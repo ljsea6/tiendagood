@@ -94,7 +94,7 @@
 
                     <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
 
-                    <h3>Registrate en Good dev</h3>
+                    <h3>Registrate en Good</h3>
                     <p>En tres simples pasos pertenecerás a nuestro exclusivo club.</p>
                     <div class="f1-steps">
 
@@ -229,18 +229,29 @@
                     <fieldset id="five">
                         <h4>Documentos y condiciones:</h4>
 
-                        <div id="cb-div" class="form-group">
-                            <label class="custom-file">
-                                Certificacion Bancaria
-                                <input type="file" id="cuenta" name="cuenta" class="custom-file-input" required>
-                                <span class="custom-file-control"></span>
-                            </label>
+                        <div class="form-group">
+                            <label for="bank">Seleccionar Entidad Bancaria</label>
+                            <select id="bank" name="bank" class="form-control" required style="width: 100% !important;">
+
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="type_acount_bank">Tipo de cuenta</label>
+                            <select id="type_acount_bank" name="type_acount_bank" class="form-control" required style="width: 100% !important;">
+
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="acount">Número de cuenta</label>
+                            <input type="number" name="acount" placeholder="Documento..." class="f1-first-name form-control" id="acount">
                         </div>
 
                         <div id="cd-div" class="form-group">
                             <label class="custom-file">
                                 Cédula o Documento
-                                <input type="file" id="cedula" name="cedula" class="custom-file-input" required>
+                                <input type="file" id="cedula" name="cedula" class="custom-file-input">
                                 <span class="custom-file-control"></span>
                             </label>
                         </div>
@@ -248,19 +259,19 @@
                         <div id="rut-div" class="form-group">
                             <label class="custom-file">
                                 RUT
-                                <input type="file" id="rut" name="rut" class="custom-file-input" required>
+                                <input type="file" id="rut" name="rut" class="custom-file-input">
                                 <span class="custom-file-control"></span>
                             </label>
                         </div>
 
-                        <div id="prime-div" class="form-check">
+                        <div class="form-group">
                             <label class="form-check-label">
                                 <input id="prime" name="prime" class="form-check-input" type="checkbox">
                                 Usuario Prime
                             </label>
                         </div>
 
-                        <div class="form-check">
+                        <div class="form-group">
                             <label for="contrato" class="form-check-label">
                                 <input class="form-check-input"  type="checkbox" id="contract" name="contract" required />
                                 Contrato <a href="pagina_condiciones.html">terminos</a>
@@ -268,7 +279,7 @@
                         </div>
 
 
-                        <div class="form-check">
+                        <div class="form-group">
                             <label for="condiciones" class="form-check-label">
                                 <input class="form-check-input"  type="checkbox" id="terms" name="terms" required />
                                 ¿Acepta <a href="pagina_condiciones.html">terminos</a> y condiciones?
@@ -366,30 +377,6 @@
 
             $("#five").remove();
 
-            $('#city').select2({
-                ajax: {
-                    url: "/cities",
-                    type: "post",
-                    dataType: "json",
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            q: params.term
-                        }
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data.data, function (val, i) {
-                                return {
-                                    id: val.id,
-                                    text: val.nombre
-                                }
-                            })
-                        }
-                    }
-                },
-                placeholder: "Ciudad"
-            });
         }
 
         $('#birthday').datepicker();
@@ -417,6 +404,42 @@
                 text: "Femenino"
             }
         ];
+
+        var banks = [
+            {
+                id: 1,
+                text: "BBVA"
+            },
+            {
+                id: 2,
+                text: "DAVIENDA"
+            },
+            {
+                id: 3,
+                text: "CAJA SOCIAL"
+            }
+        ];
+
+        $("#bank").select2({
+            placeholder: "Escoger Banco...",
+            data: banks
+        });
+
+        var acounts = [
+            {
+                id: 1,
+                text: "Ahorros"
+            },
+            {
+                id: 2,
+                text: "Corriente"
+            }
+        ];
+
+        $("#type_acount_bank").select2({
+            placeholder: "Tipo de cuenta bancaria",
+            data: acounts
+        });
 
         $('#sex').select2({
             placeholder: "Sexo",
@@ -486,48 +509,33 @@
                           '                    </fieldset>';
                       $("#tree").after(campo);
 
-                      $('#city').select2({
-                          ajax: {
-                              url: "/cities",
-                              type: "post",
-                              dataType: "json",
-                              delay: 250,
-                              data: function (params) {
-                                  return {
-                                      q: params.term
-                                  }
-                              },
-                              processResults: function(data) {
-                                  return {
-                                      results: $.map(data.data, function (val, i) {
-                                          return {
-                                              id: val.id,
-                                              text: val.nombre
-                                          }
-                                      })
-                                  }
-                              }
-                          },
-                          placeholder: "Ciudad"
-                      });
 
-
-
-                      campo1 = '<fieldset id="five">\n' +
+                      campo1 = ' <fieldset id="five">\n' +
                           '                        <h4>Documentos y condiciones:</h4>\n' +
                           '\n' +
-                          '                        <div id="cb-div" class="form-group">\n' +
-                          '                            <label class="custom-file">\n' +
-                          '                                Certificacion Bancaria\n' +
-                          '                                <input type="file" id="cuenta" name="cuenta" class="custom-file-input" required>\n' +
-                          '                                <span class="custom-file-control"></span>\n' +
-                          '                            </label>\n' +
+                          '                        <div class="form-group">\n' +
+                          '                            <label for="bank">Seleccionar Entidad Bancaria</label>\n' +
+                          '                            <select id="bank" name="bank" class="form-control" required style="width: 100% !important;">\n' +
+                          '\n' +
+                          '                            </select>\n' +
+                          '                        </div>\n' +
+                          '\n' +
+                          '                        <div class="form-group">\n' +
+                          '                            <label for="type_acount_bank">Tipo de cuenta</label>\n' +
+                          '                            <select id="type_acount_bank" name="type_acount_bank" class="form-control" required style="width: 100% !important;">\n' +
+                          '\n' +
+                          '                            </select>\n' +
+                          '                        </div>\n' +
+                          '\n' +
+                          '                        <div class="form-group">\n' +
+                          '                            <label for="acount">Número de cuenta</label>\n' +
+                          '                            <input type="number" name="acount" placeholder="Documento..." class="f1-first-name form-control" id="acount">\n' +
                           '                        </div>\n' +
                           '\n' +
                           '                        <div id="cd-div" class="form-group">\n' +
                           '                            <label class="custom-file">\n' +
                           '                                Cédula o Documento\n' +
-                          '                                <input type="file" id="cedula" name="cedula" class="custom-file-input" required>\n' +
+                          '                                <input type="file" id="cedula" name="cedula" class="custom-file-input">\n' +
                           '                                <span class="custom-file-control"></span>\n' +
                           '                            </label>\n' +
                           '                        </div>\n' +
@@ -535,19 +543,19 @@
                           '                        <div id="rut-div" class="form-group">\n' +
                           '                            <label class="custom-file">\n' +
                           '                                RUT\n' +
-                          '                                <input type="file" id="rut" name="rut" class="custom-file-input" required>\n' +
+                          '                                <input type="file" id="rut" name="rut" class="custom-file-input">\n' +
                           '                                <span class="custom-file-control"></span>\n' +
                           '                            </label>\n' +
                           '                        </div>\n' +
                           '\n' +
-                          '                        <div id="prime-div" class="form-check">\n' +
+                          '                        <div class="form-group">\n' +
                           '                            <label class="form-check-label">\n' +
-                          '                                <input id="prime" name="prime" class="form-check-input" type="checkbox" value="">\n' +
+                          '                                <input id="prime" name="prime" class="form-check-input" type="checkbox">\n' +
                           '                                Usuario Prime\n' +
                           '                            </label>\n' +
                           '                        </div>\n' +
                           '\n' +
-                          '                        <div class="form-check">\n' +
+                          '                        <div class="form-group">\n' +
                           '                            <label for="contrato" class="form-check-label">\n' +
                           '                                <input class="form-check-input"  type="checkbox" id="contract" name="contract" required />\n' +
                           '                                Contrato <a href="pagina_condiciones.html">terminos</a>\n' +
@@ -555,7 +563,7 @@
                           '                        </div>\n' +
                           '\n' +
                           '\n' +
-                          '                        <div class="form-check">\n' +
+                          '                        <div class="form-group">\n' +
                           '                            <label for="condiciones" class="form-check-label">\n' +
                           '                                <input class="form-check-input"  type="checkbox" id="terms" name="terms" required />\n' +
                           '                                ¿Acepta <a href="pagina_condiciones.html">terminos</a> y condiciones?\n' +
@@ -567,6 +575,42 @@
                           '                        </div>\n' +
                           '                    </fieldset>';
                       $("#four").after(campo1);
+
+                      var banks = [
+                          {
+                              id: 1,
+                              text: "BBVA"
+                          },
+                          {
+                              id: 2,
+                              text: "DAVIENDA"
+                          },
+                          {
+                              id: 3,
+                              text: "CAJA SOCIAL"
+                          }
+                      ];
+
+                      $("#bank").select2({
+                          placeholder: "Escoger Banco...",
+                          data: banks
+                      });
+
+                      var acounts = [
+                          {
+                              id: 1,
+                              text: "Ahorros"
+                          },
+                          {
+                              id: 2,
+                              text: "Corriente"
+                          }
+                      ];
+
+                      $("#type_acount_bank").select2({
+                          placeholder: "Tipo de cuenta bancaria",
+                          data: acounts
+                      });
 
                       // next step
                       $('.f1 .btn-next').on('click', function() {
@@ -733,30 +777,6 @@
                           });
                       });
 
-                      $('#city').select2({
-                          ajax: {
-                              url: "/cities",
-                              type: "post",
-                              dataType: "json",
-                              delay: 250,
-                              data: function (params) {
-                                  return {
-                                      q: params.term
-                                  }
-                              },
-                              processResults: function(data) {
-                                  return {
-                                      results: $.map(data.data, function (val, i) {
-                                          return {
-                                              id: val.id,
-                                              text: val.nombre
-                                          }
-                                      })
-                                  }
-                              }
-                          },
-                          placeholder: "Ciudad"
-                      });
 
                   }
 
