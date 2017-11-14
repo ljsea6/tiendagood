@@ -220,21 +220,6 @@
                                    class="f1-repeat-password form-control" id="password_confirmation" required>
                         </div>
 
-                        <div class="form-check">
-                            <label for="contrato" class="form-check-label">
-                                <input class="form-check-input"  type="checkbox" id="contract" name="contract" required />
-                                Contrato <a href="pagina_condiciones.html">terminos</a>
-                            </label>
-                        </div>
-
-
-                        <div class="form-check">
-                            <label for="condiciones" class="form-check-label">
-                                <input class="form-check-input"  type="checkbox" id="terms" name="terms" required />
-                                ¿Acepta <a href="pagina_condiciones.html">terminos</a> y condiciones?
-                            </label>
-                        </div>
-
                         <div class="f1-buttons">
                             <button type="button" class="btn btn-previous">Anterior</button>
                             <button type="button" class="btn btn-next">Siguiente</button>
