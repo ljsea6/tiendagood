@@ -250,6 +250,7 @@ class UsuariosController extends Controller {
             'birthday.required' => 'Fecha de nacimiento requerida.',
             'address.required' => 'Direccion requerida.',
             'phone.required' => 'Telefono requerido.',
+	    'phone.unique:terceros,telefono' => 'El número de telefono ya existe.',
             'password.confirmed' => 'Se requiere confirmar las contraseñas.',
         ];
 
@@ -263,7 +264,7 @@ class UsuariosController extends Controller {
             'sex' => 'required',
             'birthday' => 'required',
             'address' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|unique:terceros,telefono',
             'code' => 'required|email|exists:terceros,email',
             'email' => 'required|email|unique:terceros,email',
             'password' => 'required|min:3|confirmed',
