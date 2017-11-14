@@ -94,7 +94,7 @@
 
                     <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
 
-                    <h3>Registrate en Good</h3>
+                    <h3>Registrate en Good dev</h3>
                     <p>En tres simples pasos pertenecerás a nuestro exclusivo club.</p>
                     <div class="f1-steps">
 
