@@ -121,10 +121,12 @@
                     <fieldset id="tree">
                         <h4>Dinos quién eres:</h4>
 
+
+
                         <div class="form-group">
                             <label for="type_client">Tipo Cliente</label>
                             <select id="type_client" name="type_client" class="form-control" required>
-                                @foreach($tipos as $tipo)
+                                @foreach($tipos->tipos as $tipo)
                                     <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                 @endforeach
                             </select>
@@ -133,8 +135,8 @@
                         <div class="form-group">
                             <label for="type_dni">Tipo Documento</label>
                             <select id="type_dni" name="type_dni" class="form-control" required>
-                                @foreach($documentos as $documento)
-                                    <option value="{{$documento->id}}">{{ucwords($documento->description)}}</option>
+                                @foreach($documentos->tipos as $tipo)
+                                    <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -148,9 +150,9 @@
                         <div class="form-group">
                             <label for="city">Ciudad</label>
                             <select id="city" name="city" class="form-control" required>
-                                @foreach($cities as $city)
-                                    <option value="{{$city->id}}">{{ucwords($city->nombre)}}</option>
-                                @endforeach
+                                    @foreach($cities as $tipo)
+                                        <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
+                                    @endforeach
                             </select>
                         </div>
 
@@ -196,13 +198,13 @@
 
                         @if(isset($email))
                             <div class="form-group">
-                                <label for="f1-email">Código</label>
-                                <input type="email" name="code" placeholder="Código..." class="f1-email form-control" id="code"  value="{{$email}}" required disabled="true">
+                                <label for="f1-email">Código de tu referido</label>
+                                <input type="number" name="code" placeholder="Código..." class="f1-email form-control" id="code"  value="{{$email}}" required disabled="true">
                             </div>
                         @else
                             <div class="form-group">
-                                <label for="f1-email">Código</label>
-                                <input type="email" name="code" placeholder="Código..." class="f1-email form-control" id="code" required>
+                                <label for="f1-email">Código de tu referido</label>
+                                <input type="number" name="code" placeholder="Código..." class="f1-email form-control" id="code" required>
                             </div>
                         @endif
 
@@ -232,20 +234,32 @@
                         <div class="form-group">
                             <label for="bank">Seleccionar Entidad Bancaria</label>
                             <select id="bank" name="bank" class="form-control" required style="width: 100% !important;">
-
+                                @foreach($bancos as $tipo)
+                                    <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
+                                @endforeach
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="type_acount_bank">Tipo de cuenta</label>
+                            <label for="type_acount_bank">Tipo de cuenta </label>
                             <select id="type_acount_bank" name="type_acount_bank" class="form-control" required style="width: 100% !important;">
-
+                                @foreach($cuentas->tipos as $tipo)
+                                    <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
+                                @endforeach
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label for="acount">Número de cuenta</label>
                             <input type="number" name="acount" placeholder="Documento..." class="f1-first-name form-control" id="acount">
+                        </div>
+
+                        <div id="cd-div" class="form-group">
+                            <label class="custom-file">
+                                Certificación bancaria
+                                <input type="file" id="cuenta" name="cuenta" class="custom-file-input">
+                                <span class="custom-file-control"></span>
+                            </label>
                         </div>
 
                         <div id="cd-div" class="form-group">
@@ -318,7 +332,7 @@
 
         var valor = $('#type_client').val();
 
-        if (valor != 1) {
+        if (valor != 83) {
 
             $("#two").remove();
 
@@ -405,40 +419,12 @@
             }
         ];
 
-        var banks = [
-            {
-                id: 1,
-                text: "BBVA"
-            },
-            {
-                id: 2,
-                text: "DAVIENDA"
-            },
-            {
-                id: 3,
-                text: "CAJA SOCIAL"
-            }
-        ];
-
         $("#bank").select2({
-            placeholder: "Escoger Banco...",
-            data: banks
+            placeholder: "Escoger Banco..."
         });
-
-        var acounts = [
-            {
-                id: 1,
-                text: "Ahorros"
-            },
-            {
-                id: 2,
-                text: "Corriente"
-            }
-        ];
 
         $("#type_acount_bank").select2({
             placeholder: "Tipo de cuenta bancaria",
-            data: acounts
         });
 
         $('#sex').select2({
@@ -452,7 +438,9 @@
 
                   var valor = $('#type_client').val();
 
-                  if (valor == 1) {
+                  console.log(valor);
+
+                  if (valor == 83) {
 
                       $("#one").remove();
 
@@ -510,26 +498,38 @@
                       $("#tree").after(campo);
 
 
-                      campo1 = ' <fieldset id="five">\n' +
+                      campo1 = '<fieldset id="five">\n' +
                           '                        <h4>Documentos y condiciones:</h4>\n' +
                           '\n' +
                           '                        <div class="form-group">\n' +
                           '                            <label for="bank">Seleccionar Entidad Bancaria</label>\n' +
                           '                            <select id="bank" name="bank" class="form-control" required style="width: 100% !important;">\n' +
-                          '\n' +
+                          '                                @foreach($bancos as $tipo)\n' +
+                          '                                    <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>\n' +
+                          '                                @endforeach\n' +
                           '                            </select>\n' +
                           '                        </div>\n' +
                           '\n' +
                           '                        <div class="form-group">\n' +
-                          '                            <label for="type_acount_bank">Tipo de cuenta</label>\n' +
+                          '                            <label for="type_acount_bank">Tipo de cuenta </label>\n' +
                           '                            <select id="type_acount_bank" name="type_acount_bank" class="form-control" required style="width: 100% !important;">\n' +
-                          '\n' +
+                          '                                @foreach($cuentas->tipos as $tipo)\n' +
+                          '                                    <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>\n' +
+                          '                                @endforeach\n' +
                           '                            </select>\n' +
                           '                        </div>\n' +
                           '\n' +
                           '                        <div class="form-group">\n' +
                           '                            <label for="acount">Número de cuenta</label>\n' +
                           '                            <input type="number" name="acount" placeholder="Documento..." class="f1-first-name form-control" id="acount">\n' +
+                          '                        </div>\n' +
+                          '\n' +
+                          '                        <div id="cd-div" class="form-group">\n' +
+                          '                            <label class="custom-file">\n' +
+                          '                                Certificación bancaria\n' +
+                          '                                <input type="file" id="cuenta" name="cuenta" class="custom-file-input">\n' +
+                          '                                <span class="custom-file-control"></span>\n' +
+                          '                            </label>\n' +
                           '                        </div>\n' +
                           '\n' +
                           '                        <div id="cd-div" class="form-group">\n' +
@@ -576,40 +576,15 @@
                           '                    </fieldset>';
                       $("#four").after(campo1);
 
-                      var banks = [
-                          {
-                              id: 1,
-                              text: "BBVA"
-                          },
-                          {
-                              id: 2,
-                              text: "DAVIENDA"
-                          },
-                          {
-                              id: 3,
-                              text: "CAJA SOCIAL"
-                          }
-                      ];
+
 
                       $("#bank").select2({
                           placeholder: "Escoger Banco...",
-                          data: banks
                       });
 
-                      var acounts = [
-                          {
-                              id: 1,
-                              text: "Ahorros"
-                          },
-                          {
-                              id: 2,
-                              text: "Corriente"
-                          }
-                      ];
 
                       $("#type_acount_bank").select2({
                           placeholder: "Tipo de cuenta bancaria",
-                          data: acounts
                       });
 
                       // next step

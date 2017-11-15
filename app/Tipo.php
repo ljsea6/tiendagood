@@ -12,6 +12,18 @@ class Tipo extends Model
 {
     protected $table = 'tipos';
 
+    public function tipos()
+    {
+        return $this->hasMany(Tipo::class, 'padre_id');
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(Tipo::class, 'padre_id');
+    }
+
+
+
     public function terceros()
     {
         return $this->hasMany(Tercero::class, 'tipo_id');

@@ -1,5 +1,9 @@
 <?php
 namespace App\Http\Controllers;
+
+use App\Banco;
+use DB;
+use App\Tipo;
 use App\Documento;
 use App\TipoCliente;
 use Carbon\Carbon;
@@ -7,7 +11,6 @@ use Validator;
 use App\Entities\Ciudad;
 use App\Entities\Oficina;
 use App\Entities\Tercero;
-use App\Entities\Tipo;
 use App\Entities\Network;
 use App\Entities\Tercero_network;
 use App\Http\Controllers\Controller;
@@ -19,7 +22,8 @@ use Bican\Roles\Models\Role;
 use Illuminate\Http\Request;
 use Styde\Html\Facades\Alert;
 use Yajra\Datatables\Datatables;
-use DB;
+
+
 class UsuariosController extends Controller {
     /**
      * Display a listing of the  resource.
@@ -219,21 +223,25 @@ class UsuariosController extends Controller {
 
     protected function getusuario(Request $request)
     {
+
         $cities = Ciudad::orderBy('nombre', 'asc')->get();
 
-        $tipos= TipoCliente::all();
+        $tipos= Tipo::with('tipos')->find(76);
 
-        $documentos = Documento::all();
+        $cuentas = Tipo::with('tipos')->find(75);
 
+        $documentos = Tipo::with('tipos')->find(74);
+
+        $bancos = Banco::get();
 
         if ($request->has('q')) {
 
             $email = '' . $request->q;
 
-            return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'email' => $email, 'cities' => $cities, 'documentos' => $documentos]);
+            return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'email' => $email, 'cities' => $cities, 'documentos' => $documentos, 'bancos' => $bancos, 'cuentas' => $cuentas]);
         }
 
-        return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'cities' => $cities, 'documentos' => $documentos]);
+        return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'cities' => $cities, 'documentos' => $documentos, 'bancos' => $bancos, 'cuentas' => $cuentas]);
     }
 
     public function storeNuevo(Request $request)
