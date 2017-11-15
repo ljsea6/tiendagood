@@ -10,8 +10,11 @@
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/form-elements.css">
     <link rel="stylesheet" href="assets/css/style.css">
+
+
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -22,7 +25,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
+
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.min.css" />
       <!-- Special version of Bootstrap that only affects content wrapped in .bootstrap-iso -->
@@ -94,7 +97,8 @@
 
                     <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
 
-                    <h3>Registrate en Good</h3>
+                    <h3>Registrate en Good </h3>
+                    <p id="alerta" >Alerta </p>
                     <p>En tres simples pasos pertenecerás a nuestro exclusivo club.</p>
                     <div class="f1-steps">
 
@@ -143,7 +147,7 @@
 
                         <div class="form-group">
                             <label for="dni">Número Documento</label>
-                            <input type="number" name="dni" placeholder="Documento..." class="f1-first-name form-control" id="dni" required>
+                            <input type="number" name="dni" placeholder="Documento..." class="form-control" id="dni" required>
                         </div>
 
 
@@ -159,33 +163,34 @@
                         <div class="form-group">
                             <label for="sex">Sexo</label>
                             <select id="sex" name="sex" class="form-control" required>
-
+                                <option value="1">M</option>
+                                <option value="2">F</option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label for="f1-first-name">Nombres</label>
-                            <input type="text" name="first-name" placeholder="Nombres..." class="f1-first-name form-control" id="first-name" required>
+                            <input type="text" name="first-name" placeholder="Nombres..." class="form-control" id="first-name" required>
                         </div>
 
                         <div class="form-group">
                             <label for="f1-last-name">Apellidos</label>
-                            <input type="text" name="last-name" placeholder="Apellidos..." class="f1-last-name form-control" id="last-name" required>
+                            <input type="text" name="last-name" placeholder="Apellidos..." class="form-control" id="last-name" required>
                         </div>
 
                         <div class="form-group">
                             <label for="birthday">Fecha de Nacimiento</label>
-                            <input type="date" id="birthday" name="birthday"  placeholder="Fecha de nacimiento..." class="f1-last-name form-control" required/>
+                            <input type="date" id="birthday" name="birthday"  placeholder="Fecha de nacimiento..." class="form-control" required/>
                         </div>
 
                         <div class="form-group">
                             <label for="address">Direccion</label>
-                            <input type="text" id="address" name="address"  placeholder="Direccion..." class="f1-last-name form-control" required/>
+                            <input type="text" id="address" name="address"  placeholder="Direccion..." class="form-control" required/>
                         </div>
 
                         <div class="form-group">
                             <label for="phone">Telefono</label>
-                            <input type="tel" min="7" max="" id="phone" name="phone"  placeholder="Telefono..." class="f1-last-name form-control" required/>
+                            <input type="tel" min="7" max="" id="phone" name="phone"  placeholder="Telefono..." class="form-control" required/>
                         </div>
 
                         <div class="f1-buttons">
@@ -320,14 +325,14 @@
 <script src="assets/js/retina-1.1.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
-<script src="assets/js/scripts.js"></script>
+<script src="assets/js/scripts.js?u={{random_int(1, 100)}}"></script>
 
 <!--[if lt IE 10]>
 <script src="assets/js/placeholder.js"></script>
 
 <![endif]-->
 
-<script>
+{{--<script>
     $( document ).ready(function() {
 
         var valor = $('#type_client').val();
@@ -837,7 +842,7 @@
     });
 
 
-</script>
+</script>--}}
 
 </body>
 

@@ -41,9 +41,14 @@ jQuery(document).ready(function() {
     $('.f1 input[type="text"], .f1 input[type="password"], .f1 textarea').on('focus', function() {
     	$(this).removeClass('input-error');
     });
+
+    var exp_number = /^[0-9]+$/;
+    var exp_names =/^[a-zA-ZáéíóúàèìòùÀÈÌÒÙÁÉÍÓÚñÑüÜ\s]+$/;
+    var exp_date = /^([0-9]{2}\/[0-9]{2}\/[0-9]{4})$/;
     
     // next step
     $('.f1 .btn-next').on('click', function() {
+
     	var parent_fieldset = $(this).parents('fieldset');
     	var next_step = true;
     	// navigation steps / progress steps
@@ -52,14 +57,132 @@ jQuery(document).ready(function() {
     	
     	// fields validation
 
-    	parent_fieldset.find('input[type="text"], input[type="password"], textarea').each(function() {
-    		if( $(this).val() == "" ) {
-    			$(this).addClass('input-error');
-    			next_step = false;
-    		}
-    		else {
-    			$(this).removeClass('input-error');
-    		}
+    	parent_fieldset.find('input[type="text"], input[type="number"], input[type="tel"], input[type="date"], input[type="password"], select').each(function() {
+
+            if ($(this).attr('id') == 'type_client') {
+
+                if( $(this).val() == "" ) {
+                    $(this).addClass('input-error');
+                    next_step = false;
+                }
+                else {
+                    $(this).removeClass('input-error');
+                }
+            }
+
+            if ($(this).attr('id') == 'type_dni') {
+
+                if($(this).val() == ""  ) {
+                    $(this).addClass('input-error');
+                    next_step = false;
+                }
+                else {
+                    $(this).removeClass('input-error');
+                }
+            }
+
+            if ($(this).attr('id') == 'dni') {
+
+                var number = $(this).val();
+
+                if (exp_number.test(number) && (number.length == 7 || number.length == 10)) {
+
+                    $(this).removeClass('input-error');
+                }
+                else {
+                    $(this).addClass('input-error');
+                    next_step = false;
+                    console.log('numero mal');
+                }
+            }
+
+            if ($(this).attr('id') == 'city') {
+
+                if( $(this).val() == "" ) {
+
+                    $(this).addClass('input-error');
+                    next_step = false;
+                }
+                else {
+                    $(this).removeClass('input-error');
+                }
+            }
+
+            if ($(this).attr('id') == 'sex') {
+                if( $(this).val() == "" ) {
+                    $(this).addClass('input-error');
+                    next_step = false;
+                }
+                else {
+                    $(this).removeClass('input-error');
+                }
+            }
+
+            if ($(this).attr('id') == 'first-name') {
+
+                var first_name = $(this).val();
+
+                if (exp_names.test(first_name) && first_name.length > 2 ) {
+
+                    $(this).removeClass('input-error');
+                    next_step = false;
+                }
+                else {
+
+                    $(this).addClass('input-error');
+                }
+            }
+
+            if ($(this).attr('id') == 'last-name') {
+
+                var last_name = $(this).val();
+
+                if (exp_names.test(last_name) && last_name.length > 2 ) {
+
+                    $(this).removeClass('input-error');
+                    next_step = false;
+                }
+                else {
+
+                    $(this).addClass('input-error');
+                }
+            }
+
+            if ($(this).attr('id') == 'birthday') {
+                var date = $(this).val();
+
+                if (exp_date.test(date) && date.length == 10  ) {
+
+                    $(this).removeClass('input-error');
+                    next_step = false;
+                }
+                else {
+
+                    $(this).addClass('input-error');
+                }
+            }
+
+            if ($(this).attr('id') == 'address') {
+                if( $(this).val() == "" ) {
+                    $(this).addClass('input-error');
+                    next_step = false;
+                }
+                else {
+                    $(this).removeClass('input-error');
+                }
+            }
+
+            if ($(this).attr('id') == 'phone') {
+
+                if( $(this).val() == "" ) {
+                    $(this).addClass('input-error');
+                    next_step = false;
+                }
+                else {
+                    $(this).removeClass('input-error');
+                }
+            }
+
     	});
     	// fields validation
     	
