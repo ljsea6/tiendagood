@@ -273,7 +273,7 @@ class UsuariosController extends Controller {
             'birthday' => 'required',
             'address' => 'required',
             'phone' => 'required|unique:terceros,telefono',
-            'code' => 'required|email|exists:terceros,email',
+            'code' => 'required|string|exists:terceros,identificacion',
             'email' => 'required|email|unique:terceros,email',
             'password' => 'required|min:3|confirmed',
             'password_confirmation' => 'required|min:3'
@@ -394,7 +394,7 @@ class UsuariosController extends Controller {
             ]);
         }
 
-        $padre = Tercero::where('email', $request->code)->first();
+        $padre = Tercero::where('identificacion', $request->code)->first();
 
         if (count($padre) > 0) {
             $usuario->networks()->attach(1, ['padre_id' => $padre->id]);;

@@ -98,13 +98,10 @@
                     <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
 
                     <h3>Registrate en Good </h3>
-                    <p id="alerta" >Alerta </p>
+
                     <p>En tres simples pasos pertenecerás a nuestro exclusivo club.</p>
                     <div class="f1-steps">
 
-                        <div class="f1-progress">
-                            <div class="f1-progress-line" data-now-value="16.66" data-number-of-steps="3" style="width: 16.66%;"></div>
-                        </div>
 
                         <div id="cero" class="f1-step active">
                             <div class="f1-step-icon"><i class="fa fa-user"></i></div>
@@ -125,11 +122,10 @@
                     <fieldset id="tree">
                         <h4>Dinos quién eres:</h4>
 
-
-
                         <div class="form-group">
                             <label for="type_client">Tipo Cliente</label>
                             <select id="type_client" name="type_client" class="form-control" required>
+                                <option value=""></option>
                                 @foreach($tipos->tipos as $tipo)
                                     <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                 @endforeach
@@ -139,6 +135,7 @@
                         <div class="form-group">
                             <label for="type_dni">Tipo Documento</label>
                             <select id="type_dni" name="type_dni" class="form-control" required>
+                                <option value=""></option>
                                 @foreach($documentos->tipos as $tipo)
                                     <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                 @endforeach
@@ -147,14 +144,16 @@
 
                         <div class="form-group">
                             <label for="dni">Número Documento</label>
-                            <input type="number" name="dni" placeholder="Documento..." class="form-control" id="dni" required>
+                            <input type="text" name="dni" placeholder="Documento..." class="form-control" id="dni" required>
                         </div>
 
 
                         <div class="form-group">
                             <label for="city">Ciudad</label>
                             <select id="city" name="city" class="form-control" required>
+                                    <option value=""></option>
                                     @foreach($cities as $tipo)
+
                                         <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                     @endforeach
                             </select>
@@ -163,6 +162,7 @@
                         <div class="form-group">
                             <label for="sex">Sexo</label>
                             <select id="sex" name="sex" class="form-control" required>
+                                <option value=""></option>
                                 <option value="1">M</option>
                                 <option value="2">F</option>
                             </select>
@@ -190,7 +190,7 @@
 
                         <div class="form-group">
                             <label for="phone">Telefono</label>
-                            <input type="tel" min="7" max="" id="phone" name="phone"  placeholder="Telefono..." class="form-control" required/>
+                            <input type="text" min="7" max="" id="phone" name="phone"  placeholder="Telefono..." class="form-control" required/>
                         </div>
 
                         <div class="f1-buttons">
@@ -203,33 +203,34 @@
 
                         @if(isset($email))
                             <div class="form-group">
-                                <label for="f1-email">Código de tu referido</label>
-                                <input type="number" name="code" placeholder="Código..." class="f1-email form-control" id="code"  value="{{$email}}" required disabled="true">
+                                <label for="code">Código de tu referido</label>
+                                <input type="text" name="code" placeholder="Código..." class="form-control" id="code"  value="{{$email}}" readonly>
                             </div>
                         @else
                             <div class="form-group">
-                                <label for="f1-email">Código de tu referido</label>
-                                <input type="number" name="code" placeholder="Código..." class="f1-email form-control" id="code" required>
+                                <label for="code">Código de tu referido</label>
+                                <input type="text" name="code" placeholder="Código..." class="form-control" id="code" required>
                             </div>
                         @endif
 
                         <div class="form-group">
-                            <label for="f1-email">Email</label>
-                            <input type="email" name="email" placeholder="Email..." class="f1-email form-control" id="email" required>
+                            <label for="email">Email</label>
+                            <input type="email" name="email" placeholder="Email..." class="form-control" id="email" required>
                         </div>
                         <div class="form-group">
-                            <label for="f1-password">Contraseña</label>
-                            <input type="password" name="password" placeholder="Contraseña..." class="f1-password form-control" id="password" required>
+                            <label for="password">Contraseña</label>
+                            <input type="password" name="password" placeholder="Contraseña..." class="form-control" id="password" required>
                         </div>
                         <div class="form-group">
                             <label  for="f1-repeat-password">Repetir Contraseña</label>
-                            <input type="password" name="password_confirmation" placeholder="Repeter Contraseña..."
-                                   class="f1-repeat-password form-control" id="password_confirmation" required>
+                            <input type="password" name="password_confirmation" placeholder="Repetir Contraseña..."
+                                   class="form-control" id="password_confirmation" required>
                         </div>
 
                         <div class="f1-buttons">
                             <button type="button" class="btn btn-previous">Anterior</button>
                             <button type="button" class="btn btn-next">Siguiente</button>
+                            <button type="submit" class="btn btn-submit">Crear</button>
                         </div>
                     </fieldset>
 
@@ -238,8 +239,10 @@
 
                         <div class="form-group">
                             <label for="bank">Seleccionar Entidad Bancaria</label>
-                            <select id="bank" name="bank" class="form-control" required style="width: 100% !important;">
+                            <select id="bank" name="bank" class="form-control" style="width: 100% !important;">
+                                <option value=""></option>
                                 @foreach($bancos as $tipo)
+
                                     <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                 @endforeach
                             </select>
@@ -247,7 +250,8 @@
 
                         <div class="form-group">
                             <label for="type_acount_bank">Tipo de cuenta </label>
-                            <select id="type_acount_bank" name="type_acount_bank" class="form-control" required style="width: 100% !important;">
+                            <select id="type_acount_bank" name="type_acount_bank" class="form-control" style="width: 100% !important;">
+                                <option value=""></option>
                                 @foreach($cuentas->tipos as $tipo)
                                     <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                 @endforeach
@@ -256,7 +260,7 @@
 
                         <div class="form-group">
                             <label for="acount">Número de cuenta</label>
-                            <input type="number" name="acount" placeholder="Documento..." class="f1-first-name form-control" id="acount">
+                            <input type="number" name="acount" placeholder="Documento..." class="form-control" id="acount">
                         </div>
 
                         <div id="cd-div" class="form-group">
@@ -292,7 +296,7 @@
 
                         <div class="form-group">
                             <label for="contrato" class="form-check-label">
-                                <input class="form-check-input"  type="checkbox" id="contract" name="contract" required />
+                                <input type="checkbox" id="contract" name="contract" required/>
                                 Contrato <a href="pagina_condiciones.html">terminos</a>
                             </label>
                         </div>
@@ -300,7 +304,7 @@
 
                         <div class="form-group">
                             <label for="condiciones" class="form-check-label">
-                                <input class="form-check-input"  type="checkbox" id="terms" name="terms" required />
+                                <input  type="checkbox" id="terms" name="terms" required/>
                                 ¿Acepta <a href="pagina_condiciones.html">terminos</a> y condiciones?
                             </label>
                         </div>
@@ -332,517 +336,6 @@
 
 <![endif]-->
 
-{{--<script>
-    $( document ).ready(function() {
-
-        var valor = $('#type_client').val();
-
-        if (valor != 83) {
-
-            $("#two").remove();
-
-            $("#four").remove();
-
-            campo = '<fieldset id="four">\n' +
-                '                        <h4>Configurar tu usuario:</h4>\n' +
-                '\n' +
-                '                        @if(isset($email))\n' +
-                '                            <div class="form-group">\n' +
-                '                                <label for="f1-email">Código</label>\n' +
-                '                                <input type="email" name="code" placeholder="Código..." class="f1-email form-control" id="code"  value="{{$email}}" required disabled="true">\n' +
-                '                            </div>\n' +
-                '                        @else\n' +
-                '                            <div class="form-group">\n' +
-                '                                <label for="f1-email">Código</label>\n' +
-                '                                <input type="email" name="code" placeholder="Código..." class="f1-email form-control" id="code" required>\n' +
-                '                            </div>\n' +
-                '                        @endif\n' +
-                '\n' +
-                '                        <div class="form-group">\n' +
-                '                            <label for="f1-email">Email</label>\n' +
-                '                            <input type="email" name="email" placeholder="Email..." class="f1-email form-control" id="email" required>\n' +
-                '                        </div>\n' +
-                '                        <div class="form-group">\n' +
-                '                            <label for="f1-password">Contraseña</label>\n' +
-                '                            <input type="password" name="password" placeholder="Contraseña..." class="f1-password form-control" id="password" required>\n' +
-                '                        </div>\n' +
-                '                        <div class="form-group">\n' +
-                '                            <label  for="f1-repeat-password">Repetir Contraseña</label>\n' +
-                '                            <input type="password" name="password_confirmation" placeholder="Repeter Contraseña..."\n' +
-                '                                   class="f1-repeat-password form-control" id="password_confirmation" required>\n' +
-                '                        </div>\n' +
-                '\n' +
-                '                        <div class="form-check">\n' +
-                '                            <label for="contrato" class="form-check-label">\n' +
-                '                                <input class="form-check-input"  type="checkbox" id="contract" name="contract" required />\n' +
-                '                                Contrato <a href="pagina_condiciones.html">terminos</a>\n' +
-                '                            </label>\n' +
-                '                        </div>\n' +
-                '\n' +
-                '\n' +
-                '                        <div class="form-check">\n' +
-                '                            <label for="condiciones" class="form-check-label">\n' +
-                '                                <input class="form-check-input"  type="checkbox" id="terms" name="terms" required />\n' +
-                '                                ¿Acepta <a href="pagina_condiciones.html">terminos</a> y condiciones?\n' +
-                '                            </label>\n' +
-                '                        </div>\n' +
-                '\n' +
-                '                        <div class="f1-buttons">\n' +
-                '                            <button type="button" class="btn btn-previous">Anterior</button>\n' +
-                '                            <button type="submit" class="btn btn-submit">Crear</button>\n' +
-                '                        </div>\n' +
-                '                    </fieldset>';
-            $("#tree").after(campo);
-
-            $("#five").remove();
-
-        }
-
-        $('#birthday').datepicker();
-
-
-        $('#type_client').select2({
-            placeholder: "Tipo Cliente"
-        });
-
-        $('#type_dni').select2({
-            placeholder: "Tipo Documento"
-        });
-
-        $('#city').select2({
-            placeholder: "Ciudad"
-        });
-
-        var sex = [
-            {
-                id: "masculino",
-                text: "Masculino"
-            },
-            {
-                id: "femenimo",
-                text: "Femenino"
-            }
-        ];
-
-        $("#bank").select2({
-            placeholder: "Escoger Banco..."
-        });
-
-        $("#type_acount_bank").select2({
-            placeholder: "Tipo de cuenta bancaria",
-        });
-
-        $('#sex').select2({
-            placeholder: "Sexo",
-            data: sex
-        });
-
-        $('#type_client')
-            .select2()
-            .on('change', function (e) {
-
-                  var valor = $('#type_client').val();
-
-                  console.log(valor);
-
-                  if (valor == 83) {
-
-                      $("#one").remove();
-
-
-                      campo =  campo = '<div id="one" class="f1-step">\n' +
-                          '                            <div class="f1-step-icon"><i class="fa fa-key"></i></div>\n' +
-                          '                            <p>Tu usuario</p>\n' +
-                          '                        </div>';
-                      $("#cero").after(campo);
-
-
-                      campo1 = '<div id="two" class="f1-step">\n' +
-                          '                            <div class="f1-step-icon"><i class="fa fa-check-square-o"></i></div>\n' +
-                          '                            <p>Tus documentos</p>\n' +
-                          '                        </div>';
-
-                      $("#one").after(campo1);
-
-                      $("#four").remove();
-
-                      campo = '<fieldset id="four">\n' +
-                          '                        <h4>Configurar tu usuario:</h4>\n' +
-                          '\n' +
-                          '                        @if(isset($email))\n' +
-                          '                            <div class="form-group">\n' +
-                          '                                <label for="f1-email">Código</label>\n' +
-                          '                                <input type="email" name="code" placeholder="Código..." class="f1-email form-control" id="code"  value="{{$email}}" required disabled="true">\n' +
-                          '                            </div>\n' +
-                          '                        @else\n' +
-                          '                            <div class="form-group">\n' +
-                          '                                <label for="f1-email">Código</label>\n' +
-                          '                                <input type="email" name="code" placeholder="Código..." class="f1-email form-control" id="code" required>\n' +
-                          '                            </div>\n' +
-                          '                        @endif\n' +
-                          '\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label for="f1-email">Email</label>\n' +
-                          '                            <input type="email" name="email" placeholder="Email..." class="f1-email form-control" id="email" required>\n' +
-                          '                        </div>\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label for="f1-password">Contraseña</label>\n' +
-                          '                            <input type="password" name="password" placeholder="Contraseña..." class="f1-password form-control" id="password" required>\n' +
-                          '                        </div>\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label  for="f1-repeat-password">Repetir Contraseña</label>\n' +
-                          '                            <input type="password" name="password_confirmation" placeholder="Repeter Contraseña..."\n' +
-                          '                                   class="f1-repeat-password form-control" id="password_confirmation" required>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '                        <div class="f1-buttons">\n' +
-                          '                            <button type="button" class="btn btn-previous">Anterior</button>\n' +
-                          '                            <button type="button" class="btn btn-next">Siguiente</button>\n' +
-                          '                        </div>\n' +
-                          '                    </fieldset>';
-                      $("#tree").after(campo);
-
-
-                      campo1 = '<fieldset id="five">\n' +
-                          '                        <h4>Documentos y condiciones:</h4>\n' +
-                          '\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label for="bank">Seleccionar Entidad Bancaria</label>\n' +
-                          '                            <select id="bank" name="bank" class="form-control" required style="width: 100% !important;">\n' +
-                          '                                @foreach($bancos as $tipo)\n' +
-                          '                                    <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>\n' +
-                          '                                @endforeach\n' +
-                          '                            </select>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label for="type_acount_bank">Tipo de cuenta </label>\n' +
-                          '                            <select id="type_acount_bank" name="type_acount_bank" class="form-control" required style="width: 100% !important;">\n' +
-                          '                                @foreach($cuentas->tipos as $tipo)\n' +
-                          '                                    <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>\n' +
-                          '                                @endforeach\n' +
-                          '                            </select>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label for="acount">Número de cuenta</label>\n' +
-                          '                            <input type="number" name="acount" placeholder="Documento..." class="f1-first-name form-control" id="acount">\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '                        <div id="cd-div" class="form-group">\n' +
-                          '                            <label class="custom-file">\n' +
-                          '                                Certificación bancaria\n' +
-                          '                                <input type="file" id="cuenta" name="cuenta" class="custom-file-input">\n' +
-                          '                                <span class="custom-file-control"></span>\n' +
-                          '                            </label>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '                        <div id="cd-div" class="form-group">\n' +
-                          '                            <label class="custom-file">\n' +
-                          '                                Cédula o Documento\n' +
-                          '                                <input type="file" id="cedula" name="cedula" class="custom-file-input">\n' +
-                          '                                <span class="custom-file-control"></span>\n' +
-                          '                            </label>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '                        <div id="rut-div" class="form-group">\n' +
-                          '                            <label class="custom-file">\n' +
-                          '                                RUT\n' +
-                          '                                <input type="file" id="rut" name="rut" class="custom-file-input">\n' +
-                          '                                <span class="custom-file-control"></span>\n' +
-                          '                            </label>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label class="form-check-label">\n' +
-                          '                                <input id="prime" name="prime" class="form-check-input" type="checkbox">\n' +
-                          '                                Usuario Prime\n' +
-                          '                            </label>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label for="contrato" class="form-check-label">\n' +
-                          '                                <input class="form-check-input"  type="checkbox" id="contract" name="contract" required />\n' +
-                          '                                Contrato <a href="pagina_condiciones.html">terminos</a>\n' +
-                          '                            </label>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label for="condiciones" class="form-check-label">\n' +
-                          '                                <input class="form-check-input"  type="checkbox" id="terms" name="terms" required />\n' +
-                          '                                ¿Acepta <a href="pagina_condiciones.html">terminos</a> y condiciones?\n' +
-                          '                            </label>\n' +
-                          '                        </div>\n' +
-                          '                        <div class="f1-buttons">\n' +
-                          '                            <button type="button" class="btn btn-previous">Anterior</button>\n' +
-                          '                            <button type="submit" class="btn btn-submit">Crear</button>\n' +
-                          '                        </div>\n' +
-                          '                    </fieldset>';
-                      $("#four").after(campo1);
-
-
-
-                      $("#bank").select2({
-                          placeholder: "Escoger Banco...",
-                      });
-
-
-                      $("#type_acount_bank").select2({
-                          placeholder: "Tipo de cuenta bancaria",
-                      });
-
-                      // next step
-                      $('.f1 .btn-next').on('click', function() {
-                          var parent_fieldset = $(this).parents('fieldset');
-                          var next_step = true;
-                          // navigation steps / progress steps
-                          var current_active_step = $(this).parents('.f1').find('.f1-step.active');
-                          var progress_line = $(this).parents('.f1').find('.f1-progress-line');
-
-                          // fields validation
-                          parent_fieldset.find('input[type="text"], input[type="password"], textarea').each(function() {
-                              if( $(this).val() == "" ) {
-                                  $(this).addClass('input-error');
-                                  next_step = false;
-                              }
-                              else {
-                                  $(this).removeClass('input-error');
-                              }
-                          });
-                          // fields validation
-
-                          if( next_step ) {
-                              parent_fieldset.fadeOut(400, function() {
-                                  // change icons
-                                  current_active_step.removeClass('active').addClass('activated').next().addClass('active');
-                                  // progress bar
-                                  bar_progress(progress_line, 'right');
-                                  // show next step
-                                  $(this).next().fadeIn();
-                                  // scroll window to beginning of the form
-                                  scroll_to_class( $('.f1'), 20 );
-                              });
-                          }
-
-                      });
-
-                      // previous step
-                      $('.f1 .btn-previous').on('click', function() {
-                          // navigation steps / progress steps
-                          var current_active_step = $(this).parents('.f1').find('.f1-step.active');
-                          var progress_line = $(this).parents('.f1').find('.f1-progress-line');
-
-                          $(this).parents('fieldset').fadeOut(400, function() {
-                              // change icons
-                              current_active_step.removeClass('active').prev().removeClass('activated').addClass('active');
-                              // progress bar
-                              bar_progress(progress_line, 'left');
-                              // show previous step
-                              $(this).prev().fadeIn();
-                              // scroll window to beginning of the form
-                              scroll_to_class( $('.f1'), 20 );
-                          });
-                      });
-
-                  } else {
-
-                      $("#two").remove();
-
-                      $("#four").remove();
-
-                      campo = '<fieldset id="four">\n' +
-                          '                        <h4>Configurar tu usuario:</h4>\n' +
-                          '\n' +
-                          '                        @if(isset($email))\n' +
-                          '                            <div class="form-group">\n' +
-                          '                                <label for="f1-email">Código</label>\n' +
-                          '                                <input type="email" name="code" placeholder="Código..." class="f1-email form-control" id="code"  value="{{$email}}" required disabled="true">\n' +
-                          '                            </div>\n' +
-                          '                        @else\n' +
-                          '                            <div class="form-group">\n' +
-                          '                                <label for="f1-email">Código</label>\n' +
-                          '                                <input type="email" name="code" placeholder="Código..." class="f1-email form-control" id="code" required>\n' +
-                          '                            </div>\n' +
-                          '                        @endif\n' +
-                          '\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label for="f1-email">Email</label>\n' +
-                          '                            <input type="email" name="email" placeholder="Email..." class="f1-email form-control" id="email" required>\n' +
-                          '                        </div>\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label for="f1-password">Contraseña</label>\n' +
-                          '                            <input type="password" name="password" placeholder="Contraseña..." class="f1-password form-control" id="password" required>\n' +
-                          '                        </div>\n' +
-                          '                        <div class="form-group">\n' +
-                          '                            <label  for="f1-repeat-password">Repetir Contraseña</label>\n' +
-                          '                            <input type="password" name="password_confirmation" placeholder="Repeter Contraseña..."\n' +
-                          '                                   class="f1-repeat-password form-control" id="password_confirmation" required>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '                        <div class="form-check">\n' +
-                          '                            <label for="contrato" class="form-check-label">\n' +
-                          '                                <input class="form-check-input"  type="checkbox" id="contract" name="contract" required />\n' +
-                          '                                Contrato <a href="pagina_condiciones.html">terminos</a>\n' +
-                          '                            </label>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '\n' +
-                          '                        <div class="form-check">\n' +
-                          '                            <label for="condiciones" class="form-check-label">\n' +
-                          '                                <input class="form-check-input"  type="checkbox" id="terms" name="terms" required />\n' +
-                          '                                ¿Acepta <a href="pagina_condiciones.html">terminos</a> y condiciones?\n' +
-                          '                            </label>\n' +
-                          '                        </div>\n' +
-                          '\n' +
-                          '                        <div class="f1-buttons">\n' +
-                          '                            <button type="button" class="btn btn-previous">Anterior</button>\n' +
-                          '                            <button type="submit" class="btn btn-submit">Crear</button>\n' +
-                          '                        </div>\n' +
-                          '                    </fieldset>';
-                      $("#tree").after(campo);
-
-                      $("#five").remove();
-
-                      // next step
-                      $('.f1 .btn-next').on('click', function() {
-                          var parent_fieldset = $(this).parents('fieldset');
-                          var next_step = true;
-                          // navigation steps / progress steps
-                          var current_active_step = $(this).parents('.f1').find('.f1-step.active');
-                          var progress_line = $(this).parents('.f1').find('.f1-progress-line');
-
-                          // fields validation
-                          parent_fieldset.find('input[type="text"], input[type="password"], textarea').each(function() {
-                              if( $(this).val() == "" ) {
-                                  $(this).addClass('input-error');
-                                  next_step = false;
-                              }
-                              else {
-                                  $(this).removeClass('input-error');
-                              }
-                          });
-                          // fields validation
-
-                          if( next_step ) {
-                              parent_fieldset.fadeOut(400, function() {
-                                  // change icons
-                                  current_active_step.removeClass('active').addClass('activated').next().addClass('active');
-                                  // progress bar
-                                  bar_progress(progress_line, 'right');
-                                  // show next step
-                                  $(this).next().fadeIn();
-                                  // scroll window to beginning of the form
-                                  scroll_to_class( $('.f1'), 20 );
-                              });
-                          }
-
-                      });
-
-                      // previous step
-                      $('.f1 .btn-previous').on('click', function() {
-                          // navigation steps / progress steps
-                          var current_active_step = $(this).parents('.f1').find('.f1-step.active');
-                          var progress_line = $(this).parents('.f1').find('.f1-progress-line');
-
-                          $(this).parents('fieldset').fadeOut(400, function() {
-                              // change icons
-                              current_active_step.removeClass('active').prev().removeClass('activated').addClass('active');
-                              // progress bar
-                              bar_progress(progress_line, 'left');
-                              // show previous step
-                              $(this).prev().fadeIn();
-                              // scroll window to beginning of the form
-                              scroll_to_class( $('.f1'), 20 );
-                          });
-                      });
-
-
-                  }
-
-                $('#type_client').select2({
-                    language: "es",
-                    placeholder: "Tipo Cliente"
-                });
-
-                $('#type_dni').select2({
-                    language: "es",
-                    placeholder: "Tipo documento"
-                });
-                $('#sex').select2({
-                    language: "es",
-                    placeholder: "Sexo"
-                });
-
-                $('#city').select2({
-                    language: "es",
-                    placeholder: "Ciudad"
-                });
-
-                $('#banco').select2({
-                    language: "es",
-                    placeholder: "Banco"
-                });
-
-            });
-
-        // next step
-        $('.f1 .btn-next').on('click', function() {
-            var parent_fieldset = $(this).parents('fieldset');
-            var next_step = true;
-            // navigation steps / progress steps
-            var current_active_step = $(this).parents('.f1').find('.f1-step.active');
-            var progress_line = $(this).parents('.f1').find('.f1-progress-line');
-
-            // fields validation
-            parent_fieldset.find('input[type="text"], input[type="password"], textarea').each(function() {
-                if( $(this).val() == "" ) {
-                    $(this).addClass('input-error');
-                    next_step = false;
-                }
-                else {
-                    $(this).removeClass('input-error');
-                }
-            });
-            // fields validation
-
-            if( next_step ) {
-                parent_fieldset.fadeOut(400, function() {
-                    // change icons
-                    current_active_step.removeClass('active').addClass('activated').next().addClass('active');
-                    // progress bar
-                    bar_progress(progress_line, 'right');
-                    // show next step
-                    $(this).next().fadeIn();
-                    // scroll window to beginning of the form
-                    scroll_to_class( $('.f1'), 20 );
-                });
-            }
-
-        });
-
-        // previous step
-        $('.f1 .btn-previous').on('click', function() {
-            // navigation steps / progress steps
-            var current_active_step = $(this).parents('.f1').find('.f1-step.active');
-            var progress_line = $(this).parents('.f1').find('.f1-progress-line');
-
-            $(this).parents('fieldset').fadeOut(400, function() {
-                // change icons
-                current_active_step.removeClass('active').prev().removeClass('activated').addClass('active');
-                // progress bar
-                bar_progress(progress_line, 'left');
-                // show previous step
-                $(this).prev().fadeIn();
-                // scroll window to beginning of the form
-                scroll_to_class( $('.f1'), 20 );
-            });
-        });
-
-    });
-
-
-</script>--}}
 
 </body>
 

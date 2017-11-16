@@ -13,6 +13,7 @@ use App\Commision;
 use App\Logorder;
 use App\Product;
 use App\Entities\Network;
+use Validator;
 
 class CustomersController extends Controller
 {
@@ -25,8 +26,6 @@ class CustomersController extends Controller
 
     public function create()
     {
-        ini_set('memory_limit', '300M');
-
         $input = file_get_contents('php://input');
         $customer = json_decode($input, true);
         $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
