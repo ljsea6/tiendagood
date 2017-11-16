@@ -127,6 +127,10 @@ jQuery(document).ready(function() {
         parent_fieldset.find('input[type="checkbox"]').each(function () {
             $(this).parent().remove();
         });
+
+        $('.f1-step').css({
+            'width': '50%'
+        });
     }
 
     $('#type_client').on('change', function() {
@@ -139,7 +143,7 @@ jQuery(document).ready(function() {
 
             var padre = $("#password_confirmation").parent();
 
-            padre.after("" +contract + terms + "");
+            padre.after("" + contract + terms + "");
 
             $("#four .btn-next").hide();
 
@@ -151,9 +155,14 @@ jQuery(document).ready(function() {
                 $(this).parent().remove();
             });
 
+            $('.f1-step').css({
+                'width': '50%',
+            });
+
         } else {
 
             $("#two").remove();
+
             $("#one").after(icono_paso_tres);
 
             $("#four .btn-next").show();
@@ -174,6 +183,16 @@ jQuery(document).ready(function() {
             var padre = $("#rut").parent();
 
             padre.after("" + prime + "" +contract + terms + "");
+
+            var parent_fieldset = $("#password_confirmation").parents('fieldset');
+
+            parent_fieldset.find('input[type="checkbox"]').each(function () {
+                $(this).parent().remove();
+            });
+
+            $('.f1-step').css({
+                'width': '33.3%'
+            });
 
         }
     });
@@ -437,9 +456,6 @@ jQuery(document).ready(function() {
 
 
     	});
-
-
-
 
     	// fields validation
     	

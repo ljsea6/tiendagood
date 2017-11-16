@@ -8,12 +8,9 @@
     <title>Login Good</title>
     <!-- CSS -->
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+    <link href="https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/form-elements.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -25,14 +22,17 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min.js"></script>
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.min.css" />
-      <!-- Special version of Bootstrap that only affects content wrapped in .bootstrap-iso -->
+    <!-- Special version of Bootstrap that only affects content wrapped in .bootstrap-iso -->
     <link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
 
     <!--Font Awesome (added because you use icons in your prepend/append)-->
     <link rel="stylesheet" href="https://formden.com/static/cdn/font-awesome/4.4.0/css/font-awesome.min.css" />
+
+    <link rel="stylesheet" href="assets/css/form-elements.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 
     <!-- Inline CSS based on choices in "Settings" tab -->
     <style>.bootstrap-iso .formden_header h2, .bootstrap-iso .formden_header p, .bootstrap-iso form{font-family: Arial, Helvetica, sans-serif; color: black}.bootstrap-iso form button, .bootstrap-iso form button:hover{color: white !important;} .asteriskField{color: red;}</style>
@@ -57,24 +57,25 @@
         <div class="collapse navbar-collapse" id="top-navbar-1">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-							<span class="li-text">
-								Put some text or
-							</span>
+                            <span class="li-text">
+                                Put some text or
+                            </span>
                     <a href="#"><strong>Good</strong></a>
                     <span class="li-text">
-								here, or some icons:
-							</span>
+                                here, or some icons:
+                            </span>
                     <span class="li-social">
-								<a href="https://www.facebook.com/pages/Azmindcom/196582707093191" target="_blank"><i class="fa fa-facebook"></i></a>
-								<a href="https://twitter.com/anli_zaimi" target="_blank"><i class="fa fa-twitter"></i></a>
-								<a href="https://plus.google.com/+AnliZaimi_azmind" target="_blank"><i class="fa fa-google-plus"></i></a>
-								<a href="https://github.com/AZMIND" target="_blank"><i class="fa fa-github"></i></a>
-							</span>
+                                <a href="https://www.facebook.com/pages/Azmindcom/196582707093191" target="_blank"><i class="fa fa-facebook"></i></a>
+                                <a href="https://twitter.com/anli_zaimi" target="_blank"><i class="fa fa-twitter"></i></a>
+                                <a href="https://plus.google.com/+AnliZaimi_azmind" target="_blank"><i class="fa fa-google-plus"></i></a>
+                                <a href="https://github.com/AZMIND" target="_blank"><i class="fa fa-github"></i></a>
+                            </span>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+
 
 <!-- Top content -->
 <div class="top-content">
@@ -97,9 +98,10 @@
 
                     <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
 
-                    <h3>Registrate en Good </h3>
+                    <img src="assets/img/logo-good.png" alt="" style="width: 50%; margin: 20px auto; display: block">
+                    <h3>Registrate en Good</h3>
 
-                    <p>En tres simples pasos pertenecerás a nuestro exclusivo club.</p>
+                    <p style="border-bottom: 2px solid #80808014; padding-bottom: 30px;">En tres simples pasos pertenecerás a nuestro exclusivo club.</p>
                     <div class="f1-steps">
 
 
@@ -120,111 +122,119 @@
                     </div>
 
                     <fieldset id="tree">
-                        <h4>Dinos quién eres:</h4>
 
-                        <div class="form-group">
-                            <label for="type_client">Tipo Cliente</label>
-                            <select id="type_client" name="type_client" class="form-control" required>
-                                <option value=""></option>
-                                @foreach($tipos->tipos as $tipo)
-                                    <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
-                                @endforeach
-                            </select>
+                        <div class="col-xs-12 col-md-12" style="text-align: center">
+                            <h4 class="dinos">Dinos quién eres:</h4>
                         </div>
+                        <div class="col-md-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="type_client">Tipo Cliente</label>
+                                <select id="type_client" name="type_client" class="form-control campo" required>
+                                    <option value=""></option>
+                                    @foreach($tipos->tipos as $tipo)
+                                        <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="type_dni">Tipo Documento</label>
+                                <select id="type_dni" name="type_dni" class="form-control campo" required>
+                                    <option value=""></option>
+                                    @foreach($documentos->tipos as $tipo)
+                                        <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="type_dni">Tipo Documento</label>
-                            <select id="type_dni" name="type_dni" class="form-control" required>
-                                <option value=""></option>
-                                @foreach($documentos->tipos as $tipo)
-                                    <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="dni">Número Documento</label>
-                            <input type="text" name="dni" placeholder="Documento..." class="form-control" id="dni" required>
-                        </div>
+                            <div class="form-group">
+                                <label for="dni">Número Documento</label>
+                                <input type="text" name="dni" placeholder="Documento..." class="f1-first-name form-control campo" id="dni" required>
+                            </div>
 
 
-                        <div class="form-group">
-                            <label for="city">Ciudad</label>
-                            <select id="city" name="city" class="form-control" required>
+                            <div class="form-group">
+                                <label for="city">Ciudad</label>
+                                <select id="city" name="city" class="form-control campo" required>
                                     <option value=""></option>
                                     @foreach($cities as $tipo)
 
                                         <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                     @endforeach
-                            </select>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sex">Sexo</label>
+                                <select id="sex" name="sex" class="form-control campo" required>
+                                    <option value=""></option>
+                                    <option value="1">M</option>
+                                    <option value="2">F</option>
+                                </select>
+                            </div>
+
                         </div>
 
-                        <div class="form-group">
-                            <label for="sex">Sexo</label>
-                            <select id="sex" name="sex" class="form-control" required>
-                                <option value=""></option>
-                                <option value="1">M</option>
-                                <option value="2">F</option>
-                            </select>
+
+                        <div class="col-md-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="f1-first-name">Nombres</label>
+                                <input type="text" name="first-name" placeholder="Nombres..." class="f1-first-name form-control campo" id="first-name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="f1-last-name">Apellidos</label>
+                                <input type="text" name="last-name" placeholder="Apellidos..." class="f1-last-name form-control campo" id="last-name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="birthday">Fecha de Nacimiento</label>
+                                <input type="date" id="birthday" name="birthday"  placeholder="Fecha de nacimiento..." class="f1-last-name form-control campo" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Direccion</label>
+                                <input type="text" id="address" name="address"  placeholder="Direccion..." class="f1-last-name form-control campo" required/>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone">Telefono</label>
+                                <input type="tel" min="7" max="" id="phone" name="phone"  placeholder="Telefono..." class="f1-last-name form-control campo" required/>
+                            </div>
+
+                            <div class="f1-buttons">
+                                <button type="button" class="btn btn-next">Siguiente</button>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="f1-first-name">Nombres</label>
-                            <input type="text" name="first-name" placeholder="Nombres..." class="form-control" id="first-name" required>
-                        </div>
 
-                        <div class="form-group">
-                            <label for="f1-last-name">Apellidos</label>
-                            <input type="text" name="last-name" placeholder="Apellidos..." class="form-control" id="last-name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="birthday">Fecha de Nacimiento</label>
-                            <input type="date" id="birthday" name="birthday"  placeholder="Fecha de nacimiento..." class="form-control" required/>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="address">Direccion</label>
-                            <input type="text" id="address" name="address"  placeholder="Direccion..." class="form-control" required/>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone">Telefono</label>
-                            <input type="text" min="7" max="" id="phone" name="phone"  placeholder="Telefono..." class="form-control" required/>
-                        </div>
-
-                        <div class="f1-buttons">
-                            <button type="button" class="btn btn-next">Siguiente</button>
-                        </div>
                     </fieldset>
 
                     <fieldset id="four">
-                        <h4>Configurar tu usuario:</h4>
+
+                        <h4 class="dinos">Configurar tu usuario:</h4>
 
                         @if(isset($email))
                             <div class="form-group">
                                 <label for="code">Código de tu referido</label>
-                                <input type="text" name="code" placeholder="Código..." class="form-control" id="code"  value="{{$email}}" readonly>
+                                <input type="text" name="code" placeholder="Código..." class="f1-email form-control campo" id="code"  value="{{$email}}" readonly>
                             </div>
                         @else
                             <div class="form-group">
                                 <label for="code">Código de tu referido</label>
-                                <input type="text" name="code" placeholder="Código..." class="form-control" id="code" required>
+                                <input type="text" name="code" placeholder="Código..." class="f1-email form-control campo" id="code" required>
                             </div>
                         @endif
 
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" name="email" placeholder="Email..." class="form-control" id="email" required>
+                            <label for="f1-email">Email</label>
+                            <input type="email" name="email" placeholder="Email..." class="f1-email form-control campo" id="email" required>
                         </div>
                         <div class="form-group">
-                            <label for="password">Contraseña</label>
-                            <input type="password" name="password" placeholder="Contraseña..." class="form-control" id="password" required>
+                            <label for="f1-password">Contraseña</label>
+                            <input type="password" name="password" placeholder="Contraseña..." class="f1-password form-control campo" id="password" required>
                         </div>
                         <div class="form-group">
                             <label  for="f1-repeat-password">Repetir Contraseña</label>
-                            <input type="password" name="password_confirmation" placeholder="Repetir Contraseña..."
-                                   class="form-control" id="password_confirmation" required>
+                            <input type="password" name="password_confirmation" placeholder="Repeter Contraseña..."
+                                   class="f1-repeat-password form-control campo" id="password_confirmation" required>
                         </div>
 
                         <div class="f1-buttons">
@@ -232,14 +242,17 @@
                             <button type="button" class="btn btn-next">Siguiente</button>
                             <button type="submit" class="btn btn-submit">Crear</button>
                         </div>
+
+
                     </fieldset>
 
                     <fieldset id="five">
-                        <h4>Documentos y condiciones:</h4>
+
+                        <h4 class="dinos">Documentos y condiciones:</h4>
 
                         <div class="form-group">
                             <label for="bank">Seleccionar Entidad Bancaria</label>
-                            <select id="bank" name="bank" class="form-control" style="width: 100% !important;">
+                            <select id="bank" name="bank" class="form-control campo" style="width: 100% !important;">
                                 <option value=""></option>
                                 @foreach($bancos as $tipo)
 
@@ -250,7 +263,7 @@
 
                         <div class="form-group">
                             <label for="type_acount_bank">Tipo de cuenta </label>
-                            <select id="type_acount_bank" name="type_acount_bank" class="form-control" style="width: 100% !important;">
+                            <select id="type_acount_bank" name="type_acount_bank" class="form-control campo" style="width: 100% !important;">
                                 <option value=""></option>
                                 @foreach($cuentas->tipos as $tipo)
                                     <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
@@ -260,43 +273,43 @@
 
                         <div class="form-group">
                             <label for="acount">Número de cuenta</label>
-                            <input type="number" name="acount" placeholder="Documento..." class="form-control" id="acount">
+                            <input type="number" name="acount" placeholder="Documento..." class="f1-first-name form-control campo" id="acount">
                         </div>
 
-                        <div id="cd-div" class="form-group">
+                        <div class="form-group">
                             <label class="custom-file">
                                 Certificación bancaria
-                                <input type="file" id="cuenta" name="cuenta" class="custom-file-input">
+                                <input type="file" id="banco" name="banco" class="custom-file-input campo">
                                 <span class="custom-file-control"></span>
                             </label>
                         </div>
 
-                        <div id="cd-div" class="form-group">
+                        <div class="form-group">
                             <label class="custom-file">
                                 Cédula o Documento
-                                <input type="file" id="cedula" name="cedula" class="custom-file-input">
+                                <input type="file" id="cedula" name="cedula" class="custom-file-input campo">
                                 <span class="custom-file-control"></span>
                             </label>
                         </div>
 
-                        <div id="rut-div" class="form-group">
+                        <div class="form-group">
                             <label class="custom-file">
                                 RUT
-                                <input type="file" id="rut" name="rut" class="custom-file-input">
+                                <input type="file" id="rut" name="rut" class="custom-file-input campo">
                                 <span class="custom-file-control"></span>
                             </label>
                         </div>
 
                         <div class="form-group">
                             <label class="form-check-label">
-                                <input id="prime" name="prime" class="form-check-input" type="checkbox">
+                                <input id="prime" name="prime" class="form-check-input campo" type="checkbox">
                                 Usuario Prime
                             </label>
                         </div>
 
                         <div class="form-group">
                             <label for="contrato" class="form-check-label">
-                                <input type="checkbox" id="contract" name="contract" required/>
+                                <input class="form-check-input campo"  type="checkbox" id="contract" name="contract" required />
                                 Contrato <a href="pagina_condiciones.html">terminos</a>
                             </label>
                         </div>
@@ -304,14 +317,16 @@
 
                         <div class="form-group">
                             <label for="condiciones" class="form-check-label">
-                                <input  type="checkbox" id="terms" name="terms" required/>
+                                <input class="form-check-input campo"  type="checkbox" id="terms" name="terms" required />
                                 ¿Acepta <a href="pagina_condiciones.html">terminos</a> y condiciones?
                             </label>
                         </div>
+
                         <div class="f1-buttons">
                             <button type="button" class="btn btn-previous">Anterior</button>
                             <button type="submit" class="btn btn-submit">Crear</button>
                         </div>
+
                     </fieldset>
 
                 </form>
