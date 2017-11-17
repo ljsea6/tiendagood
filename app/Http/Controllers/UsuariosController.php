@@ -369,7 +369,7 @@ class UsuariosController extends Controller {
         $usuario->documento_id = $request->type_dni;
         $usuario->identificacion = strtolower($request->dni);
         $usuario->sexo = strtolower($request->sex);
-        $usuario->fecha_nacimiento = Carbon::parse($request->birthday);
+        $usuario->fecha_nacimiento = Carbon::parse($request->birthday)->format('d/m/Y');
 
         if ($request->has('contract')) {
 
