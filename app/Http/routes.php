@@ -73,16 +73,18 @@ Route::get('/terms', 'UsuariosController@terms');
 Route::post('/cities', 'CitiesController@cities');
 Route::post('/clients/types', 'TiposClientesController@getTypesClients');
 
+
+
 // Authentication routes...
-Route::get('/', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
-Route::post('/', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);
+Route::get('/login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
+Route::post('/login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);
 Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
 
 // Password reset link
 Route::get('olvido-contraseña', ['as' => 'reset', 'uses' => 'Auth\PasswordController@getEmail']);
 Route::post('olvido-contraseña', ['as' => 'reset', 'uses' => 'Auth\PasswordController@postEmail']);
 //Registrar nuevo usuario
-Route::get('register', ['uses' => 'UsuariosController@getusuario', 'as' => 'admin.usuarios.registerGet']);
+Route::get('/', ['uses' => 'UsuariosController@getusuario', 'as' => 'admin.usuarios.registerGet']);
 route::post('register', ['uses' => 'UsuariosController@storenuevo', 'as' => 'admin.usuarios.registerPost']);
 // Password reset
 Route::get('recuperar-contraseña/{token}', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@getReset']);

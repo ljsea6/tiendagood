@@ -55,7 +55,6 @@
             <div class="alert alert-danger fade in col-sm-offset-3 col-sm-6">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <ul>
-
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -149,7 +148,6 @@
                                 </select>
                                 <p class="alert-message">Escoge una opción.</p>
                             </div>
-
                         </div>
 
 
@@ -200,13 +198,13 @@
                             <div class="form-group">
                                 <label for="code" class="sr-only">Código de tu referido</label>
                                 <input type="text" name="code" placeholder="Código..." class="f1-email form-control campo" id="code"  value="{{$email}}" readonly>
-                                <p class="alert-message">Ingresa el código de tu referido.</p>
+                                <p class="alert-message">Ingresa el código de su referido.</p>
                             </div>
                         @else
                             <div class="form-group">
                                 <label for="code" class="sr-only">Código de tu referido</label>
                                 <input type="text" name="code" placeholder="Código..." class="f1-email form-control campo" id="code" required>
-                                <p class="alert-message">Ingresa el código de tu referido.</p>
+                                <p class="alert-message">Ingresa el código de su referido.</p>
                             </div>
                         @endif
 
@@ -222,7 +220,7 @@
                         </div>
                         <div class="form-group">
                             <label  for="f1-repeat-password" class="sr-only">Repetir Contraseña</label>
-                            <input type="password" name="password_confirmation" placeholder="Repeter Contraseña..."
+                            <input type="password" name="password_confirmation" placeholder="Repetir Contraseña..."
                                    class="f1-repeat-password form-control campo" id="password_confirmation" required>
                             <p class="alert-message">Repite la contraseña. (minimo 6 digitos) y deben coincidir</p>
                         </div>

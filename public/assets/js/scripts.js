@@ -424,6 +424,18 @@ jQuery(document).ready(function() {
         $(this).parent().find('.alert-message').fadeOut();
         $(this).next().find('.select2-selection--single').removeClass('input-error');
 
+        var parent_fieldset = $("#password_confirmation").parents('fieldset');
+
+        parent_fieldset.find('input[type="checkbox"]').each(function () {
+            $(this).parent().remove();
+        });
+
+        var parent_fieldset = $("#rut").parents('fieldset');
+
+        parent_fieldset.find('input[type="checkbox"]').each(function () {
+            $(this).parent().remove();
+        });
+
         if (valor != 83) {
 
             $("#two").remove();
@@ -443,7 +455,7 @@ jQuery(document).ready(function() {
             });
 
             $('.f1-step').css({
-                'width': '50%',
+                'width': '50%'
             });
 
         } else {
@@ -462,14 +474,9 @@ jQuery(document).ready(function() {
                 $(this).parent().remove();
             });
 
-
-            parent_fieldset.find('input[type="checkbox"]').each(function () {
-                $(this).parent().remove();
-            });
-
             var padre = $("#rut").parent();
 
-            padre.after("" + prime + "" +contract + terms + "");
+            padre.after("" + prime + "" + contract + terms + "");
 
             var parent_fieldset = $("#password_confirmation").parents('fieldset');
 

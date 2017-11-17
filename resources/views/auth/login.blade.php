@@ -192,28 +192,24 @@
 <div class="container" style="height: 100%">
 
 
-    @if (session('message'))
-
-        <div class="alert alert-success fade in col-sm-offset-3 col-sm-6">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <ul>
-                <li>{{ session('message') }}</li>
-            </ul>
-        </div>
-
-    @endif
-
-
-
-
 
     <div class="row" style="height: 100%; display:flex; justify-content: center; align-items: center">
+        <div class="col-xs-4">
+            <div class="col-xs-12">
+                @if (session('message'))
+                <div class="alert alert-success fade in col-xs-12" style="background-color: #ed7d01 !important;border: none; color: white;">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <ul style=" color: white;">
+                        <li>{{ session('message') }}</li>
+                    </ul>
+                </div>
+                @endif
 
+            </div>
 
+            <div class="col-xs-12 form-container" id="form-container" style="background-color: #ed7d01 !important;">
 
-        <div class="col-md-4 col-xs-10 form-container" id="form-container" style="background-color: #ed7d01 !important;">
-
-            {!! Form::open(['route' => 'login', 'method' => 'POST', 'class' => 'form-access']) !!}
+                {!! Form::open(['route' => 'login', 'method' => 'POST', 'class' => 'form-access']) !!}
 
                 <div class="col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2 col-xs-12 text-center">
                     <img src="https://cdn.shopify.com/s/files/1/2256/3751/files/logo.png?17179620079827299362" alt="" style="width: 50%; margin: 20px auto; display: block">
@@ -240,22 +236,26 @@
                             <input type="checkbox" name="remember" id="remember">
                             <span class="cr"><i class="cr-icon glyphicon fa-ok"></i><i class="cr-icon fa fa-check" aria-hidden="true"></i></span>
                             Recordar tus datos
-                        </label>
-                        <label for=""><a href="/register" style="color: white">Registrarme</a></label>
+                        </label><br>
 
 
                     </div>
 
                     <div class="form-group text-center">
-                        <input type="submit" name="submit" value="Ingresar" id="submit-form" class="btn submit-access" disabled>
+                        <a href="/register" style="color: white" class="btn submit-access col-xs-12">Registrarme</a><br><br>
+                        <input type="submit" name="submit" value="Ingresar" id="submit-form" class="btn submit-access col-xs-12" disabled>
+
                     </div>
                 </div>
 
 
-            {!! Form::close() !!}
+                {!! Form::close() !!}
 
+
+            </div>
 
         </div>
+
     </div>
 </div>
 
