@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.0.0/sweetalert2.min.css">
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -127,31 +128,6 @@
                                 <p class="alert-message">Es demasiado corto (usa mínimo 6 caracteres).</p>
                             </div>
 
-
-                            <div class="form-group">
-                                <label for="city" class="sr-only">Ciudad</label>
-                                <select id="city" name="city" class="form-control campo" required>
-                                    <option value=""></option>
-                                    @foreach($cities as $tipo)
-
-                                        <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
-                                    @endforeach
-                                </select>
-                                <p class="alert-message">Selecciona la ciudad donde vives..</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="sex" class="sr-only">Sexo</label>
-                                <select id="sex" name="sex" class="form-control campo" required>
-                                    <option value=""></option>
-                                    <option value="1">M</option>
-                                    <option value="2">F</option>
-                                </select>
-                                <p class="alert-message">Escoge una opción.</p>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6 col-xs-12">
                             <div class="form-group">
                                 <label for="f1-first-name" class="sr-only">Nombres</label>
                                 <input type="text" name="first-name" placeholder="Nombres..." class="f1-first-name form-control campo" id="first-name" required>
@@ -164,10 +140,31 @@
                                 <p class="alert-message">Es demasiado corto (usa mínimo 4 caracteres).</p>
                             </div>
 
+                        </div>
+
+
+                        <div class="col-md-6 col-xs-12">
+
                             <div class="form-group">
-                                <label for="birthday" class="sr-only">Fecha de Nacimiento</label>
-                                <input type="text" id="birthday" style="background-color: white; border-top-left-radius: 20px; border-bottom-left-radius: 20px;" name="birthday"  placeholder="Fecha de nacimiento..." class="f1-last-name form-control" data-role="datebox" data-options='{"mode":"datebox", "overrideDateFormat": "%d/%m/%Y" }' readonly="readonly"/>
-                                <p class="alert-message">¿Cuándo naciste?</p>
+                                <label for="sex" class="sr-only">Sexo</label>
+                                <select id="sex" name="sex" class="form-control campo" required>
+                                    <option value=""></option>
+                                    <option value="1">M</option>
+                                    <option value="2">F</option>
+                                </select>
+                                <p class="alert-message">Escoge una opción.</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="city" class="sr-only">Ciudad</label>
+                                <select id="city" name="city" class="form-control campo" required>
+                                    <option value=""></option>
+                                    @foreach($cities as $tipo)
+
+                                        <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
+                                    @endforeach
+                                </select>
+                                <p class="alert-message">Selecciona la ciudad donde vives..</p>
                             </div>
 
                             <div class="form-group">
@@ -180,6 +177,13 @@
                                 <label for="phone" class="sr-only">Teléfono</label>
                                 <input type="text" id="phone" name="phone"  placeholder="Telefono..." class="f1-last-name form-control campo" required/>
                                 <p class="alert-message">Es demasiado corto (usa mínimo 7 caracteres).</p>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="birthday" class="sr-only">Fecha de Nacimiento</label>
+                                <input type="text" id="birthday" style="background-color: white; border-top-left-radius: 20px; border-bottom-left-radius: 20px;" name="birthday"  placeholder="Fecha de nacimiento..." class="f1-last-name form-control" data-role="datebox" data-options='{"mode":"datebox", "overrideDateFormat": "%d/%m/%Y" }' readonly="readonly"/>
+                                <p class="alert-message">¿Cuándo naciste?</p>
                             </div>
 
                             <div class="f1-buttons">
@@ -197,13 +201,13 @@
                         @if(isset($email))
                             <div class="form-group">
                                 <label for="code" class="sr-only">Código de tu referido</label>
-                                <input type="text" name="code" placeholder="Código..." class="f1-email form-control campo" id="code"  value="{{$email}}" readonly>
+                                <input type="text" name="code" placeholder="Cédula de tu patrocinador..." class="f1-email form-control campo" id="code"  value="{{$email}}" readonly>
                                 <p class="alert-message">Ingresa el código de su referido.</p>
                             </div>
                         @else
                             <div class="form-group">
                                 <label for="code" class="sr-only">Código de tu referido</label>
-                                <input type="text" name="code" placeholder="Código..." class="f1-email form-control campo" id="code" required>
+                                <input type="text" name="code" placeholder="Cédula de tu patrocinador..." class="f1-email form-control campo" id="code" required>
                                 <p class="alert-message">Ingresa el código de su referido.</p>
                             </div>
                         @endif
@@ -335,6 +339,7 @@
 <script src="assets/js/jquery.backstretch.min.js"></script>
 <script src="assets/js/retina-1.1.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.0.0/sweetalert2.min.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <script type="text/javascript" src="http://cdn.jtsage.com/external/jquery.mousewheel.min.js"></script>
 <script type="text/javascript" src="http://dev.jtsage.com/DateBox/js/doc.js"></script>

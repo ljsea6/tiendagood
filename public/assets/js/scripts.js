@@ -14,6 +14,8 @@ jQuery.extend(jQuery.jtsage.datebox.prototype.options,
 
 jQuery(document).ready(function() {
 
+
+
     $("#type_client").select2({
         width: '100%',
         allowClear: true,
@@ -1129,17 +1131,32 @@ jQuery(document).ready(function() {
         if (result_code.err  || result_email.err || result_phone.err) {
 
             if (result_code.err) {
-                alert('El código que ingresó no existe, verifiquelo por favor.');
+                swal(
+                    'Oops...',
+                    'El código de su referido no existe, verifiquelo por favor.',
+                    'error'
+                );
+
                 e.preventDefault();
             }
 
             if (result_email.err) {
-                alert('El email que ingresó existe, ingrese otro por favor.');
+                swal(
+                    'Oops...',
+                    'El email que ingresó existe, ingrese otro por favor.',
+                    'error'
+                );
+
                 e.preventDefault();
             }
 
             if (result_phone.err) {
-                alert('El teléfono que ingresó existe, ingrese otro por favor.');
+                swal(
+                    'Oops...',
+                    'El número de teléfono que ingresó existe, ingrese otro por favor.',
+                    'error'
+                );
+
                 e.preventDefault();
             }
         }
