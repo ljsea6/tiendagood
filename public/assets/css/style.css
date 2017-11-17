@@ -4,7 +4,6 @@ body {
 	font-size: 16px;
 	font-weight: 300;
 	color: #888;
-	line-height: 30px;
 	text-align: center;
 }
 
@@ -51,6 +50,20 @@ h4.dinos{
 	border: 1px solid #dadada;
 	border-radius: 12px;
 	min-height: 34px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+	padding-left: 14px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+	top: 4px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+	font-size: 1.8em;
+	color: #ff8a0d;
+	top: -3px;
 }
 
 
@@ -147,7 +160,7 @@ ul.navbar-nav {
 
 .f1-buttons { text-align: right; }
 
-.f1 .input-error { border-color: #f35b3f; }
+.f1 .input-error { border-color: #f35b3f !important; transition: .8s ease-in-out}
 
 
 .select2-container--default .select2-selection--single {
@@ -163,6 +176,29 @@ ul.navbar-nav {
 	max-height: 34px;
 }
 
+
+p.alert-message {
+	color: #afafaf;
+	font-size: 0.75em;
+	line-height: 15px;
+	display: none;
+	width: 100%;
+	text-align: center;
+	padding: 5px;
+	height: auto;
+	margin-bottom: 0 !important;
+}
+
+p.alert-message.error{
+
+}
+
+.alert-danger {
+	color: #ffffff;
+	background-color: rgba(255, 0, 0, 0.2);
+	border: none;
+	border-radius: 20px;
+}
 
 /***** Media queries *****/
 

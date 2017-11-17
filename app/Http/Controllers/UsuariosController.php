@@ -7,6 +7,7 @@ use App\Tipo;
 use App\Documento;
 use App\TipoCliente;
 use Carbon\Carbon;
+use function GuzzleHttp\Psr7\str;
 use Validator;
 use App\Entities\Ciudad;
 use App\Entities\Oficina;
@@ -23,13 +24,73 @@ use Illuminate\Http\Request;
 use Styde\Html\Facades\Alert;
 use Yajra\Datatables\Datatables;
 
-
 class UsuariosController extends Controller {
     /**
      * Display a listing of the  resource.
      *
      * @return \Illuminate\Http\Response
+     *
      */
+
+    public function verified_email(Request $request)
+    {
+        if ($request->has('email')) {
+
+            $email = Tercero::where('email', $request->email)->first();
+
+            if (count($email) > 0) {
+                return response()->json(['err' => 'email existe'], 200);
+            } else {
+                return response()->json(['msg' => 'email valido'], 200);
+            }
+
+
+        } else {
+            return response()->json(['err' => 'Falta el parametro email'], 200);
+        }
+
+
+    }
+
+    public function verified_phone(Request $request)
+    {
+        if ($request->has('phone')) {
+
+            $phone = Tercero::where('telefono', $request->phone)->first();
+
+            if (count($phone) > 0) {
+                return response()->json(['err' => 'telefono existe'], 200);
+            } else {
+                return response()->json(['msg' => 'telefono valido'], 200);
+            }
+
+
+        } else {
+            return response()->json(['err' => 'Falta el parametro phone'], 200);
+        }
+
+
+    }
+
+    public function verified_code(Request $request)
+    {
+        if ($request->has('code')) {
+
+            $code = Tercero::where('identificacion', $request->code)->first();
+
+            if (count($code) > 0) {
+                return response()->json(['msg' => 'código valido'], 200);
+            } else {
+                return response()->json(['err' => 'código no valido'], 200);
+            }
+
+
+        } else {
+            return response()->json(['err' => 'Falta el parametro code'], 200);
+        }
+    }
+
+
 
 
     public function index()
@@ -246,6 +307,7 @@ class UsuariosController extends Controller {
 
     public function storeNuevo(Request $request)
     {
+
         $messages = [
             'code.exists' => 'El código referido es invalido, por favor verifiquelo!',
             'first-name.required' => 'Los nombre es requerido.',
@@ -280,28 +342,29 @@ class UsuariosController extends Controller {
         ], $messages);
 
         if ($validator->fails()) {
-            return redirect()
-                ->back()
+
+            return redirect('register')
                 ->withErrors($validator)
                 ->withInput();
         }
 
         $usuario = new Tercero();
-        $usuario->nombres = $request['first-name'];
-        $usuario->apellidos = $request['last-name'];
-        $usuario->direccion = $request->address;
-        $usuario->telefono = $request->phone;
-        $usuario->email = $request->email;
-        $usuario->usuario = $request->email;
+        $usuario->nombres = strtolower($request['first-name']);
+        $usuario->apellidos = strtolower($request['last-name']);
+        $usuario->direccion = strtolower($request->address);
+        $usuario->telefono = strtolower($request->phone);
+        $usuario->email = strtolower($request->email);
+        $usuario->usuario = strtolower($request->email);
         $usuario->contraseña = bcrypt($request->password);
-        $usuario->tipo_id = 1;
-        $usuario->ciudad_id = $request->city;
-        $usuario->celular = $request->phone;
+        $usuario->tipo_id = ($request->type_client == 83) ? 2 : 1;
+        $usuario->ciudad_id = strtolower($request->city);
+        $usuario->celular = strtolower($request->phone);
         $usuario->network_id = 1;
         $usuario->tipo_cliente_id = $request->type_client;
         $usuario->documento_id = $request->type_dni;
-        $usuario->identificacion = $request->dni;
-        $usuario->sexo = $request->sex;
+        $usuario->identificacion = strtolower($request->dni);
+        $usuario->sexo = strtolower($request->sex);
+        $usuario->fecha_nacimiento = Carbon::parse($request->birthday);
 
         if ($request->has('contract')) {
 
@@ -311,9 +374,13 @@ class UsuariosController extends Controller {
         if ($request->has('terms')) {
             ($request->terms == 'on') ? $usuario->condiciones = true : false;
         }
+        if ($request->has('acount')) {
+            (isset($request->acount)) ? $usuario->acount = $request->acount: null;
+        }
 
-        if ($request->file('cuenta')) {
-            $cuenta        = $request->file('cuenta');
+
+        if ($request->file('banco')) {
+            $cuenta        = $request->file('banco');
             $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
             $path          = public_path() . "/uploads";
             $cuenta->move($path, $cuenta_nombre);
@@ -340,7 +407,6 @@ class UsuariosController extends Controller {
 
         }
 
-
         $city = Ciudad::find($request->city);
 
         $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
@@ -349,29 +415,29 @@ class UsuariosController extends Controller {
         $res = $client->request('post', $api_url . '/admin/customers.json', array(
                 'form_params' => array(
                     'customer' => array(
-                        'first_name' => $request['first-name'],
-                        'last_name' => $request['last-name'],
-                        'email' => $request->email,
-                        'phone' => '+57' . $request->phone,
+                        'first_name' => strtolower($request['first-name']),
+                        'last_name' => strtolower($request['last-name']),
+                        'email' => strtolower($request->email),
+                        'phone' => strtolower($request->phone),
                         'verified_email' => true,
                         'addresses' => [
 
                             [
-                                'address1' => $request->address,
-                                'city' => $city->nombre,
-                                'province' => $city->departamento,
-                                'phone' => '+57' . $request->phone,
+                                'address1' => strtolower($request->address),
+                                'city' => strtolower($city->nombre),
+                                'province' => '',
+                                'phone' => $request->phone,
                                 "zip" => '',
-                                'first_name' => $request['first-name'],
-                                'last_name' => $request['last-name'],
+                                'first_name' => strtolower($request['first-name']),
+                                'last_name' => strtolower($request['last-name']),
                                 'country' => 'CO'
                             ],
 
                         ],
                         "password" => $request->password,
                         "password_confirmation" => $request->password_confirmation,
-                        'send_email_invite' => true,
-                        'send_email_welcome' => true
+                        'send_email_invite' => false,
+                        'send_email_welcome' => false
                     )
                 )
             )
@@ -396,13 +462,24 @@ class UsuariosController extends Controller {
 
         $padre = Tercero::where('identificacion', $request->code)->first();
 
-        if (count($padre) > 0) {
-            $usuario->networks()->attach(1, ['padre_id' => $padre->id]);;
+        if (count($padre) > 0 ) {
+            if ($padre->tipo_cliente_id == 83) {
+
+                $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
+            }
+
+            $usuario->networks()->attach(1, ['padre_id' => 1]);
+
+        } else {
+
+            $usuario->networks()->attach(1, ['padre_id' => 1]);
         }
 
-        if ($usuario) {
+        /*if ($usuario) {
             \Auth::login($usuario);
             return redirect()->route('admin.index');
-        }
+        }*/
+
+        return redirect()->route('login')->with(['message' => 'Felicitaciones, has sido registrado correctamente.']);
     }
 }

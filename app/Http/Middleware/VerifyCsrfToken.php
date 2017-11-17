@@ -34,7 +34,10 @@ class VerifyCsrfToken extends BaseVerifier {
                 'admin/tipos/*',
                 'api/*',
                 'cities',
-                'clients/types'
+                'clients/types',
+                'validate/email',
+                'validate/code',
+                'validate/phone'
 
                
         ];

@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <title>Login Hello</title>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="icon" href="{{ asset('img/r_icono.png') }}" type="image/x-icon">
+    <link rel="icon" href="https://cdn.shopify.com/s/files/1/2256/3751/files/favicon-96x96.png?14986824105996215938" type="image/x-icon">
+
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
@@ -181,19 +183,29 @@
             text-decoration: none;
         }
 
+
     </style>
 </head>
 
 <body style="background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/1.jpg?17275024453047598251) no-repeat center / cover; height: 100vh">
 
 <div class="container" style="height: 100%">
+
+    @if (session('message'))
+        <div class="alert alert-success fade in col-sm-12" style=" background-color: #ed7d01 !important;">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{ session('message') }}
+        </div>
+    @endif
+
+
     <div class="row" style="height: 100%; display:flex; justify-content: center; align-items: center">
         <div class="col-md-4 col-xs-10 form-container" id="form-container" style="background-color: #ed7d01 !important;">
 
             {!! Form::open(['route' => 'login', 'method' => 'POST', 'class' => 'form-access']) !!}
 
                 <div class="col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2 col-xs-12 text-center">
-                    <img src="assets/img/logo-good.png" alt="" style="width: 50%; margin: 20px auto; display: block">
+                    <img src="https://cdn.shopify.com/s/files/1/2256/3751/files/logo.png?17179620079827299362" alt="" style="width: 50%; margin: 20px auto; display: block">
                 </div>
 
                 <div class="col-xs-12">
@@ -201,14 +213,14 @@
                         <label for="user-id">Usuario</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input type="text" name="usuario" id="usuario" class="form-control campo-access" placeholder="Ingresa tu usuario">
+                            <input type="text" name="usuario" id="usuario" class="form-control campo-access" placeholder="Ingresa tu usuario" readonly="readonly">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="pass-id">Contraseña</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-unlock-alt" aria-hidden="true"></i></span>
-                            <input type="password" name="password" id="password" class="form-control  campo-access" placeholder="Ingresa tu password">
+                            <input type="password" name="password" id="password" class="form-control  campo-access" placeholder="Ingresa tu password" readonly="readonly">
                         </div>
                     </div>
 
@@ -224,7 +236,7 @@
                     </div>
 
                     <div class="form-group text-center">
-                        <input type="submit" name="submit" value="Ingresar" id="submit-form" class="btn submit-access">
+                        <input type="submit" name="submit" value="Ingresar" id="submit-form" class="btn submit-access" disabled>
                     </div>
                 </div>
 

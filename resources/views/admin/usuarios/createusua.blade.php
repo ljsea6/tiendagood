@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login Good</title>
+
+    <link rel="icon" href="https://cdn.shopify.com/s/files/1/2256/3751/files/favicon-96x96.png?14986824105996215938" type="image/x-icon">
     <!-- CSS -->
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
     <link href="https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800" rel="stylesheet">
@@ -21,7 +23,6 @@
     <![endif]-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.min.css" />
@@ -32,7 +33,10 @@
     <link rel="stylesheet" href="https://formden.com/static/cdn/font-awesome/4.4.0/css/font-awesome.min.css" />
 
     <link rel="stylesheet" href="assets/css/form-elements.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?act=1">
+
+    <link rel="stylesheet" href="http://cdn.jtsage.com/jtsage-datebox/4.2.3/jtsage-datebox-4.2.3.bootstrap.min.css" />
+    <link rel="stylesheet" href="http://dev.jtsage.com/DateBox/css/syntax.css" />
 
     <!-- Inline CSS based on choices in "Settings" tab -->
     <style>.bootstrap-iso .formden_header h2, .bootstrap-iso .formden_header p, .bootstrap-iso form{font-family: Arial, Helvetica, sans-serif; color: black}.bootstrap-iso form button, .bootstrap-iso form button:hover{color: white !important;} .asteriskField{color: red;}</style>
@@ -47,18 +51,23 @@
     <div class="container">
 
         @if ($errors->any())
+
             <div class="alert alert-danger fade in col-sm-offset-3 col-sm-6">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <ul>
+
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
+
         @endif
 
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 form-box">
+
+
                 <form enctype="multipart/form-data" role="form" action="/register" method="post" class="f1" >
 
                     <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
@@ -100,6 +109,7 @@
                                         <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                     @endforeach
                                 </select>
+                                <p class="alert-message text-center">Selecciona que tipo de cliente quieres ser.</p>
                             </div>
                             <div class="form-group">
                                 <label for="type_dni">Tipo Documento</label>
@@ -109,11 +119,13 @@
                                         <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                     @endforeach
                                 </select>
+                                <p class="alert-message">Escoge una opción.</p>
                             </div>
 
                             <div class="form-group">
                                 <label for="dni">Número Documento</label>
                                 <input type="text" name="dni" placeholder="Documento..." class="f1-first-name form-control campo" id="dni" required>
+                                <p class="alert-message">Es demasiado corto (usa mínimo 6 caracteres).</p>
                             </div>
 
 
@@ -126,6 +138,7 @@
                                         <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                     @endforeach
                                 </select>
+                                <p class="alert-message">Selecciona la ciudad donde vives..</p>
                             </div>
                             <div class="form-group">
                                 <label for="sex">Sexo</label>
@@ -134,6 +147,7 @@
                                     <option value="1">M</option>
                                     <option value="2">F</option>
                                 </select>
+                                <p class="alert-message">Escoge una opción.</p>
                             </div>
 
                         </div>
@@ -143,25 +157,31 @@
                             <div class="form-group">
                                 <label for="f1-first-name">Nombres</label>
                                 <input type="text" name="first-name" placeholder="Nombres..." class="f1-first-name form-control campo" id="first-name" required>
+                                <p class="alert-message">Es demasiado corto (usa mínimo 4 caracteres).</p>
                             </div>
 
                             <div class="form-group">
                                 <label for="f1-last-name">Apellidos</label>
                                 <input type="text" name="last-name" placeholder="Apellidos..." class="f1-last-name form-control campo" id="last-name" required>
+                                <p class="alert-message">Es demasiado corto (usa mínimo 4 caracteres).</p>
                             </div>
 
                             <div class="form-group">
-                                <label for="birthday">Fecha de Nacimiento</label>
-                                <input type="date" id="birthday" name="birthday"  placeholder="Fecha de nacimiento..." class="f1-last-name form-control campo" required/>
+                                <label for="birthday" class="sr-only">Fecha de Nacimiento</label>
+                                <input type="text" id="birthday" style="border-top-left-radius: 20px; border-bottom-left-radius: 20px;" name="birthday"  placeholder="Fecha de nacimiento..." class="f1-last-name form-control" data-role="datebox" data-options='{"mode":"datebox", "overrideDateFormat": "%d/%m/%Y" }' readonly="readonly"/>
+                                <p class="alert-message">¿Cuándo naciste?</p>
                             </div>
+
                             <div class="form-group">
-                                <label for="address">Direccion</label>
+                                <label for="address">Dirección</label>
                                 <input type="text" id="address" name="address"  placeholder="Direccion..." class="f1-last-name form-control campo" required/>
+                                <p class="alert-message">No puede estar en blanco.</p>
                             </div>
 
                             <div class="form-group">
-                                <label for="phone">Telefono</label>
+                                <label for="phone">Teléfono</label>
                                 <input type="tel" min="7" max="" id="phone" name="phone"  placeholder="Telefono..." class="f1-last-name form-control campo" required/>
+                                <p class="alert-message">Es demasiado corto (usa mínimo 7 caracteres).</p>
                             </div>
 
                             <div class="f1-buttons">
@@ -180,26 +200,31 @@
                             <div class="form-group">
                                 <label for="code">Código de tu referido</label>
                                 <input type="text" name="code" placeholder="Código..." class="f1-email form-control campo" id="code"  value="{{$email}}" readonly>
+                                <p class="alert-message">Ingresa el código de tu referido.</p>
                             </div>
                         @else
                             <div class="form-group">
                                 <label for="code">Código de tu referido</label>
                                 <input type="text" name="code" placeholder="Código..." class="f1-email form-control campo" id="code" required>
+                                <p class="alert-message">Ingresa el código de tu referido.</p>
                             </div>
                         @endif
 
                         <div class="form-group">
                             <label for="f1-email">Email</label>
                             <input type="email" name="email" placeholder="Email..." class="f1-email form-control campo" id="email" required>
+                            <p class="alert-message">Ingresa un correo electrónico válido.</p>
                         </div>
                         <div class="form-group">
                             <label for="f1-password">Contraseña</label>
                             <input type="password" name="password" placeholder="Contraseña..." class="f1-password form-control campo" id="password" required>
+                            <p class="alert-message">Escribe una contraseña.</p>
                         </div>
                         <div class="form-group">
                             <label  for="f1-repeat-password">Repetir Contraseña</label>
                             <input type="password" name="password_confirmation" placeholder="Repeter Contraseña..."
                                    class="f1-repeat-password form-control campo" id="password_confirmation" required>
+                            <p class="alert-message">Repite Contraseña.</p>
                         </div>
 
                         <div class="f1-buttons">
@@ -224,6 +249,7 @@
                                     <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                 @endforeach
                             </select>
+                            <p class="alert-message">Selecciona una entidad bancaria.</p>
                         </div>
 
                         <div class="form-group">
@@ -234,11 +260,13 @@
                                     <option value="{{$tipo->id}}">{{ucwords($tipo->nombre)}}</option>
                                 @endforeach
                             </select>
+                            <p class="alert-message">Selecciona un tipo de cuenta.</p>
                         </div>
 
                         <div class="form-group">
                             <label for="acount">Número de cuenta</label>
                             <input type="number" name="acount" placeholder="Documento..." class="f1-first-name form-control campo" id="acount">
+                            <p class="alert-message">Secelcciona un numero de cuenta.</p>
                         </div>
 
                         <div class="form-group">
@@ -295,6 +323,8 @@
                     </fieldset>
 
                 </form>
+
+
             </div>
         </div>
 
@@ -307,12 +337,13 @@
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="assets/js/jquery.backstretch.min.js"></script>
 <script src="assets/js/retina-1.1.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://cdn.jtsage.com/external/jquery.mousewheel.min.js"></script>
+<script type="text/javascript" src="http://dev.jtsage.com/DateBox/js/doc.js"></script>
+<script type="text/javascript" src="http://cdn.jtsage.com/jtsage-datebox/4.2.3/jtsage-datebox-4.2.3.bootstrap.min.js"></script>
+<script type="text/javascript" src="http://cdn.jtsage.com/jtsage-datebox/i18n/jtsage-datebox.lang.utf8.js"></script>
 <script src="assets/js/scripts.js?u={{random_int(1, 100)}}"></script>
-
-<!--[if lt IE 10]>
-<script src="assets/js/placeholder.js"></script>
 
 <![endif]-->
 

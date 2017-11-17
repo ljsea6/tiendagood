@@ -64,7 +64,10 @@ Route::post('orders/payment', 'OrdersController@payment');
 Route::post('products/create', 'ProductsController@create');
 Route::post('products/update', 'ProductsController@update');
 
-Route::get('/', 'UsuariosController@getusuario');
+Route::post('validate/email', 'UsuariosController@verified_email');
+Route::post('validate/code', 'UsuariosController@verified_code');
+Route::post('validate/phone', 'UsuariosController@verified_phone');
+
 
 Route::post('/cities', 'CitiesController@cities');
 Route::post('/clients/types', 'TiposClientesController@getTypesClients');
