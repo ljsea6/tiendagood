@@ -303,14 +303,14 @@
                         <div class="form-group">
                             <label for="contrato" class="form-check-label">
                                 <input class="form-check-input campo"  type="checkbox" id="contract" name="contract" required />
-                                Contrato <a href="terms">terminos</a>
+                                Contrato <a href="terms" target="_blank">terminos</a>
                             </label>
                         </div>
 
                         <div class="form-group">
                             <label for="condiciones" class="form-check-label">
                                 <input class="form-check-input campo"  type="checkbox" id="terms" name="terms" required />
-                                ¿Acepta <a href="terms">terminos</a> y condiciones?
+                                ¿Acepta <a href="terms" target="_blank">terminos</a> y condiciones?
                             </label>
                         </div>
 

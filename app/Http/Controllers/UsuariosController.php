@@ -423,7 +423,6 @@ class UsuariosController extends Controller {
                         'first_name' => strtolower($request['first-name']),
                         'last_name' => strtolower($request['last-name']),
                         'email' => strtolower($request->email),
-                        'phone' => strtolower($request->phone),
                         'verified_email' => true,
                         'addresses' => [
 
@@ -431,7 +430,7 @@ class UsuariosController extends Controller {
                                 'address1' => strtolower($request->address),
                                 'city' => strtolower($city->nombre),
                                 'province' => '',
-                                'phone' => $request->phone,
+
                                 "zip" => '',
                                 'first_name' => strtolower($request['first-name']),
                                 'last_name' => strtolower($request['last-name']),

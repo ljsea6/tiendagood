@@ -94,13 +94,13 @@ jQuery(document).ready(function() {
     var contract = '<div class="form-group">\n' +
         '                            <label for="contrato" class="form-check-label">\n' +
         '                                <input type="checkbox" id="contract" name="contract" required/>\n' +
-        '                                Contrato <a href="terms">terminos</a>\n' +
+        '                                Contrato <a href="terms" target="_blank">terminos</a>\n' +
         '                            </label>\n' +
         '                        </div>';
     var terms = '<div class="form-group">\n' +
         '                            <label for="condiciones" class="form-check-label">\n' +
         '                                <input  type="checkbox" id="terms" name="terms" required/>\n' +
-        '                                ¿Acepta <a href="terms">terminos</a> y condiciones?\n' +
+        '                                ¿Acepta <a href="terms" target="_blank">terminos</a> y condiciones?\n' +
         '                            </label>\n' +
         '                        </div>';
 
