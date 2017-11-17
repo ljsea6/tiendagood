@@ -102,7 +102,7 @@
                         </div>
                         <div class="col-md-6 col-xs-12">
                             <div class="form-group">
-                                <label for="type_client">Tipo Cliente</label>
+                                <label for="type_client" class="sr-only">Tipo Cliente</label>
                                 <select id="type_client" name="type_client" class="form-control campo" required>
                                     <option value=""></option>
                                     @foreach($tipos->tipos as $tipo)
@@ -112,7 +112,7 @@
                                 <p class="alert-message text-center">Selecciona que tipo de cliente quieres ser.</p>
                             </div>
                             <div class="form-group">
-                                <label for="type_dni">Tipo Documento</label>
+                                <label for="type_dni" class="sr-only">Tipo Documento</label>
                                 <select id="type_dni" name="type_dni" class="form-control campo" required>
                                     <option value=""></option>
                                     @foreach($documentos->tipos as $tipo)
@@ -123,14 +123,14 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="dni">Número Documento</label>
+                                <label for="dni" class="sr-only">Número Documento</label>
                                 <input type="text" name="dni" placeholder="Documento..." class="f1-first-name form-control campo" id="dni" required>
                                 <p class="alert-message">Es demasiado corto (usa mínimo 6 caracteres).</p>
                             </div>
 
 
                             <div class="form-group">
-                                <label for="city">Ciudad</label>
+                                <label for="city" class="sr-only">Ciudad</label>
                                 <select id="city" name="city" class="form-control campo" required>
                                     <option value=""></option>
                                     @foreach($cities as $tipo)
@@ -141,7 +141,7 @@
                                 <p class="alert-message">Selecciona la ciudad donde vives..</p>
                             </div>
                             <div class="form-group">
-                                <label for="sex">Sexo</label>
+                                <label for="sex" class="sr-only">Sexo</label>
                                 <select id="sex" name="sex" class="form-control campo" required>
                                     <option value=""></option>
                                     <option value="1">M</option>
@@ -155,13 +155,13 @@
 
                         <div class="col-md-6 col-xs-12">
                             <div class="form-group">
-                                <label for="f1-first-name">Nombres</label>
+                                <label for="f1-first-name" class="sr-only">Nombres</label>
                                 <input type="text" name="first-name" placeholder="Nombres..." class="f1-first-name form-control campo" id="first-name" required>
                                 <p class="alert-message">Es demasiado corto (usa mínimo 4 caracteres).</p>
                             </div>
 
                             <div class="form-group">
-                                <label for="f1-last-name">Apellidos</label>
+                                <label for="f1-last-name" class="sr-only">Apellidos</label>
                                 <input type="text" name="last-name" placeholder="Apellidos..." class="f1-last-name form-control campo" id="last-name" required>
                                 <p class="alert-message">Es demasiado corto (usa mínimo 4 caracteres).</p>
                             </div>
@@ -173,13 +173,13 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="address">Dirección</label>
+                                <label for="address" class="sr-only">Dirección</label>
                                 <input type="text" id="address" name="address"  placeholder="Direccion..." class="f1-last-name form-control campo" required/>
                                 <p class="alert-message">No puede estar en blanco.</p>
                             </div>
 
                             <div class="form-group">
-                                <label for="phone">Teléfono</label>
+                                <label for="phone" class="sr-only">Teléfono</label>
                                 <input type="tel" min="7" max="" id="phone" name="phone"  placeholder="Telefono..." class="f1-last-name form-control campo" required/>
                                 <p class="alert-message">Es demasiado corto (usa mínimo 7 caracteres).</p>
                             </div>
@@ -198,30 +198,30 @@
 
                         @if(isset($email))
                             <div class="form-group">
-                                <label for="code">Código de tu referido</label>
+                                <label for="code" class="sr-only">Código de tu referido</label>
                                 <input type="text" name="code" placeholder="Código..." class="f1-email form-control campo" id="code"  value="{{$email}}" readonly>
                                 <p class="alert-message">Ingresa el código de tu referido.</p>
                             </div>
                         @else
                             <div class="form-group">
-                                <label for="code">Código de tu referido</label>
+                                <label for="code" class="sr-only">Código de tu referido</label>
                                 <input type="text" name="code" placeholder="Código..." class="f1-email form-control campo" id="code" required>
                                 <p class="alert-message">Ingresa el código de tu referido.</p>
                             </div>
                         @endif
 
                         <div class="form-group">
-                            <label for="f1-email">Email</label>
+                            <label for="f1-email" class="sr-only">Email</label>
                             <input type="email" name="email" placeholder="Email..." class="f1-email form-control campo" id="email" required>
                             <p class="alert-message">Ingresa un correo electrónico válido.</p>
                         </div>
                         <div class="form-group">
-                            <label for="f1-password">Contraseña</label>
+                            <label for="f1-password" class="sr-only">Contraseña</label>
                             <input type="password" name="password" placeholder="Contraseña..." class="f1-password form-control campo" id="password" required>
                             <p class="alert-message">Escribe una contraseña.</p>
                         </div>
                         <div class="form-group">
-                            <label  for="f1-repeat-password">Repetir Contraseña</label>
+                            <label  for="f1-repeat-password" class="sr-only">Repetir Contraseña</label>
                             <input type="password" name="password_confirmation" placeholder="Repeter Contraseña..."
                                    class="f1-repeat-password form-control campo" id="password_confirmation" required>
                             <p class="alert-message">Repite Contraseña.</p>
