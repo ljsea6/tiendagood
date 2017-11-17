@@ -168,7 +168,7 @@
 
                             <div class="form-group">
                                 <label for="birthday" class="sr-only">Fecha de Nacimiento</label>
-                                <input type="text" id="birthday" style="border-top-left-radius: 20px; border-bottom-left-radius: 20px;" name="birthday"  placeholder="Fecha de nacimiento..." class="f1-last-name form-control" data-role="datebox" data-options='{"mode":"datebox", "overrideDateFormat": "%d/%m/%Y" }' readonly="readonly"/>
+                                <input type="text" id="birthday" style="background-color: white; border-top-left-radius: 20px; border-bottom-left-radius: 20px;" name="birthday"  placeholder="Fecha de nacimiento..." class="f1-last-name form-control" data-role="datebox" data-options='{"mode":"datebox", "overrideDateFormat": "%d/%m/%Y" }' readonly="readonly"/>
                                 <p class="alert-message">¿Cuándo naciste?</p>
                             </div>
 
@@ -180,7 +180,7 @@
 
                             <div class="form-group">
                                 <label for="phone" class="sr-only">Teléfono</label>
-                                <input type="tel" min="7" max="" id="phone" name="phone"  placeholder="Telefono..." class="f1-last-name form-control campo" required/>
+                                <input type="text" id="phone" name="phone"  placeholder="Telefono..." class="f1-last-name form-control campo" required/>
                                 <p class="alert-message">Es demasiado corto (usa mínimo 7 caracteres).</p>
                             </div>
 

@@ -49,7 +49,6 @@ class UsuariosController extends Controller {
             return response()->json(['err' => 'Falta el parametro email'], 200);
         }
 
-
     }
 
     public function verified_phone(Request $request)
@@ -63,7 +62,6 @@ class UsuariosController extends Controller {
             } else {
                 return response()->json(['msg' => 'telefono valido'], 200);
             }
-
 
         } else {
             return response()->json(['err' => 'Falta el parametro phone'], 200);

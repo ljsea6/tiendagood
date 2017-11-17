@@ -845,7 +845,7 @@ jQuery(document).ready(function() {
             if ($(this).attr('id') == 'phone') {
 
                 var phone = $(this).val();
-
+                console.log(phone);
                 result_phone = JSON.parse( $.ajax({
                     url: 'validate/phone',
                     type: 'post',
@@ -853,7 +853,8 @@ jQuery(document).ready(function() {
                     dataType: 'json',
                     async:false,
                     success: function (json) {
-                        return json
+                        console.log(json);
+                        return json;
                     },
 
                     error : function(xhr, status) {
@@ -1117,8 +1118,6 @@ jQuery(document).ready(function() {
             }
 
     	});
-
-
 
         if (result_code.err  || result_email.err || result_phone.err) {
 
