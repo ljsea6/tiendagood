@@ -17,37 +17,37 @@ jQuery(document).ready(function() {
     $("#type_client").select2({
         width: '100%',
         allowClear: true,
-        placeholder: 'Selccionar tipo cliente'
+        placeholder: 'Seleccionar tipo cliente'
     });
 
     $("#type_dni").select2({
         width: '100%',
         allowClear: true,
-        placeholder: 'Selccionar tipo documento'
+        placeholder: 'Seleccionar tipo documento'
     });
 
     $("#city").select2({
         width: '100%',
         allowClear: true,
-        placeholder: 'Selccionar ciudad'
+        placeholder: 'Seleccionar ciudad'
     });
 
     $("#sex").select2({
         width: '100%',
         allowClear: true,
-        placeholder: 'Selccionar sexo'
+        placeholder: 'Seleccionar sexo'
     });
 
     $("#bank").select2({
         width: '100%',
         allowClear: true,
-        placeholder: 'Selccionar banco'
+        placeholder: 'Seleccionar banco'
     });
 
     $("#type_acount_bank").select2({
         width: '100%',
         allowClear: true,
-        placeholder: 'Selccionar tipo cuenta'
+        placeholder: 'Seleccionar tipo cuenta'
     });
 	
     /*
@@ -94,13 +94,13 @@ jQuery(document).ready(function() {
     var contract = '<div class="form-group">\n' +
         '                            <label for="contrato" class="form-check-label">\n' +
         '                                <input type="checkbox" id="contract" name="contract" required/>\n' +
-        '                                Contrato <a href="pagina_condiciones.html">terminos</a>\n' +
+        '                                Contrato <a href="terms">terminos</a>\n' +
         '                            </label>\n' +
         '                        </div>';
     var terms = '<div class="form-group">\n' +
         '                            <label for="condiciones" class="form-check-label">\n' +
         '                                <input  type="checkbox" id="terms" name="terms" required/>\n' +
-        '                                ¿Acepta <a href="pagina_condiciones.html">terminos</a> y condiciones?\n' +
+        '                                ¿Acepta <a href="terms">terminos</a> y condiciones?\n' +
         '                            </label>\n' +
         '                        </div>';
 

@@ -32,6 +32,11 @@ class UsuariosController extends Controller {
      *
      */
 
+    public function terms()
+    {
+        return view('admin.terms.terms');
+    }
+
     public function verified_email(Request $request)
     {
         if ($request->has('email')) {
@@ -346,6 +351,8 @@ class UsuariosController extends Controller {
                 ->withInput();
         }
 
+
+
         $usuario = new Tercero();
         $usuario->nombres = strtolower($request['first-name']);
         $usuario->apellidos = strtolower($request['last-name']);
@@ -362,7 +369,7 @@ class UsuariosController extends Controller {
         $usuario->documento_id = $request->type_dni;
         $usuario->identificacion = strtolower($request->dni);
         $usuario->sexo = strtolower($request->sex);
-        $usuario->fecha_nacimiento = Carbon::parse($request->birthday);
+        $usuario->fecha_nacimiento = $request->birthday;
 
         if ($request->has('contract')) {
 

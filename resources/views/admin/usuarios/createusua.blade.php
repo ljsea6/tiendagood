@@ -218,13 +218,13 @@
                         <div class="form-group">
                             <label for="f1-password" class="sr-only">Contraseña</label>
                             <input type="password" name="password" placeholder="Contraseña..." class="f1-password form-control campo" id="password" required>
-                            <p class="alert-message">Escribe una contraseña.</p>
+                            <p class="alert-message">Escribe una contraseña (minimo 6 digitos).</p>
                         </div>
                         <div class="form-group">
                             <label  for="f1-repeat-password" class="sr-only">Repetir Contraseña</label>
                             <input type="password" name="password_confirmation" placeholder="Repeter Contraseña..."
                                    class="f1-repeat-password form-control campo" id="password_confirmation" required>
-                            <p class="alert-message">Repite Contraseña.</p>
+                            <p class="alert-message">Repite la contraseña. (minimo 6 digitos) y deben coincidir</p>
                         </div>
 
                         <div class="f1-buttons">
@@ -303,15 +303,14 @@
                         <div class="form-group">
                             <label for="contrato" class="form-check-label">
                                 <input class="form-check-input campo"  type="checkbox" id="contract" name="contract" required />
-                                Contrato <a href="pagina_condiciones.html">terminos</a>
+                                Contrato <a href="terms">terminos</a>
                             </label>
                         </div>
-
 
                         <div class="form-group">
                             <label for="condiciones" class="form-check-label">
                                 <input class="form-check-input campo"  type="checkbox" id="terms" name="terms" required />
-                                ¿Acepta <a href="pagina_condiciones.html">terminos</a> y condiciones?
+                                ¿Acepta <a href="terms">terminos</a> y condiciones?
                             </label>
                         </div>
 
