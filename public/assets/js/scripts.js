@@ -227,7 +227,6 @@ jQuery(document).ready(function() {
         }
     });
 
-
     // next step
     $('.f1 .btn-next').on('click', function() {
 

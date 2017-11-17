@@ -41,41 +41,6 @@
 
 <body>
 
-<!-- Top menu -->
-<nav class="navbar navbar-inverse navbar-no-bg" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navbar-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="/">Home</a>
-        </div>
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="top-navbar-1">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                            <span class="li-text">
-                                Put some text or
-                            </span>
-                    <a href="#"><strong>Good</strong></a>
-                    <span class="li-text">
-                                here, or some icons:
-                            </span>
-                    <span class="li-social">
-                                <a href="https://www.facebook.com/pages/Azmindcom/196582707093191" target="_blank"><i class="fa fa-facebook"></i></a>
-                                <a href="https://twitter.com/anli_zaimi" target="_blank"><i class="fa fa-twitter"></i></a>
-                                <a href="https://plus.google.com/+AnliZaimi_azmind" target="_blank"><i class="fa fa-google-plus"></i></a>
-                                <a href="https://github.com/AZMIND" target="_blank"><i class="fa fa-github"></i></a>
-                            </span>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
 
 <!-- Top content -->
 <div class="top-content">
@@ -94,7 +59,7 @@
 
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 form-box">
-                <form enctype="multipart/form-data" role="form" action="/register" method="post" class="f1">
+                <form enctype="multipart/form-data" role="form" action="/register" method="post" class="f1" >
 
                     <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
 

@@ -177,19 +177,23 @@
             opacity: .5;
         }
 
+        a:hover {
+            text-decoration: none;
+        }
+
     </style>
 </head>
 
-<body style="background: url(http://res.cloudinary.com/www-virgin-com/virgin-com-prod/sites/virgin.com/files/Articles/Entrepreneur%20Getty/Entrepreneur_breakfast_getty_2.jpg) no-repeat center / cover; height: 100vh">
+<body style="background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/1.jpg?17275024453047598251) no-repeat center / cover; height: 100vh">
 
 <div class="container" style="height: 100%">
     <div class="row" style="height: 100%; display:flex; justify-content: center; align-items: center">
-        <div class="col-md-4 col-xs-10 form-container" id="form-container">
+        <div class="col-md-4 col-xs-10 form-container" id="form-container" style="background-color: #ed7d01 !important;">
 
             {!! Form::open(['route' => 'login', 'method' => 'POST', 'class' => 'form-access']) !!}
 
                 <div class="col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2 col-xs-12 text-center">
-                    <img src="https://cdn.shopify.com/s/files/1/1935/1047/files/logo_65771d4d-e60d-4306-927a-e126a6ced852.png?3930852558276020552" alt="" class="img-responsive">
+                    <img src="assets/img/logo-good.png" alt="" style="width: 50%; margin: 20px auto; display: block">
                 </div>
 
                 <div class="col-xs-12">
@@ -201,7 +205,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="pass-id">Password</label>
+                        <label for="pass-id">Contraseña</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-unlock-alt" aria-hidden="true"></i></span>
                             <input type="password" name="password" id="password" class="form-control  campo-access" placeholder="Ingresa tu password">
@@ -214,6 +218,9 @@
                             <span class="cr"><i class="cr-icon glyphicon fa-ok"></i><i class="cr-icon fa fa-check" aria-hidden="true"></i></span>
                             Recordar tus datos
                         </label>
+                        <label for=""><a href="/register" style="color: white">Registrarme</a></label>
+
+
                     </div>
 
                     <div class="form-group text-center">

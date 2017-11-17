@@ -258,7 +258,7 @@ class UsuariosController extends Controller {
             'birthday.required' => 'Fecha de nacimiento requerida.',
             'address.required' => 'Direccion requerida.',
             'phone.required' => 'Telefono requerido.',
-	    'phone.unique:terceros,telefono' => 'El número de telefono ya existe.',
+	        'phone.unique:terceros,telefono' => 'El número de telefono ya existe.',
             'password.confirmed' => 'Se requiere confirmar las contraseñas.',
         ];
 
