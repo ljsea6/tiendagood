@@ -242,7 +242,7 @@
                     </div>
 
                     <div class="form-group text-center">
-                        <a href="/register" style="color: white" class="btn submit-access col-xs-12">Registrarme</a><br><br>
+                        <a href="/" style="color: white" class="btn submit-access col-xs-12">Registrarme</a><br><br>
                         <input type="submit" name="submit" value="Ingresar" id="submit-form" class="btn submit-access col-xs-12" disabled>
 
                     </div>
