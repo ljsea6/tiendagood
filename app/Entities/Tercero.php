@@ -37,6 +37,8 @@ class Tercero extends Model implements AuthenticatableContract, CanResetPassword
      */
     protected $guarded = ['id'];
 
+    protected $dates = ['fecha_nacimiento'];
+
     /**
      * The attributes excluded from the model's JSON form.
      *

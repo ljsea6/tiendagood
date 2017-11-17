@@ -203,22 +203,13 @@
 
     @endif
 
-    <div class="row" style="margin-top: 50px">
 
-    </div>
 
 
 
     <div class="row" style="height: 100%; display:flex; justify-content: center; align-items: center">
 
-        <div class="row">
-            <div class="alert alert-success fade in col-sm-offset-3 col-sm-12">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <ul>
-                    <li>hola</li>
-                </ul>
-            </div>
-        </div>
+
 
         <div class="col-md-4 col-xs-10 form-container" id="form-container" style="background-color: #ed7d01 !important;">
 
