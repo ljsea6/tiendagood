@@ -467,16 +467,50 @@ class UsuariosController extends Controller {
         $padre = Tercero::where('identificacion', $request->code)->first();
 
         if (count($padre) > 0 ) {
+
             if ($padre->tipo_cliente_id == 83) {
 
-                $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
+                $result = DB::table('terceros_networks')
+                    ->where('customer_id', $usuario->id)
+                    ->where('network_id', 1)
+                    ->where('padre_id', $padre->id)
+                    ->get();
+
+                if (count($result) == 0) {
+                    $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
+                }
+
+
+            } else {
+
+                $result = DB::table('terceros_networks')
+                    ->where('customer_id', $usuario->id)
+                    ->where('network_id', 1)
+                    ->where('padre_id', 1)
+                    ->get();
+
+                if (count($result) == 0) {
+                    $usuario->networks()->attach(1, ['padre_id' => 1]);
+                }
             }
 
-            $usuario->networks()->attach(1, ['padre_id' => 1]);
+
 
         } else {
 
-            $usuario->networks()->attach(1, ['padre_id' => 1]);
+            $result = DB::table('terceros_networks')
+                ->where('customer_id', $usuario->id)
+                ->where('network_id', 1)
+                ->where('padre_id', 1)
+                ->get();
+
+            if (count($result) == 0) {
+
+                $usuario->networks()->attach(1, ['padre_id' => 1]);
+
+            }
+
+
         }
 
         /*if ($usuario) {

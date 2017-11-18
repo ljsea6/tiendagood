@@ -243,7 +243,7 @@
                         <h4 class="dinos">Documentos y condiciones:</h4>
 
                         <div class="form-group">
-                            <label for="bank">Seleccionar Entidad Bancaria</label>
+                            <label for="bank">Seleccionar Entidad Bancaria (No obligatorio para registro)</label>
                             <select id="bank" name="bank" class="form-control campo" style="width: 100% !important;">
                                 <option value=""></option>
                                 @foreach($bancos as $tipo)
@@ -255,7 +255,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="type_acount_bank">Tipo de cuenta </label>
+                            <label for="type_acount_bank">Tipo de cuenta (No obligatorio para registro)</label>
                             <select id="type_acount_bank" name="type_acount_bank" class="form-control campo" style="width: 100% !important;">
                                 <option value=""></option>
                                 @foreach($cuentas->tipos as $tipo)
@@ -266,14 +266,14 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="acount">Número de cuenta</label>
+                            <label for="acount">Número de cuenta (No obligatorio para registro)</label>
                             <input type="number" name="acount" placeholder="Documento..." class="f1-first-name form-control campo" id="acount">
                             <p class="alert-message">Secelcciona un numero de cuenta.</p>
                         </div>
 
                         <div class="form-group">
                             <label class="custom-file">
-                                Certificación bancaria
+                                Certificación bancaria (No obligatorio para registro)
                                 <input type="file" id="banco" name="banco" class="custom-file-input campo">
                                 <span class="custom-file-control"></span>
                             </label>
@@ -281,7 +281,7 @@
 
                         <div class="form-group">
                             <label class="custom-file">
-                                Cédula o Documento
+                                Cédula o Documento (No obligatorio para registro)
                                 <input type="file" id="cedula" name="cedula" class="custom-file-input campo">
                                 <span class="custom-file-control"></span>
                             </label>
@@ -289,7 +289,7 @@
 
                         <div class="form-group">
                             <label class="custom-file">
-                                RUT
+                                RUT (No obligatorio para registro)
                                 <input type="file" id="rut" name="rut" class="custom-file-input campo">
                                 <span class="custom-file-control"></span>
                             </label>

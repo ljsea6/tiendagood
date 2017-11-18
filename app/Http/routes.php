@@ -91,7 +91,7 @@ Route::get('recuperar-contraseña/{token}', ['as' => 'recuperar', 'uses' => 'Aut
 Route::post('recuperar-contraseña', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@postReset']);
 Route::get('registro/payu', [ 'as' => 'PayuController@paybefore', 'as' =>'admin.payu.payu']);
 
-Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'administrador', 'middleware' => 'auth'], function () {
 
     /*
      * Rules
