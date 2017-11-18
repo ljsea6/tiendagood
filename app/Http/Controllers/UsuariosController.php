@@ -340,7 +340,7 @@ class UsuariosController extends Controller {
 
         if ($validator->fails()) {
 
-            return redirect('register')
+            return redirect('/')
                 ->withErrors($validator)
                 ->withInput();
         }
