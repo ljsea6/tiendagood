@@ -464,7 +464,7 @@ class UsuariosController extends Controller {
 
         }
 
-        $padre = Tercero::where('identificacion', $request->code)->first();
+        $padre = Tercero::where('identificacion', '=', '' .$request->code. '')->first();
 
         if (count($padre) > 0 ) {
 
