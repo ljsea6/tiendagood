@@ -1204,7 +1204,7 @@ jQuery(document).ready(function() {
             if (result_dni.err) {
                 swal(
                     'Oops...',
-                    'El número de documentos que ingresó existe, ingrese otro por favor.',
+                    'El número de documento que ingresó existe, ingrese otro por favor.',
                     'error'
                 );
 
