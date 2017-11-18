@@ -328,7 +328,7 @@ jQuery(document).ready(function() {
 
             var phone = $(this).val();
 
-            if (exp_phone.test(phone) && (phone.length == 7 || phone.length == 10 || phone.length == 13)) {
+            if (exp_phone.test(phone) && phone.length == 10 ) {
 
                 $(this).removeClass('input-error');
                 $(this).next().fadeOut();
@@ -705,7 +705,7 @@ jQuery(document).ready(function() {
 
                 var phone = $(this).val();
 
-                if (exp_phone.test(phone) && (phone.length == 7 || phone.length == 10 || phone.length == 13)) {
+                if (exp_phone.test(phone) && phone.length == 10 ) {
 
                     $(this).removeClass('input-error');
                     $(this).next().fadeOut();

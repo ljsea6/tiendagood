@@ -21,6 +21,9 @@ use App\Variant;
 use App\LineItems;
 use App\Commision;
 use App\Tipo;
+use GuzzleHttp\Psr7;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ClientException;
 
 class OrdersController extends Controller
 {
@@ -4260,7 +4263,66 @@ class OrdersController extends Controller
     }
     public function contador()
     {
-        $results = array();
+
+        $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $client = new \GuzzleHttp\Client();
+
+        $phone = '3126244757';
+
+        $p = '';
+
+        if (strlen($phone) == 13) {
+            $p .= ltrim( $phone , '+57' );
+        }else {
+            $p .= $phone;
+        }
+
+        try {
+            $res = $client->request('post', $api_url . '/admin/customers.json', array(
+                    'form_params' => array(
+                        'customer' => array(
+                            'first_name' => 'xxxxxxxxxx',
+                            'last_name' => 'xxxxxxxxxx',
+                            'email' => 'xxxxxxxxxx@xxx.xxx',
+                            'verified_email' => true,
+                            'phone' =>   $p,
+                            'addresses' => [
+
+                                [
+                                    'address1' => 'xxxxxxxxxx',
+                                    'city' => 'xxxxxxxxxx',
+                                    'province' => '',
+
+                                    "zip" => '',
+                                    'first_name' => 'xxxxxxxxxx',
+                                    'last_name' => 'xxxxxxxxxx',
+                                    'country' => 'CO'
+                                ],
+
+                            ],
+                            "password" => 'xxxxxxxxxx',
+                            "password_confirmation" => 'xxxxxxxxxx',
+                            'send_email_invite' => false,
+                            'send_email_welcome' => false
+                        )
+                    )
+                )
+            );
+
+            return json_decode($res->getBody(), true);
+
+        } catch (ClientException $e) {
+
+            $err = json_decode(($e->getResponse()->getBody()), true);
+
+            foreach ($err['errors'] as $key => $value) {
+                echo $key . ' ' . $value[0] . "\n";
+            }
+        }
+
+
+
+        /*$results = array();
 
         $orders = DB::table('orders')
             ->orderBy('created_at', 'asc')
@@ -4329,7 +4391,7 @@ class OrdersController extends Controller
                     }
                 }
             }
-        }
+        }*/
 
         /*$terceros = Tercero::with('tipo.rules.details')->where('state', true)->get();
 

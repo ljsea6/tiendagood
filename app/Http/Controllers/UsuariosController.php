@@ -39,7 +39,7 @@ class UsuariosController extends Controller {
     {
         if ($request->has('email')) {
 
-            $email = Tercero::where('email', $request->email)->first();
+            $email = Tercero::where('email', strtolower($request->email))->first();
 
             if (count($email) > 0) {
                 return response()->json(['err' => 'email existe'], 200);
@@ -57,7 +57,15 @@ class UsuariosController extends Controller {
     {
         if ($request->has('phone')) {
 
-            $phone = Tercero::where('telefono', $request->phone)->first();
+            $p = '';
+
+            if (strlen($request->phone) == 13) {
+                $p .= ltrim( $request->phone , '+57' );
+            }else {
+                $p .= $request->phone;
+            }
+
+            $phone = Tercero::where('telefono', '=' , '' . $p .'')->first();
 
             if (count($phone) > 0) {
                 return response()->json(['err' => 'telefono existe'], 200);
@@ -345,17 +353,26 @@ class UsuariosController extends Controller {
                 ->withInput();
         }
 
+        $p = '';
+
+        if (strlen($request->phone) == 13) {
+            $p .= ltrim( $request->phone , '+57' );
+        }else {
+            $p .= $request->phone;
+        }
+
+
         $usuario = new Tercero();
         $usuario->nombres = strtolower($request['first-name']);
         $usuario->apellidos = strtolower($request['last-name']);
         $usuario->direccion = strtolower($request->address);
-        $usuario->telefono = strtolower($request->phone);
+        $usuario->telefono = strtolower($p);
         $usuario->email = strtolower($request->email);
         $usuario->usuario = strtolower($request->email);
         $usuario->contraseña = bcrypt($request->password);
         $usuario->tipo_id = ($request->type_client == 83) ? 2 : 1;
         $usuario->ciudad_id = strtolower($request->city);
-        $usuario->celular = strtolower($request->phone);
+        $usuario->celular = strtolower($p);
         $usuario->network_id = 1;
         $usuario->tipo_cliente_id = $request->type_client;
         $usuario->documento_id = $request->type_dni;
@@ -431,6 +448,7 @@ class UsuariosController extends Controller {
                             'last_name' => strtolower($request['last-name']),
                             'email' => strtolower($request->email),
                             'verified_email' => true,
+                            'phone' => $p,
                             'addresses' => [
 
                                 [

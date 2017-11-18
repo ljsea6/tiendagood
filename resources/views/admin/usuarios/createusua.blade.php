@@ -174,9 +174,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="phone" class="sr-only">Teléfono</label>
+                                <label for="phone" class="sr-only">Célular</label>
                                 <input type="text" id="phone" name="phone"  placeholder="Telefono..." class="f1-last-name form-control campo" required/>
-                                <p class="alert-message">Es demasiado corto (usa mínimo 7 caracteres).</p>
+                                <p class="alert-message">Es demasiado corto o grande (se usa 10 dígitos).</p>
                             </div>
 
 
