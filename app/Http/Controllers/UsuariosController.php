@@ -23,6 +23,9 @@ use Bican\Roles\Models\Role;
 use Illuminate\Http\Request;
 use Styde\Html\Facades\Alert;
 use Yajra\Datatables\Datatables;
+use GuzzleHttp\Psr7;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ClientException;
 
 class UsuariosController extends Controller {
     /**
@@ -457,44 +460,56 @@ class UsuariosController extends Controller {
             $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
             $client = new \GuzzleHttp\Client();
 
-            $res = $client->request('post', $api_url . '/admin/customers.json', array(
-                    'form_params' => array(
-                        'customer' => array(
-                            'first_name' => strtolower($request['first-name']),
-                            'last_name' => strtolower($request['last-name']),
-                            'email' => strtolower($request->email),
-                            'verified_email' => true,
-                            'phone' => $p,
-                            'addresses' => [
+            try {
 
-                                [
-                                    'address1' => strtolower($request->address),
-                                    'city' => strtolower($city->nombre),
-                                    'province' => '',
+                $res = $client->request('post', $api_url . '/admin/customers.json', array(
+                        'form_params' => array(
+                            'customer' => array(
+                                'first_name' => strtolower($request['first-name']),
+                                'last_name' => strtolower($request['last-name']),
+                                'email' => strtolower($request->email),
+                                'verified_email' => true,
+                                'phone' => $p,
+                                'addresses' => [
 
-                                    "zip" => '',
-                                    'first_name' => strtolower($request['first-name']),
-                                    'last_name' => strtolower($request['last-name']),
-                                    'country' => 'CO'
+                                    [
+                                        'address1' => strtolower($request->address),
+                                        'city' => strtolower($city->nombre),
+                                        'province' => '',
+
+                                        "zip" => '',
+                                        'first_name' => strtolower($request['first-name']),
+                                        'last_name' => strtolower($request['last-name']),
+                                        'country' => 'CO'
+                                    ],
+
                                 ],
-
-                            ],
-                            "password" => $request->password,
-                            "password_confirmation" => $request->password_confirmation,
-                            'send_email_invite' => false,
-                            'send_email_welcome' => false
+                                "password" => $request->password,
+                                "password_confirmation" => $request->password_confirmation,
+                                'send_email_invite' => false,
+                                'send_email_welcome' => false
+                            )
                         )
                     )
-                )
-            );
+                );
 
-            $customer = json_decode($res->getBody(), true);
+                $customer = json_decode($res->getBody(), true);
 
-            $search = Tercero::find($usuario->id);
+                $search = Tercero::find($usuario->id);
 
-            $search->customer_id = $customer['customer']['id'];
+                $search->customer_id = $customer['customer']['id'];
 
-            $search->save();
+                $search->save();
+
+            } catch (ClientException $e) {
+
+                $err = json_decode(($e->getResponse()->getBody()), true);
+
+                foreach ($err['errors'] as $key => $value) {
+
+                    echo $key . ' ' . $value[0] . "\n";
+                }
+            } 
 
         }
 
