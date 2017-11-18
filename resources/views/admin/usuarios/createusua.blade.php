@@ -267,7 +267,7 @@
 
                         <div class="form-group">
                             <label for="acount">Número de cuenta (No obligatorio para registro)</label>
-                            <input type="number" name="acount" placeholder="Documento..." class="f1-first-name form-control campo" id="acount">
+                            <input type="text" name="acount" placeholder="Documento..." class="f1-first-name form-control campo" id="acount">
                             <p class="alert-message">Secelcciona un numero de cuenta.</p>
                         </div>
 

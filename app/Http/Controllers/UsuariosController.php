@@ -463,7 +463,6 @@ class UsuariosController extends Controller {
             ]);
         }
 
-
         $city = Ciudad::find($request->city);
 
         if (count($usuario) > 0) {
