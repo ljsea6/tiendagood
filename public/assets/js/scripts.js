@@ -74,7 +74,7 @@ jQuery(document).ready(function() {
     });
 
     var exp_number = /^[a-zA-Z0-9]{6,15}$/;
-    var exp_acount = /^[0-9]{7,}$/;
+    var exp_acount = /^[0-9\-]{7,}$/;
     var exp_names =/^[a-zA-ZáéíóúàèìòùÀÈÌÒÙÁÉÍÓÚñÑüÜ\s]+$/;
     var exp_date = /^([0-9]{2}\/[0-9]{2}\/[0-9]{4})$/;
     var exp_address = /^[0-9a-zA-ZáéíóúàèìòùÀÈÌÒÙÁÉÍÓÚñÑüÜ#.\-_\s]+$/;
