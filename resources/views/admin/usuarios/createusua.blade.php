@@ -198,10 +198,10 @@
 
                         <h4 class="dinos">Configurar tu usuario:</h4>
 
-                        @if(isset($email))
+                        @if(isset($code) && isset($patrocinador))
                             <div class="form-group">
-                                <label for="code" class="sr-only">Código de tu referido</label>
-                                <input type="text" name="code" placeholder="Cédula de tu patrocinador..." class="f1-email form-control campo" id="code"  value="{{$email}}" readonly>
+                                <label for="code">Patrocinador: {{$patrocinador->nombres}}</label>
+                                <input type="text" name="code" placeholder="Cédula de tu patrocinador..." class="f1-email form-control campo" id="code"  value="{{$code}}" readonly>
                                 <p class="alert-message">Ingresa el código de su referido.</p>
                             </div>
                         @else
