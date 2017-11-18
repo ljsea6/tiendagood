@@ -327,6 +327,8 @@ class UsuariosController extends Controller {
 
                 return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'code' => $code, 'cities' => $cities, 'documentos' => $documentos, 'bancos' => $bancos, 'cuentas' => $cuentas, 'patrocinador' => $patrocinador]);
                 //return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'email' => $email, 'cities' => $cities, 'documentos' => $documentos,  'cuentas' => $cuentas]);
+            } else {
+                return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'cities' => $cities, 'documentos' => $documentos, 'bancos' => $bancos, 'cuentas' => $cuentas]);
             }
 
         }
