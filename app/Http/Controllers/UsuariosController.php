@@ -77,7 +77,7 @@ class UsuariosController extends Controller {
 
             $code = Tercero::where('identificacion', $request->code)->first();
 
-            if (count($code) > 0) {
+            if (count($code) > 0 && $code->tipo_cliente_id == 83) {
                 return response()->json(['msg' => 'código valido'], 200);
             } else {
                 return response()->json(['err' => 'código no valido'], 200);
@@ -477,6 +477,7 @@ class UsuariosController extends Controller {
                     ->get();
 
                 if (count($result) == 0) {
+
                     $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
                 }
 
