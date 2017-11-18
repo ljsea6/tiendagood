@@ -31,12 +31,10 @@ class UsuariosController extends Controller {
      * @return \Illuminate\Http\Response
      *
      */
-
     public function terms()
     {
         return view('admin.terms.terms');
     }
-
     public function verified_email(Request $request)
     {
         if ($request->has('email')) {
@@ -55,7 +53,6 @@ class UsuariosController extends Controller {
         }
 
     }
-
     public function verified_phone(Request $request)
     {
         if ($request->has('phone')) {
@@ -74,7 +71,6 @@ class UsuariosController extends Controller {
 
 
     }
-
     public function verified_code(Request $request)
     {
         if ($request->has('code')) {
@@ -92,10 +88,6 @@ class UsuariosController extends Controller {
             return response()->json(['err' => 'Falta el parametro code'], 200);
         }
     }
-
-
-
-
     public function index()
     {
         return $permisos = Permission::lists('name', 'id')->get();
@@ -303,9 +295,11 @@ class UsuariosController extends Controller {
             $email = '' . $request->q;
 
             return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'email' => $email, 'cities' => $cities, 'documentos' => $documentos, 'bancos' => $bancos, 'cuentas' => $cuentas]);
+            //return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'email' => $email, 'cities' => $cities, 'documentos' => $documentos,  'cuentas' => $cuentas]);
         }
 
         return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'cities' => $cities, 'documentos' => $documentos, 'bancos' => $bancos, 'cuentas' => $cuentas]);
+        //return view('admin.usuarios.createusua')->with(['tipos' => $tipos, 'cities' => $cities, 'documentos' => $documentos,  'cuentas' => $cuentas]);
     }
 
     public function storeNuevo(Request $request)
@@ -350,8 +344,6 @@ class UsuariosController extends Controller {
                 ->withErrors($validator)
                 ->withInput();
         }
-
-
 
         $usuario = new Tercero();
         $usuario->nombres = strtolower($request['first-name']);
@@ -412,47 +404,6 @@ class UsuariosController extends Controller {
 
         }
 
-        $city = Ciudad::find($request->city);
-
-        $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-        $client = new \GuzzleHttp\Client();
-
-        $res = $client->request('post', $api_url . '/admin/customers.json', array(
-                'form_params' => array(
-                    'customer' => array(
-                        'first_name' => strtolower($request['first-name']),
-                        'last_name' => strtolower($request['last-name']),
-                        'email' => strtolower($request->email),
-                        'verified_email' => true,
-                        'addresses' => [
-
-                            [
-                                'address1' => strtolower($request->address),
-                                'city' => strtolower($city->nombre),
-                                'province' => '',
-
-                                "zip" => '',
-                                'first_name' => strtolower($request['first-name']),
-                                'last_name' => strtolower($request['last-name']),
-                                'country' => 'CO'
-                            ],
-
-                        ],
-                        "password" => $request->password,
-                        "password_confirmation" => $request->password_confirmation,
-                        'send_email_invite' => false,
-                        'send_email_welcome' => false
-                    )
-                )
-            )
-        );
-
-        $customer = json_decode($res->getBody(), true);
-
-        $usuario->customer_id = $customer['customer']['id'];
-
-        $usuario->save();
-
         if ($request->has('prime')) {
             $usuario->primes()->create([
                 'fecha_inicio' => Carbon::now(),
@@ -462,6 +413,55 @@ class UsuariosController extends Controller {
                     'browser' => $request->header('User-Agent')
                 ]
             ]);
+        }
+
+        $usuario->save();
+
+        $city = Ciudad::find($request->city);
+
+        if (count($usuario) > 0) {
+
+            $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+            $client = new \GuzzleHttp\Client();
+
+            $res = $client->request('post', $api_url . '/admin/customers.json', array(
+                    'form_params' => array(
+                        'customer' => array(
+                            'first_name' => strtolower($request['first-name']),
+                            'last_name' => strtolower($request['last-name']),
+                            'email' => strtolower($request->email),
+                            'verified_email' => true,
+                            'addresses' => [
+
+                                [
+                                    'address1' => strtolower($request->address),
+                                    'city' => strtolower($city->nombre),
+                                    'province' => '',
+
+                                    "zip" => '',
+                                    'first_name' => strtolower($request['first-name']),
+                                    'last_name' => strtolower($request['last-name']),
+                                    'country' => 'CO'
+                                ],
+
+                            ],
+                            "password" => $request->password,
+                            "password_confirmation" => $request->password_confirmation,
+                            'send_email_invite' => false,
+                            'send_email_welcome' => false
+                        )
+                    )
+                )
+            );
+
+            $customer = json_decode($res->getBody(), true);
+
+            $search = Tercero::find($usuario->id);
+
+            $search->customer_id = $customer['customer']['id'];
+
+            $search->save();
+
         }
 
         $padre = Tercero::where('identificacion', $request->code)->first();
@@ -494,8 +494,6 @@ class UsuariosController extends Controller {
                 }
             }
 
-
-
         } else {
 
             $result = DB::table('terceros_networks')
@@ -507,10 +505,7 @@ class UsuariosController extends Controller {
             if (count($result) == 0) {
 
                 $usuario->networks()->attach(1, ['padre_id' => 1]);
-
             }
-
-
         }
 
         /*if ($usuario) {
