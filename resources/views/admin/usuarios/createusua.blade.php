@@ -200,7 +200,7 @@
 
                         @if(isset($code) && isset($patrocinador))
                             <div class="form-group">
-                                <label for="code">Patrocinador: {{$patrocinador->nombres}}</label>
+                                <label for="code">Patrocinador: {{ucwords($patrocinador->nombres) . ' ' . ucwords($patrocinador->apellidos)}}</label>
                                 <input type="text" name="code" placeholder="Cédula de tu patrocinador..." class="f1-email form-control campo" id="code"  value="{{$code}}" readonly>
                                 <p class="alert-message">Ingresa el código de su referido.</p>
                             </div>
