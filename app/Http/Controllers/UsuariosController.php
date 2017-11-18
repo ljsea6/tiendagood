@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Banco;
+use App\Prime;
 use DB;
 use App\Tipo;
 use App\Documento;
@@ -448,6 +449,9 @@ class UsuariosController extends Controller {
 
         }
 
+
+        $usuario->save();
+
         if ($request->has('prime')) {
             $usuario->primes()->create([
                 'fecha_inicio' => Carbon::now(),
@@ -459,7 +463,6 @@ class UsuariosController extends Controller {
             ]);
         }
 
-        $usuario->save();
 
         $city = Ciudad::find($request->city);
 
