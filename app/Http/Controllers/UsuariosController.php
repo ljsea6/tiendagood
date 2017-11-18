@@ -353,7 +353,7 @@ class UsuariosController extends Controller {
             'last-name' => 'required',
             'type_client' => 'required',
             'type_dni' => 'required',
-            'dni' => 'required',
+            'dni' => 'required|unique:terceros,identificacion',
             'city' => 'required',
             'sex' => 'required',
             'birthday' => 'required',
@@ -509,7 +509,7 @@ class UsuariosController extends Controller {
 
                     echo $key . ' ' . $value[0] . "\n";
                 }
-            } 
+            }
 
         }
 
