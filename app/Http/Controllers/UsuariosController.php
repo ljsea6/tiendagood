@@ -96,6 +96,22 @@ class UsuariosController extends Controller {
             return response()->json(['err' => 'Falta el parametro code'], 200);
         }
     }
+    public function verified_dni(Request $request)
+    {
+        if ($request->has('dni')) {
+
+            $dni = Tercero::where('identificacion', strtolower($request->dni))->first();
+
+            if (count($dni) > 0 ) {
+                return response()->json(['err' => 'dni no valido'], 200);
+            } else {
+                return response()->json(['msg' => 'dni valido'], 200);
+            }
+
+        } else {
+            return response()->json(['err' => 'Falta el parametro dni'], 200);
+        }
+    }
     public function index()
     {
         return $permisos = Permission::lists('name', 'id')->get();

@@ -835,6 +835,7 @@ jQuery(document).ready(function() {
         var result_email;
         var result_code;
     	var result_phone;
+        var result_dni;
     	// fields validation
     	$(this).find('input[type="checkbox"], input[type="number"], input[type="text"], input[type="email"], input[type="password"], select').each(function() {
 
@@ -890,6 +891,46 @@ jQuery(document).ready(function() {
 
             }
 
+            if ($(this).attr('id') == 'dni') {
+
+                var dni = $(this).val();
+
+                result_dni = JSON.parse( $.ajax({
+                    url: 'validate/dni',
+                    type: 'post',
+                    data: {dni: dni},
+                    dataType: 'json',
+                    async:false,
+                    success: function (json) {
+                        return json
+                    },
+
+                    error : function(xhr, status) {
+                        console.log('Disculpe, existió un problema');
+                    },
+
+                    complete : function(xhr, status) {
+                        console.log('Petición realizada');
+                    }
+                }).responseText);
+
+                if (exp_number.test(code)) {
+
+                    $(this).removeClass('input-error');
+                    $(this).next().fadeOut();
+                }
+                else {
+
+                    $(this).addClass('input-error');
+                    $(this).next().fadeIn();
+
+                    e.preventDefault();
+                }
+
+                if (result_code == false) {
+                    e.preventDefault();
+                }
+            }
 
             if ($(this).attr('id') == 'code') {
 
@@ -1128,7 +1169,7 @@ jQuery(document).ready(function() {
 
     	});
 
-        if (result_code.err  || result_email.err || result_phone.err) {
+        if (result_code.err  || result_email.err || result_phone.err || result_dni.err) {
 
             if (result_code.err) {
                 swal(
@@ -1154,6 +1195,16 @@ jQuery(document).ready(function() {
                 swal(
                     'Oops...',
                     'El número de teléfono que ingresó existe, ingrese otro por favor.',
+                    'error'
+                );
+
+                e.preventDefault();
+            }
+
+            if (result_dni.err) {
+                swal(
+                    'Oops...',
+                    'El número de identificación que ingresó existe, ingrese otro por favor.',
                     'error'
                 );
 
