@@ -63,6 +63,7 @@ class GetCustomers extends Command
             if ($diferencia < 20) {
 
                 usleep(10000000);
+
             }
 
             $results = json_decode($res->getBody(), true);

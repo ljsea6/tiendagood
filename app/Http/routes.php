@@ -87,6 +87,8 @@ Route::post('olvido-contraseña', ['as' => 'reset', 'uses' => 'Auth\PasswordCont
 //Registrar nuevo usuario
 Route::get('/', ['uses' => 'UsuariosController@getusuario', 'as' => 'admin.usuarios.registerGet']);
 route::post('register', ['uses' => 'UsuariosController@storenuevo', 'as' => 'admin.usuarios.registerPost']);
+Route::get('/envio_registro/{id}', 'UsuariosController@envio_registro');
+
 // Password reset
 Route::get('recuperar-contraseña/{token}', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@getReset']);
 Route::post('recuperar-contraseña', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@postReset']);

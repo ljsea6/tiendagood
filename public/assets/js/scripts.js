@@ -1174,7 +1174,7 @@ jQuery(document).ready(function() {
             if (result_code.err) {
                 swal(
                     'Oops...',
-                    'El código de su referido no existe, verifiquelo por favor.',
+                    'El código de su referido no existe o no se puede hacer red con este código, verifiquelo por favor.',
                     'error'
                 );
 

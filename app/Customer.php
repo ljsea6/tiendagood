@@ -52,4 +52,5 @@ class Customer extends Model
             'verified_email' => $customer['verified_email'],
         ]);
     }
+
 }

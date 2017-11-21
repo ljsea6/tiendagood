@@ -28,6 +28,8 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ClientException;
 
+use Mail;
+
 class UsuariosController extends Controller {
     /**
      * Display a listing of the  resource.
@@ -87,7 +89,7 @@ class UsuariosController extends Controller {
     {
         if ($request->has('code')) {
 
-            $code = Tercero::where('identificacion', $request->code)->first();
+            $code = Tercero::where('identificacion', strtolower($request->code))->first();
 
             if (count($code) > 0 && $code->tipo_cliente_id == 83) {
                 return response()->json(['msg' => 'código valido'], 200);
@@ -116,6 +118,7 @@ class UsuariosController extends Controller {
             return response()->json(['err' => 'Falta el parametro dni'], 200);
         }
     }
+
     public function index()
     {
         return $permisos = Permission::lists('name', 'id')->get();
@@ -465,6 +468,7 @@ class UsuariosController extends Controller {
 
         $city = Ciudad::find($request->city);
 
+
         if (count($usuario) > 0) {
 
             $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
@@ -523,7 +527,7 @@ class UsuariosController extends Controller {
 
         }
 
-        $padre = Tercero::where('identificacion', '=', '' .$request->code. '')->first();
+        $padre = Tercero::with('networks')->where('identificacion', '=', '' .$request->code. '')->first();
 
         if (count($padre) > 0 ) {
 
@@ -573,6 +577,58 @@ class UsuariosController extends Controller {
             return redirect()->route('admin.index');
         }*/
 
+        $user = Tercero::with('networks')->find($request->code);
+        if (count($padre) > 0 ) {
+            
+        } 
+        
+        $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
+        $this->envio_registro($request->code, $data);
+
         return redirect()->route('login')->with(['message' => 'Felicitaciones, has sido registrado correctamente.']);
     }
+
+    public function mail($data, $info, $tipo, $nivel)
+    {  
+        if ($tipo == 1) {
+            $email =  $data['email'];
+        }elseif ($tipo == 2) {
+            $email =  $data->email;
+        }
+
+        Mail::send($info['view'], ['usuario' => $data, 'info' => $info, 'nivel' => $nivel], function ($m)  use ($data, $info, $email) {
+        $m->from('info@tiendagood.com', 'Tienda good');           
+        $m->to($email, 'steben')->subject($info['asunto']);
+        });          
+    }
+
+    public function envio_registro($code, $data)
+    {
+        $info = array('view' => 'admin.send.welcome_2', 'asunto' => 'Bienvenido a tienda good');
+        $this->mail($data, $info, 1, 0);  
+
+        $info = array('view' => 'admin.send.welcome', 'asunto' => 'Se inscribieron con su código');
+        $level = Tercero::with('networks')->where('identificacion', strtolower($code))->first();
+        
+        if (count($level->networks) > 0) {
+            $this->mail($level, $info, 2, 1);  
+
+          if ($level->networks['0']['pivot']['customer_id'] >= 2) { 
+            $level_1 = Tercero::with('networks')->where('id', strtolower($level->networks['0']['pivot']['padre_id']))->first();
+            if (count($level_1->networks) > 0) {
+                if ($level_1->networks['0']['pivot']['customer_id'] > 0) {
+                    $this->mail($level_1, $info, 2, 2);  
+
+                    $level_2 = Tercero::with('networks')->where('id', strtolower($level_1->networks['0']['pivot']['padre_id']))->first(); 
+                    if (count($level_2->networks) > 0) {
+                        if ($level_2->networks['0']['pivot']['customer_id'] >= 2) {
+                            $this->mail($level_2, $info, 2, 3);  
+                        }
+                    }  
+                } 
+            }       
+          }
+        }  
+    }
+
 }
