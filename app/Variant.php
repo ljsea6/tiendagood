@@ -46,7 +46,7 @@ class Variant extends Model
             $v->requires_shipping = $variant['requires_shipping'];
             $v->created_at = Carbon::parse($variant['created_at']);
             $v->updated_at = Carbon::parse($variant['updated_at']);
-            $v->percentage = random_int(10, 500);
+            $v->percentage = null;
             $v->save();
 
         } else {

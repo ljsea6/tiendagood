@@ -4267,257 +4267,91 @@ class OrdersController extends Controller
         $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $client = new \GuzzleHttp\Client();
 
-        $phone = '3126244757';
-
-        $p = '';
-
-        if (strlen($phone) == 13) {
-            $p .= ltrim( $phone , '+57' );
-        }else {
-            $p .= $phone;
-        }
-
         try {
-            $res = $client->request('post', $api_url . '/admin/customers.json', array(
-                    'form_params' => array(
-                        'customer' => array(
-                            'first_name' => 'xxxxxxxxxx',
-                            'last_name' => 'xxxxxxxxxx',
-                            'email' => 'xxxxxxxxxx@xxx.xxx',
-                            'verified_email' => true,
-                            'phone' =>   $p,
-                            'addresses' => [
 
-                                [
-                                    'address1' => 'xxxxxxxxxx',
-                                    'city' => 'xxxxxxxxxx',
-                                    'province' => '',
+            $res = $client->request('get', $api_url . '/admin/variants/4574000381989/metafields.json');
 
-                                    "zip" => '',
-                                    'first_name' => 'xxxxxxxxxx',
-                                    'last_name' => 'xxxxxxxxxx',
-                                    'country' => 'CO'
-                                ],
+            $results = json_decode($res->getBody(), true);
 
-                            ],
-                            "password" => 'xxxxxxxxxx',
-                            "password_confirmation" => 'xxxxxxxxxx',
-                            'send_email_invite' => false,
-                            'send_email_welcome' => false
-                        )
-                    )
-                )
-            );
+            if (count($results['metafields']) > 0) {
 
-            return json_decode($res->getBody(), true);
+                foreach ($results['metafields'] as $result) {
 
-        } catch (ClientException $e) {
+                    if ($result['key'] == 'points' && $result['namespace'] == 'variants') {
 
-            $err = json_decode(($e->getResponse()->getBody()), true);
+                        try {
 
-            foreach ($err['errors'] as $key => $value) {
-                echo $key . ' ' . $value[0] . "\n";
-            }
-        }
+                            $res = $client->request('put', $api_url . '/admin/variants/4574000381989/metafields/' . $result['id'] . '.json', array(
+                                    'form_params' => array(
+                                        'metafield' => array(
+                                            'namespace' => 'variants',
+                                            'key' => 'points',
+                                            'value' => 100,
+                                            'value_type' => 'integer'
+                                        )
+                                    )
+                                )
+                            );
 
-
-
-        /*$results = array();
-
-        $orders = DB::table('orders')
-            ->orderBy('created_at', 'asc')
-            ->whereNull('cancelled_at')
-            ->where('financial_status', 'paid')
-            ->where('comisionada', false)
-            ->whereYear('created_at', '=', Carbon::today()->year)
-            ->whereMonth('created_at', '<=', Carbon::today()->month)
-            ->whereMonth('created_at', '>=', Carbon::today()->month - 1)
-            ->get();
-
-        foreach ($orders as $order) {
-
-            //return response()->json(Carbon::parse($order->created_at));
-
-            // Referido
-            $tercero = Tercero::with('networks', 'tipo')
-                ->where('email', $order->email)
-                ->first();
-
-            // Asignamos el Id del padre en la tabla terceros a la variable $padre
-            $padre = $tercero->networks[0]->pivot->padre_id;
-
-            // Verificamos si tiene red de lo contrario el padre es el principal (GOOD) y no se hace nada.
-            $red = Tercero::has('networks')->find($padre);
-
-            if ($red) {
-
-                // Verificamos si tiene tipo
-                $tipo = Tercero::has('tipo.rules.details')->find($padre);
-
-                // Si tiene tipo y es diferente de Tercero
-                if ($tipo && $tipo->tipo_id != 1) {
-
-                    // Buscamos toda la información del padre (tipo, reglas y detalles de las reglas)
-                    $result = Tercero::with('networks', 'tipo.rules.details')->find($padre);
-
-                    // Si obtenemos informacion
-                    if ($result) {
-
-                        // Nivel 1 del primer padre ($padre)
-
-                        // buscamos las reglas
-
-                        $rules = $result->tipo->rules;
-
-                        foreach ($rules as $rule) {
-                            // Obtenemos el detalle por regla
-                            $details = $rule->details;
-
-                            // asignamos el detalle del nivel 1
-                            if ($details->nivel == 1) {
-
+                            $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                            $x = explode('/', $headers[0]);
+                            $diferencia = $x[1] - $x[0];
+                            if ($diferencia < 10) {
+                                usleep(10000000);
                             }
+
+                            return json_decode($res->getBody(), true);
+
+                        } catch (ClientException $e) {
+
+                            return json_decode(($e->getResponse()->getBody()), true);
                         }
-
-                        array_push($results, [
-                            'tercero_id' => $result->id,
-                            'hijo_id' => $tercero->id,
-                            'nivel' => 1,
-                            'orden_id' => $order->id,
-                            'detaller_regla_id' => ''
-                        ]);
-
-                        return response()->json($result);
                     }
-                }
-            }
-        }*/
-
-        /*$terceros = Tercero::with('tipo.rules.details')->where('state', true)->get();
-
-        foreach ($terceros as $tercero) {
-
-            //return $tercero->tipo->rules;
-
-            if ($tercero->tipo->nombre = 'Terceros') {
-
-                $results = DB::select(
-                    DB::raw(
-                        "
-                SELECT tn.*
-                FROM terceros t
-                INNER JOIN terceros_networks tn ON tn.padre_id = t.id
-                  WHERE t.id = :id
-                ORDER BY tn.created_at ASC
-                LIMIT :limit
-                "
-                    ),
-                    array(
-                        'id' => 26,
-                        'limit' => 10
-                    )
-                );
-
-                if (count($results) > 0) {
-                    return $results;
                 }
 
             } else {
 
-                return $results = DB::select(
-                    DB::raw(
-                        "
-                SELECT  t2.nombres as padre, tp.nombre as tipo, t.nombres, o.name, o.total_price, tn1.created_at
-                FROM customers c
-                  INNER JOIN orders o ON o.customer_id = c.customer_id
-                  INNER JOIN terceros t ON t.customer_id = c.customer_id
-                  INNER JOIN terceros_networks tn1 ON tn1.customer_id = t.id
-                  INNER JOIN terceros t2 ON t2.id = tn1.padre_id
-                  INNER JOIN tipos tp ON tp.id = t2.tipo_id
-                WHERE o.cancelled_at ISNULL
-                  AND t2.id = :id
-                  AND o.financial_status = 'paid'
-                ORDER BY tn1.created_at
-                LIMIT :limit
-                "
-                    ),
-                    array(
-                        'id' => 26,
-                        'limit' => 10
-                    )
-                );
+                try {
 
-                if (count($results) > 0) {
-                    return $results;
-                }
-            }
-
-        }*/
-
-        /*$api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-        $client = new \GuzzleHttp\Client();
-
-        $res = $client->request('get', $api_url . '/admin/customers/5882248530/metafields.json');
-        $metafields = json_decode($res->getBody(), true);
-        $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-        $x = explode('/', $headers[0]);
-        $diferencia = $x[1] - $x[0];
-        if ($diferencia < 10) {
-            usleep(10000000);
-        }
-
-
-        if (isset($metafields['metafields']) && count($metafields['metafields']) == 0) {
-
-            $res = $client->request('post', $api_url . '/admin/products/9744291777/variants/35942503169/metafields.json', array(
-                    'form_params' => array(
-                        'metafield' => array(
-                            'namespace' => 'variants',
-                            'key' => 'points',
-                            'value' => 20,
-                            'value_type' => 'integer'
-                        )
-                    )
-                )
-            );
-
-
-
-            return json_decode($res->getBody(), true);
-        }
-
-        if (isset($metafields['metafields']) && count($metafields['metafields']) > 0) {
-
-            foreach ($metafields['metafields'] as $metafield) {
-
-                if ($metafield['key'] === 'points') {
-
-                    $res = $client->request('put', $api_url . '/admin/products/9743579969/variants/35939622721/metafields/' . $metafield['id'] . '.json', array(
-                            'form_params' => array(
-                                'metafield' => array(
-                                    'namespace' => 'variants',
-                                    'key' => 'points',
-                                    'value' => 20,
-                                    'value_type' => 'integer'
-                                )
+                    $res = $client->request('post', $api_url . '/admin/variants/4574000381989/metafields.json', array(
+                        'form_params' => array(
+                            'metafield' => array(
+                                'namespace' => 'variants',
+                                'key' => 'points',
+                                'value' => 12,
+                                'value_type' => 'integer'
                             )
                         )
-                    );
+                    ));
 
-                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                    $x = explode('/', $headers[0]);
-                    $diferencia = $x[1] - $x[0];
-                    if ($diferencia < 10) {
-                        usleep(10000000);
-                    }
+                    $result = json_decode($res->getBody(), true);
 
-                    return json_decode($res->getBody(), true);
+                    return response()->json($result);
 
+                } catch (ClientException $e) {
+
+                    return json_decode(($e->getResponse()->getBody()), true);
                 }
 
+                $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                $x = explode('/', $headers[0]);
+                $diferencia = $x[1] - $x[0];
+                if ($diferencia < 20) {
 
+                    usleep(10000000);
+                }
+
+                $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                $x = explode('/', $headers[0]);
+                $diferencia = $x[1] - $x[0];
+                if ($diferencia < 10) {
+                    usleep(10000000);
+                }
             }
-        }*/
 
+        } catch (ClientException $e) {
+
+            return json_decode(($e->getResponse()->getBody()), true);
+        }
     }
 }

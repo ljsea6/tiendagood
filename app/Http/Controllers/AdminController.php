@@ -22,10 +22,12 @@ class AdminController extends Controller {
         $data = $request->all();
        
         if(isset($data['email']) && $data['email'] !== '') {
+
             Mail::send('admin.send.message', $data, function($message) use ($request) {
                 $message->subject($request->body);
                 $message->to($request->email);
             });
+
         }
         
         if(isset($data['emailone']) && $data['emailone'] !== '') {
@@ -85,10 +87,12 @@ class AdminController extends Controller {
         }
         
         if(isset($data['email7']) && $data['email7'] !== '') {
+
             Mail::send('admin.send.message', $data, function($message) use ($request) {
                 $message->subject($request->body);
                 $message->to($request->email4);
             });
+
         }
         
         return view('admin.send.success');
