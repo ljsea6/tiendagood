@@ -34,7 +34,7 @@
     <link rel="stylesheet" href="https://formden.com/static/cdn/font-awesome/4.4.0/css/font-awesome.min.css" />
 
     <link rel="stylesheet" href="assets/css/form-elements.css">
-    <link rel="stylesheet" href="assets/css/style.css?act=1">
+    <link rel="stylesheet" href="assets/css/style.css?act=2">
 
     <link rel="stylesheet" href="http://cdn.jtsage.com/jtsage-datebox/4.2.3/jtsage-datebox-4.2.3.bootstrap.min.css" />
     <link rel="stylesheet" href="http://dev.jtsage.com/DateBox/css/syntax.css" />
@@ -126,7 +126,7 @@
                             <div class="form-group">
                                 <label for="dni" class="sr-only">Número Documento</label>
                                 <input type="text" name="dni" placeholder="Documento..." class="f1-first-name form-control campo" id="dni" required>
-                                <p class="alert-message">Es demasiado corto (usa mínimo 6 caracteres).</p>
+                                <p class="alert-message"><span class="dni_val"></span>Es demasiado corto (usa mínimo 6 caracteres).</p>
                             </div>
 
                             <div class="form-group">
@@ -150,8 +150,8 @@
                                 <label for="sex" class="sr-only">Sexo</label>
                                 <select id="sex" name="sex" class="form-control campo" required>
                                     <option value=""></option>
-                                    <option value="1">M</option>
-                                    <option value="2">F</option>
+                                    <option value="1">Masculino</option>
+                                    <option value="2">Femenino</option>
                                 </select>
                                 <p class="alert-message">Escoge una opción.</p>
                             </div>
@@ -170,20 +170,20 @@
 
                             <div class="form-group">
                                 <label for="address" class="sr-only">Dirección</label>
-                                <input type="text" id="address" name="address"  placeholder="Direccion..." class="f1-last-name form-control campo" required/>
-                                <p class="alert-message">No puede estar en blanco.</p>
+                                <input type="text" id="address" name="address"  placeholder="Dirección..." class="f1-last-name form-control campo" required/>
+                                <p class="alert-message">No puede estar en blanco y no se puede usar caracteres especiales.</p>
                             </div>
 
                             <div class="form-group">
                                 <label for="phone" class="sr-only">Célular</label>
-                                <input type="text" id="phone" name="phone"  placeholder="Telefono..." class="f1-last-name form-control campo" required/>
+                                <input type="text" id="phone" name="phone"  placeholder="Teléfono..." class="f1-last-name form-control campo" required/>
                                 <p class="alert-message">Es demasiado corto o grande (se usa 10 dígitos).</p>
                             </div>
 
 
                             <div class="form-group">
                                 <label for="birthday" class="sr-only">Fecha de Nacimiento</label>
-                                <input type="text" id="birthday" style="background-color: white; border-top-left-radius: 20px; border-bottom-left-radius: 20px;" name="birthday"  placeholder="Fecha de nacimiento..." class="f1-last-name form-control" data-role="datebox" data-options='{"mode":"datebox", "overrideDateFormat": "%d/%m/%Y" }' readonly="readonly"/>
+                                <span class="fech"><input type="text" id="birthday" style="background-color: white; border-top-left-radius: 20px; border-bottom-left-radius: 20px;" name="birthday"  placeholder="Fecha de nacimiento..." class="f1-last-name form-control input-group-addon" data-role="datebox" data-options='{"mode":"datebox", "overrideDateFormat": "%d/%m/%Y", "useFocus": true }' readonly="readonly"/></span>
                                 <p class="alert-message">¿Cuándo naciste?</p>
                             </div>
 
@@ -209,7 +209,7 @@
                             <div class="form-group">
                                 <label for="code" class="sr-only">Código de tu referido</label>
                                 <input type="text" name="code" placeholder="Cédula de tu patrocinador..." class="f1-email form-control campo" id="code" required>
-                                <p class="alert-message">Ingresa el código de su referido.</p>
+                                <p class="alert-message">El código de su referido no existe o no se puede hacer red con este código, verifiquelo por favor.</p>
                             </div>
                         @endif
 

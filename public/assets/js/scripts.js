@@ -299,6 +299,7 @@ jQuery(document).ready(function() {
                 //$(this).addClass('input-error');
                 $(this).addClass('input-error');
                 $(this).next().fadeIn();
+                $(this).next().html('Escribe una contraseña (minimo 6 digitos).');
                 next_step = false;
             }
         }
@@ -337,25 +338,7 @@ jQuery(document).ready(function() {
 
                 $(this).addClass('input-error');
                 $(this).next().fadeIn();
-                next_step = false;
-            }
-        }
-    });
-
-    $('#code').on('keyup', function() {
-        if ($(this).attr('id') == 'code') {
-
-            var code = $(this).val();
-
-            if (exp_number.test(code)) {
-
-                $(this).removeClass('input-error');
-                $(this).next().fadeOut();
-            }
-            else {
-
-                $(this).addClass('input-error');
-                $(this).next().fadeIn();
+                $(this).next().html('Es demasiado corto o grande (se usa 10 dígitos).');
                 next_step = false;
             }
         }
@@ -573,26 +556,6 @@ jQuery(document).ready(function() {
                 }
             }
 
-            if ($(this).attr('id') == 'dni') {
-
-                var number = $(this).val();
-
-                if (exp_number.test(number)) {
-
-                    //$(this).removeClass('input-error');
-
-                    $(this).removeClass('input-error');
-                    $(this).next().fadeOut();
-                }
-                else {
-                    //$(this).addClass('input-error');
-                    $(this).addClass('input-error');
-                    $(this).next().fadeIn();
-
-                    next_step = false;
-                }
-            }
-
             if ($(this).attr('id') == 'city') {
 
                 if( $(this).val() == "" ) {
@@ -672,14 +635,12 @@ jQuery(document).ready(function() {
                 var date = $(this).val();
 
                 if (exp_date.test(date) && date.length == 10  ) {
-
-
                     $(this).removeClass('input-error');
-
+                    $('.fech').next().fadeOut();
                 }
                 else {
-
                     $(this).addClass('input-error');
+                    $('.fech').next().fadeIn();
                     next_step = false;
                 }
             }
@@ -701,57 +662,20 @@ jQuery(document).ready(function() {
                 }
             }
 
+            if ($(this).attr('id') == 'dni') {
+               dni();
+            }
+
             if ($(this).attr('id') == 'phone') {
-
-                var phone = $(this).val();
-
-                if (exp_phone.test(phone) && phone.length == 10 ) {
-
-                    $(this).removeClass('input-error');
-                    $(this).next().fadeOut();
-
-                }
-                else {
-
-                    $(this).addClass('input-error');
-                    $(this).next().fadeIn();
-                    next_step = false;
-                }
+                phone(); 
             }
 
             if ($(this).attr('id') == 'code') {
-
-                var code = $(this).val();
-
-                if (exp_number.test(code)) {
-
-                    $(this).removeClass('input-error');
-                    $(this).next().fadeOut();
-                }
-                else {
-
-                    $(this).addClass('input-error');
-                    $(this).next().fadeIn();
-                    next_step = false;
-                }
+                code();            
             }
 
             if ($(this).attr('id') == 'email') {
-
-                var email = $(this).val();
-
-                if (exp_email.test(email) && email.length > 0) {
-
-                    $(this).removeClass('input-error');
-                    $(this).next().fadeOut();
-
-                }
-                else {
-
-                    $(this).addClass('input-error');
-                    $(this).next().fadeIn();
-                    next_step = false;
-                }
+                email();
             }
 
             if ($(this).attr('id') == 'password') {
@@ -1215,5 +1139,154 @@ jQuery(document).ready(function() {
         //e.preventDefault();
     	
     });
+
+
+    $('#code').on('blur', function() {
+        code();
+    });
+
+    $('#email').on('blur', function() {
+        email();
+    });
+
+    $('#dni').on('blur', function() {
+        dni();
+    });
+
+    $('#phone').on('blur', function() { 
+        phone();
+    });
+
+    $('#birthday, .glyphicon-calendar').on('click', function() { 
+        $('.fech').next().fadeOut(); 
+    });
+
+    function dni(){
+        var dni = $('#dni').val();
+        if (exp_number.test(dni)) {
+                result_dni = JSON.parse( $.ajax({
+                    url: 'validate/dni',
+                    type: 'post',
+                    data: {dni: dni},
+                    dataType: 'json',
+                    async:false,
+                    success: function (json) {
+                        return json
+                    }
+                }).responseText);
+
+                if (result_dni.msg == 'dni valido') {
+                    $('#dni').removeClass('input-error');
+                    $('#dni').next().fadeOut();
+                }
+                else if(result_dni.err == 'dni no valido') {
+                    $('#dni').addClass('input-error');
+                    $('#dni').next().fadeIn();
+                    $('#dni').next().html('El número de documento que ingresó existe, ingrese otro por favor.');
+                    next_step = false;
+                } 
+        }
+        else{
+                    $('#dni').addClass('input-error');
+                    $('#dni').next().fadeIn(); 
+                    $('#dni').next().html('Es demasiado corto (usa mínimo 6 caracteres).');
+                    next_step = false;
+        }       
+    }
+
+    function phone(){
+        var phone = $('#phone').val();
+        if (exp_phone.test(phone) && phone.length == 10 ) {
+                result_phone = JSON.parse( $.ajax({
+                    url: 'validate/phone',
+                    type: 'post',
+                    data: {phone: phone},
+                    dataType: 'json',
+                    async:false,
+                    success: function (json) {
+                        console.log(json);
+                        return json;
+                    }
+                }).responseText);
+
+                if (result_phone.msg == 'telefono valido') {
+                    $('#phone').removeClass('input-error');
+                    $('#phone').next().fadeOut();
+                }
+                else if(result_phone.err == 'telefono existe') {
+                    $('#phone').addClass('input-error');
+                    $('#phone').next().fadeIn();
+                    $('#phone').next().html('El número de teléfono que ingresó existe, ingrese otro por favor.');
+                } 
+        }
+        else{
+                $('#phone').addClass('input-error');
+                $('#phone').next().fadeIn();
+                $('#phone').next().html('Es demasiado corto o grande (se usa 10 dígitos).');
+            }
+    }
+
+    function email(){
+        var email = $('#email').val();
+        if (exp_email.test(email) && email.length > 0) {
+                result_email = JSON.parse( $.ajax({
+                    url: 'validate/email',
+                    type: 'post',
+                    data: {email: email},
+                    dataType: 'json',
+                    async:false,
+                    success: function (json) {
+                        console.log(json);
+                       
+                    }
+                }).responseText);
+
+                if (result_email.msg == 'email valido') {
+                    $('#email').removeClass('input-error');
+                    $('#email').next().fadeOut();
+                }
+                else if(result_email.err == 'email existe') {
+                    $('#email').addClass('input-error');
+                    $('#email').next().fadeIn();
+                    $('#email').next().html('El email que ingresó existe, ingrese otro por favor.');
+                } 
+        }
+        else{
+                    $('#email').addClass('input-error');
+                    $('#email').next().fadeIn();
+                    $('#email').next().html('Ingresa un correo electrónico válido.');           
+        }
+    }
+
+    function code(){
+        var code = $('#code').val();
+        if (exp_number.test(code)) {
+                result_code = JSON.parse( $.ajax({
+                    url: 'validate/code',
+                    type: 'post',
+                    data: {code: code},
+                    dataType: 'json',
+                    async:false,
+                    success: function (json) {
+                        return json
+                    }
+                }).responseText);
+
+                if (result_code.msg == 'código valido') {
+                    $('#code').removeClass('input-error');
+                    $('#code').next().fadeOut();
+                }
+                else if(result_code.err == 'código no valido') {
+                    $('#code').addClass('input-error');
+                    $('#code').next().fadeIn();
+                    $('#code').next().html('El código de su referido no existe o no se puede hacer red con este código, verifiquelo por favor.');
+                } 
+        }
+        else{
+                    $('#code').addClass('input-error');
+                    $('#code').next().fadeIn();  
+                    $('#code').next().html('Ingresa el código de su referido.');             
+        }
+    } 
 
 });
