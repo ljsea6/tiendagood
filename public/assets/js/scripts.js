@@ -146,16 +146,15 @@ jQuery(document).ready(function() {
         $(this).next().find('.select2-selection--single').removeClass('input-error');
     });
 
-    $('#bank, #type_acount_bank').on('change', function() {
+    $('#bank').on('change', function() {
         if ($(this).attr('id') == 'bank') {
-
             var bank = $(this).val();
             var type_acount_bank = $("#type_acount_bank").val();
             var acount = $("#acount").val();
             console.log(bank);
-
-            if( bank != "") {
-
+            if(bank != "") {
+                $("#bank").next().find('.select2-selection--single').removeClass('input-error');
+                $("#bank").parent().find('.alert-message').fadeOut();
                 if (acount.length == 0){
                     $("#acount").addClass('input-error');
                     $("#acount").parent().find('.alert-message').fadeIn();
@@ -171,25 +170,28 @@ jQuery(document).ready(function() {
                     $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
                     $("#type_acount_bank").parent().find('.alert-message').fadeOut();
                 }
-
             }
             else{
                 $("#bank").next().find('.select2-selection--single').removeClass('input-error');
                 $("#bank").parent().find('.alert-message').fadeOut();
                 $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
                 $("#type_acount_bank").parent().find('.alert-message').fadeOut();
+                $("#acount").next().fadeOut();
+                $("#acount").removeClass('input-error');                 
             }
         }
+    });
 
+    $('#type_acount_bank').on('change', function() {
         if ($(this).attr('id') == 'type_acount_bank') {
-
             var type_acount_bank = $(this).val();
             var acount = $("#acount").val();
             var bank =  $("#bank").val();
             console.log(type_acount_bank);
 
-            if(type_acount_bank != "" ) {
-
+            if(type_acount_bank != "" ) {                
+                $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
+                $("#type_acount_bank").parent().find('.alert-message').fadeOut();
                 if (bank.length == 0){
                     $("#bank").next().find('.select2-selection--single').addClass('input-error');
                     $("#bank").parent().find('.alert-message').fadeIn();
@@ -205,43 +207,54 @@ jQuery(document).ready(function() {
                     $("#acount").next().find('.select2-selection--single').removeClass('input-error');
                     $("#acount").parent().find('.alert-message').fadeOut();
                 }
-
             }
             else{
+                $("#bank").next().find('.select2-selection--single').removeClass('input-error');
+                $("#bank").parent().find('.alert-message').fadeOut();
                 $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
                 $("#type_acount_bank").parent().find('.alert-message').fadeOut();
+                $("#acount").next().fadeOut();
+                $("#acount").removeClass('input-error');                 
             }
         }
     });
 
     $('#acount').on('keyup', function() {
-        if ($(this).attr('id') == 'acount') {
-
-            var acount= $(this).val();
-            var bank = $("#bank").val();
-            var type_acount_bank = $("#type_acount_bank").val();
-
-
-            if (acount != "" || exp_acount.test(acount)) {
-
-                if (bank.length == 0 || type_acount_bank.length == 0){
-
-                    //$("#bank").addClass('input-error');
-                    $("#bank").next().find('.select2-selection--single').addClass('input-error');
-                    $("#bank").parent().find('.alert-message').fadeIn();
-
-                    //$("#bank").addClass('input-error');
-                    $("#type_acount_bank").next().find('.select2-selection--single').addClass('input-error');
-                    $("#type_acount_bank").parent().find('.alert-message').fadeIn();
-
-                }
-
+        var acount= $(this).val();        
+        if (acount != "") {
+            if (exp_acount.test(acount)) {
+                var bank = $("#bank").val();
+                var type_acount_bank = $("#type_acount_bank").val();                
+                    if (bank.length == 0){
+                        $("#bank").next().find('.select2-selection--single').addClass('input-error');
+                        $("#bank").parent().find('.alert-message').fadeIn();
+                    }
+                    else{
+                        $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
+                        $("#type_acount_bank").parent().find('.alert-message').fadeOut();                   
+                    }
+                    if (type_acount_bank.length == 0){
+                        $("#type_acount_bank").next().find('.select2-selection--single').addClass('input-error');
+                        $("#type_acount_bank").parent().find('.alert-message').fadeIn();
+                    }
+                    else{
+                        $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
+                        $("#type_acount_bank").parent().find('.alert-message').fadeOut();                   
+                    }
+                    $(this).next().fadeOut();
+                    $(this).removeClass('input-error');                
             } else {
-
-                $(this).next().fadeOut();
-                $(this).removeClass('input-error');
-                //$(this).addClass('input-error');
+                    $(this).next().fadeIn();
+                    $(this).addClass('input-error');                  
             }
+        }
+        else{
+            $(this).next().fadeOut();
+            $(this).removeClass('input-error'); 
+            $("#bank").next().find('.select2-selection--single').removeClass('input-error');
+            $("#bank").parent().find('.alert-message').fadeOut();
+            $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
+            $("#type_acount_bank").parent().find('.alert-message').fadeOut();             
         }
     });
 
