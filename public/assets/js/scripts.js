@@ -663,19 +663,23 @@ jQuery(document).ready(function() {
             }
 
             if ($(this).attr('id') == 'dni') {
-                next_step = dni();  
+                var info = dni(); 
+                if (info == false){  next_step = false;  }
             }
 
             if ($(this).attr('id') == 'phone') {
-                next_step = phone(); 
+                var info = phone(); 
+                if (info == false){  next_step = false;  }
             }
 
             if ($(this).attr('id') == 'code') {
-                next_step = code();            
+                var info = code();   
+                if (info == false){  next_step = false;  }         
             }
 
             if ($(this).attr('id') == 'email') {
-                next_step = email();
+                var info = email();
+                if (info == false){  next_step = false;  }
             }
 
             if ($(this).attr('id') == 'password') {
@@ -1169,10 +1173,7 @@ jQuery(document).ready(function() {
                     type: 'post',
                     data: {dni: dni},
                     dataType: 'json',
-                    async:false,
-                    success: function (json) {
-                        return json
-                    }
+                    async:false
                 }).responseText);
 
                 if (result_dni.msg == 'dni valido') {
@@ -1204,11 +1205,7 @@ jQuery(document).ready(function() {
                     type: 'post',
                     data: {phone: phone},
                     dataType: 'json',
-                    async:false,
-                    success: function (json) {
-                        console.log(json);
-                        return json;
-                    }
+                    async:false
                 }).responseText);
 
                 if (result_phone.msg == 'telefono valido') {
@@ -1239,11 +1236,7 @@ jQuery(document).ready(function() {
                     type: 'post',
                     data: {email: email},
                     dataType: 'json',
-                    async:false,
-                    success: function (json) {
-                        console.log(json);
-                       
-                    }
+                    async:false
                 }).responseText);
 
                 if (result_email.msg == 'email valido') {
@@ -1274,10 +1267,7 @@ jQuery(document).ready(function() {
                     type: 'post',
                     data: {code: code},
                     dataType: 'json',
-                    async:false,
-                    success: function (json) {
-                        return json
-                    }
+                    async:false
                 }).responseText);
 
                 if (result_code.msg == 'código valido') {
