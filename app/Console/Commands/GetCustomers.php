@@ -9,7 +9,7 @@ use App\Entities\Network;
 use Carbon\Carbon;
 use App\Entities\Tercero;
 use DB;
-
+use Faker\Factory as Faker;
 class GetCustomers extends Command
 {
     /**
@@ -43,7 +43,10 @@ class GetCustomers extends Command
      */
     public function handle()
     {
-        $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        //$api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+
+        $api_url = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';
+
         $client = new \GuzzleHttp\Client();
         $resa = $client->request('GET', $api_url . '/admin/customers/count.json');
         $countCustomers = json_decode($resa->getBody(), true);
@@ -72,6 +75,10 @@ class GetCustomers extends Command
 
                 $this->info('Entrando al for');
 
+                $tercero = Tercero::where('email', strtolower($customer['email']))->first();
+
+                $faker = Faker::create();
+
                 $response = Customer::where('network_id', 1)
                     ->where('customer_id', $customer['id'])
                     ->get();
@@ -80,7 +87,30 @@ class GetCustomers extends Command
 
                     $this->info('Customer no existe');
 
-                    Customer::createCustomer($customer);
+                    $c = Customer::createCustomer($customer);
+
+                    if (count($tercero) == 0) {
+
+                        $usuario = new Tercero();
+                        $usuario->nombres = strtolower($customer['first_name']);
+                        $usuario->apellidos = strtolower($customer['last_name']);
+                        $usuario->direccion = strtolower('dfsdfdfds');
+                        $usuario->telefono = strtolower($customer['phone']);
+                        $usuario->email = strtolower($customer['email']);
+                        $usuario->usuario = strtolower($customer['email']);
+                        $usuario->contraseña = bcrypt('secret');
+                        $usuario->tipo_id = 2;
+                        $usuario->ciudad_id = random_int(1, 1000);
+                        $usuario->celular = $customer['phone'];
+                        $usuario->network_id = 1;
+                        $usuario->tipo_cliente_id = 83;
+                        $usuario->documento_id = 77;
+                        $usuario->identificacion = $c->id;
+                        $usuario->sexo = 'M';
+                        $usuario->fecha_nacimiento = $faker->year(2000);
+                        $usuario->customer_id = $customer['id'];
+                        $usuario->save();
+                    }
                 }
             }
 

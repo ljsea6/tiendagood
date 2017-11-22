@@ -91,7 +91,7 @@ class UsuariosController extends Controller {
 
             $code = Tercero::where('identificacion', strtolower($request->code))->first();
 
-            if (count($code) > 0 && $code->tipo_cliente_id == 83) {
+            if (count($code) > 0 && $code->tipo_cliente_id == 83 && $code->state == true) {
                 return response()->json(['msg' => 'código valido'], 200);
             } else {
                 return response()->json(['err' => 'código no valido'], 200);
@@ -519,6 +519,8 @@ class UsuariosController extends Controller {
 
                 $err = json_decode(($e->getResponse()->getBody()), true);
 
+                //return redirect()->back()->with(['err' => $err]);
+
                 foreach ($err['errors'] as $key => $value) {
 
                     echo $key . ' ' . $value[0] . "\n";
@@ -531,7 +533,7 @@ class UsuariosController extends Controller {
 
         if (count($padre) > 0 ) {
 
-            if ($padre->tipo_cliente_id == 83) {
+            if ($padre->tipo_cliente_id == 83 && $padre->state == true) {
 
                 $result = DB::table('terceros_networks')
                     ->where('customer_id', $usuario->id)

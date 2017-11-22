@@ -47,8 +47,8 @@ class GetOrders extends Command
      */
     public function handle()
     {
-        $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-        //$api_url = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';
+        //$api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $api_url = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';
         $client = new \GuzzleHttp\Client();
 
         $result = true;
@@ -282,7 +282,7 @@ class GetOrders extends Command
                                 }
                             }
 
-                            $tercero = Tercero::with('networks')->where('email', $order['email'])->first();
+                            /*$tercero = Tercero::with('networks')->where('email', $order['email'])->first();
 
                             if (count($tercero) > 0) {
 
@@ -439,7 +439,7 @@ class GetOrders extends Command
                                     $find->ganacias = $find->total_price_orders * 0.05;
                                     $find->save();
                                 }
-                            }
+                            }*/
                         }
                     }
                 }
