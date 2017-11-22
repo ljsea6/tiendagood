@@ -663,19 +663,19 @@ jQuery(document).ready(function() {
             }
 
             if ($(this).attr('id') == 'dni') {
-               dni();
+                next_step = dni();  
             }
 
             if ($(this).attr('id') == 'phone') {
-                phone(); 
+                next_step = phone(); 
             }
 
             if ($(this).attr('id') == 'code') {
-                code();            
+                next_step = code();            
             }
 
             if ($(this).attr('id') == 'email') {
-                email();
+                next_step = email();
             }
 
             if ($(this).attr('id') == 'password') {
@@ -1178,20 +1178,22 @@ jQuery(document).ready(function() {
                 if (result_dni.msg == 'dni valido') {
                     $('#dni').removeClass('input-error');
                     $('#dni').next().fadeOut();
+                    return true;
                 }
                 else if(result_dni.err == 'dni no valido') {
                     $('#dni').addClass('input-error');
                     $('#dni').next().fadeIn();
                     $('#dni').next().html('El número de documento que ingresó existe, ingrese otro por favor.');
-                    next_step = false;
+                    return false;
                 } 
         }
         else{
                     $('#dni').addClass('input-error');
                     $('#dni').next().fadeIn(); 
                     $('#dni').next().html('Es demasiado corto (usa mínimo 6 caracteres).');
-                    next_step = false;
-        }       
+                    return false;
+        } 
+
     }
 
     function phone(){
@@ -1212,17 +1214,20 @@ jQuery(document).ready(function() {
                 if (result_phone.msg == 'telefono valido') {
                     $('#phone').removeClass('input-error');
                     $('#phone').next().fadeOut();
+                    return true;
                 }
                 else if(result_phone.err == 'telefono existe') {
                     $('#phone').addClass('input-error');
                     $('#phone').next().fadeIn();
                     $('#phone').next().html('El número de teléfono que ingresó existe, ingrese otro por favor.');
+                    return false;
                 } 
         }
         else{
                 $('#phone').addClass('input-error');
                 $('#phone').next().fadeIn();
                 $('#phone').next().html('Es demasiado corto o grande (se usa 10 dígitos).');
+                return false;
             }
     }
 
@@ -1244,17 +1249,20 @@ jQuery(document).ready(function() {
                 if (result_email.msg == 'email valido') {
                     $('#email').removeClass('input-error');
                     $('#email').next().fadeOut();
+                    return true;
                 }
                 else if(result_email.err == 'email existe') {
                     $('#email').addClass('input-error');
                     $('#email').next().fadeIn();
                     $('#email').next().html('El email que ingresó existe, ingrese otro por favor.');
+                    return false;
                 } 
         }
         else{
                     $('#email').addClass('input-error');
                     $('#email').next().fadeIn();
-                    $('#email').next().html('Ingresa un correo electrónico válido.');           
+                    $('#email').next().html('Ingresa un correo electrónico válido.');  
+                    return false;         
         }
     }
 
@@ -1275,17 +1283,20 @@ jQuery(document).ready(function() {
                 if (result_code.msg == 'código valido') {
                     $('#code').removeClass('input-error');
                     $('#code').next().fadeOut();
+                    return true;
                 }
                 else if(result_code.err == 'código no valido') {
                     $('#code').addClass('input-error');
                     $('#code').next().fadeIn();
                     $('#code').next().html('El código de su referido no existe o no se puede hacer red con este código, verifiquelo por favor.');
+                    return false;
                 } 
         }
         else{
                     $('#code').addClass('input-error');
                     $('#code').next().fadeIn();  
-                    $('#code').next().html('Ingresa el código de su referido.');             
+                    $('#code').next().html('Ingresa el código de su referido.'); 
+                    return false;            
         }
     } 
 
