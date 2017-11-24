@@ -109,7 +109,7 @@
 
         <div class="box">
             <div class="panel panel-default">
-                <div class="panel-heading font-header">Nivel 3</div>
+                <div class="panel-heading font-header">Nivel 2</div>
                 <div class="panel-body">
                     @if (session('status'))
                         <div class="alert alert-info fade in col-sm-12 col-md-12 col-lg-12">
@@ -134,7 +134,6 @@
             </div>
         </div>
 
-
 </section>
 
 
@@ -143,7 +142,7 @@
 @push('scripts')
     <script>
         $(document).ready(function(){
-            $(function() {
+
                 $('#terceros1').DataTable({
                     responsive: true,
                     processing: true,
@@ -169,68 +168,59 @@
 
                 });
 
-            });
-        });
-
-        $(document).ready(function(){
-            $(function() {
-                $('#terceros2').DataTable({
-                    responsive: true,
-                    processing: true,
-                    serverSide: true,
-                    deferRender: true,
-                    pagingType: "full_numbers",
-                    ajax: {
-                        url: '{{route('admin.two')}}',
-                        type: 'post',
-                        data: function ( d ) {
-                            d.level = 2;
-                            d.id = '{{currentUser()->id}}'
-                        }
-                    },
-                    /*columns: [
-                        { data: 'id', name: 'id', orderable: true, searchable: false },
-                        { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                        { data: 'email', name: 'email', orderable: true }
-                    ],*/
-                    language: {
-                        url: "{{ asset('css/Spanish.json') }}"
-                    },
-
-                });
+            $('#terceros2').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                deferRender: true,
+                pagingType: "full_numbers",
+                ajax: {
+                    url: '{{route('admin.two')}}',
+                    type: 'post',
+                    data: function ( d ) {
+                        d.level = 2;
+                        d.id = '{{currentUser()->id}}'
+                    }
+                },
+                columns: [
+                    { data: 'id', name: 'id', orderable: true, searchable: false },
+                    { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
+                    { data: 'email', name: 'email', orderable: true }
+                ],
+                language: {
+                    url: "{{ asset('css/Spanish.json') }}"
+                },
 
             });
-        });
 
-        $(document).ready(function(){
-            $(function() {
-                $('#terceros3').DataTable({
-                    responsive: true,
-                    processing: true,
-                    serverSide: true,
-                    deferRender: true,
-                    pagingType: "full_numbers",
-                    ajax: {
-                        url: '{{route('admin.tree')}}',
-                        type: 'post',
-                        data: function ( d ) {
-                            d.level = 3;
-                            d.id = '{{currentUser()->id}}'
-                        }
-                    },
-                    /*columns: [
-                        { data: 'id', name: 'id', orderable: true, searchable: false },
-                        { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                        { data: 'email', name: 'email', orderable: true }
-                    ],*/
-                    language: {
-                        url: "{{ asset('css/Spanish.json') }}"
-                    },
-
-                });
+            $('#terceros3').DataTable({
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                deferRender: true,
+                pagingType: "full_numbers",
+                ajax: {
+                    url: '{{route('admin.tree')}}',
+                    type: 'post',
+                    data: function ( d ) {
+                        d.level = 3;
+                        d.id = '{{currentUser()->id}}'
+                    }
+                },
+                columns: [
+                    { data: 'id', name: 'id', orderable: true, searchable: false },
+                    { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
+                    { data: 'email', name: 'email', orderable: true }
+                ],
+                language: {
+                    url: "{{ asset('css/Spanish.json') }}"
+                },
 
             });
+
         });
+
+
 
     </script>
 @endpush
