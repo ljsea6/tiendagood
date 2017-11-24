@@ -324,7 +324,7 @@ a {
 				
 								<tr>
 									<td class="content-block" itemprop="handler" itemscope itemtype="http://schema.org/HttpActionHandler">
-                                                                            <a href="http://47b1edb2.ngrok.io/?q={{$code}}" class="btn-primary" itemprop="url">¡Registrate con mi código <strong>{{$code}}</strong> dando click aquí!</a>
+                                                                            <a href="http://demo.tiendagood.com/?q={{$code}}" class="btn-primary" itemprop="url">¡Registrate con mi código <strong>{{$code}}</strong> dando click aquí!</a>
 									</td>
 								</tr>
 								
