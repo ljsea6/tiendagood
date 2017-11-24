@@ -70,16 +70,8 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Identificacón</th>
                                 <th>Nombres</th>
-                                <th>Apellidos</th>
-                                <th>Código</th>
-                                <th>Referidos</th>
-                                <th>Ordenes Referidos</th>
-                                <th>Valor Compras Referidos</th>
-                                <th>Acumulado</th>
-                                <th style="text-align: center;">Ver redes</th>
-                                <th style="text-align: center;">Acciones</th>
+                                <th>Email</th>
                             </tr>
                             </thead>
                         </table>
@@ -105,16 +97,8 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Identificacón</th>
                                 <th>Nombres</th>
-                                <th>Apellidos</th>
-                                <th>Código</th>
-                                <th>Referidos</th>
-                                <th>Ordenes Referidos</th>
-                                <th>Valor Compras Referidos</th>
-                                <th>Acumulado</th>
-                                <th style="text-align: center;">Ver redes</th>
-                                <th style="text-align: center;">Acciones</th>
+                                <th>Email</th>
                             </tr>
                             </thead>
                         </table>
@@ -140,16 +124,8 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Identificacón</th>
                                 <th>Nombres</th>
-                                <th>Apellidos</th>
-                                <th>Código</th>
-                                <th>Referidos</th>
-                                <th>Ordenes Referidos</th>
-                                <th>Valor Compras Referidos</th>
-                                <th>Acumulado</th>
-                                <th style="text-align: center;">Ver redes</th>
-                                <th style="text-align: center;">Acciones</th>
+                                <th>Email</th>
                             </tr>
                             </thead>
                         </table>
@@ -186,16 +162,8 @@
                     },
                     columns: [
                         { data: 'id', name: 'id', orderable: true, searchable: false },
-                        { data: 'identificacion', name: 'identificacion', orderable: true, searchable: true },
                         { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                        { data: 'apellidos', name: 'apellidos', orderable: true },
-                        { data: 'email', name: 'email', orderable: true },
-                        { data: 'numero_referidos', name: 'numero_referidos', orderable: true },
-                        { data: 'numero_ordenes_referidos', name: 'numero_ordenes_referidos', orderable: true },
-                        { data: 'total_price_orders', name: 'total_price_orders', orderable: true },
-                        { data: 'ganacias', name: 'ganacias', orderable: true },
-                        { data: 'action', name: 'red', orderable: false, searchable: false, className: "centrar"},
-                        { data: 'edit', name: 'editar', orderable: false, searchable: false, className: "centrar"}
+                        { data: 'email', name: 'email', orderable: true }
                     ],
                     language: {
                         url: "{{ asset('css/Spanish.json') }}"
@@ -226,16 +194,8 @@
                     },
                     columns: [
                         { data: 'id', name: 'id', orderable: true, searchable: false },
-                        { data: 'identificacion', name: 'identificacion', orderable: true, searchable: true },
                         { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                        { data: 'apellidos', name: 'apellidos', orderable: true },
-                        { data: 'email', name: 'email', orderable: true },
-                        { data: 'numero_referidos', name: 'numero_referidos', orderable: true },
-                        { data: 'numero_ordenes_referidos', name: 'numero_ordenes_referidos', orderable: true },
-                        { data: 'total_price_orders', name: 'total_price_orders', orderable: true },
-                        { data: 'ganacias', name: 'ganacias', orderable: true },
-                        { data: 'action', name: 'red', orderable: false, searchable: false, className: "centrar"},
-                        { data: 'edit', name: 'editar', orderable: false, searchable: false, className: "centrar"}
+                        { data: 'email', name: 'email', orderable: true }
                     ],
                     language: {
                         url: "{{ asset('css/Spanish.json') }}"
@@ -266,16 +226,8 @@
                     },
                     columns: [
                         { data: 'id', name: 'id', orderable: true, searchable: false },
-                        { data: 'identificacion', name: 'identificacion', orderable: true, searchable: true },
                         { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                        { data: 'apellidos', name: 'apellidos', orderable: true },
-                        { data: 'email', name: 'email', orderable: true },
-                        { data: 'numero_referidos', name: 'numero_referidos', orderable: true },
-                        { data: 'numero_ordenes_referidos', name: 'numero_ordenes_referidos', orderable: true },
-                        { data: 'total_price_orders', name: 'total_price_orders', orderable: true },
-                        { data: 'ganacias', name: 'ganacias', orderable: true },
-                        { data: 'action', name: 'red', orderable: false, searchable: false, className: "centrar"},
-                        { data: 'edit', name: 'editar', orderable: false, searchable: false, className: "centrar"}
+                        { data: 'email', name: 'email', orderable: true }
                     ],
                     language: {
                         url: "{{ asset('css/Spanish.json') }}"

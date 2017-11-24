@@ -4263,35 +4263,6 @@ class OrdersController extends Controller
     }
     public function contador()
     {
-        $padre = 1;
-        $cont = 0;
-        $terceros = Tercero::where('id', '>', 1)->get();
 
-        foreach ($terceros as $tercero) {
-
-            $cont++;
-
-            DB::table('terceros_networks')->insert(
-                [
-                    'customer_id' => $tercero->id,
-                    'network_id' => 1,
-                    'padre_id' => $padre,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
-                ]
-            );
-
-
-
-            if ($cont == 50) {
-                $cont = 0;
-
-                $padre++;
-            }
-
-
-        }
-
-        return response()->json(['msg' => 'Hecho']);
     }
 }
