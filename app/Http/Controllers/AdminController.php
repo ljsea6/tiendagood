@@ -1,6 +1,6 @@
 <?php
-namespace App\Http\Controllers;
 
+namespace App\Http\Controllers;
 
 use DB;
 use Mail;
@@ -236,14 +236,14 @@ class AdminController extends Controller {
 
     public function level_one(Request $request)
     {
-
-
-        $tercero = Tercero::find((int)$request['id']);
+        return $request->all();
+        $tercero = Tercero::find(1);
         $results  = DB::table('terceros')
             ->join('networks', 'terceros.network_id', '=', 'networks.id')
             ->where('terceros.apellidos',  $tercero['email'])
             ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
             ->get();
+
         $send = collect($tercero);
         return Datatables::of($send)
             ->addColumn('id', function ($send) {
@@ -264,12 +264,14 @@ class AdminController extends Controller {
 
     public function level_two(Request $request)
     {
-        $tercero = Tercero::find((int)$request['id']);
+        return $request->all();
+        $tercero = Tercero::find(1);
         $results  = DB::table('terceros')
             ->join('networks', 'terceros.network_id', '=', 'networks.id')
             ->where('terceros.apellidos',  $tercero['email'])
             ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
             ->get();
+
         $send = collect($tercero);
         return Datatables::of($send)
             ->addColumn('id', function ($send) {
@@ -290,12 +292,14 @@ class AdminController extends Controller {
 
     public function level_tree(Request $request)
     {
-        $tercero = Tercero::find((int)$request['id']);
+        return $request->all();
+        $tercero = Tercero::find(1);
         $results  = DB::table('terceros')
             ->join('networks', 'terceros.network_id', '=', 'networks.id')
             ->where('terceros.apellidos',  $tercero['email'])
             ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
             ->get();
+
         $send = collect($tercero);
         return Datatables::of($send)
             ->addColumn('id', function ($send) {
