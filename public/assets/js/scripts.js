@@ -146,16 +146,15 @@ jQuery(document).ready(function() {
         $(this).next().find('.select2-selection--single').removeClass('input-error');
     });
 
-    $('#bank, #type_acount_bank').on('change', function() {
+    $('#bank').on('change', function() {
         if ($(this).attr('id') == 'bank') {
-
             var bank = $(this).val();
             var type_acount_bank = $("#type_acount_bank").val();
             var acount = $("#acount").val();
             console.log(bank);
-
-            if( bank != "") {
-
+            if(bank != "") {
+                $("#bank").next().find('.select2-selection--single').removeClass('input-error');
+                $("#bank").parent().find('.alert-message').fadeOut();
                 if (acount.length == 0){
                     $("#acount").addClass('input-error');
                     $("#acount").parent().find('.alert-message').fadeIn();
@@ -171,25 +170,28 @@ jQuery(document).ready(function() {
                     $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
                     $("#type_acount_bank").parent().find('.alert-message').fadeOut();
                 }
-
             }
             else{
                 $("#bank").next().find('.select2-selection--single').removeClass('input-error');
                 $("#bank").parent().find('.alert-message').fadeOut();
                 $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
                 $("#type_acount_bank").parent().find('.alert-message').fadeOut();
+                $("#acount").next().fadeOut();
+                $("#acount").removeClass('input-error');                 
             }
         }
+    });
 
+    $('#type_acount_bank').on('change', function() {
         if ($(this).attr('id') == 'type_acount_bank') {
-
             var type_acount_bank = $(this).val();
             var acount = $("#acount").val();
             var bank =  $("#bank").val();
             console.log(type_acount_bank);
 
-            if(type_acount_bank != "" ) {
-
+            if(type_acount_bank != "" ) {                
+                $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
+                $("#type_acount_bank").parent().find('.alert-message').fadeOut();
                 if (bank.length == 0){
                     $("#bank").next().find('.select2-selection--single').addClass('input-error');
                     $("#bank").parent().find('.alert-message').fadeIn();
@@ -205,43 +207,54 @@ jQuery(document).ready(function() {
                     $("#acount").next().find('.select2-selection--single').removeClass('input-error');
                     $("#acount").parent().find('.alert-message').fadeOut();
                 }
-
             }
             else{
+                $("#bank").next().find('.select2-selection--single').removeClass('input-error');
+                $("#bank").parent().find('.alert-message').fadeOut();
                 $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
                 $("#type_acount_bank").parent().find('.alert-message').fadeOut();
+                $("#acount").next().fadeOut();
+                $("#acount").removeClass('input-error');                 
             }
         }
     });
 
     $('#acount').on('keyup', function() {
-        if ($(this).attr('id') == 'acount') {
-
-            var acount= $(this).val();
-            var bank = $("#bank").val();
-            var type_acount_bank = $("#type_acount_bank").val();
-
-
-            if (acount != "" || exp_acount.test(acount)) {
-
-                if (bank.length == 0 || type_acount_bank.length == 0){
-
-                    //$("#bank").addClass('input-error');
-                    $("#bank").next().find('.select2-selection--single').addClass('input-error');
-                    $("#bank").parent().find('.alert-message').fadeIn();
-
-                    //$("#bank").addClass('input-error');
-                    $("#type_acount_bank").next().find('.select2-selection--single').addClass('input-error');
-                    $("#type_acount_bank").parent().find('.alert-message').fadeIn();
-
-                }
-
+        var acount= $(this).val();        
+        if (acount != "") {
+            if (exp_acount.test(acount)) {
+                var bank = $("#bank").val();
+                var type_acount_bank = $("#type_acount_bank").val();                
+                    if (bank.length == 0){
+                        $("#bank").next().find('.select2-selection--single').addClass('input-error');
+                        $("#bank").parent().find('.alert-message').fadeIn();
+                    }
+                    else{
+                        $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
+                        $("#type_acount_bank").parent().find('.alert-message').fadeOut();                   
+                    }
+                    if (type_acount_bank.length == 0){
+                        $("#type_acount_bank").next().find('.select2-selection--single').addClass('input-error');
+                        $("#type_acount_bank").parent().find('.alert-message').fadeIn();
+                    }
+                    else{
+                        $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
+                        $("#type_acount_bank").parent().find('.alert-message').fadeOut();                   
+                    }
+                    $(this).next().fadeOut();
+                    $(this).removeClass('input-error');                
             } else {
-
-                $(this).next().fadeOut();
-                $(this).removeClass('input-error');
-                //$(this).addClass('input-error');
+                    $(this).next().fadeIn();
+                    $(this).addClass('input-error');                  
             }
+        }
+        else{
+            $(this).next().fadeOut();
+            $(this).removeClass('input-error'); 
+            $("#bank").next().find('.select2-selection--single').removeClass('input-error');
+            $("#bank").parent().find('.alert-message').fadeOut();
+            $("#type_acount_bank").next().find('.select2-selection--single').removeClass('input-error');
+            $("#type_acount_bank").parent().find('.alert-message').fadeOut();             
         }
     });
 
@@ -663,19 +676,23 @@ jQuery(document).ready(function() {
             }
 
             if ($(this).attr('id') == 'dni') {
-               dni();
+                var info = dni(); 
+                if (info == false){  next_step = false;  }
             }
 
             if ($(this).attr('id') == 'phone') {
-                phone(); 
+                var info = phone(); 
+                if (info == false){  next_step = false;  }
             }
 
             if ($(this).attr('id') == 'code') {
-                code();            
+                var info = code();   
+                if (info == false){  next_step = false;  }         
             }
 
             if ($(this).attr('id') == 'email') {
-                email();
+                var info = email();
+                if (info == false){  next_step = false;  }
             }
 
             if ($(this).attr('id') == 'password') {
@@ -1169,29 +1186,28 @@ jQuery(document).ready(function() {
                     type: 'post',
                     data: {dni: dni},
                     dataType: 'json',
-                    async:false,
-                    success: function (json) {
-                        return json
-                    }
+                    async:false
                 }).responseText);
 
                 if (result_dni.msg == 'dni valido') {
                     $('#dni').removeClass('input-error');
                     $('#dni').next().fadeOut();
+                    return true;
                 }
                 else if(result_dni.err == 'dni no valido') {
                     $('#dni').addClass('input-error');
                     $('#dni').next().fadeIn();
                     $('#dni').next().html('El número de documento que ingresó existe, ingrese otro por favor.');
-                    next_step = false;
+                    return false;
                 } 
         }
         else{
                     $('#dni').addClass('input-error');
                     $('#dni').next().fadeIn(); 
                     $('#dni').next().html('Es demasiado corto (usa mínimo 6 caracteres).');
-                    next_step = false;
-        }       
+                    return false;
+        } 
+
     }
 
     function phone(){
@@ -1202,27 +1218,26 @@ jQuery(document).ready(function() {
                     type: 'post',
                     data: {phone: phone},
                     dataType: 'json',
-                    async:false,
-                    success: function (json) {
-                        console.log(json);
-                        return json;
-                    }
+                    async:false
                 }).responseText);
 
                 if (result_phone.msg == 'telefono valido') {
                     $('#phone').removeClass('input-error');
                     $('#phone').next().fadeOut();
+                    return true;
                 }
                 else if(result_phone.err == 'telefono existe') {
                     $('#phone').addClass('input-error');
                     $('#phone').next().fadeIn();
                     $('#phone').next().html('El número de teléfono que ingresó existe, ingrese otro por favor.');
+                    return false;
                 } 
         }
         else{
                 $('#phone').addClass('input-error');
                 $('#phone').next().fadeIn();
                 $('#phone').next().html('Es demasiado corto o grande (se usa 10 dígitos).');
+                return false;
             }
     }
 
@@ -1234,27 +1249,26 @@ jQuery(document).ready(function() {
                     type: 'post',
                     data: {email: email},
                     dataType: 'json',
-                    async:false,
-                    success: function (json) {
-                        console.log(json);
-                       
-                    }
+                    async:false
                 }).responseText);
 
                 if (result_email.msg == 'email valido') {
                     $('#email').removeClass('input-error');
                     $('#email').next().fadeOut();
+                    return true;
                 }
                 else if(result_email.err == 'email existe') {
                     $('#email').addClass('input-error');
                     $('#email').next().fadeIn();
                     $('#email').next().html('El email que ingresó existe, ingrese otro por favor.');
+                    return false;
                 } 
         }
         else{
                     $('#email').addClass('input-error');
                     $('#email').next().fadeIn();
-                    $('#email').next().html('Ingresa un correo electrónico válido.');           
+                    $('#email').next().html('Ingresa un correo electrónico válido.');  
+                    return false;         
         }
     }
 
@@ -1266,26 +1280,26 @@ jQuery(document).ready(function() {
                     type: 'post',
                     data: {code: code},
                     dataType: 'json',
-                    async:false,
-                    success: function (json) {
-                        return json
-                    }
+                    async:false
                 }).responseText);
 
                 if (result_code.msg == 'código valido') {
                     $('#code').removeClass('input-error');
                     $('#code').next().fadeOut();
+                    return true;
                 }
                 else if(result_code.err == 'código no valido') {
                     $('#code').addClass('input-error');
                     $('#code').next().fadeIn();
                     $('#code').next().html('El código de su referido no existe o no se puede hacer red con este código, verifiquelo por favor.');
+                    return false;
                 } 
         }
         else{
                     $('#code').addClass('input-error');
                     $('#code').next().fadeIn();  
-                    $('#code').next().html('Ingresa el código de su referido.');             
+                    $('#code').next().html('Ingresa el código de su referido.'); 
+                    return false;            
         }
     } 
 
