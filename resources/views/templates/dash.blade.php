@@ -22,7 +22,7 @@
     {!! Html::style('js/Jit/Examples/css/base.css') !!}
     {!! Html::style('js/Jit/Examples/css/Spacetree.css') !!}
 
-    {!! Html::style('css/app.min.css') !!}
+    {!! Html::style('css/app.min.css?act=1') !!}
 
      @yield('styles')
     <!--[if lt IE 9]>
