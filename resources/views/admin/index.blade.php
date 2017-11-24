@@ -153,14 +153,12 @@
                     ajax: {
                         url: '{{route('admin.one')}}',
                         type: 'post',
-                        contentType: "application/json",
-                        dataType: 'json',
-                        data: {
-                            level: 1,
-                            id: '{{currentUser()->id}}'
+                        data: function ( d ) {
+                            d.level = 1;
+                            d.id = '{{currentUser()->id}}'
                         }
                     },
-                    columns: [
+                   columns: [
                         { data: 'id', name: 'id', orderable: true, searchable: false },
                         { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
                         { data: 'email', name: 'email', orderable: true }
@@ -185,18 +183,16 @@
                     ajax: {
                         url: '{{route('admin.two')}}',
                         type: 'post',
-                        contentType: "application/json",
-                        dataType: 'json',
-                        data: {
-                            level: 2,
-                            id: '{{currentUser()->id}}'
+                        data: function ( d ) {
+                            d.level = 2;
+                            d.id = '{{currentUser()->id}}'
                         }
                     },
-                    columns: [
+                    /*columns: [
                         { data: 'id', name: 'id', orderable: true, searchable: false },
                         { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
                         { data: 'email', name: 'email', orderable: true }
-                    ],
+                    ],*/
                     language: {
                         url: "{{ asset('css/Spanish.json') }}"
                     },
@@ -217,18 +213,16 @@
                     ajax: {
                         url: '{{route('admin.tree')}}',
                         type: 'post',
-                        contentType: "application/json",
-                        dataType: 'json',
-                        data: {
-                            level: 3,
-                            id: '{{currentUser()->id}}'
+                        data: function ( d ) {
+                            d.level = 3;
+                            d.id = '{{currentUser()->id}}'
                         }
                     },
-                    columns: [
+                    /*columns: [
                         { data: 'id', name: 'id', orderable: true, searchable: false },
                         { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
                         { data: 'email', name: 'email', orderable: true }
-                    ],
+                    ],*/
                     language: {
                         url: "{{ asset('css/Spanish.json') }}"
                     },

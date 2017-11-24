@@ -236,85 +236,80 @@ class AdminController extends Controller {
 
     public function level_one(Request $request)
     {
-        return $request->all();
-        $tercero = Tercero::find(1);
-        $results  = DB::table('terceros')
-            ->join('networks', 'terceros.network_id', '=', 'networks.id')
-            ->where('terceros.apellidos',  $tercero['email'])
-            ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
-            ->get();
-
-        $send = collect($tercero);
-        return Datatables::of($send)
-            ->addColumn('id', function ($send) {
-                return '<div align=left>' . $send->id . '</div>';
-            })
-            ->addColumn('nombres', function ($send) {
-                return '<div align=left>' . $send->nombres . '</div>';
-            })
-            ->addColumn('email', function ($send) {
-                return '<div align=left>' . $send->email . '</div>';
-            })
-            ->make(true);
-
         if ($request->has('level') && $request->has('id')) {
-            return response()->json($request->all());
+            $tercero = Tercero::find($request->id);
+            $results  = DB::table('terceros')
+                ->join('networks', 'terceros.network_id', '=', 'networks.id')
+                ->where('terceros.apellidos',  $tercero['email'])
+                ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
+                ->get();
+
+            $send = collect($tercero);
+            return Datatables::of($send)
+                ->addColumn('id', function ($send) {
+                    return '<div align=left>' . $send['id'] . '</div>';
+                })
+                ->addColumn('nombres', function ($send) {
+                    return '<div align=left>' . $send['nombres'] . '</div>';
+                })
+                ->addColumn('email', function ($send) {
+                    return '<div align=left>' . $send['email'] . '</div>';
+                })
+                ->make(true);
         }
+
+
+
+
     }
 
     public function level_two(Request $request)
     {
-        return $request->all();
-        $tercero = Tercero::find(1);
-        $results  = DB::table('terceros')
-            ->join('networks', 'terceros.network_id', '=', 'networks.id')
-            ->where('terceros.apellidos',  $tercero['email'])
-            ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
-            ->get();
-
-        $send = collect($tercero);
-        return Datatables::of($send)
-            ->addColumn('id', function ($send) {
-                return '<div align=left>' . $send->id . '</div>';
-            })
-            ->addColumn('nombres', function ($send) {
-                return '<div align=left>' . $send->nombres . '</div>';
-            })
-            ->addColumn('email', function ($send) {
-                return '<div align=left>' . $send->email . '</div>';
-            })
-            ->make(true);
-        return response()->json($request->all());
         if ($request->has('level') && $request->has('id')) {
-            return response()->json($request->all());
+            $tercero = Tercero::find($request->id);
+            $results  = DB::table('terceros')
+                ->join('networks', 'terceros.network_id', '=', 'networks.id')
+                ->where('terceros.apellidos',  $tercero['email'])
+                ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
+                ->get();
+
+            $send = collect($tercero);
+            return Datatables::of($send)
+                ->addColumn('id', function ($send) {
+                    return '<div align=left>' . $send['id'] . '</div>';
+                })
+                ->addColumn('nombres', function ($send) {
+                    return '<div align=left>' . $send['nombres'] . '</div>';
+                })
+                ->addColumn('email', function ($send) {
+                    return '<div align=left>' . $send['email'] . '</div>';
+                })
+                ->make(true);
         }
     }
 
     public function level_tree(Request $request)
     {
-        return $request->all();
-        $tercero = Tercero::find(1);
-        $results  = DB::table('terceros')
-            ->join('networks', 'terceros.network_id', '=', 'networks.id')
-            ->where('terceros.apellidos',  $tercero['email'])
-            ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
-            ->get();
-
-        $send = collect($tercero);
-        return Datatables::of($send)
-            ->addColumn('id', function ($send) {
-                return '<div align=left>' . $send->id . '</div>';
-            })
-            ->addColumn('nombres', function ($send) {
-                return '<div align=left>' . $send->nombres . '</div>';
-            })
-            ->addColumn('email', function ($send) {
-                return '<div align=left>' . $send->email . '</div>';
-            })
-            ->make(true);
-        return response()->json($request->all());
         if ($request->has('level') && $request->has('id')) {
-            return response()->json($request->all());
+            $tercero = Tercero::find($request->id);
+            $results  = DB::table('terceros')
+                ->join('networks', 'terceros.network_id', '=', 'networks.id')
+                ->where('terceros.apellidos',  $tercero['email'])
+                ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
+                ->get();
+
+            $send = collect($tercero);
+            return Datatables::of($send)
+                ->addColumn('id', function ($send) {
+                    return '<div align=left>' . $send['id'] . '</div>';
+                })
+                ->addColumn('nombres', function ($send) {
+                    return '<div align=left>' . $send['nombres'] . '</div>';
+                })
+                ->addColumn('email', function ($send) {
+                    return '<div align=left>' . $send['email'] . '</div>';
+                })
+                ->make(true);
         }
     }
 
