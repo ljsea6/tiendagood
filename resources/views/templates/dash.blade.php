@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>@yield('titulo') | Home </title>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="icon" href="{{ asset('img/r_icono.png') }}" type="image/x-icon">
+    <link rel="icon" href="https://cdn.shopify.com/s/files/1/2256/3751/files/favicon-96x96.png?14986824105996215938" type="image/x-icon">
     {!! Html::style('css/bootstrap.min.css') !!}
     {!! Html::style('css/icon.css') !!}
     {!! Html::style('css/font-awesome.min.css') !!}

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login Hello</title>
+    <title>Login Good</title>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <link rel="icon" href="https://cdn.shopify.com/s/files/1/2256/3751/files/favicon-96x96.png?14986824105996215938" type="image/x-icon">
 
@@ -220,14 +220,14 @@
                         <label for="user-id">Usuario</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input type="text" name="usuario" id="usuario" class="form-control campo-access" placeholder="Ingresa tu usuario" readonly="readonly">
+                            <input type="text" name="usuario" id="usuario" class="form-control campo-access" placeholder="Ingresa tu usuario">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="pass-id">Contraseña</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-unlock-alt" aria-hidden="true"></i></span>
-                            <input type="password" name="password" id="password" class="form-control  campo-access" placeholder="Ingresa tu password" readonly="readonly">
+                            <input type="password" name="password" id="password" class="form-control  campo-access" placeholder="Ingresa tu password">
                         </div>
                     </div>
 
@@ -243,7 +243,7 @@
 
                     <div class="form-group text-center">
                         <a href="/" style="color: white" class="btn submit-access col-xs-12">Registrarme</a><br><br>
-                        <input type="submit" name="submit" value="Ingresar" id="submit-form" class="btn submit-access col-xs-12" disabled>
+                        <input type="submit" name="submit" value="Ingresar" id="submit-form" class="btn submit-access col-xs-12">
 
                     </div>
                 </div>

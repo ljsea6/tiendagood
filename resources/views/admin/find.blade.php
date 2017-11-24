@@ -26,7 +26,6 @@
                             </tr>
                             </thead>
                             <tbody>
-
                                     @foreach ($results as $result)
                                         <tr>
                                             <td class="text-left">{{$result['id']}}</td>
@@ -35,8 +34,6 @@
                                             <td class="text-left">{{$result['apellidos']}}</td>
                                         </tr>
                                     @endforeach
-
-
                             </tbody>
                         </table>
                         @endif

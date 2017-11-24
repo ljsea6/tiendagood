@@ -1,6 +1,6 @@
 @extends('templates.main')
 
-@section('titulo','Resetear contraseña - Domina')
+@section('titulo','Resetear contraseña - Good')
 
 @section('body_class','hold-transition login-page')
 

@@ -5,7 +5,7 @@
 @section('content')
 
     <section class="invoice">
-        <div class="page-header no-breadcrumb font-header"><i class="fa fa-user"></i>¡Bienvenido {{ currentUser()->nombre_completo }}!</div>
+        <div class="page-header no-breadcrumb font-header"><i class="fa fa-user"></i>¡Bienvenido(a) {{ currentUser()->nombre_completo }}!</div>
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="row">
@@ -20,7 +20,7 @@
                                     <h2 class="font-header no-m">{{number_format($send->numero_referidos)}}</h2>
                                 </div>
                                 <div class="detail text-right">
-                                    <div class="text-upper">#Referidos</div>
+                                    <div class="text-upper">Tus puntos</div>
                                 </div>
                             </div>
                         </div>
@@ -32,7 +32,7 @@
                                     <h2 class="font-header no-m">{{number_format($send->numero_ordenes_referidos)}}</h2>
                                 </div>
                                 <div class="detail text-right">
-                                    <div class="text-upper">#Compras</div>
+                                    <div class="text-upper">Tus compras</div>
                                 </div>
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                                     <h2 class="font-header no-m">{{number_format($send->total_price_orders)}}</h2>
                                 </div>
                                 <div class="detail text-right">
-                                    <small class="text-upper">$ Total Compras</small>
+                                    <small class="text-upper">$ Total de tus puntos</small>
                                 </div>
                             </div>
                         </div>
@@ -53,9 +53,239 @@
             </div>
         </div>
 
-       
+        <div class="box">
+            <div class="panel panel-default">
+                <div class="panel-heading font-header">Nivel 1</div>
+                <div class="panel-body">
+                    @if (session('status'))
+                        <div class="alert alert-info fade in col-sm-12 col-md-12 col-lg-12">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <ul>
+                                <li>{{ session('status') }}</li>
+                            </ul>
+                        </div>
+                    @endif
+                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                        <table data-order='[[ 0, "asc" ]]' id="terceros1" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Identificacón</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Código</th>
+                                <th>Referidos</th>
+                                <th>Ordenes Referidos</th>
+                                <th>Valor Compras Referidos</th>
+                                <th>Acumulado</th>
+                                <th style="text-align: center;">Ver redes</th>
+                                <th style="text-align: center;">Acciones</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="panel panel-default">
+                <div class="panel-heading font-header">Nivel 2</div>
+                <div class="panel-body">
+                    @if (session('status'))
+                        <div class="alert alert-info fade in col-sm-12 col-md-12 col-lg-12">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <ul>
+                                <li>{{ session('status') }}</li>
+                            </ul>
+                        </div>
+                    @endif
+                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                        <table data-order='[[ 0, "asc" ]]' id="terceros2" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Identificacón</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Código</th>
+                                <th>Referidos</th>
+                                <th>Ordenes Referidos</th>
+                                <th>Valor Compras Referidos</th>
+                                <th>Acumulado</th>
+                                <th style="text-align: center;">Ver redes</th>
+                                <th style="text-align: center;">Acciones</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="panel panel-default">
+                <div class="panel-heading font-header">Nivel 3</div>
+                <div class="panel-body">
+                    @if (session('status'))
+                        <div class="alert alert-info fade in col-sm-12 col-md-12 col-lg-12">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <ul>
+                                <li>{{ session('status') }}</li>
+                            </ul>
+                        </div>
+                    @endif
+                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                        <table data-order='[[ 0, "asc" ]]' id="terceros3" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Identificacón</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Código</th>
+                                <th>Referidos</th>
+                                <th>Ordenes Referidos</th>
+                                <th>Valor Compras Referidos</th>
+                                <th>Acumulado</th>
+                                <th style="text-align: center;">Ver redes</th>
+                                <th style="text-align: center;">Acciones</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
 </section>
 
 
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function(){
+            $(function() {
+                $('#terceros1').DataTable({
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+                    deferRender: true,
+                    pagingType: "full_numbers",
+                    ajax: {
+                        url: '{{route('admin.one')}}',
+                        type: 'post',
+                        contentType: "application/json",
+                        dataType: 'json',
+                        data: {
+                            level: 1,
+                            id: '{{currentUser()->id}}'
+                        }
+                    },
+                    columns: [
+                        { data: 'id', name: 'id', orderable: true, searchable: false },
+                        { data: 'identificacion', name: 'identificacion', orderable: true, searchable: true },
+                        { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
+                        { data: 'apellidos', name: 'apellidos', orderable: true },
+                        { data: 'email', name: 'email', orderable: true },
+                        { data: 'numero_referidos', name: 'numero_referidos', orderable: true },
+                        { data: 'numero_ordenes_referidos', name: 'numero_ordenes_referidos', orderable: true },
+                        { data: 'total_price_orders', name: 'total_price_orders', orderable: true },
+                        { data: 'ganacias', name: 'ganacias', orderable: true },
+                        { data: 'action', name: 'red', orderable: false, searchable: false, className: "centrar"},
+                        { data: 'edit', name: 'editar', orderable: false, searchable: false, className: "centrar"}
+                    ],
+                    language: {
+                        url: "{{ asset('css/Spanish.json') }}"
+                    },
+
+                });
+
+            });
+        });
+
+        $(document).ready(function(){
+            $(function() {
+                $('#terceros2').DataTable({
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+                    deferRender: true,
+                    pagingType: "full_numbers",
+                    ajax: {
+                        url: '{{route('admin.two')}}',
+                        type: 'post',
+                        contentType: "application/json",
+                        dataType: 'json',
+                        data: {
+                            level: 2,
+                            id: '{{currentUser()->id}}'
+                        }
+                    },
+                    columns: [
+                        { data: 'id', name: 'id', orderable: true, searchable: false },
+                        { data: 'identificacion', name: 'identificacion', orderable: true, searchable: true },
+                        { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
+                        { data: 'apellidos', name: 'apellidos', orderable: true },
+                        { data: 'email', name: 'email', orderable: true },
+                        { data: 'numero_referidos', name: 'numero_referidos', orderable: true },
+                        { data: 'numero_ordenes_referidos', name: 'numero_ordenes_referidos', orderable: true },
+                        { data: 'total_price_orders', name: 'total_price_orders', orderable: true },
+                        { data: 'ganacias', name: 'ganacias', orderable: true },
+                        { data: 'action', name: 'red', orderable: false, searchable: false, className: "centrar"},
+                        { data: 'edit', name: 'editar', orderable: false, searchable: false, className: "centrar"}
+                    ],
+                    language: {
+                        url: "{{ asset('css/Spanish.json') }}"
+                    },
+
+                });
+
+            });
+        });
+
+        $(document).ready(function(){
+            $(function() {
+                $('#terceros3').DataTable({
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+                    deferRender: true,
+                    pagingType: "full_numbers",
+                    ajax: {
+                        url: '{{route('admin.tree')}}',
+                        type: 'post',
+                        contentType: "application/json",
+                        dataType: 'json',
+                        data: {
+                            level: 3,
+                            id: '{{currentUser()->id}}'
+                        }
+                    },
+                    columns: [
+                        { data: 'id', name: 'id', orderable: true, searchable: false },
+                        { data: 'identificacion', name: 'identificacion', orderable: true, searchable: true },
+                        { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
+                        { data: 'apellidos', name: 'apellidos', orderable: true },
+                        { data: 'email', name: 'email', orderable: true },
+                        { data: 'numero_referidos', name: 'numero_referidos', orderable: true },
+                        { data: 'numero_ordenes_referidos', name: 'numero_ordenes_referidos', orderable: true },
+                        { data: 'total_price_orders', name: 'total_price_orders', orderable: true },
+                        { data: 'ganacias', name: 'ganacias', orderable: true },
+                        { data: 'action', name: 'red', orderable: false, searchable: false, className: "centrar"},
+                        { data: 'edit', name: 'editar', orderable: false, searchable: false, className: "centrar"}
+                    ],
+                    language: {
+                        url: "{{ asset('css/Spanish.json') }}"
+                    },
+
+                });
+
+            });
+        });
+
+    </script>
+@endpush
 

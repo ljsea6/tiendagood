@@ -1,14 +1,16 @@
 <?php
 namespace App\Http\Controllers;
+
+
+use DB;
+use Mail;
+use App\Order;
 use App\Entities\Network;
 use App\Entities\Tercero;
-use App\Order;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 use Yajra\Datatables\Datatables;
-use Mail;
-use DB;
+use App\Http\Controllers\Controller;
+
 
 class AdminController extends Controller {
     
@@ -131,12 +133,16 @@ class AdminController extends Controller {
             if (count($results) > 0) {
                 $find = DB::table('terceros_networks')->where('customer_id', $results['id'])->first();
 
-                if ($find->padre_id == currentUser()->id) {
+                if (count($find) > 0 && $find->padre_id == currentUser()->id) {
+
                     return view('admin.find', compact('results'));
+
                 } else {
+
                     $err = 'No está en su lista de referidos';
                     return view('admin.find', compact('err'));
                 }
+
             } else {
                 $err = 'No está en su lista de referidos';
                 return view('admin.find', compact('err'));
@@ -226,6 +232,30 @@ class AdminController extends Controller {
                 return '<div align=left>' . $send->name . '</div>';
             })
             ->make(true);
+    }
+
+    public function level_one(Request $request)
+    {
+        return response()->json($request->all());
+        if ($request->has('level') && $request->has('id')) {
+            return response()->json($request->all());
+        }
+    }
+
+    public function level_two(Request $request)
+    {
+        return response()->json($request->all());
+        if ($request->has('level') && $request->has('id')) {
+            return response()->json($request->all());
+        }
+    }
+
+    public function level_tree(Request $request)
+    {
+        return response()->json($request->all());
+        if ($request->has('level') && $request->has('id')) {
+            return response()->json($request->all());
+        }
     }
 
     public function indexproveedores()

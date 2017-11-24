@@ -4263,95 +4263,35 @@ class OrdersController extends Controller
     }
     public function contador()
     {
+        $padre = 1;
+        $cont = 0;
+        $terceros = Tercero::where('id', '>', 1)->get();
 
-        $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-        $client = new \GuzzleHttp\Client();
+        foreach ($terceros as $tercero) {
 
-        try {
+            $cont++;
 
-            $res = $client->request('get', $api_url . '/admin/variants/4574000381989/metafields.json');
+            DB::table('terceros_networks')->insert(
+                [
+                    'customer_id' => $tercero->id,
+                    'network_id' => 1,
+                    'padre_id' => $padre,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]
+            );
 
-            $results = json_decode($res->getBody(), true);
 
-            if (count($results['metafields']) > 0) {
 
-                foreach ($results['metafields'] as $result) {
+            if ($cont == 50) {
+                $cont = 0;
 
-                    if ($result['key'] == 'points' && $result['namespace'] == 'variants') {
-
-                        try {
-
-                            $res = $client->request('put', $api_url . '/admin/variants/4574000381989/metafields/' . $result['id'] . '.json', array(
-                                    'form_params' => array(
-                                        'metafield' => array(
-                                            'namespace' => 'variants',
-                                            'key' => 'points',
-                                            'value' => 100,
-                                            'value_type' => 'integer'
-                                        )
-                                    )
-                                )
-                            );
-
-                            $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                            $x = explode('/', $headers[0]);
-                            $diferencia = $x[1] - $x[0];
-                            if ($diferencia < 10) {
-                                usleep(10000000);
-                            }
-
-                            return json_decode($res->getBody(), true);
-
-                        } catch (ClientException $e) {
-
-                            return json_decode(($e->getResponse()->getBody()), true);
-                        }
-                    }
-                }
-
-            } else {
-
-                try {
-
-                    $res = $client->request('post', $api_url . '/admin/variants/4574000381989/metafields.json', array(
-                        'form_params' => array(
-                            'metafield' => array(
-                                'namespace' => 'variants',
-                                'key' => 'points',
-                                'value' => 12,
-                                'value_type' => 'integer'
-                            )
-                        )
-                    ));
-
-                    $result = json_decode($res->getBody(), true);
-
-                    return response()->json($result);
-
-                } catch (ClientException $e) {
-
-                    return json_decode(($e->getResponse()->getBody()), true);
-                }
-
-                $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                $x = explode('/', $headers[0]);
-                $diferencia = $x[1] - $x[0];
-                if ($diferencia < 20) {
-
-                    usleep(10000000);
-                }
-
-                $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                $x = explode('/', $headers[0]);
-                $diferencia = $x[1] - $x[0];
-                if ($diferencia < 10) {
-                    usleep(10000000);
-                }
+                $padre++;
             }
 
-        } catch (ClientException $e) {
 
-            return json_decode(($e->getResponse()->getBody()), true);
         }
+
+        return response()->json(['msg' => 'Hecho']);
     }
 }

@@ -1,6 +1,6 @@
 @extends('templates.main')
 
-@section('titulo','Login Domina')
+@section('titulo','Login Good')
 
 @section('styles')
 <style type="text/css">

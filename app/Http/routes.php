@@ -136,6 +136,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/search', ['uses' => 'AdminController@search', 'as' => 'admin.search']);
     Route::post('/finder', ['uses' => 'AdminController@finder', 'as' => 'admin.finder']);
 
+    Route::post('/level/one', ['uses' => 'AdminController@level_one', 'as' => 'admin.one']);
+    Route::post('/level/two', ['uses' => 'AdminController@level_two', 'as' => 'admin.two']);
+    Route::post('/level/tree', ['uses' => 'AdminController@level_tree', 'as' => 'admin.tree']);
+
+
     // email
     Route::get('/send/email', ['uses' => 'AdminController@email', 'as' => 'admin.send.mail']);
     Route::get('/send/msm', ['uses' => 'AdminController@msm', 'as' => 'admin.send.msm']);
