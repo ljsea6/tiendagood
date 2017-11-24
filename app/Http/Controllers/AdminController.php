@@ -26,6 +26,7 @@ class AdminController extends Controller {
         if(isset($data['email']) && $data['email'] !== '') {
 
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email);
             });
@@ -34,6 +35,7 @@ class AdminController extends Controller {
         
         if(isset($data['emailone']) && $data['emailone'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->emailone);
             });
@@ -41,6 +43,7 @@ class AdminController extends Controller {
         
         if(isset($data['emailtwo']) && $data['emailtwo'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->emailtwo);
             });
@@ -48,6 +51,7 @@ class AdminController extends Controller {
         
         if(isset($data['email1']) && $data['email1'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email1);
             });
@@ -55,6 +59,7 @@ class AdminController extends Controller {
         
         if(isset($data['email2']) && $data['email2'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email2);
             });
@@ -62,6 +67,7 @@ class AdminController extends Controller {
         
         if(isset($data['email3']) && $data['email3'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email3);
             });
@@ -69,6 +75,7 @@ class AdminController extends Controller {
         
         if(isset($data['email4']) && $data['email4'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email4);
             });
@@ -76,6 +83,7 @@ class AdminController extends Controller {
         
          if(isset($data['email5']) && $data['email5'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email2);
             });
@@ -83,6 +91,7 @@ class AdminController extends Controller {
         
         if(isset($data['email6']) && $data['email6'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email3);
             });
@@ -91,6 +100,7 @@ class AdminController extends Controller {
         if(isset($data['email7']) && $data['email7'] !== '') {
 
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email4);
             });
@@ -124,7 +134,6 @@ class AdminController extends Controller {
                 ->where('email', strtolower($request['email']))
                 ->where('state', true)
                 ->first();
-
 
             $level = '';
 
