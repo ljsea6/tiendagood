@@ -305,8 +305,62 @@ class AdminController extends Controller {
 
     public function index()
     {
+    	$level_uno = 0;
+    	$level_dos = 0;
+    	$level_tres = 0;
+
+                $uno  = DB::table('terceros as t')
+                    ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
+                    ->where('tk.padre_id',  currentUser()->id)
+                    ->where('t.state',  true)
+                    ->select('t.id')
+                    ->get();
+
+                $results = array();
+
+                if (count($uno) > 0) {
+
+                	$level_uno = $level_uno + count($uno);
+
+                    foreach ($uno as $n) {
+
+                        $dos  = DB::table('terceros as t')
+                            ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
+                            ->where('tk.padre_id',  $n->id)
+                            ->where('t.state',  true)
+                            ->select('t.id')
+                            ->get();
+
+                        if (count($dos) > 0) {
+
+                        	$level_dos = $level_dos + count($dos);
+
+                            foreach ($dos as $d) {
+
+                                $tres  = DB::table('terceros as t')
+                                    ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
+                                    ->where('tk.padre_id',  $d->id)
+                                    ->where('t.state',  true)
+                                    ->select('t.id', 't.nombres', 't.email')
+                                    ->get();
+
+                                if (count($tres) > 0) {
+
+                                	$level_tres = $level_tres + count($tres);
+
+                                    foreach ($tres as $t) {
+
+                                        array_push($results, $t);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+   		       
+                   	
         $send = Tercero::find(currentUser()->id);
-        return view('admin.index', compact('send'));
+        return view('admin.index')->with(['send' => $send, 'uno' => $level_uno, 'dos' => $level_dos, 'tres' => $level_tres]);
     }
 
     public function anyData(Request $request)

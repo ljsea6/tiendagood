@@ -46,7 +46,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading font-header"><a href="nivel/1" >Nivel 1</a></div>
                         <div class="panel-body puntos">
-                            {{number_format($send->nivel_1)}}
+                            {{number_format($uno)}}
                         </div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading font-header"><a href="nivel/2" >Nivel 2</a></div>
                         <div class="panel-body puntos">
-                            {{number_format($send->nivel_2)}}
+                            {{number_format($dos)}}
                         </div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading font-header"><a href="nivel/3" >Nivel 3</a></div>
                         <div class="panel-body puntos">
-                            {{number_format($send->nivel_3)}}
+                            {{number_format($tres)}}
                         </div>
                     </div>
                 </div>
