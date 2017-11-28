@@ -17,9 +17,10 @@ class Variant extends Model
         return $this->belongsTo(Product::class, 'product_id');
     }
 
-    public static function createVariant($variant)
+    public static function createVariant($variant, $points = null)
     {
         $va =  Variant::find($variant['id']);
+
         if (count($va) == 0) {
             $v = new Variant();
             $v->id = $variant['id'];
@@ -46,7 +47,7 @@ class Variant extends Model
             $v->requires_shipping = $variant['requires_shipping'];
             $v->created_at = Carbon::parse($variant['created_at']);
             $v->updated_at = Carbon::parse($variant['updated_at']);
-            $v->percentage = null;
+            $v->percentage = $points;
             $v->save();
 
         } else {
@@ -130,7 +131,6 @@ class Variant extends Model
             $va->requires_shipping = $variant['requires_shipping'];
             $va->created_at = Carbon::parse($variant['created_at']);
             $va->updated_at = Carbon::parse($variant['updated_at']);
-            $v->percentage = random_int(10, 500);
             $va->save();
         }
     }

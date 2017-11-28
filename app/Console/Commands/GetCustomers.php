@@ -99,7 +99,7 @@ class GetCustomers extends Command
                         $usuario->email = strtolower($customer['email']);
                         $usuario->usuario = strtolower($customer['email']);
                         $usuario->contraseña = bcrypt('secret');
-                        $usuario->tipo_id = 2;
+                        $usuario->tipo_id = null;
                         $usuario->ciudad_id = random_int(1, 1000);
                         $usuario->celular = $customer['phone'];
                         $usuario->network_id = 1;

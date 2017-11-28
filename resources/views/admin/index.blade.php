@@ -20,7 +20,7 @@
                                     <h2 class="font-header no-m">{{number_format($send->numero_referidos)}}</h2>
                                 </div>
                                 <div class="detail text-right">
-                                    <div class="text-upper">Tus puntos</div>
+                                    <div class="text-upper">Nivel 1</div>
                                 </div>
                             </div>
                         </div>
@@ -32,7 +32,7 @@
                                     <h2 class="font-header no-m">{{number_format($send->numero_ordenes_referidos)}}</h2>
                                 </div>
                                 <div class="detail text-right">
-                                    <div class="text-upper">Tus compras</div>
+                                    <div class="text-upper">Nivel 2</div>
                                 </div>
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                                     <h2 class="font-header no-m">{{number_format($send->total_price_orders)}}</h2>
                                 </div>
                                 <div class="detail text-right">
-                                    <small class="text-upper">$ Total de tus puntos</small>
+                                    <small class="text-upper">Nivel 3</small>
                                 </div>
                             </div>
                         </div>
@@ -109,7 +109,7 @@
 
         <div class="box">
             <div class="panel panel-default">
-                <div class="panel-heading font-header">Nivel 2</div>
+                <div class="panel-heading font-header">Nivel 3</div>
                 <div class="panel-body">
                     @if (session('status'))
                         <div class="alert alert-info fade in col-sm-12 col-md-12 col-lg-12">

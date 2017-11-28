@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
+use Validator;
 
 class AuthController extends Controller {
 
@@ -46,6 +47,7 @@ class AuthController extends Controller {
 
     //Esta funcion Post, reemplaza a la que viene de la clase AuthenticatesAndRegistersUsers
     public function postLogin(Request $request) {
+
 
         $this->validate($request, [
             $this->loginUsername() => 'required', 'password' => 'required',

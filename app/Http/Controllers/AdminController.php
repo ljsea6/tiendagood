@@ -340,11 +340,15 @@ class AdminController extends Controller {
         if ($request->has('level') && $request->has('id')) {
 
             if ($request->level == 1) {
+
                 $results  = DB::table('terceros as t')
                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                     ->where('tk.padre_id',  $request->id)
+                    ->where('t.state',  true)
                     ->select('t.id', 't.nombres', 't.email')
                     ->get();
+
+
                 $send = collect($results);
                 return Datatables::of($send)
                     ->addColumn('id', function ($send) {
@@ -371,6 +375,7 @@ class AdminController extends Controller {
                 $uno  = DB::table('terceros as t')
                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                     ->where('tk.padre_id',  $request->id)
+                    ->where('t.state',  true)
                     ->select('t.id')
                     ->get();
 
@@ -383,6 +388,7 @@ class AdminController extends Controller {
                         $dos  = DB::table('terceros as t')
                             ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                             ->where('tk.padre_id',  $n->id)
+                            ->where('t.state',  true)
                             ->select('t.id', 't.nombres', 't.email')
                             ->get();
 
@@ -422,6 +428,7 @@ class AdminController extends Controller {
                 $uno  = DB::table('terceros as t')
                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                     ->where('tk.padre_id',  $request->id)
+                    ->where('t.state',  true)
                     ->select('t.id')
                     ->get();
 
@@ -434,6 +441,7 @@ class AdminController extends Controller {
                         $dos  = DB::table('terceros as t')
                             ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                             ->where('tk.padre_id',  $n->id)
+                            ->where('t.state',  true)
                             ->select('t.id')
                             ->get();
 
@@ -444,6 +452,7 @@ class AdminController extends Controller {
                                 $tres  = DB::table('terceros as t')
                                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                                     ->where('tk.padre_id',  $d->id)
+                                    ->where('t.state',  true)
                                     ->select('t.id', 't.nombres', 't.email')
                                     ->get();
 

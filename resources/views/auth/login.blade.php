@@ -193,6 +193,8 @@
 
 
 
+
+
     <div class="row" style="height: 100%; display:flex; justify-content: center; align-items: center">
         <div class="col-xs-4">
             <div class="col-xs-12">
@@ -206,6 +208,20 @@
                 @endif
 
             </div>
+
+
+            @if ($errors->any())
+                <div class="col-xs-12">
+                    <div class="alert alert-success fade in col-xs-12" style="background-color: #ed7d01 !important;border: none; color: white;">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endif
 
             <div class="col-xs-12 form-container" id="form-container" style="background-color: #ed7d01 !important;">
 
@@ -237,8 +253,6 @@
                             <span class="cr"><i class="cr-icon glyphicon fa-ok"></i><i class="cr-icon fa fa-check" aria-hidden="true"></i></span>
                             Recordar tus datos
                         </label><br>
-
-
                     </div>
 
                     <div class="form-group text-center">
@@ -248,9 +262,7 @@
                     </div>
                 </div>
 
-
                 {!! Form::close() !!}
-
 
             </div>
 

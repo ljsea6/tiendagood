@@ -25,10 +25,17 @@
             </div>
         </div>
     </div>
+
+    <div id="divLoading" style="display: none; margin: 0px; padding: 0px; position: fixed; right: 0px; top: 0px; width: 100%; height: 100%; background-color: rgb(44, 104, 140); z-index: 30001; opacity: 0.8;"> <p style="position: absolute; color: White; top: 50%; left: 35%; font-size: 30px;"> Cargando, espere por favor...  <img src="https://loading.io/spinners/balls/index.circle-slack-loading-icon.gif" width="100px">  </p>  </div>
+
 @stop
 @push('scripts')
     <script>
+
         $(function() {
+
+
+
             var table = $('#variants').DataTable({
 
                 dom: 'Bfrtip',
@@ -54,7 +61,12 @@
                 }
             });
 
+
             $('#update').click( function() {
+
+                $("#g").prop("disabled",true);
+                $("div#divLoading").show();
+
                 var data = table.$('input, select').serialize();
 
                 $.ajax({
@@ -63,11 +75,13 @@
                     type: 'POST',
                     dataType: 'json',
                     success: function(data) {
-                        alert(data.data);
+                        $("div#divLoading").hide();
+
+
                     },
                     error : function(xhr, status) {
                         alert('Disculpe, existió un problema');
-                    },
+                    }
 
                 });
 

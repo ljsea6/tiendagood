@@ -13,7 +13,7 @@ return [
             |
     */
 
-    'failed'   => 'Estas credenciales no coinciden con nuestros registros.',
+    'failed'   => 'Verifique el correo o contraseña, las credenciales no son validas.',
     'throttle' => 'Demasiados intentos de acceso. Por favor intente nuevamente en :seconds segundos.',
     'failedIp' => 'Estas credenciales no estan autorizadas para ingresar desde esta IP.',
 ];

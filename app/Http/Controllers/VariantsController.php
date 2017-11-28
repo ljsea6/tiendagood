@@ -25,7 +25,7 @@ class VariantsController extends Controller
         $variants = DB::table('variants')
             ->join('products', 'variants.product_id', '=', 'products.id')
             ->select('variants.id as id', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
-            //->where('variants.sold_units', '>', 0)
+            ->where('products.tipo_producto', 'nacional')
             ->get();
 
         $send = collect($variants);
@@ -211,8 +211,6 @@ class VariantsController extends Controller
 
                                     return json_decode(($e->getResponse()->getBody()), true);
                                 }
-
-
 
                             }
 
