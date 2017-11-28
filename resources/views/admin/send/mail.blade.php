@@ -34,7 +34,7 @@
                     <input type="hidden" id="code" name="code" value="{{currentUser()->identificacion}}">
                     <div class="form-group text-left">
                         <label for="body">Mensaje</label>
-                        <input id="body" name="body" class="form-control" value="Ahorra comprando, gana invitando con Hello. Mi código es: {{currentUser()->identificacion}}">
+                        <input id="body" name="body" class="form-control" value="Haz parte de mi red y disfruta de todos los beneficios. Mi código es: {{currentUser()->identificacion}}">
                     </div>
                     <div class="form-group text-left">
                         <button class="btn btn-danger" type="submit">Enviar</button>

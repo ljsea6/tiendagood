@@ -2,7 +2,7 @@
     <div class="sidenav-inner">
         <ul class="side-nav magic-nav">
 
-            @role('tercero|logistica|contabilidad')
+
             <li class="has-submenu">
                 <a href="{{ route('admin.index') }}" class="animsition-link text-left">
                     <i class="fa fa-area-chart">
@@ -37,7 +37,7 @@
                     </ul>
                 </div>
             </li>
-            @endrole
+
 
             @role('contabilidad|administrador')
             <li class="has-submenu">

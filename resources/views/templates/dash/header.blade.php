@@ -8,8 +8,8 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand">
-            <div><img  style="width: 15px" src="https://cdn.shopify.com/s/files/1/2256/3751/files/favicon-96x96.png?14986824105996215938"></div>
+        <a class="navbar-brand" style="padding: 5px">
+            <div><img  style="width: 40px" src="https://cdn.shopify.com/s/files/1/2256/3751/files/favicon-96x96.png?14986824105996215938"></div>
 
         </a>
         <ul class="nav navbar-nav-xs">

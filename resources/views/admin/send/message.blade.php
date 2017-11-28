@@ -306,7 +306,7 @@ a {
                                                             <tr>
                                                                 <td style='font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",sans-serif;'>
                                                                     <img width="180px"
-                                                                         alt="Vive Hello" src="https://resize.yandex.net/mailservice?url=https%3A%2F%2Fcdn.shopify.com%2Fs%2Ffiles%2F1%2F1935%2F1047%2Femail_settings%2Fr_Mall.png%3F13981863490009258166&proxy=yes&key=0a5cb0596579d5eed7c8855d0296237d"></img>
+                                                                         alt="Tienda Good" src="https://cdn.shopify.com/s/files/1/2256/3751/files/logo-good.png?7246547361766372281"></img>
                                                                 </td>
                                                             </tr>
 							</table>
@@ -324,7 +324,7 @@ a {
 				
 								<tr>
 									<td class="content-block" itemprop="handler" itemscope itemtype="http://schema.org/HttpActionHandler">
-                                                                            <a href="http://localhost:8000/?q= {{$code}}" class="btn-primary" itemprop="url">¡Registrate con mi código <strong>{{$code}}</strong> dando click aquí!</a>
+                                                                            <a href="http://demo.tiendagood.com/?q={{$code}}" class="btn-primary" itemprop="url">¡Registrate con mi código <strong>{{$code}}</strong> dando click aquí!</a>
 									</td>
 								</tr>
 								

@@ -74,7 +74,7 @@ Route::get('/terms', 'UsuariosController@terms');
 Route::post('/cities', 'CitiesController@cities');
 Route::post('/clients/types', 'TiposClientesController@getTypesClients');
 
-
+Route::get('/nivel/{id}', 'AdminController@nivel');
 
 // Authentication routes...
 Route::get('/login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);

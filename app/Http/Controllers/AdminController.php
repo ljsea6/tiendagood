@@ -26,6 +26,7 @@ class AdminController extends Controller {
         if(isset($data['email']) && $data['email'] !== '') {
 
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email);
             });
@@ -34,6 +35,7 @@ class AdminController extends Controller {
         
         if(isset($data['emailone']) && $data['emailone'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->emailone);
             });
@@ -41,6 +43,7 @@ class AdminController extends Controller {
         
         if(isset($data['emailtwo']) && $data['emailtwo'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->emailtwo);
             });
@@ -48,6 +51,7 @@ class AdminController extends Controller {
         
         if(isset($data['email1']) && $data['email1'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email1);
             });
@@ -55,6 +59,7 @@ class AdminController extends Controller {
         
         if(isset($data['email2']) && $data['email2'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email2);
             });
@@ -62,6 +67,7 @@ class AdminController extends Controller {
         
         if(isset($data['email3']) && $data['email3'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email3);
             });
@@ -69,6 +75,7 @@ class AdminController extends Controller {
         
         if(isset($data['email4']) && $data['email4'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email4);
             });
@@ -76,6 +83,7 @@ class AdminController extends Controller {
         
          if(isset($data['email5']) && $data['email5'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email2);
             });
@@ -83,6 +91,7 @@ class AdminController extends Controller {
         
         if(isset($data['email6']) && $data['email6'] !== '') {
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email3);
             });
@@ -91,6 +100,7 @@ class AdminController extends Controller {
         if(isset($data['email7']) && $data['email7'] !== '') {
 
             Mail::send('admin.send.message', $data, function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Tienda good');
                 $message->subject($request->body);
                 $message->to($request->email4);
             });
@@ -102,8 +112,13 @@ class AdminController extends Controller {
 
     public function buscar(Request $request)
     {
-        $tercero = Tercero::where('email', strtolower($request['email']))->get();
-        return view('admin.search.index', compact('tercero'));
+        if ($request->has('email')) {
+
+            $tercero = Tercero::with('networks')->where('email', strtolower($request['email']))->get();
+
+            return view('admin.search.index', compact('tercero'));
+        }
+
     }
 
     public function search()
@@ -113,29 +128,80 @@ class AdminController extends Controller {
 
     public function finder(Request $request)
     {
-        if(currentUser()->tipo_id == 2) {
-            $results = Tercero::where('email', 'like', '%' .strtolower($request['email']) . '%')->get();
+        if ($request->has('email') && $request->has('id')) {
 
-            return view('admin.find', compact('results'));
-        }
+            $results = Tercero::with('networks')
+                ->where('email', strtolower($request['email']))
+                ->where('state', true)
+                ->first();
 
-        if (currentUser()->tipo_id != 2 && currentUser()->tipo_id != 1) {
+            $level = '';
 
-            $results = Tercero::where('email', '=', $request['email'])->get();
+            if (count($results) > 0 && $results->state == true) {
 
-            return view('admin.find', compact('results'));
-        }
+                if (count($results->networks) > 0) {
 
-        if (currentUser()->tipo_id == 1) {
+                    $uno = $results->networks[0]->pivot->padre_id;
 
-            $results  = Tercero::where('email', '=', $request['email'])->first();
+                    if ($uno == $request->id) {
 
-            if (count($results) > 0) {
-                $find = DB::table('terceros_networks')->where('customer_id', $results['id'])->first();
+                        $level = '' . 1;
+                        return view('admin.find')->with(['results' => $results, 'level' => $level]);
 
-                if (count($find) > 0 && $find->padre_id == currentUser()->id) {
+                    } else {
 
-                    return view('admin.find', compact('results'));
+                        $results_dos = Tercero::with('networks')->find($uno);
+
+                        if (count($results_dos) > 0 && $results_dos->state == true) {
+
+                            if (count($results_dos->networks) > 0) {
+
+                                $dos = $results_dos->networks[0]->pivot->padre_id;
+
+                                if ($dos == $request->id) {
+
+                                    $level = '' . 2;
+                                    return view('admin.find')->with(['results' => $results, 'level' => $level]);
+
+                                } else {
+
+                                    $results_tres = Tercero::with('networks')->find($dos);
+
+                                    if (count($results_tres) > 0 && $results_tres->state == true) {
+
+                                        if (count($results_tres->networks) > 0) {
+
+                                            $tres = $results_tres->networks[0]->pivot->padre_id;
+
+                                            if ($tres == $request->id) {
+
+                                                $level = '' . 3;
+
+
+                                                return view('admin.find')->with(['results' => $results, 'level' => $level]);
+
+                                            } else {
+
+                                                $err = 'No está en su lista de referidos';
+                                                return view('admin.find', compact('err'));
+
+                                            }
+                                        }
+
+                                    } else {
+
+                                        $err = 'No está en su lista de referidos';
+                                        return view('admin.find', compact('err'));
+                                    }
+                                }
+                            }
+
+                        } else {
+
+                            $err = 'No está en su lista de referidos';
+                            return view('admin.find', compact('err'));
+                        }
+                    }
 
                 } else {
 
@@ -144,15 +210,49 @@ class AdminController extends Controller {
                 }
 
             } else {
+
                 $err = 'No está en su lista de referidos';
                 return view('admin.find', compact('err'));
+
             }
 
+           /* if(currentUser()->tipo_id == 2) {
+                $results = Tercero::where('email', 'like', '%' .strtolower($request['email']) . '%')->get();
 
+                return view('admin.find', compact('results'));
+            } */
 
+            /*if (currentUser()->tipo_id != 2 && currentUser()->tipo_id != 1) {
 
+                $results = Tercero::where('email', '=', $request['email'])->get();
+
+                return view('admin.find', compact('results'));
+            }
+
+            if (currentUser()->tipo_id == 1) {
+
+                $results  = Tercero::where('email', '=', $request['email'])->first();
+
+                if (count($results) > 0) {
+                    $find = DB::table('terceros_networks')->where('customer_id', $results['id'])->first();
+
+                    if (count($find) > 0 && $find->padre_id == currentUser()->id) {
+
+                        return view('admin.find', compact('results'));
+
+                    } else {
+
+                        $err = 'No está en su lista de referidos';
+                        return view('admin.find', compact('err'));
+                    }
+
+                } else {
+                    $err = 'No está en su lista de referidos';
+                    return view('admin.find', compact('err'));
+                }
+
+            }*/
         }
-        
     }
 
     public function network()
@@ -234,81 +334,151 @@ class AdminController extends Controller {
             ->make(true);
     }
 
+    public function nivel($nivel=1)
+    {
+        return view('admin.nivel.nivel', compact('nivel'));
+    }
+
     public function level_one(Request $request)
     {
-       return   $tercero = Tercero::find(25); 
-
-        $send = collect($tercero);
-        return Datatables::of(Tercero::find(1))
-            ->addColumn('id', function ($send) {
-                return '<div align=left>' . $send->id . '</div>';
-            })
-            ->addColumn('nombres', function ($send) {
-                return '<div align=left>' . $send->nombres . '</div>';
-            })
-            ->addColumn('email', function ($send) {
-                return '<div align=left>' . $send->email . '</div>';
-            })
-            ->make(true);
 
         if ($request->has('level') && $request->has('id')) {
-            return response()->json($request->all());
+
+            if ($request->level == 1) {
+                $results  = DB::table('terceros as t')
+                    ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
+                    ->where('tk.padre_id',  $request->id)
+                    ->select('t.id', 't.nombres', 't.email')
+                    ->get();
+                $send = collect($results);
+                return Datatables::of($send)
+                    ->addColumn('id', function ($send) {
+                        return '<div align=left>' . $send->id . '</div>';
+                    })
+                    ->addColumn('nombres', function ($send) {
+                        return '<div align=left>' . $send->nombres . '</div>';
+                    })
+                    ->addColumn('email', function ($send) {
+                        return '<div align=left>' . $send->email . '</div>';
+                    })
+                    ->make(true);
+            }
+
         }
     }
 
     public function level_two(Request $request)
     {
-        return $request->all();
-        $tercero = Tercero::find(1);
-        $results  = DB::table('terceros')
-            ->join('networks', 'terceros.network_id', '=', 'networks.id')
-            ->where('terceros.apellidos',  $tercero['email'])
-            ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
-            ->get();
-
-        $send = collect($tercero);
-        return Datatables::of($send)
-            ->addColumn('id', function ($send) {
-                return '<div align=left>' . $send->id . '</div>';
-            })
-            ->addColumn('nombres', function ($send) {
-                return '<div align=left>' . $send->nombres . '</div>';
-            })
-            ->addColumn('email', function ($send) {
-                return '<div align=left>' . $send->email . '</div>';
-            })
-            ->make(true);
-        return response()->json($request->all());
         if ($request->has('level') && $request->has('id')) {
-            return response()->json($request->all());
+
+            if ($request->level == 2) {
+
+                $uno  = DB::table('terceros as t')
+                    ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
+                    ->where('tk.padre_id',  $request->id)
+                    ->select('t.id')
+                    ->get();
+
+                $results = array();
+
+                if (count($uno) > 0) {
+
+                    foreach ($uno as $n) {
+
+                        $dos  = DB::table('terceros as t')
+                            ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
+                            ->where('tk.padre_id',  $n->id)
+                            ->select('t.id', 't.nombres', 't.email')
+                            ->get();
+
+                        if (count($dos) > 0) {
+
+                            foreach ($dos as $d) {
+                                array_push($results, $d);
+                            }
+                        }
+                    }
+                }
+
+                $send = collect($results);
+
+                return Datatables::of($send)
+                    ->addColumn('id', function ($send) {
+                        return '<div align=left>' . $send->id . '</div>';
+                    })
+                    ->addColumn('nombres', function ($send) {
+                        return '<div align=left>' . $send->nombres . '</div>';
+                    })
+                    ->addColumn('email', function ($send) {
+                        return '<div align=left>' . $send->email . '</div>';
+                    })
+                    ->make(true);
+            }
+
         }
     }
 
     public function level_tree(Request $request)
     {
-        return $request->all();
-        $tercero = Tercero::find(1);
-        $results  = DB::table('terceros')
-            ->join('networks', 'terceros.network_id', '=', 'networks.id')
-            ->where('terceros.apellidos',  $tercero['email'])
-            ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
-            ->get();
-
-        $send = collect($tercero);
-        return Datatables::of($send)
-            ->addColumn('id', function ($send) {
-                return '<div align=left>' . $send->id . '</div>';
-            })
-            ->addColumn('nombres', function ($send) {
-                return '<div align=left>' . $send->nombres . '</div>';
-            })
-            ->addColumn('email', function ($send) {
-                return '<div align=left>' . $send->email . '</div>';
-            })
-            ->make(true);
-        return response()->json($request->all());
         if ($request->has('level') && $request->has('id')) {
-            return response()->json($request->all());
+
+            if ($request->level == 3) {
+
+                $uno  = DB::table('terceros as t')
+                    ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
+                    ->where('tk.padre_id',  $request->id)
+                    ->select('t.id')
+                    ->get();
+
+                $results = array();
+
+                if (count($uno) > 0) {
+
+                    foreach ($uno as $n) {
+
+                        $dos  = DB::table('terceros as t')
+                            ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
+                            ->where('tk.padre_id',  $n->id)
+                            ->select('t.id')
+                            ->get();
+
+                        if (count($dos) > 0) {
+
+                            foreach ($dos as $d) {
+
+                                $tres  = DB::table('terceros as t')
+                                    ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
+                                    ->where('tk.padre_id',  $d->id)
+                                    ->select('t.id', 't.nombres', 't.email')
+                                    ->get();
+
+                                if (count($tres) > 0) {
+
+                                    foreach ($tres as $t) {
+
+                                        array_push($results, $t);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $send = collect($results);
+
+                return Datatables::of($send)
+                    ->addColumn('id', function ($send) {
+                        return '<div align=left>' . $send->id . '</div>';
+                    })
+                    ->addColumn('nombres', function ($send) {
+                        return '<div align=left>' . $send->nombres . '</div>';
+                    })
+                    ->addColumn('email', function ($send) {
+                        return '<div align=left>' . $send->email . '</div>';
+                    })
+                    ->make(true);
+            }
+
         }
     }
 

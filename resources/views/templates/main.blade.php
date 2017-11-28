@@ -11,7 +11,7 @@
     {!! Html::style('css/icon.css') !!}
     {!! Html::style('css/font-awesome.min.css') !!}
     {!! Html::style('css/animate.min.css') !!}
-    {!! Html::style('css/app.min.css') !!}
+    {!! Html::style('css/app.min.css?act=1') !!}
     {!! Html::style('js/Jit/Examples/css/base.css') !!}
     {!! Html::style('js/Jit/Examples/css/Spacetree.css') !!}
     @yield('styles')

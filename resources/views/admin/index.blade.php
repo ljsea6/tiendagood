@@ -3,7 +3,7 @@
 @section('titulo','Good')
 
 @section('content')
-
+<style type="text/css"> .puntos{ font-size: 20px; font-weight: bold; } </style>
     <section class="invoice">
         <div class="page-header no-breadcrumb font-header"><i class="fa fa-user"></i>¡Bienvenido(a) {{ currentUser()->nombre_completo }}!</div>
         <div class="panel panel-default">
@@ -13,38 +13,26 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4 col-xs-8">
+                    <div class="col-lg-6">
                         <div class="panel panel-default bg-info panel-stat no-icon">
                             <div class="panel-body content-wrap">
                                 <div class="value">
-                                    <h2 class="font-header no-m">{{number_format($send->numero_referidos)}}</h2>
+                                    <h2 class="font-header no-m">{{number_format($send->mispuntos)}}</h2>
                                 </div>
                                 <div class="detail text-right">
-                                    <div class="text-upper">Tus puntos</div>
+                                    <div class="text-upper">Mis puntos</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-xs-8">
+                    <div class="col-lg-6">
                         <div class="panel panel-default bg-success panel-stat no-icon">
                             <div class="panel-body content-wrap">
                                 <div class="value">
-                                    <h2 class="font-header no-m">{{number_format($send->numero_ordenes_referidos)}}</h2>
+                                    <h2 class="font-header no-m">{{number_format($send->puntos_vendidos)}}</h2>
                                 </div>
                                 <div class="detail text-right">
-                                    <div class="text-upper">Tus compras</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-xs-8">
-                        <div class="panel panel-default bg-purple panel-stat no-icon">
-                            <div class="panel-body content-wrap">
-                                <div class="value">
-                                    <h2 class="font-header no-m">{{number_format($send->total_price_orders)}}</h2>
-                                </div>
-                                <div class="detail text-right">
-                                    <small class="text-upper">$ Total de tus puntos</small>
+                                    <div class="text-upper">Mis puntos vendidos</div>
                                 </div>
                             </div>
                         </div>
@@ -52,192 +40,42 @@
                 </div>
             </div>
         </div>
-
+<div class="row">
+    <div class="col-sm-4">
         <div class="box">
             <div class="panel panel-default">
-                <div class="panel-heading font-header">Nivel 1</div>
-                <div class="panel-body">
-                    @if (session('status'))
-                        <div class="alert alert-info fade in col-sm-12 col-md-12 col-lg-12">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <ul>
-                                <li>{{ session('status') }}</li>
-                            </ul>
-                        </div>
-                    @endif
-                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                        <table data-order='[[ 0, "asc" ]]' id="terceros1" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nombres</th>
-                                <th>Email</th>
-                            </tr>
-                            </thead>
-                        </table>
-                    </div>
+                <div class="panel-heading font-header"><a href="nivel/1" >Nivel 1</a></div>
+                <div class="panel-body puntos">
+                       {{number_format($send->nivel_1)}}
                 </div>
             </div>
         </div>
-
+    </div>
+    <div class="col-sm-4">
         <div class="box">
             <div class="panel panel-default">
-                <div class="panel-heading font-header">Nivel 2</div>
-                <div class="panel-body">
-                    @if (session('status'))
-                        <div class="alert alert-info fade in col-sm-12 col-md-12 col-lg-12">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <ul>
-                                <li>{{ session('status') }}</li>
-                            </ul>
-                        </div>
-                    @endif
-                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                        <table data-order='[[ 0, "asc" ]]' id="terceros2" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nombres</th>
-                                <th>Email</th>
-                            </tr>
-                            </thead>
-                        </table>
-                    </div>
+                <div class="panel-heading font-header"><a href="nivel/2" >Nivel 2</a></div>
+                <div class="panel-body puntos">
+                        {{number_format($send->nivel_2)}}
                 </div>
             </div>
         </div>
-
+    </div> 
+    <div class="col-sm-4">
         <div class="box">
             <div class="panel panel-default">
-                <div class="panel-heading font-header">Nivel 3</div>
-                <div class="panel-body">
-                    @if (session('status'))
-                        <div class="alert alert-info fade in col-sm-12 col-md-12 col-lg-12">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <ul>
-                                <li>{{ session('status') }}</li>
-                            </ul>
-                        </div>
-                    @endif
-                    <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                        <table data-order='[[ 0, "asc" ]]' id="terceros3" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nombres</th>
-                                <th>Email</th>
-                            </tr>
-                            </thead>
-                        </table>
-                    </div>
+                <div class="panel-heading font-header"><a href="nivel/3" >Nivel 3</a></div>
+                <div class="panel-body puntos">
+                        {{number_format($send->nivel_3)}}
                 </div>
             </div>
         </div>
+    </div>   
+</div>
 
-
+<div class="row">
+</div>
+<br><br><br>
 </section>
 
-
 @endsection
-
-@push('scripts')
-    <script>
-        $(document).ready(function(){
-            $(function() {
-                $('#terceros1').DataTable({
-                    responsive: true,
-                    processing: true,
-                    serverSide: true,
-                    deferRender: true,
-                    pagingType: "full_numbers",
-                    ajax: {
-                        url: '{{route('admin.one')}}',
-                        type: 'post',
-                        contentType: "application/json",
-                        dataType: 'json',
-                        data: {
-                            level: 1,
-                            id: '{{currentUser()->id}}'
-                        }
-                    },
-                    columns: [
-                        { data: 'id', name: 'id', orderable: true, searchable: false },
-                        { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                        { data: 'email', name: 'email', orderable: true }
-                    ],
-                    language: {
-                        url: "{{ asset('css/Spanish.json') }}"
-                    },
-
-                });
-
-            });
-        });
-
-        $(document).ready(function(){
-            $(function() {
-                $('#terceros2').DataTable({
-                    responsive: true,
-                    processing: true,
-                    serverSide: true,
-                    deferRender: true,
-                    pagingType: "full_numbers",
-                    ajax: {
-                        url: '{{route('admin.two')}}',
-                        type: 'post',
-                        contentType: "application/json",
-                        dataType: 'json',
-                        data: {
-                            level: 2,
-                            id: '{{currentUser()->id}}'
-                        }
-                    },
-                    columns: [
-                        { data: 'id', name: 'id', orderable: true, searchable: false },
-                        { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                        { data: 'email', name: 'email', orderable: true }
-                    ],
-                    language: {
-                        url: "{{ asset('css/Spanish.json') }}"
-                    },
-
-                });
-
-            });
-        });
-
-        $(document).ready(function(){
-            $(function() {
-                $('#terceros3').DataTable({
-                    responsive: true,
-                    processing: true,
-                    serverSide: true,
-                    deferRender: true,
-                    pagingType: "full_numbers",
-                    ajax: {
-                        url: '{{route('admin.tree')}}',
-                        type: 'post',
-                        contentType: "application/json",
-                        dataType: 'json',
-                        data: {
-                            level: 3,
-                            id: '{{currentUser()->id}}'
-                        }
-                    },
-                    columns: [
-                        { data: 'id', name: 'id', orderable: true, searchable: false },
-                        { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                        { data: 'email', name: 'email', orderable: true }
-                    ],
-                    language: {
-                        url: "{{ asset('css/Spanish.json') }}"
-                    },
-
-                });
-
-            });
-        });
-
-    </script>
-@endpush
-

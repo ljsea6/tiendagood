@@ -20,6 +20,7 @@
                             <h3 class="text-center">Buscar Referidos</h3>
                             <hr>
                             <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
+                            <input type="hidden" id="id" name="id" value="{{currentUser()->id}}">
                             <div class="form-group">
                                 <div class="col-sm-offset-3 col-sm-6">
                                     <label for="email">Ingresar correo</label>
