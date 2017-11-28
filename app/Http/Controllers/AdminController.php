@@ -236,16 +236,10 @@ class AdminController extends Controller {
 
     public function level_one(Request $request)
     {
-        return $request->all();
-        $tercero = Tercero::find(1);
-        $results  = DB::table('terceros')
-            ->join('networks', 'terceros.network_id', '=', 'networks.id')
-            ->where('terceros.apellidos',  $tercero['email'])
-            ->select('terceros.id', 'terceros.nombres', 'terceros.email', 'networks.name')
-            ->get();
+       return   $tercero = Tercero::find(25); 
 
         $send = collect($tercero);
-        return Datatables::of($send)
+        return Datatables::of(Tercero::find(1))
             ->addColumn('id', function ($send) {
                 return '<div align=left>' . $send->id . '</div>';
             })
