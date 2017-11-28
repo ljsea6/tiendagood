@@ -334,6 +334,11 @@ class AdminController extends Controller {
             ->make(true);
     }
 
+    public function nivel($nivel=1)
+    {
+        return view('admin.nivel.nivel', compact('nivel'));
+    }
+
     public function level_one(Request $request)
     {
 

@@ -196,7 +196,7 @@
 
 
     <div class="row" style="height: 100%; display:flex; justify-content: center; align-items: center">
-        <div class="col-xs-4">
+        <div class="col-xs-10 col-sm-4 col-sm-offset-0">
             <div class="col-xs-12">
                 @if (session('message'))
                 <div class="alert alert-success fade in col-xs-12" style="background-color: #ed7d01 !important;border: none; color: white;">
@@ -223,7 +223,8 @@
                 </div>
             @endif
 
-            <div class="col-xs-12 form-container" id="form-container" style="background-color: #ed7d01 !important;">
+            <div class="col-xs-12 col-sm-12 form-container" id="form-container" style="background-color: #ed7d01 !important;">
+
 
                 {!! Form::open(['route' => 'login', 'method' => 'POST', 'class' => 'form-access']) !!}
 
@@ -256,8 +257,10 @@
                     </div>
 
                     <div class="form-group text-center">
-                        <a href="/" style="color: white" class="btn submit-access col-xs-12">Registrarme</a><br><br>
+                        
                         <input type="submit" name="submit" value="Ingresar" id="submit-form" class="btn submit-access col-xs-12">
+                        <br><br>
+                        <a href="/" style="color: white" class="btn submit-access col-xs-12">Registrarme</a>
 
                     </div>
                 </div>
