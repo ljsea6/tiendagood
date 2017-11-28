@@ -377,7 +377,7 @@ class AdminController extends Controller {
                 return '<div align=left>' . $send->id . '</div>';
             })
             ->addColumn('nombres', function ($send) {
-                return '<div align=left>' . $send->nombres . '</div>';
+                return '<div align=left>' . ucwords($send->nombres) . '</div>';
             })
             ->addColumn('email', function ($send) {
                 return '<div align=left>' . $send->email . '</div>';
@@ -404,7 +404,7 @@ class AdminController extends Controller {
                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                     ->where('tk.padre_id',  $request->id)
                     ->where('t.state',  true)
-                    ->select('t.id', 't.nombres', 't.email')
+                    ->select('t.id', 't.nombres', 't.mispuntos')
                     ->get();
 
 
@@ -414,10 +414,10 @@ class AdminController extends Controller {
                         return '<div align=left>' . $send->id . '</div>';
                     })
                     ->addColumn('nombres', function ($send) {
-                        return '<div align=left>' . $send->nombres . '</div>';
+                        return '<div align=left>' . ucwords($send->nombres) . '</div>';
                     })
-                    ->addColumn('email', function ($send) {
-                        return '<div align=left>' . $send->email . '</div>';
+                    ->addColumn('puntos', function ($send) {
+                        return '<div align=left>' . number_format($send->mispuntos)  . '</div>';
                     })
                     ->make(true);
             }
@@ -448,7 +448,7 @@ class AdminController extends Controller {
                             ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                             ->where('tk.padre_id',  $n->id)
                             ->where('t.state',  true)
-                            ->select('t.id', 't.nombres', 't.email')
+                            ->select('t.id', 't.nombres', 't.mispuntos')
                             ->get();
 
                         if (count($dos) > 0) {
@@ -467,10 +467,10 @@ class AdminController extends Controller {
                         return '<div align=left>' . $send->id . '</div>';
                     })
                     ->addColumn('nombres', function ($send) {
-                        return '<div align=left>' . $send->nombres . '</div>';
+                        return '<div align=left>' . ucwords($send->nombres) . '</div>';
                     })
-                    ->addColumn('email', function ($send) {
-                        return '<div align=left>' . $send->email . '</div>';
+                    ->addColumn('puntos', function ($send) {
+                        return '<div align=left>' . number_format($send->mispuntos) . '</div>';
                     })
                     ->make(true);
             }
@@ -512,7 +512,7 @@ class AdminController extends Controller {
                                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                                     ->where('tk.padre_id',  $d->id)
                                     ->where('t.state',  true)
-                                    ->select('t.id', 't.nombres', 't.email')
+                                    ->select('t.id', 't.nombres', 't.mispuntos')
                                     ->get();
 
                                 if (count($tres) > 0) {
@@ -534,10 +534,10 @@ class AdminController extends Controller {
                         return '<div align=left>' . $send->id . '</div>';
                     })
                     ->addColumn('nombres', function ($send) {
-                        return '<div align=left>' . $send->nombres . '</div>';
+                        return '<div align=left>' . ucwords($send->nombres) . '</div>';
                     })
-                    ->addColumn('email', function ($send) {
-                        return '<div align=left>' . $send->email . '</div>';
+                    ->addColumn('puntos', function ($send) {
+                        return '<div align=left>' . number_format($send->mispuntos) . '</div>';
                     })
                     ->make(true);
             }

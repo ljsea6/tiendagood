@@ -25,7 +25,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nombres</th>
-                                <th>Email</th>
+                                <th>Puntos</th>
                             </tr>
                             </thead>
                         </table>
@@ -53,7 +53,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nombres</th>
-                                <th>Email</th>
+                                <th>Puntos</th>
                             </tr>
                             </thead>
                         </table>
@@ -81,7 +81,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nombres</th>
-                                <th>Email</th>
+                                <th>Puntos</th>
                             </tr>
                             </thead>
                         </table>
@@ -117,7 +117,7 @@
                    columns: [
                         { data: 'id', name: 'id', orderable: true, searchable: false },
                         { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                        { data: 'email', name: 'email', orderable: true }
+                        { data: 'puntos', name: 'puntos', orderable: true }
                     ],
                     language: {
                         url: "{{ asset('css/Spanish.json') }}"
@@ -143,7 +143,7 @@
                 columns: [
                     { data: 'id', name: 'id', orderable: true, searchable: false },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                    { data: 'email', name: 'email', orderable: true }
+                    { data: 'puntos', name: 'puntos', orderable: true }
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"
@@ -169,7 +169,7 @@
                 columns: [
                     { data: 'id', name: 'id', orderable: true, searchable: false },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
-                    { data: 'email', name: 'email', orderable: true }
+                    { data: 'puntos', name: 'puntos', orderable: true }
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"
