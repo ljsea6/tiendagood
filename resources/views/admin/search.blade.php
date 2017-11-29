@@ -23,28 +23,25 @@
                             <input type="hidden" id="id" name="id" value="{{currentUser()->id}}">
                             <div class="form-group">
                                 <div class="col-sm-offset-3 col-sm-6">
-                                    <label for="email">Ingresar correo</label>
-                                    <input id="email" name="email" type="email" class="form-control" required>
+                                    <label for="email">Ingresar correo o el nombre completo de la persona</label>
+                                    <input id="tercero" name="email" type="email" class="form-control" required>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <div class="col-sm-offset-3 col-sm-6 text-left">
-                                    <button class="btn btn-primary text-left" type="submit" >Buscar</button>
-                                </div>
-                            </div>
-
-                            
-                            @if ($errors->any())
-                                <div class="alert alert-danger fade in col-sm-offset-3 col-sm-6">
-                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
+                         <table id="referidos" class="table table-bordered font-12">
+                            <thead>
+                            <tr>
+                                <th>Nombres</th>
+                                <th>Email</th>
+                                <th>Nivel</th>
+                            </tr>
+                            </thead>
+                            <tbody class="tercero">
+                                <tr class="primer">
+                                    <td class="text-left" colspan="3"></td>
+                                </tr>
+                            </tbody>
+                        </table>
 
                         </div>
                     </div>
@@ -52,7 +49,31 @@
             </form>
         </div>
     </div>
-
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    var html = '';
+    $("#tercero").autocomplete({
+    source: function(request, response) {
+    $.ajax({ url: '{{route("admin.finder")}}', 
+        dataType: "json",  type:"POST",  
+        data: { email : $("#tercero").val(), id : $("#id").val(),  _token : $("#_token").val()
+        },
+        success: function(data) {  $(".tercero").html('');  html = '';  response(data);  }     
+    });
+    },   
+    minLength: 1,   
+    select: function( event, ui ) {  
+        html += '<tr>';
+        html += '<td class="text-left">'+ui.item.nombre+'</td>';
+        html += '<td class="text-left">'+ui.item.correo+'</td>';
+        html += '<td class="text-left">'+ui.item.nivel+'</td>';  
+        html += '</tr>';
+        $(".tercero").html(html); 
+    }
+    });   
+</script>
 
 @endsection
 

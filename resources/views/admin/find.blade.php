@@ -46,10 +46,7 @@
                                 {{$err}}
                                 <br><br>
                             @endif
-                            <br>
-                        <div class="col-md-12">
-                            <a class="btn btn-danger" href="{{route('admin.search')}}" role="button">Atras</a>
-                        </div>
+                            <br> 
                     </div>
                 </div>
             </div>

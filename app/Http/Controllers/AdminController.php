@@ -131,89 +131,79 @@ class AdminController extends Controller {
         if ($request->has('email') && $request->has('id')) {
 
             $results = Tercero::with('networks')
-                ->where('email', strtolower($request['email']))
+                ->where('email', '=', "".strtolower($request['email'])."")   
+                ->orWhere(DB::raw("(nombres || ' ' || apellidos)"), '=', "".strtolower($request['email'])."")
                 ->where('state', true)
                 ->first();
 
             $level = '';
 
             if (count($results) > 0 && $results->state == true) {
-
                 if (count($results->networks) > 0) {
-
                     $uno = $results->networks[0]->pivot->padre_id;
-
                     if ($uno == $request->id) {
-
-                        $level = '' . 1;
-                        return view('admin.find')->with(['results' => $results, 'level' => $level]);
-
+                        $level = 1;
+                       // return view('admin.find')->with(['results' => $results, 'level' => $level]);
+                       $data[] =  array('label' => 'Nombre: '.$results['nombres'].' '.$results['apellidos'].' Correo: '.$results['email'].' Nivel:'.$level,  
+                       	'nombre' => $results['nombres'].' '.$results['apellidos'], 'correo' => $results['email'],  'nivel' => $level);    
+                         echo json_encode($data);
                     } else {
-
                         $results_dos = Tercero::with('networks')->find($uno);
-
                         if (count($results_dos) > 0 && $results_dos->state == true) {
-
                             if (count($results_dos->networks) > 0) {
-
                                 $dos = $results_dos->networks[0]->pivot->padre_id;
-
                                 if ($dos == $request->id) {
-
-                                    $level = '' . 2;
-                                    return view('admin.find')->with(['results' => $results, 'level' => $level]);
-
+                                    $level = 2;
+                                   // return view('admin.find')->with(['results' => $results, 'level' => $level]);
+                       $data[] =  array('label' => 'Nombre: '.$results['nombres'].' '.$results['apellidos'].' Correo: '.$results['email'].' Nivel:'.$level,  
+                       	'nombre' => $results['nombres'].' '.$results['apellidos'], 'correo' => $results['email'],  'nivel' => $level);                          
+                                   echo json_encode($data);
                                 } else {
-
                                     $results_tres = Tercero::with('networks')->find($dos);
-
                                     if (count($results_tres) > 0 && $results_tres->state == true) {
-
                                         if (count($results_tres->networks) > 0) {
-
                                             $tres = $results_tres->networks[0]->pivot->padre_id;
-
                                             if ($tres == $request->id) {
-
-                                                $level = '' . 3;
-
-
-                                                return view('admin.find')->with(['results' => $results, 'level' => $level]);
+                                                $level = 3;
+                                               // return view('admin.find')->with(['results' => $results, 'level' => $level]);
+                       $data[] =  array('label' => 'Nombre: '.$results['nombres'].' '.$results['apellidos'].' Correo: '.$results['email'].' Nivel:'.$level,  
+                       	'nombre' => $results['nombres'].' '.$results['apellidos'], 'correo' => $results['email'],  'nivel' => $level);                                           
+                                               echo json_encode($data);
 
                                             } else {
-
                                                 $err = 'No está en su lista de referidos';
-                                                return view('admin.find', compact('err'));
-
+                                                //return view('admin.find', compact('err'));
+                                                $data =  array('label' => $err);                       
+                                               echo json_encode($data);                                               
                                             }
                                         }
-
                                     } else {
-
                                         $err = 'No está en su lista de referidos';
-                                        return view('admin.find', compact('err'));
+                                        //return view('admin.find', compact('err'));
+                                        $data =  array('label' => $err);                       
+                                        echo json_encode($data);                                       
                                     }
                                 }
                             }
-
                         } else {
-
                             $err = 'No está en su lista de referidos';
-                            return view('admin.find', compact('err'));
+                            //return view('admin.find', compact('err'));
+                            $data =  array('label' => $err);                       
+                           echo json_encode($data);                         
                         }
                     }
-
                 } else {
-
                     $err = 'No está en su lista de referidos';
-                    return view('admin.find', compact('err'));
+                    //return view('admin.find', compact('err'));
+                    $data =  array('label' => $err);                       
+                    echo json_encode($data);                   
                 }
 
             } else {
-
                 $err = 'No está en su lista de referidos';
-                return view('admin.find', compact('err'));
-
+                //return view('admin.find', compact('err'));
+                $data =  array('label' => $err);                       
+                echo json_encode($data);               
             }
 
            /* if(currentUser()->tipo_id == 2) {

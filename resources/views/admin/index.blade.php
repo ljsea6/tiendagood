@@ -165,20 +165,20 @@
                 <div class="col-sm-12">
                     <div class="box">
                         <div class="panel panel-default">
-                            <div class="panel-heading font-header">Nivel 1</div>
                             <div class="panel-body puntos">
                                 <div class="row">
-                                    <div class="col-xs-4">
-                                        <div class="font-16"># {{number_format($uno)}} </div>
-                                        <span class="text-mute">Referidos</span>
+                                    <div class="col-xs-1">
+                                        <span class="font-16" style="background-color:#0791F0; padding: 12px; border-radius: 50%; width: 100px; height: 20px; color: #fff"> 1 </span>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <span class="font-16"># {{number_format($uno)}} </span>
+                                        <span class="icon-user font-12-xs"></span>
                                     </div>
                                     <div class="col-xs-4">
                                         <div class="font-16">$ {{number_format(353)}}</div>
-                                        <span class="text-mute">Puntos</span>
                                     </div>
                                     <div class="col-xs-4">
                                         <div class="font-16">$ {{number_format(3334)}}</div>
-                                        <span class="text-mute">Ganancias</span>
                                     </div>
                                 </div>
                             </div>
@@ -187,56 +187,56 @@
                 </div>
             </a>
             <a href="nivel/2" style="color: black;">
-            <div class="col-sm-12">
-                <div class="box">
-                    <div class="panel panel-default">
-                        <div class="panel-heading font-header">Nivel 2</div>
-                        <div class="panel-body puntos">
-                            <div class="row">
-                                <div class="col-xs-4">
-                                    <div class="font-16"># {{number_format($dos)}} </div>
-                                    <span class="text-mute">Referidos</span>
-                                </div>
-                                <div class="col-xs-4">
-                                    <div class="font-16">$ {{number_format(353)}}</div>
-                                    <span class="text-mute">Puntos</span>
-                                </div>
-                                <div class="col-xs-4">
-                                    <div class="font-16">$ {{number_format(3334)}}</div>
-                                    <span class="text-mute">Ganancias</span>
+                <div class="col-sm-12">
+                    <div class="box">
+                        <div class="panel panel-default">
+                            <div class="panel-body puntos">
+                                <div class="row">
+                                    <div class="col-xs-1">
+                                        <span class="font-16" style="background-color:#0791F0; padding: 12px; border-radius: 50%; width: 100px; height: 20px; color: #fff"> 2 </span>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <span class="font-16"># {{number_format($dos)}} </span>
+                                        <span class="icon-user font-12-xs"></span>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div class="font-16">$ {{number_format(353)}}</div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div class="font-16">$ {{number_format(3334)}}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             </a>
             <a href="nivel/3" style="color: black;">
-            <div class="col-sm-12">
-                <div class="box">
-                    <div class="panel panel-default">
-                        <div class="panel-heading font-header">Nivel 3</div>
-                        <div class="panel-body puntos">
-                            <div class="row">
-                                <div class="col-xs-4">
-                                    <div class="font-16"># {{number_format($tres)}} </div>
-                                    <span class="text-mute">Referidos</span>
-                                </div>
-                                <div class="col-xs-4">
-                                    <div class="font-16">$ {{number_format(353)}}</div>
-                                    <span class="text-mute">Puntos</span>
-                                </div>
-                                <div class="col-xs-4">
-                                    <div class="font-16">$ {{number_format(3334)}}</div>
-                                    <span class="text-mute">Ganancias</span>
+                <div class="col-sm-12">
+                    <div class="box">
+                        <div class="panel panel-default">
+                            <div class="panel-body puntos">
+                                <div class="row">
+                                    <div class="col-xs-1">
+                                        <span class="font-16" style="background-color:#0791F0; padding: 12px; border-radius: 50%; width: 100px; height: 20px; color: #fff"> 3 </span>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <span class="font-16"># {{number_format($tres)}} </span>
+                                        <span class="icon-user font-12-xs"></span>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div class="font-16">$ {{number_format(353)}}</div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div class="font-16">$ {{number_format(3334)}}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             </a>
-        </div>
+        </div><br><br>
 
     </section>
 

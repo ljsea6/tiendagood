@@ -467,7 +467,7 @@ class UsuariosController extends Controller {
         }
 
         $city = Ciudad::find($request->city);
-
+/*
         if (count($usuario) > 0) {
 
             $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
@@ -527,7 +527,7 @@ class UsuariosController extends Controller {
             }
 
         }
-
+*/
         $padre = Tercero::with('networks')->where('identificacion', '=', '' .$request->code. '')->first();
 
         if (count($padre) > 0 ) {
