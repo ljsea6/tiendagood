@@ -70,7 +70,7 @@
                      </div>
                   </td>
                   <td>#{{$uno}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>$ 353</td>
+                  <td>467 Puntos</td>
                   <td>$ 3,334</td>
                   </a>
                </div></tr>
@@ -81,7 +81,7 @@
                      </div>
                   </td>
                   <td>#{{$dos}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>$ 353</td>
+                  <td>353 Puntos</td>
                   <td>$ 3,334</td>
                </tr>
                <tr onclick="link(3)">
@@ -91,7 +91,7 @@
                      </div>
                   </td>
                   <td>#{{$tres}}<span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>$ 353</td>
+                  <td>353 Puntos</td>
                   <td>$ 3,334</td>
                </tr>
             </tbody>
