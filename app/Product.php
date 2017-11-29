@@ -23,7 +23,7 @@ class Product extends Model
         return $this->hasMany(Variant::class, 'product_id', 'id');
     }
 
-    public static function createProduct($product, $tipo_producto)
+    public static function createProduct($product, $tipo_producto, $shop)
     {
 
         Product::create([
@@ -45,7 +45,8 @@ class Product extends Model
             'updated_at' => Carbon::parse($product['updated_at']),
             'variants' => $product['variants'],
             'vendor' => $product['vendor'],
-            'tipo_producto' => $tipo_producto
+            'tipo_producto' => $tipo_producto,
+            'shop' => $shop
         ]);
     }
 }

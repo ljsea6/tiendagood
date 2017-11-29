@@ -2,26 +2,25 @@
 
 namespace App\Console\Commands;
 
-
 use App\Product;
 use App\Variant;
 use Illuminate\Console\Command;
 
-class GetProducts extends Command
+class GetProductsMercando extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'get:products';
+    protected $signature = 'get:products-mercando';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Comando para obtener todos los productos de la API shopify';
+    protected $description = 'Comando para descargar la lista de productos de mercando';
 
     /**
      * Create a new command instance.
@@ -40,7 +39,7 @@ class GetProducts extends Command
      */
     public function handle()
     {
-        $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $api_url = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
         $client = new \GuzzleHttp\Client();
         $result = true;
         $h = 1;
@@ -61,38 +60,17 @@ class GetProducts extends Command
 
             foreach ($results['products'] as  $product) {
 
-                $response = Product::where('shop', 'good')
+                $response = Product::where('shop', 'mercando')
                     ->where('id', $product['id'])
                     ->first();
 
                 if(count($response) == 0) {
 
-                    Product::createProduct($product, 'internacional', 'good');
+                    Product::createProduct($product, 'nacional', 'mercando');
 
                     foreach ($product['variants'] as $variant) {
 
-                        // variable para asignar puntos a las variantes
-                        $puntos = 0;
-
-                        // Asignamos a p los puntos asignados por cada 1000 pesos
-                        $p = $variant['price']/1000;
-
-                        // Partimos en dos después del . para redondear por el valor menor
-                        $partir = explode('.', $p);
-
-                        // Si tiene dos partes asignamos lo que hay en la posición 0
-                        if (count($partir) > 1) {
-                            $puntos = $puntos +  (int)$partir[0];
-                        }
-
-                        // Si tiene una partes asignamos lo que hay en la variable $partir
-                        if (count($partir) == 1) {
-                            $puntos = $puntos +  (int)$partir;
-                        }
-
-
-                        // Método para crear una Variante con sus puntos
-                        Variant::createVariant($variant, $puntos, 'good');
+                        Variant::createVariant($variant, 0, 'mercando');
 
                         try {
 
@@ -113,7 +91,7 @@ class GetProducts extends Command
                                                         'metafield' => array(
                                                             'namespace' => 'variants',
                                                             'key' => 'points',
-                                                            'value' => $puntos,
+                                                            'value' => 0,
                                                             'value_type' => 'integer'
                                                         )
                                                     )
@@ -143,7 +121,7 @@ class GetProducts extends Command
                                             'metafield' => array(
                                                 'namespace' => 'variants',
                                                 'key' => 'points',
-                                                'value' => $puntos,
+                                                'value' => 0,
                                                 'value_type' => 'integer'
                                             )
                                         )
@@ -174,7 +152,7 @@ class GetProducts extends Command
 
                     foreach ($product['variants'] as $variant) {
 
-                        Variant::updateVariant($variant, 'good');
+                        Variant::updateVariant($variant, 'mercando');
                     }
 
                     $update = Product::find($response->id);

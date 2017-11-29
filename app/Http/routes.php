@@ -64,6 +64,11 @@ Route::post('orders/payment', 'OrdersController@payment');
 Route::post('products/create', 'ProductsController@create');
 Route::post('products/update', 'ProductsController@update');
 
+/*
+ * Final web hooks
+ *
+ * */
+
 Route::post('validate/email', 'UsuariosController@verified_email');
 Route::post('validate/code', 'UsuariosController@verified_code');
 Route::post('validate/phone', 'UsuariosController@verified_phone');

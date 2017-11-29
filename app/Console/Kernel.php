@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\MercadoPago::class,
         \App\Console\Commands\Metafields::class,
         \App\Console\Commands\GiftsCards::class,
+        \App\Console\Commands\GetProductsMercando::class
     ];
 
     /**
@@ -39,6 +40,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('get:products')
                  ->twiceDaily(1, 20);
+
+        $schedule->command('get:products-mercando')
+                 ->twiceDaily(2, 21);
 
         $schedule->command('get:customers')
                  ->twiceDaily(2, 21);
