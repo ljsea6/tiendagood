@@ -23,7 +23,7 @@
                             <input type="hidden" id="id" name="id" value="{{currentUser()->id}}">
                             <div class="form-group">
                                 <div class="col-sm-offset-3 col-sm-6">
-                                    <label for="email">Ingresar correo o el nombre completo de la persona</label>
+                                    <label for="email">Ingresar correo o el nombre de la persona</label>
                                     <input id="tercero" name="email" type="email" class="form-control" required>
                                 </div>
                             </div>

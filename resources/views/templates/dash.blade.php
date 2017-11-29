@@ -17,12 +17,15 @@
     {!! Html::style('css/jquery.dataTables.min.css') !!}
     {!! Html::style('css/buttons.dataTables.min.css') !!}
 
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.0.2/css/responsive.bootstrap.min.css">
 
     {!! Html::style('js/Jit/Examples/css/base.css') !!}
     {!! Html::style('js/Jit/Examples/css/Spacetree.css') !!}
 
     {!! Html::style('css/app.min.css?act=1') !!}
+
+
 
      @yield('styles')
     <!--[if lt IE 9]>
@@ -69,6 +72,8 @@
     {!! Html::script('js/buttons.html5.min.js') !!}
     {!! Html::script('js/buttons.print.min.js') !!}
 
+    {!! Html::script('css/material.min.js') !!}
+    {!! Html::script('css/material-dashboard.js') !!}
 
     {!! Html::script('js/dataTables.bootstrap.min.js') !!}
     
