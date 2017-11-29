@@ -252,7 +252,12 @@
                             <a href="{{ route('admin.variants.index') }}" class="text-left">
                                 <i class="fa fa-list">
                                 </i>
-                                Variantes
+                                Variantes Good
+                            </a>
+                            <a href="{{ route('admin.variants.mercando') }}" class="text-left">
+                                <i class="fa fa-list">
+                                </i>
+                                Variantes Mercando
                             </a>
                         </li>
                     </ul>

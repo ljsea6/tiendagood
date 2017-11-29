@@ -15,6 +15,7 @@
                         <tr>
                             <th>#</th>
                             <th>Título</th>
+                            <th>Tienda</th>
                             <th>Tipo Producto</th>
                         </tr>
                         </thead>
@@ -42,6 +43,7 @@
                columns: [
                     { data: 'id', name: 'id', orderable: true, searchable: false },
                     { data: 'title', name: 'title', orderable: true, searchable: true },
+                    { data: 'shop', name: 'shop', orderable: true, searchable: true },
                     { data: 'tipo_producto', name: 'tipo_producto', orderable: true, searchable: true}
 
                 ],

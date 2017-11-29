@@ -5,7 +5,7 @@
 @section('content')
     <div class="box">
         <div class="panel panel-default">
-            <div class="panel-heading font-header">Variantes de Good</div>
+            <div class="panel-heading font-header">Variantes de Mercando</div>
             <div class="panel-body">
                 {!! Alert::render() !!}
                 <input type="button" class="btn btn-danger" id="update" value="Actualizar">
@@ -47,7 +47,7 @@
                 serverSide: false,
                 deferRender: true,
                 pagingType: "full_numbers",
-                ajax: '{{route('admin.variants.search')}}',
+                ajax: '{{route('admin.variants.search_mercando')}}',
                 columns: [
                     { data: 'id', name: 'id', orderable: true, searchable: true },
                     { data: 'title', name: 'title', orderable: true, searchable: true },
@@ -70,7 +70,7 @@
                 var data = table.$('input, select').serialize();
 
                 $.ajax({
-                    url: "{{route('admin.variants.update')}}",
+                    url: "{{route('admin.variants.update_mercando')}}",
                     data: { value: data, _token: '{{ csrf_token() }}'},
                     type: 'POST',
                     dataType: 'json',

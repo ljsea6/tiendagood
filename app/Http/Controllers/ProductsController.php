@@ -37,7 +37,7 @@ class ProductsController extends Controller
 
     public function anyData()
     {
-        $products = Product::select('id', 'title', 'tipo_producto')
+        $products = Product::select('id', 'title', 'tipo_producto', 'shop')
             ->get();
 
         $send = collect($products);
@@ -48,10 +48,13 @@ class ProductsController extends Controller
                 return '<div align=left>' . $send['id'] . '</div>';
             })
             ->addColumn('title', function ($send) {
-                return '<div align=left>' . $send['title'] . '</div>';
+                return '<div align=left>' . ucwords($send['title']) . '</div>';
+            })
+            ->addColumn('shop', function ($send) {
+                return '<div align=left>' . ucwords($send['shop']) . '</div>';
             })
             ->addColumn('tipo_producto', function ($send) {
-                return '<div align=left>' . $send->tipo_producto . '</div>';
+                return '<div align=left>' . ucwords($send->tipo_producto) . '</div>';
             })
             ->make(true);
     }

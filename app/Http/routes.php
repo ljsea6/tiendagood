@@ -126,9 +126,15 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     /*
      * Variantes
      */
-    Route::get('variants', ['uses' => 'VariantsController@index', 'as' => 'admin.variants.index']);
-    Route::any('variants/search', ['uses' => 'VariantsController@variants', 'as' => 'admin.variants.search']);
-    Route::any('variants/update', ['uses' => 'VariantsController@update', 'as' => 'admin.variants.update']);
+    Route::get('variants/good', ['uses' => 'VariantsController@index', 'as' => 'admin.variants.index']);
+    Route::get('variants/mercando', ['uses' => 'VariantsController@mercando', 'as' => 'admin.variants.mercando']);
+
+    Route::any('variants/good/search', ['uses' => 'VariantsController@variants', 'as' => 'admin.variants.search']);
+    Route::any('variants/mercando/search', ['uses' => 'VariantsController@variants_mercando', 'as' => 'admin.variants.search_mercando']);
+
+
+    Route::any('variants/good/update', ['uses' => 'VariantsController@update', 'as' => 'admin.variants.update']);
+    Route::any('variants/mercando/update', ['uses' => 'VariantsController@update_mercando', 'as' => 'admin.variants.update_mercando']);
 
     /*
      *   gifts
