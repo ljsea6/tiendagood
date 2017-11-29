@@ -27,17 +27,21 @@
                                     <input id="tercero" name="email" type="email" class="form-control" required>
                                 </div>
                             </div>
-                                                        
-                            @if ($errors->any())
-                                <div class="alert alert-danger fade in col-sm-offset-3 col-sm-6">
-                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
+
+                         <table id="referidos" class="table table-bordered font-12">
+                            <thead>
+                            <tr>
+                                <th>Nombres</th>
+                                <th>Email</th>
+                                <th>Nivel</th>
+                            </tr>
+                            </thead>
+                            <tbody class="tercero">
+                                <tr class="primer">
+                                    <td class="text-left" colspan="3"></td>
+                                </tr>
+                            </tbody>
+                        </table>
 
                         </div>
                     </div>
@@ -49,23 +53,26 @@
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
- 
+    var html = '';
     $("#tercero").autocomplete({
     source: function(request, response) {
     $.ajax({ url: '{{route("admin.finder")}}', 
         dataType: "json",  type:"POST",  
         data: { email : $("#tercero").val(), id : $("#id").val(),  _token : $("#_token").val()
         },
-        success: function(data) {    response(data);  }     
+        success: function(data) {  $(".tercero").html('');  html = '';  response(data);  }     
     });
     },   
     minLength: 1,   
-    select: function( event, ui ) {
-        $("#id_receta").val(ui.item.id);  
+    select: function( event, ui ) {  
+        html += '<tr>';
+        html += '<td class="text-left">'+ui.item.nombre+'</td>';
+        html += '<td class="text-left">'+ui.item.correo+'</td>';
+        html += '<td class="text-left">'+ui.item.nivel+'</td>';  
+        html += '</tr>';
+        $(".tercero").html(html); 
     }
     });   
-
-
 </script>
 
 @endsection
