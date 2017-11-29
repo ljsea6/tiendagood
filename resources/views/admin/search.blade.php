@@ -23,18 +23,11 @@
                             <input type="hidden" id="id" name="id" value="{{currentUser()->id}}">
                             <div class="form-group">
                                 <div class="col-sm-offset-3 col-sm-6">
-                                    <label for="email">Ingresar correo</label>
-                                    <input id="email" name="email" type="email" class="form-control" required>
+                                    <label for="email">Ingresar correo o el nombre completo de la persona</label>
+                                    <input id="tercero" name="email" type="email" class="form-control" required>
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <div class="col-sm-offset-3 col-sm-6 text-left">
-                                    <button class="btn btn-primary text-left" type="submit" >Buscar</button>
-                                </div>
-                            </div>
-
-                            
+                                                        
                             @if ($errors->any())
                                 <div class="alert alert-danger fade in col-sm-offset-3 col-sm-6">
                                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -52,7 +45,28 @@
             </form>
         </div>
     </div>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+ 
+    $("#tercero").autocomplete({
+    source: function(request, response) {
+    $.ajax({ url: '{{route("admin.finder")}}', 
+        dataType: "json",  type:"POST",  
+        data: { email : $("#tercero").val(), id : $("#id").val(),  _token : $("#_token").val()
+        },
+        success: function(data) {    response(data);  }     
+    });
+    },   
+    minLength: 1,   
+    select: function( event, ui ) {
+        $("#id_receta").val(ui.item.id);  
+    }
+    });   
 
+
+</script>
 
 @endsection
 
