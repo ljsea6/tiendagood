@@ -161,8 +161,8 @@
         </div>--}}
 
         <div class="row">
-            <a href="nivel/1">
-                <div class="col-sm-6">
+            <a href="nivel/1" style="color: black;">
+                <div class="col-sm-12">
                     <div class="box">
                         <div class="panel panel-default">
                             <div class="panel-heading font-header">Nivel 1</div>
@@ -186,8 +186,8 @@
                     </div>
                 </div>
             </a>
-            <a href="nivel/1">
-            <div class="col-sm-6">
+            <a href="nivel/2" style="color: black;">
+            <div class="col-sm-12">
                 <div class="box">
                     <div class="panel panel-default">
                         <div class="panel-heading font-header">Nivel 2</div>
@@ -211,8 +211,8 @@
                 </div>
             </div>
             </a>
-            <a href="nivel/1">
-            <div class="col-sm-6">
+            <a href="nivel/3" style="color: black;">
+            <div class="col-sm-12">
                 <div class="box">
                     <div class="panel panel-default">
                         <div class="panel-heading font-header">Nivel 3</div>
