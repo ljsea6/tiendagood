@@ -526,6 +526,63 @@ class UsuariosController extends Controller {
                 }
             }
 
+
+            $api_url = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+            $client = new \GuzzleHttp\Client();
+
+            try {
+
+                $res = $client->request('post', $api_url . '/admin/customers.json', array(
+                        'form_params' => array(
+                            'customer' => array(
+                                'first_name' => strtolower($request['first-name']),
+                                'last_name' => strtolower($request['last-name']),
+                                'email' => strtolower($request->email),
+                                'verified_email' => true,
+                                'phone' => $p,
+                                'addresses' => [
+
+                                    [
+                                        'address1' => strtolower($request->address),
+                                        'city' => strtolower($city->nombre),
+                                        'province' => '',
+
+                                        "zip" => '',
+                                        'first_name' => strtolower($request['first-name']),
+                                        'last_name' => strtolower($request['last-name']),
+                                        'country' => 'CO'
+                                    ],
+
+                                ],
+                                "password" => $request->password,
+                                "password_confirmation" => $request->password_confirmation,
+                                'send_email_invite' => false,
+                                'send_email_welcome' => false
+                            )
+                        )
+                    )
+                );
+
+                $customer = json_decode($res->getBody(), true);
+
+                $search = Tercero::find($usuario->id);
+
+                $search->customer_id = $customer['customer']['id'];
+
+                $search->save();
+
+            } catch (ClientException $e) {
+
+                $err = json_decode(($e->getResponse()->getBody()), true);
+
+                //return redirect()->back()->with(['err' => $err]);
+
+                foreach ($err['errors'] as $key => $value) {
+
+                    echo $key . ' ' . $value[0] . "\n";
+                }
+            }
+
         }
 
         $padre = Tercero::with('networks')->where('identificacion', '=', '' .$request->code. '')->first();
