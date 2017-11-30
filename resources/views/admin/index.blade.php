@@ -66,14 +66,14 @@
                <tr onclick="link(1)">
                   <td>
                      <div class="card-header" data-background-color="orange" style="width: 50px; height: 50px; margin-top: 10px; border-radius: 20px;">
-                        <i class="fa">1</i>
+                        <i class="fa" style="font-size: 25px">1</i>
                      </div>
                   </td>
                   <td>#{{$uno}} <span class="fa fa-user" aria-hidden="true"></span></td>
                   <td>467 Puntos</td>
                   <td>$ 3,334</td>
                   </a>
-               </div></tr>
+               </tr>
                <tr onclick="link(2)">
                   <td>
                      <div class="card-header" data-background-color="orange" style="width: 50px; height: 50px; margin-top: 10px; border-radius: 20px;">
@@ -90,7 +90,7 @@
                         <i class="fa">3</i>
                      </div>
                   </td>
-                  <td>#{{$tres}}<span class="fa fa-user" aria-hidden="true"></span></td>
+                  <td>#{{$tres}} <span class="fa fa-user" aria-hidden="true"></span></td>
                   <td>353 Puntos</td>
                   <td>$ 3,334</td>
                </tr>

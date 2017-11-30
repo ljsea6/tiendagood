@@ -3496,6 +3496,11 @@ select.form-control[multiple],
 
 .table td {
     text-align: left;
+    font-size: 20px;
+}
+
+.i {
+    font-size: 25px;
 }
 
 .table>tbody>tr {
