@@ -44,9 +44,17 @@ class GetProductsMercando extends Command
         $result = true;
         $h = 1;
 
+        $r = $client->request('GET', $api_url . '/admin/products/count.json');
+
+        $count = json_decode($r->getBody(), true);
+
+        $this->info('Cantidad productos de mercando: ' . $count['count']);
+
         do {
 
             $resa = $client->request('GET', $api_url . '/admin/products.json?limit=250&&page=' . $h);
+
+            $this->info('pagina: ' . $h);
 
             $headers = $resa->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
             $x = explode('/', $headers[0]);
@@ -162,11 +170,15 @@ class GetProductsMercando extends Command
                     $update->vendor = $product['vendor'];
                     $update->save();
 
-                    return response()->json(['status' => 'The resource is updated successfully'], 200);
+                    //return response()->json(['status' => 'The resource is updated successfully'], 200);
                 }
             }
 
+            $this->info('Contando en pagina ' . $h . ' productos: ' . count($results['products']));
+
             $h++;
+
+
 
             if (count($results['products']) < 1) {
                 $result = false;

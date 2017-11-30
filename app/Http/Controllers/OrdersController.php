@@ -11,6 +11,7 @@ use App\Entities\Tercero;
 use App\Customer;
 use DB;
 use App\Logorder;
+use Illuminate\Support\Facades\Crypt;
 use Yajra\Datatables\Datatables;
 use MP;
 use MercadoPagoException;
@@ -24,6 +25,7 @@ use App\Tipo;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ClientException;
+
 
 class OrdersController extends Controller
 {
