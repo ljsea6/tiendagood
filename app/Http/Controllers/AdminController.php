@@ -173,14 +173,14 @@ class AdminController extends Controller {
                                             } else {
                                                 $err = 'No está en su lista de referidos';
                                                 //return view('admin.find', compact('err'));
-                                                $data =  array('label' => $err);                       
+                                                $data[] =  array('label' => $err, 'nivel' => 0);                       
                                                echo json_encode($data);                                               
                                             }
                                         }
                                     } else {
                                         $err = 'No está en su lista de referidos';
                                         //return view('admin.find', compact('err'));
-                                        $data =  array('label' => $err);                       
+                                        $data[] =  array('label' => $err, 'nivel' => 0);                       
                                         echo json_encode($data);                                       
                                     }
                                 }
@@ -188,21 +188,21 @@ class AdminController extends Controller {
                         } else {
                             $err = 'No está en su lista de referidos';
                             //return view('admin.find', compact('err'));
-                            $data =  array('label' => $err);                       
+                            $data[] =  array('label' => $err, 'nivel' => 0);                       
                            echo json_encode($data);                         
                         }
                     }
                 } else {
                     $err = 'No está en su lista de referidos';
                     //return view('admin.find', compact('err'));
-                    $data =  array('label' => $err);                       
+                    $data[] =  array('label' => $err, 'nivel' => 0);                       
                     echo json_encode($data);                   
                 }
 
             } else {
                 $err = 'No está en su lista de referidos';
                 //return view('admin.find', compact('err'));
-                $data =  array('label' => $err);                       
+                $data[] =  array('label' => $err, 'nivel' => 0);                       
                 echo json_encode($data);               
             }
 

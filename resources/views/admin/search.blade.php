@@ -65,11 +65,18 @@
     },   
     minLength: 1,   
     select: function( event, ui ) {  
+    if(ui.item.nivel > 0){
         html += '<tr>';
         html += '<td class="text-left">'+ui.item.nombre+'</td>';
         html += '<td class="text-left">'+ui.item.correo+'</td>';
         html += '<td class="text-left">'+ui.item.nivel+'</td>';  
         html += '</tr>';
+    }
+    else{
+        html += '<tr>';
+        html += '<td style="text-align:center" colspan="3">No está en su lista de referidos</td>';
+        html += '</tr>';
+    }
         $(".tercero").html(html); 
     }
     });   
