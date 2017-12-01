@@ -24,7 +24,7 @@
                             <div class="form-group">
                                 <div class="col-sm-offset-3 col-sm-6">
                                     <label for="email">Ingresar correo o el nombre de la persona</label>
-                                    <input id="tercero" name="email" type="email" class="form-control" required>
+                                    <input id="tercero" name="email" type="text" class="form-control" required>
                                 </div>
                             </div>
 
