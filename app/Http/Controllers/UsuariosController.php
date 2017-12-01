@@ -635,10 +635,7 @@ class UsuariosController extends Controller {
             return redirect()->route('admin.index');
         }*/
 
-        $user = Tercero::with('networks')->find($request->code);
-        if (count($padre) > 0 ) {
-            
-        } 
+
         
         $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
         $this->envio_registro($request->code, $data);
