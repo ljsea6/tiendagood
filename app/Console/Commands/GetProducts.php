@@ -45,10 +45,6 @@ class GetProducts extends Command
         $result = true;
         $h = 1;
 
-        $r = $client->request('GET', $api_url . '/admin/products/count.json');
-        $count = json_decode($r->getBody(), true);
-
-
         do {
 
             $resa = $client->request('GET', $api_url . '/admin/products.json?limit=250&&page=' . $h);
@@ -58,7 +54,7 @@ class GetProducts extends Command
             $diferencia = $x[1] - $x[0];
             if ($diferencia < 20) {
 
-                usleep(20000000);
+                usleep(10000000);
             }
 
             $results = json_decode($resa->getBody(), true);
@@ -78,7 +74,7 @@ class GetProducts extends Command
                     $diferencia = $x[1] - $x[0];
                     if ($diferencia < 20) {
 
-                        usleep(20000000);
+                        usleep(10000000);
                     }
 
                     $collections = json_decode($a->getBody(), true);
@@ -166,6 +162,7 @@ class GetProducts extends Command
                                             usleep(10000000);
                                         }
 
+
                                     } catch (ClientException $e) {
 
                                         return json_decode(($e->getResponse()->getBody()), true);
@@ -184,21 +181,13 @@ class GetProducts extends Command
 
                         foreach ($product['variants'] as $variant) {
 
-
                             // variable para asignar puntos a las variantes
                             $puntos = 0;
+
                             // Asignamos a p los puntos asignados por cada 1000 pesos
                             $p = $variant['price'] / 1000;
-                            // Partimos en dos después del . para redondear por el valor menor
-                            $partir = explode('.', $p);
-                            // Si tiene dos partes asignamos lo que hay en la posición 0
-                            if (count($partir) > 1) {
-                                $puntos = $puntos + (int)$partir[0];
-                            }
-                            // Si tiene una partes asignamos lo que hay en la variable $partir
-                            if (count($partir) == 1) {
-                                $puntos = $puntos + (int)$partir;
-                            }
+
+                            $puntos = $puntos + floor($p);
 
                             Variant::createVariant($variant, $puntos, 'good');
 
@@ -234,6 +223,7 @@ class GetProducts extends Command
                                                 if ($diferencia < 10) {
                                                     usleep(10000000);
                                                 }
+
 
                                             } catch (ClientException $e) {
 
@@ -293,8 +283,6 @@ class GetProducts extends Command
                     $update->images = $product['images'];
                     $update->vendor = $product['vendor'];
                     $update->save();
-
-                    //return response()->json(['status' => 'The resource is updated successfully'], 200);
                 }
             }
 
