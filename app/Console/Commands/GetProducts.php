@@ -49,13 +49,11 @@ class GetProducts extends Command
         $count = json_decode($r->getBody(), true);
 
 
-        $this->info('Cantidad productos de good: ' . $count['count']);
-
         do {
 
             $resa = $client->request('GET', $api_url . '/admin/products.json?limit=250&&page=' . $h);
 
-            $this->info('pagina: ' . $h);
+
 
             $headers = $resa->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
             $x = explode('/', $headers[0]);
@@ -75,27 +73,75 @@ class GetProducts extends Command
 
                 if(count($response) == 0) {
 
-                    Product::createProduct($product, 'internacional', 'good');
 
-                    foreach ($product['variants'] as $variant) {
+                    $a = $client->request('GET', $api_url . '/admin/collects.json?product_id=' . $product['id']);
+                    $headers = $a->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+                    if ($diferencia < 20) {
 
-                        Variant::createVariant($variant, 0, 'good');
+                        usleep(20000000);
+                    }
 
-                        try {
+                    $collections = json_decode($a->getBody(), true);
 
-                            $resb = $client->request('get', $api_url . '/admin/variants/'. $variant['id'] .'/metafields.json');
+                    if (count($collections['collects']) > 0) {
 
-                            $rs = json_decode($resb->getBody(), true);
+                        foreach ($collections['collects'] as $collect) {
 
-                            if (count($rs['metafields']) > 0) {
+                            if ($collect['collection_id'] == 25960513573) {
 
-                                foreach ($rs['metafields'] as $r) {
+                                Product::createProduct($product, 'nacional', 'good');
 
-                                    if ($r['key'] == 'points' && $r['namespace'] == 'variants') {
+                                foreach ($product['variants'] as $variant) {
 
-                                        try {
+                                    Variant::createVariant($variant, 0, 'good');
 
-                                            $resc = $client->request('put', $api_url . '/admin/variants/'. $variant['id'] .'/metafields/' . $r['id'] . '.json', array(
+                                    try {
+
+                                        $resb = $client->request('get', $api_url . '/admin/variants/'. $variant['id'] .'/metafields.json');
+
+                                        $rs = json_decode($resb->getBody(), true);
+
+                                        if (count($rs['metafields']) > 0) {
+
+                                            foreach ($rs['metafields'] as $r) {
+
+                                                if ($r['key'] == 'points' && $r['namespace'] == 'variants') {
+
+                                                    try {
+
+                                                        $resc = $client->request('put', $api_url . '/admin/variants/'. $variant['id'] .'/metafields/' . $r['id'] . '.json', array(
+                                                                'form_params' => array(
+                                                                    'metafield' => array(
+                                                                        'namespace' => 'variants',
+                                                                        'key' => 'points',
+                                                                        'value' => 0,
+                                                                        'value_type' => 'integer'
+                                                                    )
+                                                                )
+                                                            )
+                                                        );
+
+                                                        $headers = $resc->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                                        $x = explode('/', $headers[0]);
+                                                        $diferencia = $x[1] - $x[0];
+                                                        if ($diferencia < 10) {
+                                                            usleep(10000000);
+                                                        }
+
+                                                    } catch (ClientException $e) {
+
+                                                        return json_decode(($e->getResponse()->getBody()), true);
+                                                    }
+                                                }
+                                            }
+
+                                        } else {
+
+                                            try {
+
+                                                $resd = $client->request('post', $api_url . '/admin/variants/'. $variant['id'] .'/metafields.json', array(
                                                     'form_params' => array(
                                                         'metafield' => array(
                                                             'namespace' => 'variants',
@@ -104,57 +150,132 @@ class GetProducts extends Command
                                                             'value_type' => 'integer'
                                                         )
                                                     )
-                                                )
-                                            );
+                                                ));
 
-                                            $headers = $resc->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                            $x = explode('/', $headers[0]);
-                                            $diferencia = $x[1] - $x[0];
-                                            if ($diferencia < 10) {
-                                                usleep(10000000);
+                                                $headers = $resd->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                                $x = explode('/', $headers[0]);
+                                                $diferencia = $x[1] - $x[0];
+                                                if ($diferencia < 20) {
+
+                                                    usleep(10000000);
+                                                }
+
+                                            } catch (ClientException $e) {
+
+                                                return json_decode(($e->getResponse()->getBody()), true);
                                             }
-
-                                        } catch (ClientException $e) {
-
-                                            return json_decode(($e->getResponse()->getBody()), true);
                                         }
+
+                                    } catch (ClientException $e) {
+
+                                        return json_decode(($e->getResponse()->getBody()), true);
                                     }
                                 }
 
                             } else {
 
-                                try {
+                                Product::createProduct($product, 'internacional', 'good');
 
-                                    $resd = $client->request('post', $api_url . '/admin/variants/'. $variant['id'] .'/metafields.json', array(
-                                        'form_params' => array(
-                                            'metafield' => array(
-                                                'namespace' => 'variants',
-                                                'key' => 'points',
-                                                'value' => 0,
-                                                'value_type' => 'integer'
-                                            )
-                                        )
-                                    ));
+                                foreach ($product['variants'] as $variant) {
 
-                                    $headers = $resd->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                    $x = explode('/', $headers[0]);
-                                    $diferencia = $x[1] - $x[0];
-                                    if ($diferencia < 20) {
 
-                                        usleep(10000000);
+                                    // variable para asignar puntos a las variantes
+                                    $puntos = 0;
+                                    // Asignamos a p los puntos asignados por cada 1000 pesos
+                                    $p = $variant['price']/1000;
+                                    // Partimos en dos después del . para redondear por el valor menor
+                                    $partir = explode('.', $p);
+                                    // Si tiene dos partes asignamos lo que hay en la posición 0
+                                    if (count($partir) > 1) {
+                                        $puntos = $puntos +  (int)$partir[0];
+                                    }
+                                    // Si tiene una partes asignamos lo que hay en la variable $partir
+                                    if (count($partir) == 1) {
+                                        $puntos = $puntos +  (int)$partir;
                                     }
 
-                                } catch (ClientException $e) {
+                                    Variant::createVariant($variant, $puntos, 'good');
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    try {
+
+                                        $resb = $client->request('get', $api_url . '/admin/variants/'. $variant['id'] .'/metafields.json');
+
+                                        $rs = json_decode($resb->getBody(), true);
+
+                                        if (count($rs['metafields']) > 0) {
+
+                                            foreach ($rs['metafields'] as $r) {
+
+                                                if ($r['key'] == 'points' && $r['namespace'] == 'variants') {
+
+                                                    try {
+
+                                                        $resc = $client->request('put', $api_url . '/admin/variants/'. $variant['id'] .'/metafields/' . $r['id'] . '.json', array(
+                                                                'form_params' => array(
+                                                                    'metafield' => array(
+                                                                        'namespace' => 'variants',
+                                                                        'key' => 'points',
+                                                                        'value' => 0,
+                                                                        'value_type' => 'integer'
+                                                                    )
+                                                                )
+                                                            )
+                                                        );
+
+                                                        $headers = $resc->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                                        $x = explode('/', $headers[0]);
+                                                        $diferencia = $x[1] - $x[0];
+                                                        if ($diferencia < 10) {
+                                                            usleep(10000000);
+                                                        }
+
+                                                    } catch (ClientException $e) {
+
+                                                        return json_decode(($e->getResponse()->getBody()), true);
+                                                    }
+                                                }
+                                            }
+
+                                        } else {
+
+                                            try {
+
+                                                $resd = $client->request('post', $api_url . '/admin/variants/'. $variant['id'] .'/metafields.json', array(
+                                                    'form_params' => array(
+                                                        'metafield' => array(
+                                                            'namespace' => 'variants',
+                                                            'key' => 'points',
+                                                            'value' => 0,
+                                                            'value_type' => 'integer'
+                                                        )
+                                                    )
+                                                ));
+
+                                                $headers = $resd->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                                $x = explode('/', $headers[0]);
+                                                $diferencia = $x[1] - $x[0];
+                                                if ($diferencia < 20) {
+
+                                                    usleep(10000000);
+                                                }
+
+                                            } catch (ClientException $e) {
+
+                                                return json_decode(($e->getResponse()->getBody()), true);
+                                            }
+                                        }
+
+                                    } catch (ClientException $e) {
+
+                                        return json_decode(($e->getResponse()->getBody()), true);
+                                    }
                                 }
                             }
-
-                        } catch (ClientException $e) {
-
-                            return json_decode(($e->getResponse()->getBody()), true);
                         }
+
                     }
+
+
                 }
 
                 if (count($response) > 0 ) {
@@ -175,17 +296,14 @@ class GetProducts extends Command
                 }
             }
 
-            $this->info('Contando en pagina ' . $h . ' productos: ' . count($results['products']));
-
             $h++;
-
-
 
             if (count($results['products']) < 1) {
                 $result = false;
             }
 
         } while($result);
+
 
         $this->info('Los productos han sido descargados correctamente');
     }
