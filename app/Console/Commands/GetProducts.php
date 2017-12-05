@@ -45,9 +45,17 @@ class GetProducts extends Command
         $result = true;
         $h = 1;
 
+        $r = $client->request('GET', $api_url . '/admin/products/count.json');
+        $count = json_decode($r->getBody(), true);
+
+
+        $this->info('Cantidad productos de good: ' . $count['count']);
+
         do {
 
             $resa = $client->request('GET', $api_url . '/admin/products.json?limit=250&&page=' . $h);
+
+            $this->info('pagina: ' . $h);
 
             $headers = $resa->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
             $x = explode('/', $headers[0]);
@@ -71,28 +79,7 @@ class GetProducts extends Command
 
                     foreach ($product['variants'] as $variant) {
 
-                        // variable para asignar puntos a las variantes
-                        $puntos = 0;
-
-                        // Asignamos a p los puntos asignados por cada 1000 pesos
-                        $p = $variant['price']/1000;
-
-                        // Partimos en dos después del . para redondear por el valor menor
-                        $partir = explode('.', $p);
-
-                        // Si tiene dos partes asignamos lo que hay en la posición 0
-                        if (count($partir) > 1) {
-                            $puntos = $puntos +  (int)$partir[0];
-                        }
-
-                        // Si tiene una partes asignamos lo que hay en la variable $partir
-                        if (count($partir) == 1) {
-                            $puntos = $puntos +  (int)$partir;
-                        }
-
-
-                        // Método para crear una Variante con sus puntos
-                        Variant::createVariant($variant, $puntos, 'good');
+                        Variant::createVariant($variant, 0, 'good');
 
                         try {
 
@@ -113,7 +100,7 @@ class GetProducts extends Command
                                                         'metafield' => array(
                                                             'namespace' => 'variants',
                                                             'key' => 'points',
-                                                            'value' => $puntos,
+                                                            'value' => 0,
                                                             'value_type' => 'integer'
                                                         )
                                                     )
@@ -143,7 +130,7 @@ class GetProducts extends Command
                                             'metafield' => array(
                                                 'namespace' => 'variants',
                                                 'key' => 'points',
-                                                'value' => $puntos,
+                                                'value' => 0,
                                                 'value_type' => 'integer'
                                             )
                                         )
@@ -184,11 +171,15 @@ class GetProducts extends Command
                     $update->vendor = $product['vendor'];
                     $update->save();
 
-                    return response()->json(['status' => 'The resource is updated successfully'], 200);
+                    //return response()->json(['status' => 'The resource is updated successfully'], 200);
                 }
             }
 
+            $this->info('Contando en pagina ' . $h . ' productos: ' . count($results['products']));
+
             $h++;
+
+
 
             if (count($results['products']) < 1) {
                 $result = false;
