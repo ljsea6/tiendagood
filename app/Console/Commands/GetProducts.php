@@ -210,7 +210,7 @@ class GetProducts extends Command
                                                             'metafield' => array(
                                                                 'namespace' => 'variants',
                                                                 'key' => 'points',
-                                                                'value' => 0,
+                                                                'value' => $puntos,
                                                                 'value_type' => 'integer'
                                                             )
                                                         )
@@ -241,7 +241,7 @@ class GetProducts extends Command
                                                 'metafield' => array(
                                                     'namespace' => 'variants',
                                                     'key' => 'points',
-                                                    'value' => 0,
+                                                    'value' => $puntos,
                                                     'value_type' => 'integer'
                                                 )
                                             )
