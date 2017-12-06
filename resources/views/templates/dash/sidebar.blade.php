@@ -266,7 +266,7 @@
             </li>
             @endrole
 
-            @role('logistica')
+            @role('good')
             <li class="has-submenu">
                 <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-gears">
@@ -283,6 +283,25 @@
                                 </i>
                                 Variantes Good
                             </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+            @endrole
+
+            @role('mercando')
+            <li class="has-submenu">
+                <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="text-left">
+                    <i class="fa fa-gears">
+                    </i>
+                    <span class="nav-text">
+                        Configuración
+                    </span>
+                </a>
+                <div class="sub-menu collapse secondary list-style-circle" id="submenu1">
+                    <ul>
+                        <li>
                             <a href="{{ route('admin.variants.mercando') }}" class="text-left">
                                 <i class="fa fa-list">
                                 </i>
