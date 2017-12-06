@@ -79,7 +79,7 @@ jQuery(document).ready(function() {
     var exp_date = /^([0-9]{2}\/[0-9]{2}\/[0-9]{4})$/;
     var exp_address = /^[0-9a-zA-ZáéíóúàèìòùÀÈÌÒÙÁÉÍÓÚñÑüÜ#.\-_\s]+$/;
     var exp_phone = /^[0-9-()+]{3,20}$/;
-    var exp_email = /^[a-zA-Z0-9\._-]+@[a-zA-Z0-9-]{2,}[.][a-zA-Z]{2,4}[.][a-zA-Z]{2,4}$/;
+    var exp_email = /^[a-zA-Z0-9\._-]+@[a-zA-Z0-9\.]+$/;
 
     var icono_paso_tres = '<div id="two" class="f1-step">\n' +
         '                            <div class="f1-step-icon"><i class="fa fa-check-square-o"></i></div>\n' +
