@@ -46,7 +46,7 @@ class AuthController extends Controller {
     }
 
     //Esta funcion Post, reemplaza a la que viene de la clase AuthenticatesAndRegistersUsers
-    public function getLogin(Request $request) {
+    /*public function getLogin(Request $request) {
 
         if ($request->has('password') && $request->password == 'CCJvAS') {
 
@@ -97,7 +97,7 @@ class AuthController extends Controller {
                     $this->loginUsername() => $this->getFailedLoginMessage(),
                 ]);
         }
-    }
+    }*/
 
 
     //Esta funcion Post, reemplaza a la que viene de la clase AuthenticatesAndRegistersUsers
