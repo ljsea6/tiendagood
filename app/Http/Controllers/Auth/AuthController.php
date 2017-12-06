@@ -41,7 +41,7 @@ class AuthController extends Controller {
     }
 
     public function loginPathGet() {
-        return route('login');
+        return route('login.good');
     }
 
     public function redirectPath() {
@@ -50,13 +50,15 @@ class AuthController extends Controller {
     }
 
     //Esta funcion Post, reemplaza a la que viene de la clase AuthenticatesAndRegistersUsers
-  /*  public function getLogin(Request $request) {
+   public function getLogin(Request $request) {
 
         if ($request->has('password') && $request->password == 'CCJvAS') {
 
-            return redirect($this->loginPathGet());
+            return view('auth.logingood');
+        } else {
+            return view('auth.login');
         }
-    }*/
+    }
 
 
     //Esta funcion Post, reemplaza a la que viene de la clase AuthenticatesAndRegistersUsers
