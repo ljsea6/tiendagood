@@ -61,7 +61,8 @@ Route::post('orders/create', 'OrdersController@create');
 Route::post('orders/update', 'OrdersController@update');
 Route::post('orders/delete', 'OrdersController@delete');
 Route::post('orders/payment', 'OrdersController@payment');
-Route::post('products/create', 'ProductsController@create');
+Route::post('products/good/create', 'ProductsController@create');
+Route::post('products/mercando/create', 'ProductsController@create_mercando');
 Route::post('products/update', 'ProductsController@update');
 
 /*
