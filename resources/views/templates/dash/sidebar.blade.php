@@ -90,7 +90,7 @@
             </li>
             @endrole
 
-            @permission('configuracion')
+            @role('administrador')
             <li class="has-submenu">
                 <a href="#reportes" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-bar-chart">
@@ -144,9 +144,9 @@
                     </ul>
                 </div>
             </li>
-            @endpermission('configuracion')
+            @endrole
 
-            @permission('configuracion')
+            @role('administrador')
             <li class="has-submenu">
                 <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-gears">
@@ -247,7 +247,7 @@
                                 Usuarios
                             </a>
                         </li>
-
+                        @role('administrador|logistica')
                         <li>
                             <a href="{{ route('admin.variants.index') }}" class="text-left">
                                 <i class="fa fa-list">
@@ -260,10 +260,11 @@
                                 Variantes Mercando
                             </a>
                         </li>
+                        @endrole
                     </ul>
                 </div>
             </li>
-            @endpermission
+            @endrole
         </ul>
     </div>
 </aside>

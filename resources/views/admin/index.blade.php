@@ -22,7 +22,7 @@
       </div>
       <div class="card-content">
          <p class="category">Estos son tus puntos</p>
-         <h3 class="title">15,347,329
+         <h3 class="title">0
             <small>Pts</small>
          </h3>
       </div>
@@ -41,7 +41,7 @@
       </div>
       <div class="card-content">
          <p class="category">Estos son tus puntos Vendidos</p>
-         <h3 class="title">111
+         <h3 class="title">0
             <small>Pts</small>
          </h3>
       </div>
@@ -70,8 +70,8 @@
                      </div>
                   </td>
                   <td>#{{$uno}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>467 Puntos</td>
-                  <td>$ 3,334</td>
+                  <td>0 Puntos</td>
+                  <td>$ 0</td>
                   </a>
                </tr>
                <tr onclick="link(2)">
@@ -81,8 +81,8 @@
                      </div>
                   </td>
                   <td>#{{$dos}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>353 Puntos</td>
-                  <td>$ 3,334</td>
+                  <td>0 Puntos</td>
+                  <td>$ 0</td>
                </tr>
                <tr onclick="link(3)">
                   <td>
@@ -91,8 +91,8 @@
                      </div>
                   </td>
                   <td>#{{$tres}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>353 Puntos</td>
-                  <td>$ 3,334</td>
+                  <td>0 Puntos</td>
+                  <td>$ 0</td>
                </tr>
             </tbody>
          </table><br><br><br>

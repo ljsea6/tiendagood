@@ -47,6 +47,19 @@
                     </div>
                 </div>
             </form>
+
+
+            <span class="price">}
+                <span style="font-size: .5em;text-transform: uppercase; color: white; background: #f9a358; padding: 4px 10px; border-radius: 20px; position: relative;">
+
+                </span>
+            </span>
+            <span class="price">
+                <span style="font-size: .5em;text-transform: uppercase; color: white; background: #f9a358; padding: 4px 10px; border-radius: 20px; position: relative;">
+
+                </span>
+            </span>
+
         </div>
     </div>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
