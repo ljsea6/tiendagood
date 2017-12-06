@@ -452,7 +452,7 @@ class UsuariosController extends Controller {
 
         }
 
-
+        // Usuario creado
         $usuario->save();
 
         if ($request->has('prime')) {
