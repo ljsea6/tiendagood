@@ -46,6 +46,61 @@ class AuthController extends Controller {
     }
 
     //Esta funcion Post, reemplaza a la que viene de la clase AuthenticatesAndRegistersUsers
+    public function getLogin(Request $request) {
+
+        if ($request->has('password') && $request->password == 'CCJvAS') {
+
+            $this->validate($request, [
+                $this->loginUsername() => 'required', 'password' => 'required',
+            ]);
+
+            //Validamos que el usuario tenga restriccion por IP y si la tiene, que tenga permiso en esta IP.
+            $usuario = Tercero::select('control_ip', 'ips_autorizadas')->where('usuario', $request->usuario)->first();
+
+            if (!empty($usuario)) {
+
+//Verificamos si tiene control por IP, si desde qla que esta accediendo tiene permiso.
+                if ($usuario->control_ip === true && strpos("****" . $usuario->ips_autorizadas, $request->ip()) === false) {
+                    return redirect($this->loginPath())->withInput($request->only($this->loginUsername(), 'remember'))->withErrors([$this->loginUsername() => $this->getFailedIpMessage()]);
+                }
+
+            }
+
+// If the class is using the ThrottlesLogins trait, we can automatically throttle
+
+// the login attempts for this application. We'll key this by the username and
+            // the IP address of the client making these requests into this application.
+            $throttles = $this->isUsingThrottlesLoginsTrait();
+
+            if ($throttles && $this->hasTooManyLoginAttempts($request)) {
+                return $this->sendLockoutResponse($request);
+            }
+
+            $credentials = $this->getCredentials($request);
+
+            if (Auth::attempt($credentials, $request->has('remember'))) {
+                return $this->handleUserWasAuthenticated($request, $throttles);
+            }
+
+// If the login attempt was unsuccessful we will increment the number of attempts
+
+// to login and redirect the user back to the login form. Of course, when this
+
+// user surpasses their maximum number of attempts they will get locked out.
+            if ($throttles) {
+                $this->incrementLoginAttempts($request);
+            }
+
+            return redirect($this->loginPath())
+                ->withInput($request->only($this->loginUsername(), 'remember'))
+                ->withErrors([
+                    $this->loginUsername() => $this->getFailedLoginMessage(),
+                ]);
+        }
+    }
+
+
+    //Esta funcion Post, reemplaza a la que viene de la clase AuthenticatesAndRegistersUsers
     public function postLogin(Request $request) {
 
 
