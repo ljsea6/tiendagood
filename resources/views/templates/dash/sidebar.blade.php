@@ -247,7 +247,7 @@
                                 Usuarios
                             </a>
                         </li>
-                        @role('administrador|logistica')
+
                         <li>
                             <a href="{{ route('admin.variants.index') }}" class="text-left">
                                 <i class="fa fa-list">
@@ -260,7 +260,36 @@
                                 Variantes Mercando
                             </a>
                         </li>
-                        @endrole
+
+                    </ul>
+                </div>
+            </li>
+            @endrole
+
+            @role('logistica')
+            <li class="has-submenu">
+                <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="text-left">
+                    <i class="fa fa-gears">
+                    </i>
+                    <span class="nav-text">
+                        Configuración
+                    </span>
+                </a>
+                <div class="sub-menu collapse secondary list-style-circle" id="submenu1">
+                    <ul>
+                        <li>
+                            <a href="{{ route('admin.variants.index') }}" class="text-left">
+                                <i class="fa fa-list">
+                                </i>
+                                Variantes Good
+                            </a>
+                            <a href="{{ route('admin.variants.mercando') }}" class="text-left">
+                                <i class="fa fa-list">
+                                </i>
+                                Variantes Mercando
+                            </a>
+                        </li>
+
                     </ul>
                 </div>
             </li>

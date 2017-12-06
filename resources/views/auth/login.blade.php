@@ -190,7 +190,7 @@
 <body style="background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/1.jpg?17275024453047598251) no-repeat center / cover; height: 100vh">
 
 <div class="container" style="height: 100%">
-    
+
     <div class="row" style="height: 100%; display:flex; justify-content: center; align-items: center">
         <div class="col-xs-10 col-sm-4 col-sm-offset-0">
             <div class="col-xs-12">
