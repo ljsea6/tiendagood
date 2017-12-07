@@ -25,7 +25,8 @@ class VariantsController extends Controller
             ->join('products', 'variants.product_id', '=', 'products.id')
             ->select('products.tipo_producto as tipo', 'variants.id as id', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
             ->where('products.shop', 'good')
-            ->orderBy('products.created_at', 'desc')
+            ->where('products.handle', '!=', 'example-t-shirt')
+            ->orderBy('products.id', 'desc')
             ->get();
 
         $send = collect($variants);

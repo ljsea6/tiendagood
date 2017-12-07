@@ -10,7 +10,7 @@
                 {!! Alert::render() !!}
                 <input type="button" class="btn btn-danger" id="update" value="Actualizar">
                 <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                    <table data-order='[[ 0, "asc" ]]' id="variants" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
+                    <table data-order='[[ 0, "desc" ]]' id="variants" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
                         <thead>
                         <tr>
                             <th>#</th>
