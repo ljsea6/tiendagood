@@ -206,4 +206,9 @@ class TercerosController extends Controller
         }    
     }
     
+    public function cambiarPadre()
+    {
+        return view('admin.terceros.cambiarpadre');
+    }
+    
 }
