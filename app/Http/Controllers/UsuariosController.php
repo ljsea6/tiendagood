@@ -452,7 +452,7 @@ class UsuariosController extends Controller {
 
         }
 
-
+        // Usuario creado
         $usuario->save();
 
         if ($request->has('prime')) {
@@ -635,10 +635,8 @@ class UsuariosController extends Controller {
             return redirect()->route('admin.index');
         }*/
 
-
-        
-        //$data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
-        //$this->envio_registro($request->code, $data);
+        $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
+        $this->envio_registro($request->code, $data);
 
         return redirect()->route('login')->with(['message' => 'Felicitaciones, has sido registrado correctamente.']);
     }

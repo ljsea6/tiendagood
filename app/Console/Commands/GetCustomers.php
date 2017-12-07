@@ -43,9 +43,9 @@ class GetCustomers extends Command
      */
     public function handle()
     {
-        //$api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
 
-        $api_url = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';
+
 
         $client = new \GuzzleHttp\Client();
         $resa = $client->request('GET', $api_url . '/admin/customers/count.json');
@@ -87,7 +87,7 @@ class GetCustomers extends Command
 
                     $this->info('Customer no existe');
 
-                    $c = Customer::createCustomer($customer);
+                    //$c = Customer::createCustomer($customer);
 
                     if (count($tercero) == 0) {
 
@@ -103,9 +103,9 @@ class GetCustomers extends Command
                         $usuario->ciudad_id = random_int(1, 1000);
                         $usuario->celular = $customer['phone'];
                         $usuario->network_id = 1;
-                        $usuario->tipo_cliente_id = 83;
+                        $usuario->tipo_cliente_id = null;
                         $usuario->documento_id = 77;
-                        $usuario->identificacion = $c->id;
+                        $usuario->identificacion = 0000000;
                         $usuario->sexo = 'M';
                         $usuario->fecha_nacimiento = $faker->year(2000);
                         $usuario->customer_id = $customer['id'];

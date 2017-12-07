@@ -67,7 +67,6 @@ class GetProducts extends Command
 
                 if(count($response) == 0) {
 
-
                     $a = $client->request('GET', $api_url . '/admin/collects.json?product_id=' . $product['id']);
                     $headers = $a->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
                     $x = explode('/', $headers[0]);
@@ -175,21 +174,13 @@ class GetProducts extends Command
                             }
                         }
 
-                    }else {
+                    } else {
 
                         Product::createProduct($product, 'internacional', 'good');
 
                         foreach ($product['variants'] as $variant) {
 
-                            // variable para asignar puntos a las variantes
-                            $puntos = 0;
-
-                            // Asignamos a p los puntos asignados por cada 1000 pesos
-                            $p = $variant['price'] / 1000;
-
-                            $puntos = $puntos + floor($p);
-
-                            Variant::createVariant($variant, $puntos, 'good');
+                            Variant::createVariant($variant, 0, 'good');
 
                             try {
 
@@ -210,7 +201,7 @@ class GetProducts extends Command
                                                             'metafield' => array(
                                                                 'namespace' => 'variants',
                                                                 'key' => 'points',
-                                                                'value' => $puntos,
+                                                                'value' => 0,
                                                                 'value_type' => 'integer'
                                                             )
                                                         )
@@ -241,7 +232,7 @@ class GetProducts extends Command
                                                 'metafield' => array(
                                                     'namespace' => 'variants',
                                                     'key' => 'points',
-                                                    'value' => $puntos,
+                                                    'value' => 0,
                                                     'value_type' => 'integer'
                                                 )
                                             )
@@ -274,15 +265,9 @@ class GetProducts extends Command
 
                     foreach ($product['variants'] as $variant) {
 
-                        Variant::updateVariant($variant, 'good');
+                        Variant::updateVariant($variant, 'good', 0);
                     }
 
-                    $update = Product::find($response->id);
-
-                    $update->image = $product['image'];
-                    $update->images = $product['images'];
-                    $update->vendor = $product['vendor'];
-                    $update->save();
                 }
             }
 

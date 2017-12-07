@@ -90,7 +90,7 @@
             </li>
             @endrole
 
-            @role('administrador')
+            @permission('configuracion')
             <li class="has-submenu">
                 <a href="#reportes" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-bar-chart">
@@ -138,15 +138,13 @@
                                 Referidos
                             </a>
                         </li>
-
-
-
                     </ul>
                 </div>
             </li>
-            @endrole
 
-            @role('administrador')
+            @endpermission('configuracion')
+
+            @permission('configuracion')
             <li class="has-submenu">
                 <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-gears">
@@ -248,34 +246,23 @@
                             </a>
                         </li>
 
-                        <li>
-                            <a href="{{ route('admin.variants.index') }}" class="text-left">
-                                <i class="fa fa-list">
-                                </i>
-                                Variantes Good
-                            </a>
-                            <a href="{{ route('admin.variants.mercando') }}" class="text-left">
-                                <i class="fa fa-list">
-                                </i>
-                                Variantes Mercando
-                            </a>
-                        </li>
+
 
                     </ul>
                 </div>
             </li>
-            @endrole
+            @endpermission('configuracion')
 
             @role('good')
             <li class="has-submenu">
-                <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="text-left">
-                    <i class="fa fa-gears">
+                <a href="#submenu10" data-toggle="collapse" aria-expanded="false" class="text-left">
+                    <i class="fa fa-plus-square-o">
                     </i>
                     <span class="nav-text">
-                        Configuración
+                        Puntos Good
                     </span>
                 </a>
-                <div class="sub-menu collapse secondary list-style-circle" id="submenu1">
+                <div class="sub-menu collapse secondary list-style-circle" id="submenu10">
                     <ul>
                         <li>
                             <a href="{{ route('admin.variants.index') }}" class="text-left">
@@ -292,14 +279,14 @@
 
             @role('mercando')
             <li class="has-submenu">
-                <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="text-left">
-                    <i class="fa fa-gears">
+                <a href="#submenu11" data-toggle="collapse" aria-expanded="false" class="text-left">
+                    <i class="fa fa-plus-square-o">
                     </i>
                     <span class="nav-text">
-                        Configuración
+                        Puntos Mercando
                     </span>
                 </a>
-                <div class="sub-menu collapse secondary list-style-circle" id="submenu1">
+                <div class="sub-menu collapse secondary list-style-circle" id="submenu11">
                     <ul>
                         <li>
                             <a href="{{ route('admin.variants.mercando') }}" class="text-left">
