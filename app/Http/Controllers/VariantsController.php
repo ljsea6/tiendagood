@@ -23,10 +23,10 @@ class VariantsController extends Controller
     {
         $variants = DB::table('variants')
             ->join('products', 'variants.product_id', '=', 'products.id')
-            ->select('variants.id as id', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
+            ->select('products.tipo_producto as tipo', 'variants.id as id', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
             ->where('variants.percentage', '<=', 30)
             ->where('products.shop', 'good')
-            ->orderBy('variants.created_at', 'desc')
+            ->orderBy('variants.created_at', 'asc')
             ->get();
 
         $send = collect($variants);
@@ -46,6 +46,9 @@ class VariantsController extends Controller
                     return '<div align=left>' . $send->product . ' ' . $send->title . '</div>';
                 }
 
+            })
+            ->addColumn('tipo', function ($send) {
+                return '<div align=left>' . ucwords($send->tipo) . '</div>';
             })
             ->addColumn('price', function ($send) {
                 return '<div align=left>' . number_format($send->price) . '</div>';
