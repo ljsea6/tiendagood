@@ -24,7 +24,7 @@ class VariantsController extends Controller
         $variants = DB::table('variants')
             ->join('products', 'variants.product_id', '=', 'products.id')
             ->select('variants.id as id', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
-            ->where('variants.percentage', '<=', 100)
+            ->where('variants.percentage', '<=', 30)
             ->where('products.shop', 'good')
             ->orderBy('variants.created_at', 'desc')
             ->get();
