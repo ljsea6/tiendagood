@@ -241,21 +241,21 @@
                         <label for="user-id">Correo electronico</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input type="email" name="email" id="email" class="form-control campo-access" value="{{$email}}">
+                            <input type="email" id="email" class="form-control campo-access" value="{{$email}}">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="user-id">Escriba su nueva contraseña</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input type="password" name="email" id="email_1" class="form-control campo-access" placeholder="Ingresa tu correo electronico">
+                            <input type="password" name="password" id="email_1" class="form-control campo-access" placeholder="Ingresa tu correo electronico">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="user-id">Vuelva a escribir la contraseña</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input type="password" name="email" id="email_2" class="form-control campo-access" placeholder="Ingresa tu correo electronico">
+                            <input type="password"  id="email_2" class="form-control campo-access" placeholder="Ingresa tu correo electronico">
                         </div>
                     </div>
                     <div class="form-group text-center">
