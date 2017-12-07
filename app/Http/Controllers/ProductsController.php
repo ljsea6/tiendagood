@@ -194,7 +194,7 @@ class ProductsController extends Controller
 
                     return response()->json(['status' => 'The resource has been created successfully'], 200);
 
-                }else {
+                } else {
 
                     Product::createProduct($product, 'internacional', 'good');
 
@@ -305,7 +305,7 @@ class ProductsController extends Controller
                 $update->vendor = $product['vendor'];
                 $update->save();
 
-                return response()->json(['status' => 'The resource has been created successfully'], 200);
+                return response()->json(['status' => 'The resource has been updated successfully'], 200);
             }
         }
 
