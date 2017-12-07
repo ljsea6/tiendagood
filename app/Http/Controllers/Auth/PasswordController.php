@@ -77,7 +77,7 @@ class PasswordController extends Controller {
             $id = $remember_token['id'];
 
             $usuario = Tercero::findOrFail($remember_token['id']);
-            $usuario->contraseña = bcrypt($request->email);
+            $usuario->contraseña = bcrypt($request->password);
             $usuario->remember_token = '';
             $usuario->save();
             //cambio de clave
