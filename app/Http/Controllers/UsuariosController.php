@@ -634,11 +634,9 @@ class UsuariosController extends Controller {
             \Auth::login($usuario);
             return redirect()->route('admin.index');
         }*/
-
-
         
-        //$data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
-        //$this->envio_registro($request->code, $data);
+        $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
+        $this->envio_registro($request->code, $data);
 
         return redirect()->route('login')->with(['message' => 'Felicitaciones, has sido registrado correctamente.']);
     }
