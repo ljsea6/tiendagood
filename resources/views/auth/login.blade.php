@@ -205,7 +205,17 @@
                     </ul>
                 </div>
                 @endif
+            </div>
 
+            <div class="col-xs-12">
+                @if (session('err'))
+                    <div class="alert alert-success fade in col-xs-12" style="background-color: #ed7d01 !important;border: none; color: white;">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <ul style=" color: white;">
+                            <li>{{ session('err') }}</li>
+                        </ul>
+                    </div>
+                @endif
             </div>
 
 
