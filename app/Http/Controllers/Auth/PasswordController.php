@@ -102,18 +102,32 @@ class PasswordController extends Controller {
 
                     return $results = json_decode($good->getBody(), true);
 
-                }catch (ClientException $e) {
+                } catch (ClientException $e) {
 
                     if ($e->hasResponse()) {
 
-                        $err = json_decode(($e->getResponse()->getBody()), true);
-
                         return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                    }
+                }
 
-                        foreach ($err['errors'] as $key => $value) {
+                try {
 
-                            echo $key . ' ' . $value[0] . "\n";
-                        }
+                    $mercando = $client->request('GET', $api_url_mercando . '/admin/customers/'. $usuario->customer_id .'.json');
+
+                    $headers = $mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+                    if ($diferencia < 20) {
+                        usleep(10000000);
+                    }
+
+                    return $results = json_decode($mercando->getBody(), true);
+
+                } catch (ClientException $e) {
+
+                    if ($e->hasResponse()) {
+
+                        return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en mercando']);
                     }
                 }
             }
