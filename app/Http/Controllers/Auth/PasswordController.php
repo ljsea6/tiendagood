@@ -2,7 +2,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ResetsPasswords;
+use App\Entities\Tercero;
+use Illuminate\Http\Request;
+use Mail;
+use Hash;
+use Session;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7;
+//use Illuminate\Foundation\Auth\ResetsPasswords;
 
 class PasswordController extends Controller {
 
@@ -17,13 +24,111 @@ class PasswordController extends Controller {
      * |
      */
 
-    use ResetsPasswords;
+   // use ResetsPasswords;
+  //  protected $redirectTo = '/dashboard';
 
     /**
      * Create a new password controller instance.
      *
      * @return void
      */
+
+
+    public function getEmail() {
+        return view('auth.password', compact('nivel'));
+    }
+
+    public function postEmail(Request $request) {
+        $email = Tercero::where('email', strtolower($request->email))->first();
+
+        if($email){  
+           $token = str_shuffle("abcdefghijklmnopqrstuvwxyz0123456789".uniqid());
+
+            $usuario = Tercero::findOrFail($email['id']);
+            $usuario->remember_token = $token;
+            $usuario->save();
+       
+            Mail::send('auth.reset_password', ['token' => $token], function($message) use ($request) {
+                $message->from('info@tiendagood.com', 'Recupera tu contraseña');
+                $message->subject('Recupera tu contraseña');
+                $message->to($request->email);
+            }); 
+
+            Session::flash('flash_msg', 'Revise su correo para saber como puede cambiar su contrase\u00f1a');
+             return redirect()->action('Auth\PasswordController@getEmail');
+        }
+      // return view('auth.password', compact('nivel'));
+    }
+
+    public function getReset($token) {
+       $remember_token = Tercero::where('remember_token', $token)->first();
+        if($remember_token != ''){ 
+            $email = $remember_token['email'];
+            $id = $remember_token['id'];
+          return view('auth.reset', compact('token', 'email', 'id'));
+        }
+        else{
+             return view('auth.login', compact('nivel'));
+        }
+    }
+
+    public function postReset(Request $request) {
+        $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_KEY_MERCANDO');
+        $client = new \GuzzleHttp\Client();
+
+        $remember_token = Tercero::where('remember_token', $request->token)->first();
+        if($remember_token != ''){ 
+            $email = $remember_token['email'];
+            $id = $remember_token['id'];
+
+            $usuario = Tercero::findOrFail($remember_token['id']);
+            $usuario->contraseña = bcrypt($request->password);
+            $usuario->remember_token = '';
+            $usuario->save();
+
+            if($usuario) {
+
+                try {
+
+                    $good = $client->request('GET', $api_url_good . '/admin/customers/'. $usuario->customer_id .'.json');
+
+                    $headers = $good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+                    if ($diferencia < 20) {
+                        usleep(10000000);
+                    }
+
+                    return $results = json_decode($good->getBody(), true);
+
+                }catch (ClientException $e) {
+
+                    if ($e->hasResponse()) {
+
+                        $err = json_decode(($e->getResponse()->getBody()), true);
+
+                        return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+
+                        foreach ($err['errors'] as $key => $value) {
+
+                            echo $key . ' ' . $value[0] . "\n";
+                        }
+                    }
+                }
+            }
+
+
+            //cambio de clave
+            Session::flash('flash_msg', 'El cambio de contrase\u00f1a se realizo correctamente');
+            return redirect()->action('Auth\AuthController@getLogin');
+        }
+        else{
+             return view('auth.login', compact('nivel'));
+        }
+    }
+/*
+
     public function __construct() {
         $this->middleware('guest');
     }
@@ -33,6 +138,8 @@ class PasswordController extends Controller {
     }
 
     protected function getEmailSubject() {
-        return 'Recupera tu contraseña';
+        return 'Recupera tu contraseñad';
     }
+ */
+
 }

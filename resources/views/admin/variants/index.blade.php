@@ -16,6 +16,7 @@
                             <th>#</th>
                             <th>Variante</th>
                             <th>Tipo</th>
+                            <th>Vendedor</th>
                             <th>Precio Unitario</th>
                             <th>Unidades Vendidas</th>
                             <th>Puntaje</th>
@@ -53,6 +54,7 @@
                     { data: 'id', name: 'id', orderable: true, searchable: true },
                     { data: 'title', name: 'title', orderable: true, searchable: true },
                     { data: 'tipo', name: 'tipo', orderable: true, searchable: true },
+                    { data: 'vendor', name: 'vendor', orderable: true, searchable: true },
                     { data: 'price', name: 'price', orderable: true, searchable: true },
                     { data: 'sold_units', name: 'sold_units', orderable: true, searchable: true},
                     { data: 'percentage', name: 'percentage', orderable: true, searchable: true}
