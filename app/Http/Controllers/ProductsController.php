@@ -84,7 +84,6 @@ class ProductsController extends Controller
 
             if(count($response) == 0) {
 
-
                 $a = $client->request('GET', $api_url . '/admin/collects.json?product_id=' . $product['id']);
                 $headers = $a->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
                 $x = explode('/', $headers[0]);
