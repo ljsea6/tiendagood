@@ -644,6 +644,124 @@ class ProductsController extends Controller
         }
     }
 
+    public function update_mercando()
+    {
+        $input = file_get_contents('php://input');
+        $api_url = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+        $client = new \GuzzleHttp\Client();
+
+        $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
+        $verified = $this->verify_webhook(collect($input), $hmac_header);
+        $resultapi = error_log('Webhook verified: '.var_export($verified, true));
+
+        if ($resultapi == 'true') {
+
+            $product = json_decode($input, true);
+
+            $response = Product::where('shop', 'mercando')
+                ->where('id', $product['id'])
+                ->first();
+
+            if(count($response) == 0) {
+
+                Product::createProduct($product, 'nacional', 'mercando');
+
+                foreach ($product['variants'] as $variant) {
+
+                    Variant::createVariant($variant, 0, 'mercando');
+
+                    try {
+
+                        $resb = $client->request('get', $api_url . '/admin/variants/'. $variant['id'] .'/metafields.json');
+
+                        $rs = json_decode($resb->getBody(), true);
+
+                        if (count($rs['metafields']) > 0) {
+
+                            foreach ($rs['metafields'] as $r) {
+
+                                if ($r['key'] == 'points' && $r['namespace'] == 'variants') {
+
+                                    try {
+
+                                        $resc = $client->request('put', $api_url . '/admin/variants/'. $variant['id'] .'/metafields/' . $r['id'] . '.json', array(
+                                                'form_params' => array(
+                                                    'metafield' => array(
+                                                        'namespace' => 'variants',
+                                                        'key' => 'points',
+                                                        'value' => 0,
+                                                        'value_type' => 'integer'
+                                                    )
+                                                )
+                                            )
+                                        );
+
+                                        $headers = $resc->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                        $x = explode('/', $headers[0]);
+                                        $diferencia = $x[1] - $x[0];
+                                        if ($diferencia < 10) {
+                                            usleep(10000000);
+                                        }
+
+                                    } catch (ClientException $e) {
+
+                                        return json_decode(($e->getResponse()->getBody()), true);
+                                    }
+                                }
+                            }
+
+                        } else {
+
+                            try {
+
+                                $resd = $client->request('post', $api_url . '/admin/variants/'. $variant['id'] .'/metafields.json', array(
+                                    'form_params' => array(
+                                        'metafield' => array(
+                                            'namespace' => 'variants',
+                                            'key' => 'points',
+                                            'value' => 0,
+                                            'value_type' => 'integer'
+                                        )
+                                    )
+                                ));
+
+                                $headers = $resd->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                $x = explode('/', $headers[0]);
+                                $diferencia = $x[1] - $x[0];
+                                if ($diferencia < 20) {
+
+                                    usleep(10000000);
+                                }
+
+
+                            } catch (ClientException $e) {
+
+                                return json_decode(($e->getResponse()->getBody()), true);
+                            }
+                        }
+
+                    } catch (ClientException $e) {
+
+                        return json_decode(($e->getResponse()->getBody()), true);
+                    }
+                }
+
+                return response()->json(['status' => 'The resource has been created successfully'], 200);
+
+            }
+
+            if (count($response) > 0 ) {
+
+                foreach ($product['variants'] as $variant) {
+
+                    Variant::updateVariant($variant, 'mercando', 0);
+                }
+
+                return response()->json(['status' => 'The resource has been updated successfully'], 200);
+            }
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *

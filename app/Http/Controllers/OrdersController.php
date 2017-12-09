@@ -4249,6 +4249,7 @@ class OrdersController extends Controller
             }
         }
     }
+
     public function payment()
     {
         $api_url = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';
@@ -4265,6 +4266,45 @@ class OrdersController extends Controller
     }
     public function contador()
     {
+        $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
 
+        $client = new \GuzzleHttp\Client();
+
+        $result = true;
+        $h = 1;
+
+        do {
+
+            $res = $client->request('GET', $api_url . '/admin/customers.json?limit=250&&page=' . $h);
+
+            $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+            $x = explode('/', $headers[0]);
+            $diferencia = $x[1] - $x[0];
+            if ($diferencia < 20) {
+
+                usleep(10000000);
+
+            }
+
+            $results = json_decode($res->getBody(), true);
+
+            foreach ($results['customers'] as $customer) {
+
+                $tercero = Tercero::where('email', strtolower($customer['email']))->first();
+
+                if (count($tercero) > 0) {
+                    $t = Tercero::find($tercero->id);
+
+                    return $t;
+                }
+            }
+
+            $h++;
+
+            if (count($results['customers']) < 1) {
+                $result = false;
+            }
+
+        } while($result);
     }
 }

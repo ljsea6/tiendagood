@@ -64,7 +64,8 @@ Route::post('orders/payment', 'OrdersController@payment');
 Route::post('products/good/create', 'ProductsController@create');
 Route::post('products/good/update', 'ProductsController@update');
 Route::post('products/mercando/create', 'ProductsController@create_mercando');
-Route::post('products/update', 'ProductsController@update');
+Route::post('products/mercando/update', 'ProductsController@update_mercando');
+
 
 /*
  * Final web hooks
