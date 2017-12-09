@@ -399,7 +399,7 @@ class VariantsController extends Controller
 
                         DB::table('variants')
                             ->where('id', $r[0])
-                            ->where('shop', 'good')
+                            ->where('shop', 'mercando')
                             ->update(['percentage' => $r[1]]);
 
                         try {
@@ -492,8 +492,8 @@ class VariantsController extends Controller
 
                         DB::table('variants')
                             ->where('id', $r[0])
-                            ->where('shop', 'good')
-                            ->update(['percentage' => null]);
+                            ->where('shop', 'mercando')
+                            ->update(['percentage' => $r[1]]);
 
                         try {
 
