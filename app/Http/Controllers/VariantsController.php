@@ -547,6 +547,7 @@ class VariantsController extends Controller
                         $variant->save();
                     }
                 }
+                
             }
             return response()->json(['data' => 'actualización terminada']);
         }
