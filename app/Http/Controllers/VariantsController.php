@@ -192,6 +192,7 @@ class VariantsController extends Controller
                         DB::table('variants')
                             ->where('id', $r[0])
                             ->where('shop', 'good')
+                            ->where('product_id', $variant->product_id)
                             ->update(['percentage' => $r[1]]);
 
                         try {
@@ -283,7 +284,8 @@ class VariantsController extends Controller
                         DB::table('variants')
                             ->where('id', $r[0])
                             ->where('shop', 'good')
-                            ->update(['percentage' => null]);
+                            ->where('product_id', $variant->product_id)
+                            ->update(['percentage' => 0]);
 
                         try {
 
@@ -359,8 +361,6 @@ class VariantsController extends Controller
                                     }
                                 }
 
-
-
                             }
 
                         } catch (ClientException $e) {
@@ -395,11 +395,13 @@ class VariantsController extends Controller
 
                 if (count($variant) > 0) {
 
+
                     if ($r[1] != "") {
 
                         DB::table('variants')
                             ->where('id', $r[0])
                             ->where('shop', 'mercando')
+                            ->where('product_id', $variant->product_id)
                             ->update(['percentage' => $r[1]]);
 
                         try {
@@ -493,7 +495,8 @@ class VariantsController extends Controller
                         DB::table('variants')
                             ->where('id', $r[0])
                             ->where('shop', 'mercando')
-                            ->update(['percentage' => $r[1]]);
+                            ->where('product_id', $variant->product_id)
+                            ->update(['percentage' => 0]);
 
                         try {
 
