@@ -71,6 +71,7 @@ class VariantsController extends Controller
             ->join('products', 'variants.product_id', '=', 'products.id')
             ->select('variants.id as id', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
             ->where('products.tipo_producto', 'nacional')
+            ->where('products.handle', '!=', 'example-t-shirt')
             ->where('products.shop', 'mercando')
             ->get();
 
