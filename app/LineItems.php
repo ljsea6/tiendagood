@@ -45,6 +45,7 @@ class LineItems extends Model
             'origin_location' =>$item['origin_location'],
             'destination_location' => (isset($item['destination_location'])) ? $item['destination_location'] : null,
             'order_name' => $order['name'],
+            'order_id' => $order['id'],
             'date_order' =>$order['updated_at'],
             'points' => $points,
             'line_item_id' => $item['id'],
