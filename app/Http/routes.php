@@ -38,6 +38,8 @@ $api->version('v1', function ($api) {
     });
 });
 
+Route::get('/carga', ['uses' => 'AdminController@carga', 'as' => 'admin.index']);
+
 Route::get('orders/list/paid', ['uses' => 'OrdersController@contador', 'as' => 'admin.orders.list.paid']);
 
 
