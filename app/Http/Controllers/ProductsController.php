@@ -288,6 +288,13 @@ class ProductsController extends Controller
                     Variant::updateVariant($variant, 'good', 0);
                 }
 
+                $update = Product::find($response->id);
+                $update->shop = 'good';
+                $update->image = $product['image'];
+                $update->images = $product['images'];
+                $update->vendor = $product['vendor'];
+                $update->save();
+
                 return response()->json(['status' => 'The resource has been updated successfully'], 200);
             }
         }
@@ -404,6 +411,13 @@ class ProductsController extends Controller
 
                     Variant::updateVariant($variant, 'mercando', 0);
                 }
+
+                $update = Product::find($response->id);
+                $update->shop = 'mercando';
+                $update->image = $product['image'];
+                $update->images = $product['images'];
+                $update->vendor = $product['vendor'];
+                $update->save();
 
                 return response()->json(['status' => 'The resource has been created successfully'], 200);
             }
@@ -639,6 +653,13 @@ class ProductsController extends Controller
                     Variant::updateVariant($variant, 'good', 0);
                 }
 
+                $update = Product::find($response->id);
+                $update->shop = 'good';
+                $update->image = $product['image'];
+                $update->images = $product['images'];
+                $update->vendor = $product['vendor'];
+                $update->save();
+
                 return response()->json(['status' => 'The resource has been updated successfully'], 200);
             }
         }
@@ -756,6 +777,13 @@ class ProductsController extends Controller
 
                     Variant::updateVariant($variant, 'mercando', 0);
                 }
+
+                $update = Product::find($response->id);
+                $update->shop = 'mercando';
+                $update->image = $product['image'];
+                $update->images = $product['images'];
+                $update->vendor = $product['vendor'];
+                $update->save();
 
                 return response()->json(['status' => 'The resource has been updated successfully'], 200);
             }
