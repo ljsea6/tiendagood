@@ -417,7 +417,9 @@ class VariantsController extends Controller
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -445,20 +447,21 @@ class VariantsController extends Controller
                                         usleep(10000000);
                                     }
 
-                                    $result = json_decode($res->getBody(), true);
-
-                                    //return response()->json($result);
 
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
 
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
 
                         $variant->save();
@@ -504,7 +507,9 @@ class VariantsController extends Controller
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -533,21 +538,25 @@ class VariantsController extends Controller
                                     }
 
                                 } catch (ClientException $e) {
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
                                 }
 
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
 
                         $variant->save();
                     }
                 }
-                
+
             }
             return response()->json(['data' => 'actualización terminada']);
         }
