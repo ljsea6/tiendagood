@@ -268,6 +268,13 @@ class GetProducts extends Command
                         Variant::updateVariant($variant, 'good', 0);
                     }
 
+                    $update = Product::find($response->id);
+                    $update->shop = 'good';
+                    $update->image = $product['image'];
+                    $update->images = $product['images'];
+                    $update->vendor = $product['vendor'];
+                    $update->save();
+
                 }
             }
 

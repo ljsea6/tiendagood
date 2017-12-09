@@ -164,7 +164,7 @@ class GetProductsMercando extends Command
                     }
 
                     $update = Product::find($response->id);
-
+                    $update->shop = 'mercando';
                     $update->image = $product['image'];
                     $update->images = $product['images'];
                     $update->vendor = $product['vendor'];
