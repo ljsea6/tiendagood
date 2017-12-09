@@ -17,10 +17,9 @@ class LineItems extends Model
 
     protected $guarded = [];
 
-    public static function createLineItem($item, $order, $points = 0)
+    public static function createLineItem($item, $order, $points = 0, $shop)
     {
         LineItems::create([
-            'id' => $item['id'],
             'variant_id' =>$item['variant_id'],
             'title' => $item['title'],
             'quantity' =>$item['quantity'],
@@ -47,7 +46,9 @@ class LineItems extends Model
             'destination_location' => (isset($item['destination_location'])) ? $item['destination_location'] : null,
             'order_name' => $order['name'],
             'date_order' =>$order['updated_at'],
-            'points' => $points
+            'points' => $points,
+            'line_item_id' => $item['id'],
+            'shop' => $shop
         ]);
     }
 }
