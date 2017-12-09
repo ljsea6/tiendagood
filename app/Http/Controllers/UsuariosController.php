@@ -468,6 +468,9 @@ class UsuariosController extends Controller {
 
         $city = Ciudad::find($request->city);
 
+        $good_id  = '';
+        $mercando_id = '';
+
         if (count($usuario) > 0) {
 
             $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
@@ -508,11 +511,11 @@ class UsuariosController extends Controller {
 
                 $customer = json_decode($res->getBody(), true);
 
-                $search = Tercero::find($usuario->id);
 
-                $search->customer_id = $customer['customer']['id'];
 
-                $search->save();
+                $good_id = '' . $customer['customer']['id'];
+
+
 
             } catch (ClientException $e) {
 
@@ -565,11 +568,7 @@ class UsuariosController extends Controller {
 
                 $customer = json_decode($res->getBody(), true);
 
-                $search = Tercero::find($usuario->id);
-
-                $search->customer_id = $customer['customer']['id'];
-
-                $search->save();
+                $mercando_id = '' . $customer['customer']['id'];
 
             } catch (ClientException $e) {
 
@@ -584,6 +583,16 @@ class UsuariosController extends Controller {
             }
 
         }
+
+        DB::table('terceros_tiendas')->insertGetId(
+            [
+                'tercero_id' => $usuario->id,
+                'customer_id_good' =>  $good_id,
+                'customer_id_mercando' =>  $mercando_id,
+            ]
+        );
+
+
 
         $padre = Tercero::with('networks')->where('identificacion', '=', '' .$request->code. '')->first();
 

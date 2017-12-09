@@ -4266,236 +4266,97 @@ class OrdersController extends Controller
     }
     public function contador()
     {
-        $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-        $client = new \GuzzleHttp\Client();
-        $result = true;
-        $h = 1;
-
-        do {
-
-            $res = $client->request('GET', $api_url . '/admin/orders.json?limit=250&&status=any&&page=' . $h);
-
-            $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-            $x = explode('/', $headers[0]);
-            $diferencia = $x[1] - $x[0];
-            if ($diferencia < 20) {
-
-                usleep(20000000);
-            }
-
-            $results = json_decode($res->getBody(), true);
-
-            foreach ($results['orders'] as $order) {
-
-                $response = Order::where('network_id', 1)
-                    ->where('name', $order['name'])
-                    ->where('order_id', $order['id'])
-                    ->where('shop', 'good')
-                    ->first();
-
-                if ($order['cancelled_at'] != null || $order['cancel_reason'] != null) {
-
-                    if(count($response) == 0) {
-
-                        $tipo_orden = '';
-                        $i = 0;
-                        $n = 0;
-                        $puntos = 0;
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $v = Variant::where('id', $item['variant_id'])
-                                    ->where('shop', 'good')
-                                    ->where('product_id', $item['product_id'])
-                                    ->first();
-
-                                if (count($v) > 0) {
-
-                                    $puntos = $puntos + $v->points;
-
-                                    $line_item = LineItems::where('line_item_id', $item['id'])
-                                        ->where('shop', 'good')
-                                        ->where('variant_id', $item['variant_id'])
-                                        ->first();
-
-                                    if (count($line_item) == 0) {
-
-                                        LineItems::createLineItem($item, $order, $v->points, 'good');
-                                    }
-
-                                    $product = Product::find($item['product_id']);
-
-                                    if ($product->tipo_producto == 'nacional') {
-                                        $n++;
-                                    }
-                                    if ($product->tipo_producto == 'internacional') {
-                                        $i++;
-                                    }
-                                }
-                            }
-                        }
-
-                        if ($i > 0 && $n > 0) {
-                            $tipo_orden .= 'nacional/internacional';
-                            $i = 0;
-                            $n = 0;
-                        }
-                        if ($i > 0 && $n == 0) {
-                            $tipo_orden .= 'internacional';
-                            $i = 0;
-                            $n = 0;
-                        }
-                        if ($i == 0 && $n > 0) {
-                            $tipo_orden .= 'nacional';
-                            $i = 0;
-                            $n = 0;
-                        }
-
-                        $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
-
-                        $tipo_orden = '';
-
-                    }
-                }
-
-                if ($order['cancelled_at'] == null && $order['cancel_reason'] == null) {
-
-                    if(count($response) == 0) {
-
-                        $tipo_orden = '';
-                        $i = 0;
-                        $n = 0;
-                        $puntos = 0;
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $v = Variant::where('id', $item['variant_id'])
-                                    ->where('shop', 'good')
-                                    ->where('product_id', $item['product_id'])
-                                    ->first();
-
-                                if (count($v) > 0) {
-
-                                    $puntos = $puntos + $v->points;
-
-                                    $line_item = LineItems::where('line_item_id', $item['id'])
-                                        ->where('shop', 'good')
-                                        ->where('variant_id', $item['variant_id'])
-                                        ->first();
-
-                                    if (count($line_item) == 0) {
-
-                                        LineItems::createLineItem($item, $order, $v->points, 'good');
-                                    }
-
-                                    $product = Product::find($item['product_id']);
-
-                                    if ($product->tipo_producto == 'nacional') {
-                                        $n++;
-                                    }
-                                    if ($product->tipo_producto == 'internacional') {
-                                        $i++;
-                                    }
-                                }
-                            }
-                        }
-
-                        if ($i > 0 && $n > 0) {
-                            $tipo_orden .= 'nacional/internacional';
-                            $i = 0;
-                            $n = 0;
-                        }
-                        if ($i > 0 && $n == 0) {
-                            $tipo_orden .= 'internacional';
-                            $i = 0;
-                            $n = 0;
-                        }
-                        if ($i == 0 && $n > 0) {
-                            $tipo_orden .= 'nacional';
-                            $i = 0;
-                            $n = 0;
-                        }
-
-                        $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
-
-                        $tipo_orden = '';
-
-
-                        if ($order['financial_status'] == "paid") {
-
-                            if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                                foreach ($order['line_items'] as $item) {
-
-                                    $variant = Variant::where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->first();
-
-                                    if (count($variant) > 0) {
-                                        DB::table('variants')
-                                            ->where('id', $item['variant_id'])
-                                            ->where('product_id', $item['product_id'])
-                                            ->where('shop', 'good')
-                                            ->update(['sold_units' => $variant->sold_units + 1]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            $h++;
-
-            if (count($results['orders']) < 1) {
-                $result = false;
-            }
-
-        } while($result);
-        /*$api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-
+        $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
         $client = new \GuzzleHttp\Client();
 
-        $result = true;
-        $h = 1;
 
-        do {
+        $terceros = Tercero::all();
 
-            $res = $client->request('GET', $api_url . '/admin/customers.json?limit=250&&page=' . $h);
+        foreach ($terceros as $tercero) {
 
-            $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+            $res_good = $client->request('GET',  $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
+            $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
             $x = explode('/', $headers[0]);
             $diferencia = $x[1] - $x[0];
+
             if ($diferencia < 20) {
 
                 usleep(10000000);
-
             }
 
-            $results = json_decode($res->getBody(), true);
+            $results_good = json_decode($res_good->getBody(), true);
 
-            foreach ($results['customers'] as $customer) {
+            if (count($results_good['customers']) > 0) {
 
-                $tercero = Tercero::where('email', strtolower($customer['email']))->first();
+                $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
 
-                if (count($tercero) > 0) {
-                    $t = Tercero::find($tercero->id);
+                $headers =  $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                $x = explode('/', $headers[0]);
+                $diferencia = $x[1] - $x[0];
 
-                    return $t;
+                if ($diferencia < 20) {
+
+                    usleep(10000000);
                 }
+
+                $results_mercando = json_decode($res_mercando->getBody(), true);
+
+                if (count($results_mercando['customers']) > 0) {
+
+
+                    DB::table('terceros_tiendas')->insertGetId(
+                        [
+                            'tercero_id' => $tercero->id,
+                            'customer_id_good' =>  $results_good['customers'][0]['id'],
+                            'customer_id_mercando' => $results_mercando['customers'][0]['id'],
+                        ]
+                    );
+
+                } else {
+
+                    try {
+
+                        $res = $client->request('post', $api_url_mercando . '/admin/customers.json', array(
+                                'form_params' => array(
+                                    'customer' => array(
+                                        'first_name' => strtolower( $results_good['customers'][0]['first_name']),
+                                        'last_name' => strtolower( $results_good['customers'][0]['last_name']),
+                                        'email' => strtolower($tercero->email),
+                                        'verified_email' => true,
+                                        'phone' =>  $results_good['customers'][0]['phone'],
+                                        'addresses' => [
+
+                                            $results_good['customers'][0]['address']
+
+                                        ],
+                                        "password" => $tercero->identificacion,
+                                        "password_confirmation" => $tercero->identificacion,
+                                        'send_email_invite' => false,
+                                        'send_email_welcome' => false
+                                    )
+                                )
+                            )
+                        );
+
+                        $customer['customer'] = json_decode($res->getBody(), true);
+
+                        DB::table('terceros_tiendas')->insertGetId(
+                            [
+                                'tercero_id' => $tercero->id,
+                                'customer_id_good' =>  $results_good['customers'][0]['id'],
+                                'customer_id_mercando' =>  $customer['customer']['id'],
+                            ]
+                        );
+
+
+                    } catch (ClientException $e) {
+
+                       return $err = json_decode(($e->getResponse()->getBody()), true);
+                    }
+                }
+
             }
-
-            $h++;
-
-            if (count($results['customers']) < 1) {
-                $result = false;
-            }
-
-        } while($result);*/
+        }
     }
 }
