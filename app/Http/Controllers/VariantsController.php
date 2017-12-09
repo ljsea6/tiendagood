@@ -189,6 +189,10 @@ class VariantsController extends Controller
 
                     if ($r[1] != "") {
 
+                        DB::table('variants')
+                            ->where('id', $r[0])
+                            ->where('shop', 'good')
+                            ->update(['percentage' => $r[1]]);
 
                         try {
 
@@ -226,7 +230,9 @@ class VariantsController extends Controller
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -256,21 +262,28 @@ class VariantsController extends Controller
 
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
 
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
 
-                        $variant->save();
+
 
                     } else {
 
-                        $variant->percentage = null;
+                        DB::table('variants')
+                            ->where('id', $r[0])
+                            ->where('shop', 'good')
+                            ->update(['percentage' => null]);
 
                         try {
 
@@ -308,7 +321,9 @@ class VariantsController extends Controller
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -339,7 +354,9 @@ class VariantsController extends Controller
 
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
 
 
@@ -348,10 +365,12 @@ class VariantsController extends Controller
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
 
-                        $variant->save();
+
                     }
                 }
             }
@@ -378,7 +397,10 @@ class VariantsController extends Controller
 
                     if ($r[1] != "") {
 
-                        $variant->percentage = $r[1];
+                        DB::table('variants')
+                            ->where('id', $r[0])
+                            ->where('shop', 'good')
+                            ->update(['percentage' => $r[1]]);
 
                         try {
 
@@ -464,11 +486,14 @@ class VariantsController extends Controller
                             }
                         }
 
-                        $variant->save();
+
 
                     } else {
 
-                        $variant->percentage = null;
+                        DB::table('variants')
+                            ->where('id', $r[0])
+                            ->where('shop', 'good')
+                            ->update(['percentage' => null]);
 
                         try {
 
@@ -553,7 +578,7 @@ class VariantsController extends Controller
                             }
                         }
 
-                        $variant->save();
+
                     }
                 }
 
