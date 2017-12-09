@@ -183,13 +183,12 @@ class VariantsController extends Controller
 
                 $r = explode('=', $data);
 
-                $variant = Variant::find($r[0]);
+                $variant = Variant::where('id', $r[0])->where('shop', 'good')->first();
 
                 if (count($variant) > 0) {
 
                     if ($r[1] != "") {
 
-                        $variant->percentage = $r[1];
 
                         try {
 
@@ -224,7 +223,6 @@ class VariantsController extends Controller
                                                 usleep(10000000);
                                             }
 
-                                            //return json_decode($res->getBody(), true);
 
                                         } catch (ClientException $e) {
 
@@ -255,10 +253,6 @@ class VariantsController extends Controller
 
                                         usleep(10000000);
                                     }
-
-                                    $result = json_decode($res->getBody(), true);
-
-                                    //return response()->json($result);
 
                                 } catch (ClientException $e) {
 
@@ -311,7 +305,6 @@ class VariantsController extends Controller
                                                 usleep(10000000);
                                             }
 
-                                            //return json_decode($res->getBody(), true);
 
                                         } catch (ClientException $e) {
 
@@ -343,9 +336,6 @@ class VariantsController extends Controller
                                         usleep(10000000);
                                     }
 
-                                    $result = json_decode($res->getBody(), true);
-
-                                    //return response()->json($result);
 
                                 } catch (ClientException $e) {
 
@@ -382,7 +372,7 @@ class VariantsController extends Controller
 
                 $r = explode('=', $data);
 
-                $variant = Variant::find($r[0]);
+                $variant = Variant::where('id', $r[0])->where('shop', 'mercando')->first();
 
                 if (count($variant) > 0) {
 

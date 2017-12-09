@@ -46,7 +46,6 @@ class GetCustomers extends Command
     public function handle()
     {
         $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-
         $client = new \GuzzleHttp\Client();
         $resa = $client->request('GET', $api_url . '/admin/customers/count.json');
         $countCustomers = json_decode($resa->getBody(), true);

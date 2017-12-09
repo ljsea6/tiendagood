@@ -3,6 +3,8 @@ namespace App\Entities;
 
 use App\Tipo;
 use App\Prime;
+use App\Shop;
+use App\Level;
 use Carbon\Carbon;
 use App\TipoCliente;
 use App\Liquidacion;
@@ -154,4 +156,13 @@ class Tercero extends Model implements AuthenticatableContract, CanResetPassword
         return $this->hasMany(Prime::class, 'tercero_id');
     }
 
+    public function levels()
+    {
+        return $this->hasMany(Level::class, 'tercero_id');
+    }
+
+    public function shop()
+    {
+        return $this->hasOne(Shop::class, 'tercero_id');
+    }
 }
