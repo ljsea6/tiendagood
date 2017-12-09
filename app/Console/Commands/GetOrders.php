@@ -159,9 +159,12 @@ class GetOrders extends Command
                                     ->where('product_id', $item['product_id'])
                                     ->first();
 
+                                $this->info('Puntos: ' . $v->points . ' la variante: ' .  $v->title);
+
+
                                 if (count($v) > 0) {
 
-                                    $puntos = $puntos + $v->points;
+                                    $puntos = $puntos + $v->points * $item['quantity'];
 
                                     $line_item = LineItems::where('line_item_id', $item['id'])
                                         ->where('shop', 'good')
@@ -218,11 +221,14 @@ class GetOrders extends Command
                                         ->first();
 
                                     if (count($variant) > 0) {
+
+                                        $this->info('Sumando: ' . $item['quantity']);
+                                        
                                         DB::table('variants')
                                             ->where('id', $item['variant_id'])
                                             ->where('product_id', $item['product_id'])
                                             ->where('shop', 'good')
-                                            ->update(['sold_units' => $variant->sold_units + 1]);
+                                            ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
                                     }
                                 }
                             }
