@@ -284,7 +284,7 @@ class GetOrders extends Command
                                              );
                                          }
                                      }
-                                     
+
                                      if (count($padre_uno->networks) > 0) {
 
                                          $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
@@ -329,9 +329,9 @@ class GetOrders extends Command
 
                                              if (count($padre_dos->networks) > 0) {
 
-                                                 $padre_tres = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
+                                                 $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
 
-                                                 if (count($padre_uno) > 0 && $padre_uno->state == true) {
+                                                 if (count($padre_tres) > 0 && $padre_tres->state == true) {
 
                                                      if (count($padre_tres->levels) == 0) {
 
