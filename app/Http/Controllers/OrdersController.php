@@ -1833,8 +1833,7 @@ class OrdersController extends Controller
     }
     public function create()
     {
-        $api_url = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';
-        $client = new \GuzzleHttp\Client();
+
         $input = file_get_contents('php://input');
         $order = json_decode($input, true);
         $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
@@ -1846,74 +1845,52 @@ class OrdersController extends Controller
             $response = Order::where('network_id', 1)
                 ->where('name', $order['name'])
                 ->where('order_id', $order['id'])
-                ->get();
+                ->where('shop', 'good')
+                ->first();
 
-            if ($order['cancelled_at'] != null) {
+            if ($order['cancelled_at'] != null || $order['cancel_reason'] != null) {
 
                 if(count($response) == 0) {
 
                     $tipo_orden = '';
                     $i = 0;
                     $n = 0;
-
-                    if ($i > 0 && $n > 0) {
-                        $tipo_orden .= 'nacional/internacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-                    if ($i > 0 && $n == 0) {
-                        $tipo_orden .= 'internacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-                    if ($i == 0 && $n > 0) {
-                        $tipo_orden .= 'nacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-
-                    Order::createOrder($order, $tipo_orden);
-
-                    $tipo_orden = '';
+                    $puntos = 0;
 
                     if (isset($order['line_items']) && count($order['line_items']) > 0) {
 
                         foreach ($order['line_items'] as $item) {
 
-                            $variant = Variant::find($item['variant_id']);
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'good')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
 
-                            $search = Order::where('name', $order['name'])->first();
+                            if (count($v) > 0) {
 
-                            if(count($search) > 0) {
+                                $puntos = $puntos + $v->points;
 
-                                $update = Order::find($search->id);
-                                $update->points = $update->points + $variant->percentage;
-                                $update->save();
-                            }
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'good')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
 
-                            $line_item = LineItems::find($item['id']);
+                                if (count($line_item) == 0) {
 
-                            if (count($line_item) == 0) {
-                                LineItems::createLineItem($item, $order, (isset($variant->percentage)) ? $variant->percentage : 0);
+                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                }
+
+                                $product = Product::find($item['product_id']);
+
+                                if ($product->tipo_producto == 'nacional') {
+                                    $n++;
+                                }
+                                if ($product->tipo_producto == 'internacional') {
+                                    $i++;
+                                }
                             }
                         }
                     }
-
-                    return response()->json(['status' => 'order processed'], 200);
-
-                } else {
-
-                    return response()->json(['status' => 'order not processed'], 200);
-                }
-            }
-
-            if ($order['cancelled_at'] == null) {
-                $send = array();
-                if(count($response) == 0) {
-
-                    $tipo_orden = '';
-                    $i = 0;
-                    $n = 0;
 
                     if ($i > 0 && $n > 0) {
                         $tipo_orden .= 'nacional/internacional';
@@ -1931,11 +1908,76 @@ class OrdersController extends Controller
                         $n = 0;
                     }
 
-                    Order::createOrder($order, $tipo_orden);
+                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
 
                     $tipo_orden = '';
 
-                    $customer = Customer::where('email', $order['email'])->first();
+                }
+            }
+
+            if ($order['cancelled_at'] == null && $order['cancel_reason'] == null) {
+
+                if(count($response) == 0) {
+
+                    $tipo_orden = '';
+                    $i = 0;
+                    $n = 0;
+                    $puntos = 0;
+
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                        foreach ($order['line_items'] as $item) {
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'good')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + $v->percentage * $item['quantity'];
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'good')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
+                                }
+
+                                $product = Product::find($item['product_id']);
+
+                                if ($product->tipo_producto == 'nacional') {
+                                    $n++;
+                                }
+                                if ($product->tipo_producto == 'internacional') {
+                                    $i++;
+                                }
+                            }
+                        }
+                    }
+
+                    if ($i > 0 && $n > 0) {
+                        $tipo_orden .= 'nacional/internacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+                    if ($i > 0 && $n == 0) {
+                        $tipo_orden .= 'internacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+                    if ($i == 0 && $n > 0) {
+                        $tipo_orden .= 'nacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+
+                    $order_create = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+
+                    $tipo_orden = '';
 
                     if ($order['financial_status'] == "paid") {
 
@@ -1943,213 +1985,30 @@ class OrdersController extends Controller
 
                             foreach ($order['line_items'] as $item) {
 
-                                $variant = Variant::find($item['variant_id']);
-
-                                $search = Order::where('name', $order['name'])->first();
-
-                                if(count($search) > 0) {
-
-                                    $update = Order::find($search->id);
-                                    $update->points = $update->points + $variant->percentage;
-                                    $update->save();
-                                }
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) == 0) {
-                                    LineItems::createLineItem($item, $order, (isset($variant->percentage)) ? $variant->percentage : 0);
-                                }
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
 
                                 if (count($variant) > 0) {
-                                    $variant->sold_units = $variant->sold_units + $item['quantity'];
-                                    $variant->save();
-                                }
 
-                            }
-                        }
-
-                        $tercero = Tercero::with('networks')->where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-
-                            if (isset($tercero->networks) && isset($tercero->networks[0]) && isset($tercero->networks[0]['pivot']) && count($tercero->networks[0]['pivot']['padre_id']) > 0 && $tercero->state == true) {
-
-                                $padre = Tercero::where('id', $tercero->networks[0]['pivot']['padre_id'])->first();
-
-                                if (count($padre) > 0) {
-
-                                    if ($padre->state) {
-
-                                        $find = Tercero::find($padre->id);
-                                        $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                        $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-
-                                        $find->save();
-
-                                        $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                        if (count($customer) > 0) {
-                                            $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                            $metafields = json_decode($res->getBody(), true);
-
-                                            if (count($metafields['metafields']) > 0) {
-
-                                                foreach ($metafields['metafields'] as $metafield) {
-                                                    if ($metafield['key'] === 'referidos') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'referidos',
-                                                                        'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                    }
-
-                                                    if ($metafield['key'] === 'compras') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'compras',
-                                                                        'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                    }
-
-                                                    if ($metafield['key'] === 'valor') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'valor',
-                                                                        'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                        'value_type' => 'string'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        return response()->json(['status' => 'The resource is created successfully', $order['customer']], 200);
-                                    }
-
-                                } else {
-
-                                    return response()->json(['status' => 'The father was not found', $order['customer']], 200);
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
                                 }
                             }
-
-                        } else {
-
-                            $padre = Tercero::where('email', strtolower($order['billing_address']['last_name']))->first();
-
-                            if (count($padre) > 0) {
-
-                                if ($padre->state) {
-
-                                    $find = Tercero::find($padre->id);
-                                    $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                    $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                    $find->ganacias = $find->total_price_orders * 0.05;
-                                    $find->save();
-
-                                    $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                    if (count($customer) > 0) {
-                                        $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                        $metafields = json_decode($res->getBody(), true);
-
-
-                                        if (count($metafields['metafields']) > 0) {
-
-                                            foreach ($metafields['metafields'] as $metafield) {
-                                                if ($metafield['key'] === 'referidos') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'referidos',
-                                                                    'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-
-                                                }
-
-                                                if ($metafield['key'] === 'compras') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'compras',
-                                                                    'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-
-                                                }
-
-                                                if ($metafield['key'] === 'valor') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'valor',
-                                                                    'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                    'value_type' => 'string'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    return response()->json(['status' => 'The resource is created successfully', $send], 200);
-                                }
-
-                            } else {
-
-                                $find = Tercero::find(1);
-                                $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                $find->ganacias = $find->total_price_orders * 0.05;
-                                $find->save();
-
-                                return response()->json(['status' => 'The resource is created successfully', $send], 200);
-                            }
-
                         }
                     }
-
-                    return response()->json(['status' => 'order not processed'], 200);
-
-                } else {
-
-                    return response()->json(['status' => 'order not processed'], 200);
                 }
             }
         }
     }
+
     public function update()
     {
-        $api_url = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';
-        $client = new \GuzzleHttp\Client();
+
         $input = file_get_contents('php://input');
         $order = json_decode($input, true);
         $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
@@ -2158,9 +2017,10 @@ class OrdersController extends Controller
 
         if ($resultapi == 'true') {
 
-            $result = Order::where('order_id', $order['id'])
-                ->where('email', $order['email'])
-                ->where('network_id', 1)
+            $result = Order::where('network_id', 1)
+                ->where('name', $order['name'])
+                ->where('order_id', $order['id'])
+                ->where('shop', 'good')
                 ->first();
 
             if ($order['cancelled_at'] != null && $order['financial_status'] != 'paid') {
@@ -2181,188 +2041,23 @@ class OrdersController extends Controller
 
                             foreach ($order['line_items'] as $item) {
 
-                                $variant = Variant::find($item['variant_id']);
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
 
                                 if (count($variant) > 0) {
-                                    $variant->sold_units = $variant->sold_units - $item['quantity'];
-                                    $variant->save();
+
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
                                 }
                             }
                         }
 
-                        $tercero = Tercero::with('networks')->where('email', $order['email'])->first();
 
-                        if (count($tercero) > 0) {
-
-                            if (isset($tercero->networks) && isset($tercero->networks[0]) && isset($tercero->networks[0]['pivot']) && count($tercero->networks[0]['pivot']['padre_id']) > 0 && $tercero->state == true) {
-
-                                $padre = Tercero::where('id', $tercero->networks[0]['pivot']['padre_id'])->first();
-
-                                if (count($padre) > 0) {
-
-                                    if ($padre->state) {
-
-                                        $find = Tercero::find($padre->id);
-                                        $find->numero_ordenes_referidos = $find->numero_ordenes_referidos - 1;
-                                        $find->total_price_orders = $find->total_price_orders - $order['total_price'];
-                                        $find->ganacias = $find->total_price_orders * 0.05;
-                                        $find->save();
-
-                                        $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                        if (count($customer) > 0) {
-                                            $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                            $metafields = json_decode($res->getBody(), true);
-                                            $results = array();
-
-                                            if (count($metafields['metafields']) > 0) {
-
-                                                foreach ($metafields['metafields'] as $metafield) {
-                                                    if ($metafield['key'] === 'referidos') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'referidos',
-                                                                        'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'compras') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'compras',
-                                                                        'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'valor') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'valor',
-                                                                        'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                        'value_type' => 'string'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        return response()->json(['status' => 'The resource is created successfully'], 200);
-                                    }
-
-                                } else {
-
-                                    return response()->json(['status' => 'The father was not found'], 200);
-                                }
-
-                            }
-
-                        } else {
-
-                            $padre = Tercero::where('email', strtolower($order['billing_address']['last_name']))->first();
-
-                            if (count($padre) > 0) {
-
-                                if ($padre->state) {
-
-                                    $find = Tercero::find($padre->id);
-                                    $find->numero_ordenes_referidos = $find->numero_ordenes_referidos - 1;
-                                    $find->total_price_orders = $find->total_price_orders - $order['total_price'];
-                                    $find->ganacias = $find->total_price_orders * 0.05;
-                                    $find->save();
-
-                                    $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                    if (count($customer) > 0) {
-                                        $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                        $metafields = json_decode($res->getBody(), true);
-                                        $results = array();
-
-                                        if (count($metafields['metafields']) > 0) {
-
-                                            foreach ($metafields['metafields'] as $metafield) {
-                                                if ($metafield['key'] === 'referidos') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'referidos',
-                                                                    'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'compras') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'compras',
-                                                                    'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'valor') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'valor',
-                                                                    'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                    'value_type' => 'string'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    return response()->json(['status' => 'The resource is created successfully'], 200);
-                                }
-
-                            } else {
-
-                                $find = Tercero::find(1);
-                                $find->numero_ordenes_referidos = $find->numero_ordenes_referidos - 1;
-                                $find->total_price_orders = $find->total_price_orders - $order['total_price'];
-                                $find->ganacias = $find->total_price_orders * 0.05;
-                                $find->save();
-
-                                return response()->json(['status' => 'The resource is created successfully'], 200);
-                            }
-
-                        }
 
                     }
 
@@ -2375,20 +2070,6 @@ class OrdersController extends Controller
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
 
                         return response()->json(['status' => 'order processed'], 200);
                     }
@@ -2403,20 +2084,6 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
-
                         return response()->json(['status' => 'The resource is created successfully'], 200);
                     }
 
@@ -2430,20 +2097,6 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
-
                         return response()->json(['status' => 'order processed'], 200);
                     }
 
@@ -2454,22 +2107,38 @@ class OrdersController extends Controller
                     $tipo_orden = '';
                     $i = 0;
                     $n = 0;
+                    $puntos = 0;
 
                     if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
                         foreach ($order['line_items'] as $item) {
-                            $product = Product::find($item['product_id']);
-                            if (strtolower($item['vendor'])  == 'nacional' || strtolower($item['vendor'])  == 'a - nacional') {
-                                $n++;
-                                if (count($product) > 0) {
-                                    $product->tipo_producto = 'nacional';
-                                    $product->save();
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'good')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + $v->points;
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'good')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->points, 'good');
                                 }
-                            }
-                            if (strtolower($item['vendor'])  != 'nacional' && strtolower($item['vendor'])  != 'a - nacional') {
-                                $i++;
-                                if (count($product) > 0) {
-                                    $product->tipo_producto = 'internacional';
-                                    $product->save();
+
+                                $product = Product::find($item['product_id']);
+
+                                if ($product->tipo_producto == 'nacional') {
+                                    $n++;
+                                }
+                                if ($product->tipo_producto == 'internacional') {
+                                    $i++;
                                 }
                             }
                         }
@@ -2491,34 +2160,8 @@ class OrdersController extends Controller
                         $n = 0;
                     }
 
-                    Order::createOrder($order, $tipo_orden);
-
+                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
                     $tipo_orden = '';
-
-                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                        foreach ($order['line_items'] as $item) {
-
-                            $variant = Variant::find($item['variant_id']);
-
-                            $search = Order::where('name', $order['name'])->first();
-
-                            if(count($search) > 0) {
-
-                                $update = Order::find($search->id);
-                                $update->points = $update->points + $variant->percentage;
-                                $update->save();
-                            }
-
-                            $line_item = LineItems::find($item['id']);
-
-                            if (count($line_item) == 0) {
-
-                                LineItems::createLineItem($item, $order, (isset($variant->percentage)) ? $variant->percentage : 0);
-                            }
-
-                        }
-                    }
 
                     return response()->json(['status' => 'The resource is created successfully'], 200);
                 }
@@ -2542,188 +2185,23 @@ class OrdersController extends Controller
 
                             foreach ($order['line_items'] as $item) {
 
-                                $variant = Variant::find($item['variant_id']);
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
 
                                 if (count($variant) > 0) {
-                                    $variant->sold_units = $variant->sold_units - $item['quantity'];
-                                    $variant->save();
+
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
                                 }
                             }
                         }
 
-                        $tercero = Tercero::with('networks')->where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-
-                            if (isset($tercero->networks) && isset($tercero->networks[0]) && isset($tercero->networks[0]['pivot']) && count($tercero->networks[0]['pivot']['padre_id']) > 0 && $tercero->state == true) {
-
-                                $padre = Tercero::where('id', $tercero->networks[0]['pivot']['padre_id'])->first();
-
-                                if (count($padre) > 0) {
-
-                                    if ($padre->state) {
-
-                                        $find = Tercero::find($padre->id);
-                                        $find->numero_ordenes_referidos = $find->numero_ordenes_referidos - 1;
-                                        $find->total_price_orders = $find->total_price_orders - $order['total_price'];
-                                        $find->ganacias = $find->total_price_orders * 0.05;
-                                        $find->save();
-
-                                        $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                        if (count($customer) > 0) {
-                                            $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                            $metafields = json_decode($res->getBody(), true);
-                                            $results = array();
-
-                                            if (count($metafields['metafields']) > 0) {
-
-                                                foreach ($metafields['metafields'] as $metafield) {
-                                                    if ($metafield['key'] === 'referidos') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'referidos',
-                                                                        'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'compras') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'compras',
-                                                                        'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'valor') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'valor',
-                                                                        'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                        'value_type' => 'string'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        return response()->json(['status' => 'The resource is created successfully'], 200);
-                                    }
-
-                                } else {
-
-                                    return response()->json(['status' => 'The father was not found'], 200);
-                                }
-
-                            }
-
-                        } else {
-
-                            $padre = Tercero::where('email', strtolower($order['billing_address']['last_name']))->first();
-
-                            if (count($padre) > 0) {
-
-                                if ($padre->state) {
-
-                                    $find = Tercero::find($padre->id);
-                                    $find->numero_ordenes_referidos = $find->numero_ordenes_referidos - 1;
-                                    $find->total_price_orders = $find->total_price_orders - $order['total_price'];
-                                    $find->ganacias = $find->total_price_orders * 0.05;
-                                    $find->save();
-
-                                    $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                    if (count($customer) > 0) {
-                                        $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                        $metafields = json_decode($res->getBody(), true);
-                                        $results = array();
-
-                                        if (count($metafields['metafields']) > 0) {
-
-                                            foreach ($metafields['metafields'] as $metafield) {
-                                                if ($metafield['key'] === 'referidos') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'referidos',
-                                                                    'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'compras') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'compras',
-                                                                    'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'valor') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'valor',
-                                                                    'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                    'value_type' => 'string'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    return response()->json(['status' => 'The resource is created successfully'], 200);
-                                }
-
-                            } else {
-
-                                $find = Tercero::find(1);
-                                $find->numero_ordenes_referidos = $find->numero_ordenes_referidos - 1;
-                                $find->total_price_orders = $find->total_price_orders - $order['total_price'];
-                                $find->ganacias = $find->total_price_orders * 0.05;
-                                $find->save();
-
-                                return response()->json(['status' => 'The resource is created successfully'], 200);
-                            }
-
-                        }
+                        return response()->json(['status' => 'order processed'], 200);
                     }
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
@@ -2735,20 +2213,6 @@ class OrdersController extends Controller
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
 
                         return response()->json(['status' => 'order processed'], 200);
                     }
@@ -2763,20 +2227,6 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
-
                         return response()->json(['status' => 'The resource is created successfully'], 200);
                     }
 
@@ -2790,45 +2240,48 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
-
                         return response()->json(['status' => 'order processed'], 200);
                     }
 
                     return response()->json(['status' => 'order not processed'], 200);
+
                 } else {
 
                     $tipo_orden = '';
                     $i = 0;
                     $n = 0;
+                    $puntos = 0;
 
                     if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
                         foreach ($order['line_items'] as $item) {
-                            $product = Product::find($item['product_id']);
-                            if (strtolower($item['vendor'])  == 'nacional' || strtolower($item['vendor'])  == 'a - nacional') {
-                                $n++;
-                                if (count($product) > 0) {
-                                    $product->tipo_producto = 'nacional';
-                                    $product->save();
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'good')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + $v->points;
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'good')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->points, 'good');
                                 }
-                            }
-                            if (strtolower($item['vendor'])  != 'nacional' && strtolower($item['vendor'])  != 'a - nacional') {
-                                $i++;
-                                if (count($product) > 0) {
-                                    $product->tipo_producto = 'internacional';
-                                    $product->save();
+
+                                $product = Product::find($item['product_id']);
+
+                                if ($product->tipo_producto == 'nacional') {
+                                    $n++;
+                                }
+                                if ($product->tipo_producto == 'internacional') {
+                                    $i++;
                                 }
                             }
                         }
@@ -2850,33 +2303,9 @@ class OrdersController extends Controller
                         $n = 0;
                     }
 
-                    Order::createOrder($order, $tipo_orden);
+                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
 
                     $tipo_orden = '';
-
-                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                        foreach ($order['line_items'] as $item) {
-
-                            $variant = Variant::find($item['variant_id']);
-
-                            $search = Order::where('name', $order['name'])->first();
-
-                            if(count($search) > 0) {
-
-                                $update = Order::find($search->id);
-                                $update->points = $update->points + $variant->percentage;
-                                $update->save();
-                            }
-
-                            $line_item = LineItems::find($item['id']);
-
-                            if (count($line_item) == 0) {
-                                LineItems::createLineItem($item, $order, (isset($variant->percentage)) ? $variant->percentage : 0);
-                            }
-
-                        }
-                    }
 
                     return response()->json(['status' => 'The resource is created successfully'], 200);
                 }
@@ -2884,9 +2313,9 @@ class OrdersController extends Controller
 
             if ($order['cancelled_at'] == null && $order['financial_status'] == 'paid') {
 
-                $send = array();
-
                 if (count($result) > 0) {
+
+                    // envio de notificaciones en esta parte. OJO
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
@@ -2898,224 +2327,27 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        $customer = Customer::where('email', $order['email'])->first();
-
                         if (isset($order['line_items']) && count($order['line_items']) > 0) {
 
                             foreach ($order['line_items'] as $item) {
 
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
-
-                        $log = Logorder::where('name', $update->name)
-                            ->where('checkout_id', $update->checkout_id)
-                            ->where('order_id', $update->order_id)
-                            ->first();
-
-                        DB::table('logsorders')
-                            ->where('name', '=', $update->name)
-                            ->where('checkout_id', '=', $update->checkout_id)
-                            ->where('order_id', '=', $update->order_id)->delete();
-
-                        if (count($log) > 0) {
-                            $log_delete = Logorder::find($log->id);
-                            if ($log_delete != null) {
-                                $log_delete->delete();
-                            }
-                        }
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::find($item['variant_id']);
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
 
                                 if (count($variant) > 0) {
-                                    $variant->sold_units = $variant->sold_units + $item['quantity'];
-                                    $variant->save();
+
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
                                 }
                             }
                         }
 
-                        $tercero = Tercero::with('networks')->where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-
-                            if (isset($tercero->networks) && isset($tercero->networks[0]) && isset($tercero->networks[0]['pivot']) && count($tercero->networks[0]['pivot']['padre_id']) > 0 && $tercero->state == true) {
-
-                                $padre = Tercero::where('id', $tercero->networks[0]['pivot']['padre_id'])->first();
-
-                                if (count($padre) > 0) {
-
-                                    if ($padre->state) {
-
-                                        $find = Tercero::find($padre->id);
-                                        $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                        $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                        $find->ganacias = $find->total_price_orders * 0.05;
-                                        $find->save();
-
-                                        $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                        if (count($customer) > 0) {
-                                            $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                            $metafields = json_decode($res->getBody(), true);
-                                            $results = array();
-
-                                            if (count($metafields['metafields']) > 0) {
-
-                                                foreach ($metafields['metafields'] as $metafield) {
-                                                    if ($metafield['key'] === 'referidos') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'referidos',
-                                                                        'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'compras') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'compras',
-                                                                        'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'valor') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'valor',
-                                                                        'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                        'value_type' => 'string'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        return response()->json(['status' => 'The resource is created successfully', $send], 200);
-                                    }
-
-                                } else {
-
-                                    return response()->json(['status' => 'The father was not found'], 200);
-                                }
-
-                            }
-
-                        } else {
-
-                            $padre = Tercero::where('email', strtolower($order['billing_address']['last_name']))->first();
-
-                            if (count($padre) > 0) {
-
-                                if ($padre->state) {
-
-                                    $find = Tercero::find($padre->id);
-                                    $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                    $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                    $find->ganacias = $find->total_price_orders * 0.05;
-                                    $find->save();
-
-                                    $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                    if (count($customer) > 0) {
-                                        $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                        $metafields = json_decode($res->getBody(), true);
-                                        $results = array();
-
-                                        if (count($metafields['metafields']) > 0) {
-
-                                            foreach ($metafields['metafields'] as $metafield) {
-                                                if ($metafield['key'] === 'referidos') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'referidos',
-                                                                    'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'compras') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'compras',
-                                                                    'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'valor') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'valor',
-                                                                    'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                    'value_type' => 'string'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    return response()->json(['status' => 'The resource is created successfully'], 200);
-                                }
-
-                            } else {
-
-                                $find = Tercero::find(1);
-                                $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                $find->ganacias = $find->total_price_orders * 0.05;
-                                $find->save();
-
-                                return response()->json(['status' => 'The resource is created successfully', $send], 200);
-                            }
-
-                        }
+                        return response()->json(['status' => 'order has been processed'], 200);
 
                     }
 
@@ -3128,20 +2360,6 @@ class OrdersController extends Controller
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
 
                         return response()->json(['status' => 'order processed'], 200);
                     }
@@ -3160,219 +2378,23 @@ class OrdersController extends Controller
 
                             foreach ($order['line_items'] as $item) {
 
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
-
-                        $log = Logorder::where('name', $update->name)
-                            ->where('checkout_id', $update->checkout_id)
-                            ->where('order_id', $update->order_id)
-                            ->first();
-
-                        DB::table('logsorders')
-                            ->where('name', '=', $update->name)
-                            ->where('checkout_id', '=', $update->checkout_id)
-                            ->where('order_id', '=', $update->order_id)->delete();
-
-                        if (count($log) > 0) {
-                            $log_delete = Logorder::find($log->id);
-                            if ($log_delete != null) {
-                                $log_delete->delete();
-                            }
-                        }
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::find($item['variant_id']);
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
 
                                 if (count($variant) > 0) {
-                                    $variant->sold_units = $variant->sold_units + $item['quantity'];
-                                    $variant->save();
+
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
                                 }
                             }
                         }
 
-                        $tercero = Tercero::with('networks')->where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-
-                            if (isset($tercero->networks) && isset($tercero->networks[0]) && isset($tercero->networks[0]['pivot']) && count($tercero->networks[0]['pivot']['padre_id']) > 0 && $tercero->state == true) {
-
-                                $padre = Tercero::where('id', $tercero->networks[0]['pivot']['padre_id'])->first();
-
-                                if (count($padre) > 0) {
-
-                                    if ($padre->state) {
-
-                                        $find = Tercero::find($padre->id);
-                                        $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                        $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                        $find->ganacias = $find->total_price_orders * 0.05;
-                                        $find->save();
-
-                                        $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                        if (count($customer) > 0) {
-                                            $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                            $metafields = json_decode($res->getBody(), true);
-                                            $results = array();
-
-                                            if (count($metafields['metafields']) > 0) {
-
-                                                foreach ($metafields['metafields'] as $metafield) {
-                                                    if ($metafield['key'] === 'referidos') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'referidos',
-                                                                        'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'compras') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'compras',
-                                                                        'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'valor') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'valor',
-                                                                        'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                        'value_type' => 'string'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        return response()->json(['status' => 'The resource is created successfully'], 200);
-                                    }
-
-                                } else {
-
-                                    return response()->json(['status' => 'The father was not found'], 200);
-                                }
-
-                            }
-
-                        } else {
-
-                            $padre = Tercero::where('email', strtolower($order['billing_address']['last_name']))->first();
-
-                            if (count($padre) > 0) {
-
-                                if ($padre->state) {
-
-                                    $find = Tercero::find($padre->id);
-                                    $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                    $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                    $find->ganacias = $find->total_price_orders * 0.05;
-                                    $find->save();
-
-                                    $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                    if (count($customer) > 0) {
-                                        $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                        $metafields = json_decode($res->getBody(), true);
-                                        $results = array();
-
-                                        if (count($metafields['metafields']) > 0) {
-
-                                            foreach ($metafields['metafields'] as $metafield) {
-                                                if ($metafield['key'] === 'referidos') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'referidos',
-                                                                    'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'compras') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'compras',
-                                                                    'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'valor') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'valor',
-                                                                    'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                    'value_type' => 'string'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    return response()->json(['status' => 'The resource is created successfully'], 200);
-                                }
-
-                            } else {
-
-                                $find = Tercero::find(1);
-                                $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                $find->ganacias = $find->total_price_orders * 0.05;
-                                $find->save();
-
-                                return response()->json(['status' => 'The resource is created successfully'], 200);
-                            }
-
-                        }
-
+                        return response()->json(['status' => 'order has been processed'], 200);
                     }
 
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
@@ -3389,245 +2411,65 @@ class OrdersController extends Controller
 
                             foreach ($order['line_items'] as $item) {
 
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
-
-                        $log = Logorder::where('name', $update->name)
-                            ->where('checkout_id', $update->checkout_id)
-                            ->where('order_id', $update->order_id)
-                            ->first();
-
-                        DB::table('logsorders')
-                            ->where('name', '=', $update->name)
-                            ->where('checkout_id', '=', $update->checkout_id)
-                            ->where('order_id', '=', $update->order_id)->delete();
-
-                        if (count($log) > 0) {
-                            $log_delete = Logorder::find($log->id);
-                            if ($log_delete != null) {
-                                $log_delete->delete();
-                            }
-                        }
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-                            foreach ($order['line_items'] as $item) {
-                                $variant = Variant::find($item['variant_id']);
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
 
                                 if (count($variant) > 0) {
-                                    $variant->sold_units = $variant->sold_units + $item['quantity'];
-                                    $variant->save();
+
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
                                 }
                             }
                         }
 
-                        $tercero = Tercero::with('networks')->where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-
-                            if (isset($tercero->networks) && isset($tercero->networks[0]) && isset($tercero->networks[0]['pivot']) && count($tercero->networks[0]['pivot']['padre_id']) > 0 && $tercero->state == true) {
-
-                                $padre = Tercero::where('id', $tercero->networks[0]['pivot']['padre_id'])->first();
-
-                                if (count($padre) > 0) {
-
-                                    if ($padre->state) {
-
-                                        $find = Tercero::find($padre->id);
-                                        $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                        $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                        $find->ganacias = $find->total_price_orders * 0.05;
-                                        $find->save();
-
-                                        $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                        if (count($customer) > 0) {
-                                            $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                            $metafields = json_decode($res->getBody(), true);
-                                            $results = array();
-
-                                            if (count($metafields['metafields']) > 0) {
-
-                                                foreach ($metafields['metafields'] as $metafield) {
-                                                    if ($metafield['key'] === 'referidos') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'referidos',
-                                                                        'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'compras') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'compras',
-                                                                        'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'valor') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'valor',
-                                                                        'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                        'value_type' => 'string'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        return response()->json(['status' => 'The resource is created successfully'], 200);
-                                    }
-
-                                } else {
-
-                                    return response()->json(['status' => 'The father was not found'], 200);
-                                }
-
-                            }
-
-                        } else {
-
-                            $padre = Tercero::where('email', strtolower($order['billing_address']['last_name']))->first();
-
-                            if (count($padre) > 0) {
-
-                                if ($padre->state) {
-
-                                    $find = Tercero::find($padre->id);
-                                    $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                    $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                    $find->ganacias = $find->total_price_orders * 0.05;
-                                    $find->save();
-
-                                    $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                    if (count($customer) > 0) {
-                                        $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                        $metafields = json_decode($res->getBody(), true);
-                                        $results = array();
-
-                                        if (count($metafields['metafields']) > 0) {
-
-                                            foreach ($metafields['metafields'] as $metafield) {
-                                                if ($metafield['key'] === 'referidos') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'referidos',
-                                                                    'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'compras') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'compras',
-                                                                    'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'valor') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'valor',
-                                                                    'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                    'value_type' => 'string'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    return response()->json(['status' => 'The resource is created successfully'], 200);
-                                }
-
-                            } else {
-
-                                $find = Tercero::find(1);
-                                $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                $find->ganacias = $find->total_price_orders * 0.05;
-                                $find->save();
-
-                                return response()->json(['status' => 'The resource is created successfully'], 200);
-                            }
-
-                        }
+                        return response()->json(['status' => 'order has been processed'], 200);
 
                     }
 
                     return response()->json(['status' => 'order not processed'], 200);
 
-                }
-
-                else {
+                } else {
 
                     $tipo_orden = '';
                     $i = 0;
                     $n = 0;
+                    $puntos = 0;
 
                     if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
                         foreach ($order['line_items'] as $item) {
-                            $product = Product::find($item['product_id']);
-                            if (strtolower($item['vendor'])  == 'nacional' || strtolower($item['vendor'])  == 'a - nacional') {
-                                $n++;
-                                if (count($product) > 0) {
-                                    $product->tipo_producto = 'nacional';
-                                    $product->save();
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'good')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + $v->percentage * $item['quantity'];
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'good')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
                                 }
-                            }
-                            if (strtolower($item['vendor'])  != 'nacional' && strtolower($item['vendor'])  != 'a - nacional') {
-                                $i++;
-                                if (count($product) > 0) {
-                                    $product->tipo_producto = 'internacional';
-                                    $product->save();
+
+                                $product = Product::find($item['product_id']);
+
+                                if ($product->tipo_producto == 'nacional') {
+                                    $n++;
+                                }
+                                if ($product->tipo_producto == 'internacional') {
+                                    $i++;
                                 }
                             }
                         }
@@ -3649,249 +2491,40 @@ class OrdersController extends Controller
                         $n = 0;
                     }
 
-                    Order::createOrder($order, $tipo_orden);
+                    $order_create = Order::createOrder($order, 'good', $puntos, $tipo_orden);
 
                     $tipo_orden = '';
+
 
                     if (isset($order['line_items']) && count($order['line_items']) > 0) {
 
                         foreach ($order['line_items'] as $item) {
 
-                            $variant = Variant::find($item['variant_id']);
-
-                            $search = Order::where('name', $order['name'])->first();
-
-                            if(count($search) > 0) {
-
-                                $update = Order::find($search->id);
-                                $update->points = $update->points + $variant->percentage;
-                                $update->save();
-                            }
-
+                            $variant = Variant::where('id', $item['variant_id'])
+                                ->where('product_id', $item['product_id'])
+                                ->where('shop', 'good')
+                                ->first();
 
                             if (count($variant) > 0) {
-                                $variant->sold_units = $variant->sold_units + $item['quantity'];
-                                $variant->save();
-                            }
 
-                            $line_item = LineItems::find($item['id']);
-
-                            if (count($line_item) == 0) {
-                                LineItems::createLineItem($item, $order, (isset($variant->percentage)) ? $variant->percentage : 0);
-                            }
-
-                        }
-                    }
-
-                    $customer = Customer::where('email', $order['email'])->first();
-
-                    if ($order['financial_status'] == "paid") {
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::find($item['variant_id']);
-
-                                if (count($variant) > 0) {
-                                    $variant->sold_units = $variant->sold_units + $item['quantity'];
-                                    $variant->save();
-                                }
-                            }
-                        }
-
-
-
-                        $tercero = Tercero::with('networks')->where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-
-                            if (isset($tercero->networks) && isset($tercero->networks[0]) && isset($tercero->networks[0]['pivot']) && count($tercero->networks[0]['pivot']['padre_id']) > 0 && $tercero->state == true) {
-
-                                $padre = Tercero::where('id', $tercero->networks[0]['pivot']['padre_id'])->first();
-
-                                if (count($padre) > 0) {
-
-                                    if ($padre->state) {
-
-                                        $find = Tercero::find($padre->id);
-                                        $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                        $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                        $find->ganacias = $find->total_price_orders * 0.05;
-                                        $find->save();
-
-                                        $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                        if (count($customer) > 0) {
-                                            $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                            $metafields = json_decode($res->getBody(), true);
-                                            $results = array();
-
-                                            if (count($metafields['metafields']) > 0) {
-
-                                                foreach ($metafields['metafields'] as $metafield) {
-                                                    if ($metafield['key'] === 'referidos') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'referidos',
-                                                                        'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'compras') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'compras',
-                                                                        'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'valor') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'valor',
-                                                                        'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                        'value_type' => 'string'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                        } else {
-
-                            $padre = Tercero::where('email', strtolower($order['billing_address']['last_name']))->first();
-
-                            if (count($padre) > 0) {
-
-                                if ($padre->state) {
-
-                                    $find = Tercero::find($padre->id);
-                                    $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                    $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                    $find->ganacias = $find->total_price_orders * 0.05;
-                                    $find->save();
-
-                                    $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                    if (count($customer) > 0) {
-                                        $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                        $metafields = json_decode($res->getBody(), true);
-                                        $results = array();
-
-                                        if (count($metafields['metafields']) > 0) {
-
-                                            foreach ($metafields['metafields'] as $metafield) {
-                                                if ($metafield['key'] === 'referidos') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'referidos',
-                                                                    'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'compras') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'compras',
-                                                                    'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'valor') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'valor',
-                                                                    'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                    'value_type' => 'string'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                }
-
-                            } else {
-
-                                $find = Tercero::find(1);
-                                $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                $find->ganacias = $find->total_price_orders * 0.05;
-                                $find->save();
-
-                            }
-
-                        }
-                    }
-
-                    $orders_paid = $orders = Logorder::where('status_shopify', 'pending')->where('status_mercadopago', 'approved')->get();
-                    foreach ($orders_paid as $paid) {
-                        $order_result = Order::where('order_id', $paid->order_id)->where('checkout_id', $paid->checkout_id)->first();
-                        if (count($order_result) > 0 ) {
-                            if ($order_result->financial_status == 'paid') {
-                                $delete = Logorder::where('order_id', $paid->order_id)->where('checkout_id', $paid->checkout_id)->first();
-                                if (count($delete) > 0) {
-                                    Logorder::find($delete->id)->delete();
-                                    DB::table('logsorders')
-                                        ->where('id', $delete->id)
-                                        ->where('name', '=', $delete->name)
-                                        ->where('checkout_id', '=', $delete->checkout_id)
-                                        ->where('order_id', '=', $delete->order_id)->delete();
-                                }
+                                DB::table('variants')
+                                    ->where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
                             }
                         }
                     }
-                    return response()->json(['status' => 'The resource is created successfully', $send], 200);
+
+                    return response()->json(['status' => 'The resource is created successfully'], 200);
                 }
             }
 
             if ($order['cancelled_at'] == null && $order['financial_status'] != 'paid') {
 
                 if (count($result) > 0) {
+
+                    // envio de notificaciones en esta parte. OJO
 
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
@@ -3906,187 +2539,20 @@ class OrdersController extends Controller
                         if (isset($order['line_items']) && count($order['line_items']) > 0) {
 
                             foreach ($order['line_items'] as $item) {
-                                $variant = Variant::find($item['variant_id']);
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
 
                                 if (count($variant) > 0) {
-                                    $variant->sold_units = $variant->sold_units - $item['quantity'];
-                                    $variant->save();
+
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
                                 }
                             }
-                        }
-
-                        $tercero = Tercero::with('networks')->where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-
-                            if (isset($tercero->networks) && isset($tercero->networks[0]) && isset($tercero->networks[0]['pivot']) && count($tercero->networks[0]['pivot']['padre_id']) > 0 && $tercero->state == true) {
-
-                                $padre = Tercero::where('id', $tercero->networks[0]['pivot']['padre_id'])->first();
-
-                                if (count($padre) > 0) {
-
-                                    if ($padre->state) {
-
-                                        $find = Tercero::find($padre->id);
-                                        $find->numero_ordenes_referidos = $find->numero_ordenes_referidos - 1;
-                                        $find->total_price_orders = $find->total_price_orders - $order['total_price'];
-                                        $find->ganacias = $find->total_price_orders * 0.05;
-                                        $find->save();
-
-                                        $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                        if (count($customer) > 0) {
-                                            $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                            $metafields = json_decode($res->getBody(), true);
-                                            $results = array();
-
-                                            if (count($metafields['metafields']) > 0) {
-
-                                                foreach ($metafields['metafields'] as $metafield) {
-                                                    if ($metafield['key'] === 'referidos') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'referidos',
-                                                                        'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'compras') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'compras',
-                                                                        'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-
-                                                    if ($metafield['key'] === 'valor') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'valor',
-                                                                        'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                        'value_type' => 'string'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                        array_push($results, json_decode($res->getBody(), true));
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        return response()->json(['status' => 'The resource is created successfully'], 200);
-                                    }
-
-                                } else {
-
-                                    return response()->json(['status' => 'The father was not found'], 200);
-                                }
-
-                            }
-
-                        } else {
-
-                            $padre = Tercero::where('email', strtolower($order['billing_address']['last_name']))->first();
-
-                            if (count($padre) > 0) {
-
-                                if ($padre->state) {
-
-                                    $find = Tercero::find($padre->id);
-                                    $find->numero_ordenes_referidos = $find->numero_ordenes_referidos - 1;
-                                    $find->total_price_orders = $find->total_price_orders - $order['total_price'];
-                                    $find->ganacias = $find->total_price_orders * 0.05;
-                                    $find->save();
-
-                                    $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                    if (count($customer) > 0) {
-                                        $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                        $metafields = json_decode($res->getBody(), true);
-                                        $results = array();
-
-                                        if (count($metafields['metafields']) > 0) {
-
-                                            foreach ($metafields['metafields'] as $metafield) {
-                                                if ($metafield['key'] === 'referidos') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'referidos',
-                                                                    'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'compras') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'compras',
-                                                                    'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                    'value_type' => 'integer'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-
-                                                if ($metafield['key'] === 'valor') {
-                                                    $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                            'form_params' => array(
-                                                                'metafield' => array(
-                                                                    'namespace' => 'customers',
-                                                                    'key' => 'valor',
-                                                                    'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                    'value_type' => 'string'
-                                                                )
-                                                            )
-                                                        )
-                                                    );
-                                                    array_push($results, json_decode($res->getBody(), true));
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    return response()->json(['status' => 'The resource is created successfully'], 200);
-                                }
-
-                            } else {
-
-                                $find = Tercero::find(1);
-                                $find->numero_ordenes_referidos = $find->numero_ordenes_referidos - 1;
-                                $find->total_price_orders = $find->total_price_orders - $order['total_price'];
-                                $find->ganacias = $find->total_price_orders * 0.05;
-                                $find->save();
-
-                                return response()->json(['status' => 'The resource is created successfully'], 200);
-                            }
-
                         }
                     }
 
@@ -4100,21 +2566,6 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
-
-
                         return response()->json(['status' => 'order processed'], 200);
                     }
 
@@ -4127,20 +2578,6 @@ class OrdersController extends Controller
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
 
                         return response()->json(['status' => 'The resource is created successfully'], 200);
                     }
@@ -4155,20 +2592,6 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) > 0) {
-                                    $line_item->date_order = $order['updated_at'];
-                                    $line_item->save();
-                                }
-
-                            }
-                        }
-
                         return response()->json(['status' => 'order processed'], 200);
                     }
 
@@ -4179,22 +2602,38 @@ class OrdersController extends Controller
                     $tipo_orden = '';
                     $i = 0;
                     $n = 0;
+                    $puntos = 0;
 
                     if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
                         foreach ($order['line_items'] as $item) {
-                            $product = Product::find($item['product_id']);
-                            if (strtolower($item['vendor'])  == 'nacional' || strtolower($item['vendor'])  == 'a - nacional') {
-                                $n++;
-                                if (count($product) > 0) {
-                                    $product->tipo_producto = 'nacional';
-                                    $product->save();
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'good')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + $v->points;
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'good')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->points, 'good');
                                 }
-                            }
-                            if (strtolower($item['vendor'])  != 'nacional' && strtolower($item['vendor'])  != 'a - nacional') {
-                                $i++;
-                                if (count($product) > 0) {
-                                    $product->tipo_producto = 'internacional';
-                                    $product->save();
+
+                                $product = Product::find($item['product_id']);
+
+                                if ($product->tipo_producto == 'nacional') {
+                                    $n++;
+                                }
+                                if ($product->tipo_producto == 'internacional') {
+                                    $i++;
                                 }
                             }
                         }
@@ -4216,44 +2655,20 @@ class OrdersController extends Controller
                         $n = 0;
                     }
 
-                    Order::createOrder($order, $tipo_orden);
+                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
 
                     $tipo_orden = '';
-
-                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                        foreach ($order['line_items'] as $item) {
-
-                            $variant = Variant::find($item['variant_id']);
-
-                            $search = Order::where('name', $order['name'])->first();
-
-                            if(count($search) > 0) {
-
-                                $update = Order::find($search->id);
-                                $update->points = $update->points + $variant->percentage;
-                                $update->save();
-                            }
-
-                            $line_item = LineItems::find($item['id']);
-
-                            if (count($line_item) == 0) {
-                                LineItems::createLineItem($item, $order, (isset($variant->percentage)) ? $variant->percentage : 0);
-                            }
-
-                        }
-                    }
 
                     return response()->json(['status' => 'The resource is created successfully'], 200);
                 }
             }
+
+            return response()->json(['status' => 'order not processed'], 200);
         }
     }
 
     public function payment()
     {
-        $api_url = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';
-        $client = new \GuzzleHttp\Client();
         $input = file_get_contents('php://input');
         $order = json_decode($input, true);
         $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
@@ -4261,132 +2676,536 @@ class OrdersController extends Controller
         $resultapi = error_log('Webhook verified: ' . var_export($verified, true));
 
         if ($resultapi == 'true') {
-            return response()->json(['status' => 'order not processed'], 200);
-        }
-    }
-    public function contador()
-    {
-        $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-        $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
-        $client = new \GuzzleHttp\Client();
 
-        $terceros = Tercero::all();
+            $result = Order::where('network_id', 1)
+                ->where('name', $order['name'])
+                ->where('order_id', $order['id'])
+                ->where('shop', 'good')
+                ->first();
 
-        foreach ($terceros as $tercero) {
+            if ($order['cancelled_at'] == null && $order['financial_status'] == 'paid') {
 
-            $res_good = $client->request('GET',  $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
-            $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-            $x = explode('/', $headers[0]);
-            $diferencia = $x[1] - $x[0];
+                if (count($result) > 0) {
 
-            if ($diferencia < 20) {
+                    // envio de notificaciones en esta parte. OJO
 
-                usleep(20000000);
-            }
+                    if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-            $results_good = json_decode($res_good->getBody(), true);
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
 
-            if (count($results_good['customers']) > 0) {
+                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
 
-                $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
+                            foreach ($order['line_items'] as $item) {
 
-                $headers =  $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                $x = explode('/', $headers[0]);
-                $diferencia = $x[1] - $x[0];
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
 
-                if ($diferencia < 20) {
+                                if (count($variant) > 0) {
 
-                    usleep(20000000);
-                }
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
+                                }
+                            }
+                        }
 
-                $results_mercando = json_decode($res_mercando->getBody(), true);
+                        return response()->json(['status' => 'order has been processed'], 200);
 
-                if (count($results_mercando['customers']) > 0) {
-
-                    $a = DB::table('terceros_tiendas')
-                        ->where('tercero_id', $tercero->id)
-                        ->where('customer_id_good', $results_good['customers'][0]['id'])
-                        ->where('customer_id_mercando', $results_mercando['customers'][0]['id'])
-                        ->first();
-
-                    if (count($a) == 0) {
-
-                        DB::table('terceros_tiendas')->insertGetId(
-                            [
-                                'tercero_id' => $tercero->id,
-                                'customer_id_good' =>  $results_good['customers'][0]['id'],
-                                'customer_id_mercando' => $results_mercando['customers'][0]['id'],
-                            ]
-                        );
                     }
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                            foreach ($order['line_items'] as $item) {
+
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
+
+                                if (count($variant) > 0) {
+
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
+                                }
+                            }
+                        }
+
+                        return response()->json(['status' => 'order has been processed'], 200);
+                    }
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                            foreach ($order['line_items'] as $item) {
+
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
+
+                                if (count($variant) > 0) {
+
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
+                                }
+                            }
+                        }
+
+                        return response()->json(['status' => 'order has been processed'], 200);
+
+                    }
+
+                    return response()->json(['status' => 'order not processed'], 200);
 
                 } else {
 
-                    try {
+                    $tipo_orden = '';
+                    $i = 0;
+                    $n = 0;
+                    $puntos = 0;
 
-                        $res = $client->request('post', $api_url_mercando . '/admin/customers.json', array(
-                                'form_params' => array(
-                                    'customer' => array(
-                                        'first_name' => strtolower( $results_good['customers'][0]['first_name']),
-                                        'last_name' => strtolower( $results_good['customers'][0]['last_name']),
-                                        'email' => strtolower($results_good['customers'][0]['email']),
-                                        'verified_email' => true,
-                                        'phone' =>  $results_good['customers'][0]['phone'],
-                                        'addresses' => [
-                                            [
-                                                'address1' => strtolower($results_good['customers'][0]['addresses'][0]['address1']),
-                                                'city' => strtolower($results_good['customers'][0]['addresses'][0]['city']),
-                                                'province' => '',
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
 
-                                                "zip" => '',
-                                                'first_name' => strtolower($results_good['customers'][0]['addresses'][0]['first_name']),
-                                                'last_name' => strtolower($results_good['customers'][0]['addresses'][0]['first_name']),
-                                                'country' => 'CO'
-                                            ],
-                                        ],
-                                        "password" => $tercero->identificacion,
-                                        "password_confirmation" => $tercero->identificacion,
-                                        'send_email_invite' => false,
-                                        'send_email_welcome' => false
-                                    )
-                                )
-                            )
-                        );
+                        foreach ($order['line_items'] as $item) {
 
-                        $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                        $x = explode('/', $headers[0]);
-                        $diferencia = $x[1] - $x[0];
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'good')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
 
-                        if ($diferencia < 20) {
+                            if (count($v) > 0) {
 
-                            usleep(20000000);
+                                $puntos = $puntos + $v->percentage * $item['quantity'];
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'good')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
+                                }
+
+                                $product = Product::find($item['product_id']);
+
+                                if ($product->tipo_producto == 'nacional') {
+                                    $n++;
+                                }
+                                if ($product->tipo_producto == 'internacional') {
+                                    $i++;
+                                }
+                            }
                         }
-
-                        $customer = json_decode($res->getBody(), true);
-
-                        $b = DB::table('terceros_tiendas')
-                            ->where('tercero_id', $tercero->id)
-                            ->where('customer_id_good', $results_good['customers'][0]['id'])
-                            ->where('customer_id_mercando', $customer['customer']['id'])
-                            ->first();
-
-                        if (count($b) == 0) {
-                            DB::table('terceros_tiendas')->insertGetId(
-                                [
-                                    'tercero_id' => $tercero->id,
-                                    'customer_id_good' =>  $results_good['customers'][0]['id'],
-                                    'customer_id_mercando' =>  $customer['customer']['id'],
-                                ]
-                            );
-                        }
-
-                    } catch (ClientException $e) {
-
-                       return $err = json_decode(($e->getResponse()->getBody()), true);
                     }
-                }
 
+                    if ($i > 0 && $n > 0) {
+                        $tipo_orden .= 'nacional/internacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+                    if ($i > 0 && $n == 0) {
+                        $tipo_orden .= 'internacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+                    if ($i == 0 && $n > 0) {
+                        $tipo_orden .= 'nacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+
+                    $order_create = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+
+                    $tipo_orden = '';
+
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                        foreach ($order['line_items'] as $item) {
+
+                            $variant = Variant::where('id', $item['variant_id'])
+                                ->where('product_id', $item['product_id'])
+                                ->where('shop', 'good')
+                                ->first();
+
+                            if (count($variant) > 0) {
+
+                                DB::table('variants')
+                                    ->where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
+                            }
+                        }
+                    }
+
+                    return response()->json(['status' => 'The resource is created successfully'], 200);
+                }
             }
+
+            return response()->json(['status' => 'order not processed'], 200);
         }
+    }
+
+    public function cancelled()
+    {
+        $input = file_get_contents('php://input');
+        $order = json_decode($input, true);
+        $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
+        $verified = $this->verify_webhook(collect($order), $hmac_header);
+        $resultapi = error_log('Webhook verified: ' . var_export($verified, true));
+
+        if ($resultapi == 'true') {
+
+            $result = Order::where('network_id', 1)
+                ->where('name', $order['name'])
+                ->where('order_id', $order['id'])
+                ->where('shop', 'good')
+                ->first();
+
+            if ($order['cancelled_at'] != null && $order['financial_status'] != 'paid') {
+
+                if (count($result) > 0) {
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                            foreach ($order['line_items'] as $item) {
+
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
+
+                                if (count($variant) > 0) {
+
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
+                                }
+                            }
+                        }
+
+                        return response()->json(['status' => 'order processed'], 200);
+
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'The resource is created successfully'], 200);
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    return response()->json(['status' => 'order not processed'], 200);
+
+                } else {
+
+                    $tipo_orden = '';
+                    $i = 0;
+                    $n = 0;
+                    $puntos = 0;
+
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                        foreach ($order['line_items'] as $item) {
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'good')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + $v->points;
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'good')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                }
+
+                                $product = Product::find($item['product_id']);
+
+                                if ($product->tipo_producto == 'nacional') {
+                                    $n++;
+                                }
+                                if ($product->tipo_producto == 'internacional') {
+                                    $i++;
+                                }
+                            }
+                        }
+                    }
+
+                    if ($i > 0 && $n > 0) {
+                        $tipo_orden .= 'nacional/internacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+                    if ($i > 0 && $n == 0) {
+                        $tipo_orden .= 'internacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+                    if ($i == 0 && $n > 0) {
+                        $tipo_orden .= 'nacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+
+                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+                    $tipo_orden = '';
+
+                    return response()->json(['status' => 'The resource is created successfully'], 200);
+                }
+            }
+
+            if ($order['cancelled_at'] != null && $order['financial_status'] == 'paid') {
+
+                if (count($result) > 0) {
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                            foreach ($order['line_items'] as $item) {
+
+                                $variant = Variant::where('id', $item['variant_id'])
+                                    ->where('product_id', $item['product_id'])
+                                    ->where('shop', 'good')
+                                    ->first();
+
+                                if (count($variant) > 0) {
+
+                                    DB::table('variants')
+                                        ->where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
+                                }
+                            }
+                        }
+
+                        return response()->json(['status' => 'order processed'], 200);
+
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'The resource is created successfully'], 200);
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    return response()->json(['status' => 'order not processed'], 200);
+
+                } else {
+
+                    $tipo_orden = '';
+                    $i = 0;
+                    $n = 0;
+                    $puntos = 0;
+
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                        foreach ($order['line_items'] as $item) {
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'good')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + $v->points;
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'good')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                }
+
+                                $product = Product::find($item['product_id']);
+
+                                if ($product->tipo_producto == 'nacional') {
+                                    $n++;
+                                }
+                                if ($product->tipo_producto == 'internacional') {
+                                    $i++;
+                                }
+                            }
+                        }
+                    }
+
+                    if ($i > 0 && $n > 0) {
+                        $tipo_orden .= 'nacional/internacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+                    if ($i > 0 && $n == 0) {
+                        $tipo_orden .= 'internacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+                    if ($i == 0 && $n > 0) {
+                        $tipo_orden .= 'nacional';
+                        $i = 0;
+                        $n = 0;
+                    }
+
+                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+
+                    $tipo_orden = '';
+
+                    return response()->json(['status' => 'The resource is created successfully'], 200);
+                }
+            }
+
+            return response()->json(['status' => 'order not processed'], 200);
+        }
+    }
+
+    public function contador()
+    {
+
     }
 }

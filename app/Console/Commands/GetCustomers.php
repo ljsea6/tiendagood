@@ -86,8 +86,6 @@ class GetCustomers extends Command
 
                     $this->info('Customer no existe');
 
-
-
                     if (count($tercero) == 0) {
 
                         $usuario = new Tercero();
