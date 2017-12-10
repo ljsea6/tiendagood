@@ -4357,9 +4357,7 @@ class OrdersController extends Controller
                             usleep(20000000);
                         }
 
-                        $customer['customer'] = json_decode($res->getBody(), true);
-
-                        return $customer['customer'];
+                        $customer = json_decode($res->getBody(), true);
 
                         $b = DB::table('terceros_tiendas')
                             ->where('tercero_id', $tercero->id)
