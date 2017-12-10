@@ -4322,7 +4322,7 @@ class OrdersController extends Controller
 
                     try {
 
-                        $re = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] . '.json', array(
+                        $re = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] .'.json', array(
                                 'form_params' => array(
                                     'customer' => array(
                                         'addresses' => [
