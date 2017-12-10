@@ -4320,8 +4320,6 @@ class OrdersController extends Controller
                         );
                     }
 
-                    return $results_mercando['customers'][0]['id'];
-
                     try {
 
                         $re = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] . '.json', array(
@@ -4348,6 +4346,8 @@ class OrdersController extends Controller
 
 
                     } catch (ClientException $e) {
+
+                        return 'hola';
 
                         return $err = json_decode(($e->getResponse()->getBody()), true);
                     }
