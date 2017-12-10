@@ -143,7 +143,7 @@ class Tercero extends Model implements AuthenticatableContract, CanResetPassword
 
     public function cliente()
     {
-        return $this->belongsTo(TipoCliente::class, 'tipo_cliente_id');
+        return $this->belongsTo(Tipo::class, 'tipo_cliente_id');
     }
 
     public function liquidaciones()
