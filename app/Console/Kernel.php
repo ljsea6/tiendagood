@@ -21,7 +21,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\MercadoPago::class,
         \App\Console\Commands\Metafields::class,
         \App\Console\Commands\GiftsCards::class,
-        \App\Console\Commands\GetProductsMercando::class
+        \App\Console\Commands\GetProductsMercando::class,
+        \App\Console\Commands\GetUsers::class,
     ];
 
     /**
