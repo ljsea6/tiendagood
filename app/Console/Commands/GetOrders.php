@@ -240,8 +240,7 @@ class GetOrders extends Command
                         if (count($tercero) > 0) {
 
                             $update = Tercero::with('networks', 'levels', 'cliente')->find($tercero->id);
-                            $update->mispuntos = $update->mispuntos + $order_create->points;
-                            $update->save();
+
 
                             if ($update->cliente->id == 85) {
 
@@ -257,6 +256,9 @@ class GetOrders extends Command
                                 }
 
                             } else {
+
+                                $update->mispuntos = $update->mispuntos + $order_create->points;
+                                $update->save();
 
                                 if (count($update->networks) > 0) {
 
