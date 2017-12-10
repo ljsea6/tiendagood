@@ -4336,7 +4336,7 @@ class OrdersController extends Controller
                                         'phone' =>  $results_good['customers'][0]['phone'],
                                         'addresses' => [
 
-                                            $results_good['customers'][0]['addresses']
+                                            $results_good['customers'][0]['addresses'][0]
 
                                         ],
                                         "password" => $tercero->identificacion,
