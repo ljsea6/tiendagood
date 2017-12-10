@@ -86,7 +86,7 @@ class GetCustomers extends Command
 
                     $this->info('Customer no existe');
 
-                    //$c = Customer::createCustomer($customer);
+
 
                     if (count($tercero) == 0) {
 

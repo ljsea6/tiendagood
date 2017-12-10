@@ -267,7 +267,6 @@ class VariantsController extends Controller
                                         continue;
                                     }
                                 }
-
                             }
 
                         } catch (ClientException $e) {
@@ -276,8 +275,6 @@ class VariantsController extends Controller
                                 continue;
                             }
                         }
-
-
 
                     } else {
 
@@ -360,7 +357,6 @@ class VariantsController extends Controller
                                         continue;
                                     }
                                 }
-
                             }
 
                         } catch (ClientException $e) {
@@ -369,8 +365,6 @@ class VariantsController extends Controller
                                 continue;
                             }
                         }
-
-
                     }
                 }
             }
@@ -471,14 +465,12 @@ class VariantsController extends Controller
                                         usleep(10000000);
                                     }
 
-
                                 } catch (ClientException $e) {
 
                                     if ($e->getResponse()) {
                                         continue;
                                     }
                                 }
-
                             }
 
                         } catch (ClientException $e) {
@@ -487,8 +479,6 @@ class VariantsController extends Controller
                                 continue;
                             }
                         }
-
-
 
                     } else {
 
@@ -530,8 +520,6 @@ class VariantsController extends Controller
                                             if ($diferencia < 10) {
                                                 usleep(10000000);
                                             }
-
-                                            //return json_decode($res->getBody(), true);
 
                                         } catch (ClientException $e) {
 

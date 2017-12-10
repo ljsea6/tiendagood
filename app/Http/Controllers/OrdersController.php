@@ -4270,7 +4270,6 @@ class OrdersController extends Controller
         $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
         $client = new \GuzzleHttp\Client();
 
-
         $terceros = Tercero::all();
 
         foreach ($terceros as $tercero) {
@@ -4282,7 +4281,7 @@ class OrdersController extends Controller
 
             if ($diferencia < 20) {
 
-                usleep(10000000);
+                usleep(20000000);
             }
 
             $results_good = json_decode($res_good->getBody(), true);
@@ -4297,21 +4296,31 @@ class OrdersController extends Controller
 
                 if ($diferencia < 20) {
 
-                    usleep(10000000);
+                    usleep(20000000);
                 }
 
                 $results_mercando = json_decode($res_mercando->getBody(), true);
 
                 if (count($results_mercando['customers']) > 0) {
 
+                    $a = DB::table('terceros_tiendas')
+                        ->where('tercero_id', $tercero->id)
+                        ->where('customer_id_good', $results_good['customers'][0]['id'])
+                        ->where('customer_id_mercando', $results_mercando['customers'][0]['id'])
+                        ->first();
 
-                    DB::table('terceros_tiendas')->insertGetId(
-                        [
-                            'tercero_id' => $tercero->id,
-                            'customer_id_good' =>  $results_good['customers'][0]['id'],
-                            'customer_id_mercando' => $results_mercando['customers'][0]['id'],
-                        ]
-                    );
+                    if (count($a) == 0) {
+
+                        DB::table('terceros_tiendas')->insertGetId(
+                            [
+                                'tercero_id' => $tercero->id,
+                                'customer_id_good' =>  $results_good['customers'][0]['id'],
+                                'customer_id_mercando' => $results_mercando['customers'][0]['id'],
+                            ]
+                        );
+                    }
+
+
 
                 } else {
 
@@ -4322,12 +4331,12 @@ class OrdersController extends Controller
                                     'customer' => array(
                                         'first_name' => strtolower( $results_good['customers'][0]['first_name']),
                                         'last_name' => strtolower( $results_good['customers'][0]['last_name']),
-                                        'email' => strtolower($tercero->email),
+                                        'email' => strtolower($results_good['customers'][0]['email']),
                                         'verified_email' => true,
                                         'phone' =>  $results_good['customers'][0]['phone'],
                                         'addresses' => [
 
-                                            $results_good['customers'][0]['address']
+                                            $results_good['customers'][0]['addresses']
 
                                         ],
                                         "password" => $tercero->identificacion,
@@ -4339,16 +4348,32 @@ class OrdersController extends Controller
                             )
                         );
 
+                        $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                        $x = explode('/', $headers[0]);
+                        $diferencia = $x[1] - $x[0];
+
+                        if ($diferencia < 20) {
+
+                            usleep(20000000);
+                        }
+
                         $customer['customer'] = json_decode($res->getBody(), true);
 
-                        DB::table('terceros_tiendas')->insertGetId(
-                            [
-                                'tercero_id' => $tercero->id,
-                                'customer_id_good' =>  $results_good['customers'][0]['id'],
-                                'customer_id_mercando' =>  $customer['customer']['id'],
-                            ]
-                        );
+                        $b = DB::table('terceros_tiendas')
+                            ->where('tercero_id', $tercero->id)
+                            ->where('customer_id_good', $results_good['customers'][0]['id'])
+                            ->where('customer_id_mercando', $customer['customer']['id'])
+                            ->first();
 
+                        if (count($b) == 0) {
+                            DB::table('terceros_tiendas')->insertGetId(
+                                [
+                                    'tercero_id' => $tercero->id,
+                                    'customer_id_good' =>  $results_good['customers'][0]['id'],
+                                    'customer_id_mercando' =>  $customer['customer']['id'],
+                                ]
+                            );
+                        }
 
                     } catch (ClientException $e) {
 

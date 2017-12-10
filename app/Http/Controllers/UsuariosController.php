@@ -511,24 +511,18 @@ class UsuariosController extends Controller {
 
                 $customer = json_decode($res->getBody(), true);
 
-
-
                 $good_id = '' . $customer['customer']['id'];
-
 
 
             } catch (ClientException $e) {
 
                 $err = json_decode(($e->getResponse()->getBody()), true);
 
-                //return redirect()->back()->with(['err' => $err]);
-
                 foreach ($err['errors'] as $key => $value) {
 
                     echo $key . ' ' . $value[0] . "\n";
                 }
             }
-
 
             $api_url = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
             $client = new \GuzzleHttp\Client();
@@ -581,7 +575,6 @@ class UsuariosController extends Controller {
                     echo $key . ' ' . $value[0] . "\n";
                 }
             }
-
         }
 
         DB::table('terceros_tiendas')->insertGetId(
@@ -591,8 +584,6 @@ class UsuariosController extends Controller {
                 'customer_id_mercando' =>  $mercando_id,
             ]
         );
-
-
 
         $padre = Tercero::with('networks')->where('identificacion', '=', '' .$request->code. '')->first();
 
@@ -610,8 +601,7 @@ class UsuariosController extends Controller {
 
                     $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
                 }
-
-
+                
             } else {
 
                 $result = DB::table('terceros_networks')

@@ -204,10 +204,9 @@ class GetOrders extends Command
                             $n = 0;
                         }
 
-                        $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+                        $order_create = Order::createOrder($order, 'good', $puntos, $tipo_orden);
 
                         $tipo_orden = '';
-
 
                         if ($order['financial_status'] == "paid") {
 
