@@ -4319,7 +4319,7 @@ class OrdersController extends Controller
                             ]
                         );
                     }
-                    
+
                 } else {
 
                     try {
@@ -4333,7 +4333,6 @@ class OrdersController extends Controller
                                         'verified_email' => true,
                                         'phone' =>  $results_good['customers'][0]['phone'],
                                         'addresses' => [
-
                                             [
                                                 'address1' => strtolower($results_good['customers'][0]['addresses'][0]['address1']),
                                                 'city' => strtolower($results_good['customers'][0]['addresses'][0]['city']),
@@ -4344,7 +4343,6 @@ class OrdersController extends Controller
                                                 'last_name' => strtolower($results_good['customers'][0]['addresses'][0]['first_name']),
                                                 'country' => 'CO'
                                             ],
-
                                         ],
                                         "password" => $tercero->identificacion,
                                         "password_confirmation" => $tercero->identificacion,
