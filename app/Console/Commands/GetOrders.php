@@ -252,6 +252,7 @@ class GetOrders extends Command
                                     if (count($padre_uno) > 0 && $padre_uno->state == true) {
 
                                         $padre_uno->mispuntos = $padre_uno->mispuntos + $puntos;
+                                        $padre_uno->save();
                                     }
                                 }
 
