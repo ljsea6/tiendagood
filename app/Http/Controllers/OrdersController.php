@@ -4320,6 +4320,38 @@ class OrdersController extends Controller
                         );
                     }
 
+                    try {
+
+                        $re = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] .'.json', array(
+                                'form_params' => array(
+                                    'customer' => array(
+                                        'first_name' => strtolower( $results_good['customers'][0]['first_name']),
+                                        'last_name' => strtolower( $results_good['customers'][0]['last_name']),
+                                        'phone' =>  $results_good['customers'][0]['phone'],
+                                        'addresses' => [
+
+                                            $results_good['customers'][0]['addresses'][0]
+
+                                        ]
+                                    )
+                                )
+                            )
+                        );
+
+                        $headers =  $re->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                        $x = explode('/', $headers[0]);
+                        $diferencia = $x[1] - $x[0];
+
+                        if ($diferencia < 20) {
+
+                            usleep(20000000);
+                        }
+
+
+                    } catch (ClientException $e) {
+
+                        return $err = json_decode(($e->getResponse()->getBody()), true);
+                    }
 
 
                 } else {
