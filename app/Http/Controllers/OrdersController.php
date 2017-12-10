@@ -4359,6 +4359,8 @@ class OrdersController extends Controller
 
                         $customer['customer'] = json_decode($res->getBody(), true);
 
+                        return $customer['customer']['id'];
+
                         $b = DB::table('terceros_tiendas')
                             ->where('tercero_id', $tercero->id)
                             ->where('customer_id_good', $results_good['customers'][0]['id'])

@@ -601,7 +601,7 @@ class UsuariosController extends Controller {
 
                     $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
                 }
-                
+
             } else {
 
                 $result = DB::table('terceros_networks')
