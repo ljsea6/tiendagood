@@ -231,7 +231,6 @@ class GetOrders extends Command
                                     }
                                 }
                             }
-
                         }
                     }
                 }

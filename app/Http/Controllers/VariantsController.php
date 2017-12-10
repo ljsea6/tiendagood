@@ -18,7 +18,6 @@ use GuzzleHttp\Exception\ClientException;
 class VariantsController extends Controller
 {
 
-
     public function variants()
     {
         $variants = DB::table('variants')
