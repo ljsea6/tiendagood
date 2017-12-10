@@ -4320,14 +4320,13 @@ class OrdersController extends Controller
                         );
                     }
 
+                    return $results_mercando['customers'][0]['id'];
+
                     try {
 
-                        $re = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] .'.json', array(
+                        $re = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] . '.json', array(
                                 'form_params' => array(
                                     'customer' => array(
-                                        'first_name' => strtolower( $results_good['customers'][0]['first_name']),
-                                        'last_name' => strtolower( $results_good['customers'][0]['last_name']),
-                                        'phone' =>  $results_good['customers'][0]['phone'],
                                         'addresses' => [
 
                                             $results_good['customers'][0]['addresses'][0]
