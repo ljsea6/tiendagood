@@ -1917,6 +1917,11 @@ class OrdersController extends Controller
 
                     $tipo_orden = '';
 
+                    return response()->json(['status' => 'order processed'], 200);
+
+                } else {
+
+                    return response()->json(['status' => 'order not processed'], 200);
                 }
             }
 
@@ -1985,8 +1990,20 @@ class OrdersController extends Controller
                     $tipo_orden = '';
 
                     $this->OrderPaid($order, $order_create, $puntos);
+
+                    return response()->json(['status' => 'order processed'], 200);
+
+                } else {
+
+                    return response()->json(['status' => 'order not processed'], 200);
                 }
             }
+
+            return response()->json(['status' => 'order not processed'], 200);
+
+        } else {
+
+            return response()->json(['status' => 'Bad Request'], 400);
         }
     }
     public function update()
@@ -2116,7 +2133,7 @@ class OrdersController extends Controller
                     Order::createOrder($order, 'good', $puntos, $tipo_orden);
                     $tipo_orden = '';
 
-                    return response()->json(['status' => 'The resource is created successfully'], 200);
+                    return response()->json(['status' => 'The resource has been created successfully'], 200);
                 }
             }
 
@@ -2234,7 +2251,7 @@ class OrdersController extends Controller
 
                     $tipo_orden = '';
 
-                    return response()->json(['status' => 'The resource is created successfully'], 200);
+                    return response()->json(['status' => 'The resource has been created successfully'], 200);
                 }
             }
 
@@ -2375,7 +2392,7 @@ class OrdersController extends Controller
 
                     $this->OrderPaid($order, $order_create, $puntos);
 
-                    return response()->json(['status' => 'The resource is created successfully'], 200);
+                    return response()->json(['status' => 'The resource has been created successfully'], 200);
                 }
             }
 
@@ -2396,6 +2413,8 @@ class OrdersController extends Controller
                         $update->save();
 
                         $this->OrderCancelled($result, $order);
+
+                        return response()->json(['status' => 'order processed'], 200);
                     }
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
@@ -2501,7 +2520,7 @@ class OrdersController extends Controller
 
                     $tipo_orden = '';
 
-                    return response()->json(['status' => 'The resource is created successfully'], 200);
+                    return response()->json(['status' => 'The resource has been created successfully'], 200);
                 }
             }
 
@@ -2804,11 +2823,13 @@ class OrdersController extends Controller
                 Order::createOrder($order, 'good', $puntos, $tipo_orden);
                 $tipo_orden = '';
 
-                return response()->json(['status' => 'The resource is created successfully'], 200);
+                return response()->json(['status' => 'The resource has been created successfully'], 200);
             }
 
         }
     }
+
+
     public function contador()
     {
 
