@@ -1,6 +1,9 @@
 <?php
+
 namespace App\Http\Controllers;
 use App\Entities\Tercero_network;
+use app\Traits\OrderCancelled;
+use App\Traits\OrderPaid;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -29,6 +32,8 @@ use GuzzleHttp\Exception\ClientException;
 
 class OrdersController extends Controller
 {
+    use OrderPaid, OrderCancelled;
+
     public function listpaid()
     {
         return view('admin.orders.paid');
@@ -1908,7 +1913,7 @@ class OrdersController extends Controller
                         $n = 0;
                     }
 
-                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+                    Order::createOrder($order, 'good', $puntos, $tipo_orden);
 
                     $tipo_orden = '';
 
@@ -1979,329 +1984,13 @@ class OrdersController extends Controller
 
                     $tipo_orden = '';
 
-                    if ($order['financial_status'] == "paid") {
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
-
-                                if (count($variant) > 0) {
-
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
-                                }
-                            }
-                        }
-
-                        $tercero = Tercero::where('email', strtolower($order['email']))
-                            ->where('state', true)
-                            ->first();
-
-                        if (count($tercero) > 0) {
-
-                            $update = Tercero::with('networks', 'levels', 'cliente')->find($tercero->id);
-
-                            if ($update->cliente->id == 85) {
-
-                                if (count($update->networks) > 0) {
-
-                                    $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
-
-                                    if (count($padre_uno) > 0 && $padre_uno->state == true) {
-
-                                        $padre_uno->mispuntos = $padre_uno->mispuntos + $puntos;
-                                        $padre_uno->save();
-
-
-                                        if (count($padre_uno->networks) > 0) {
-
-                                            $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
-
-                                            if (count($padre_dos) > 0 && $padre_dos->state == true) {
-
-                                                if (count($padre_dos->levels) == 0) {
-
-                                                    DB::table('terceros_niveles')->insertGetId(
-                                                        [
-                                                            'tercero_id' => $padre_dos->id,
-                                                            'nivel' =>  1,
-                                                            'puntos' =>  $puntos,
-                                                        ]
-                                                    );
-
-                                                } else {
-
-                                                    $result = DB::table('terceros_niveles')
-                                                        ->where('tercero_id', $padre_dos->id)
-                                                        ->where('nivel', 1)
-                                                        ->first();
-
-                                                    if (count($result) > 0) {
-
-                                                        DB::table('terceros_niveles')
-                                                            ->where('tercero_id', $padre_dos->id)
-                                                            ->where('nivel', 1)
-                                                            ->update(['puntos' => $result->puntos + $puntos]);
-
-                                                    } else {
-
-                                                        DB::table('terceros_niveles')->insertGetId(
-                                                            [
-                                                                'tercero_id' => $padre_dos->id,
-                                                                'nivel' =>  1,
-                                                                'puntos' =>  $puntos,
-                                                            ]
-                                                        );
-                                                    }
-                                                }
-
-                                                if (count($padre_dos->networks) > 0) {
-
-                                                    $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
-
-                                                    if (count($padre_tres) > 0 && $padre_tres->state == true) {
-
-                                                        if (count($padre_tres->levels) == 0) {
-
-                                                            DB::table('terceros_niveles')->insertGetId(
-                                                                [
-                                                                    'tercero_id' => $padre_tres->id,
-                                                                    'nivel' =>  2,
-                                                                    'puntos' =>  $puntos,
-                                                                ]
-                                                            );
-
-                                                        } else {
-
-                                                            $result = DB::table('terceros_niveles')
-                                                                ->where('tercero_id', $padre_tres->id)
-                                                                ->where('nivel', 2)
-                                                                ->first();
-
-                                                            if (count($result) > 0) {
-
-                                                                DB::table('terceros_niveles')
-                                                                    ->where('tercero_id', $padre_tres->id)
-                                                                    ->where('nivel', 2)
-                                                                    ->update(['puntos' => $result->puntos + $puntos]);
-
-                                                            } else {
-
-                                                                DB::table('terceros_niveles')->insertGetId(
-                                                                    [
-                                                                        'tercero_id' => $padre_tres->id,
-                                                                        'nivel' =>  2,
-                                                                        'puntos' =>  $puntos,
-                                                                    ]
-                                                                );
-                                                            }
-                                                        }
-
-                                                        if (count($padre_tres->networks) > 0) {
-
-                                                            $padre_cuatro = Tercero::with('networks', 'levels')->find($padre_tres->networks[0]['pivot']['padre_id']);
-
-                                                            if (count($padre_cuatro) > 0 && $padre_cuatro->state == true) {
-
-                                                                if (count($padre_cuatro->levels) == 0) {
-
-                                                                    DB::table('terceros_niveles')->insertGetId(
-                                                                        [
-                                                                            'tercero_id' => $padre_cuatro->id,
-                                                                            'nivel' =>  3,
-                                                                            'puntos' =>  $puntos,
-                                                                        ]
-                                                                    );
-
-                                                                } else {
-
-                                                                    $result = DB::table('terceros_niveles')
-                                                                        ->where('tercero_id', $padre_cuatro->id)
-                                                                        ->where('nivel', 3)
-                                                                        ->first();
-
-                                                                    if (count($result) > 0) {
-
-                                                                        DB::table('terceros_niveles')
-                                                                            ->where('tercero_id', $padre_cuatro->id)
-                                                                            ->where('nivel', 3)
-                                                                            ->update(['puntos' => $result->puntos + $puntos]);
-
-                                                                    } else {
-
-                                                                        DB::table('terceros_niveles')->insertGetId(
-                                                                            [
-                                                                                'tercero_id' => $padre_cuatro->id,
-                                                                                'nivel' =>  3,
-                                                                                'puntos' =>  $puntos,
-                                                                            ]
-                                                                        );
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                            }
-                            else {
-
-                                $update->mispuntos = $update->mispuntos + $order_create->points;
-                                $update->save();
-
-                                if (count($update->networks) > 0) {
-
-                                    $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
-
-                                    if (count($padre_uno) > 0 && $padre_uno->state == true) {
-
-                                        if (count($padre_uno->levels) == 0) {
-
-                                            DB::table('terceros_niveles')->insertGetId(
-                                                [
-                                                    'tercero_id' => $padre_uno->id,
-                                                    'nivel' =>  1,
-                                                    'puntos' =>  $puntos,
-                                                ]
-                                            );
-
-                                        } else {
-
-                                            $result = DB::table('terceros_niveles')
-                                                ->where('tercero_id', $padre_uno->id)
-                                                ->where('nivel', 1)
-                                                ->first();
-
-                                            if (count($result) > 0) {
-
-                                                DB::table('terceros_niveles')
-                                                    ->where('tercero_id', $padre_uno->id)
-                                                    ->where('nivel', 1)
-                                                    ->update(['puntos' => $result->puntos + $puntos]);
-
-                                            } else {
-
-                                                DB::table('terceros_niveles')->insertGetId(
-                                                    [
-                                                        'tercero_id' => $padre_uno->id,
-                                                        'nivel' =>  1,
-                                                        'puntos' =>  $puntos,
-                                                    ]
-                                                );
-                                            }
-                                        }
-
-                                        if (count($padre_uno->networks) > 0) {
-
-                                            $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
-
-                                            if (count($padre_dos) > 0 && $padre_dos->state == true) {
-
-                                                if (count($padre_dos->levels) == 0) {
-
-                                                    DB::table('terceros_niveles')->insertGetId(
-                                                        [
-                                                            'tercero_id' => $padre_dos->id,
-                                                            'nivel' =>  2,
-                                                            'puntos' =>  $puntos,
-                                                        ]
-                                                    );
-
-                                                } else {
-
-                                                    $result = DB::table('terceros_niveles')
-                                                        ->where('tercero_id', $padre_dos->id)
-                                                        ->where('nivel', 2)
-                                                        ->first();
-
-                                                    if (count($result) > 0) {
-
-                                                        DB::table('terceros_niveles')
-                                                            ->where('tercero_id', $padre_dos->id)
-                                                            ->where('nivel', 2)
-                                                            ->update(['puntos' => $result->puntos + $puntos]);
-
-                                                    } else {
-
-                                                        DB::table('terceros_niveles')->insertGetId(
-                                                            [
-                                                                'tercero_id' => $padre_dos->id,
-                                                                'nivel' =>  2,
-                                                                'puntos' =>  $puntos,
-                                                            ]
-                                                        );
-                                                    }
-                                                }
-
-                                                if (count($padre_dos->networks) > 0) {
-
-                                                    $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
-
-                                                    if (count($padre_tres) > 0 && $padre_tres->state == true) {
-
-                                                        if (count($padre_tres->levels) == 0) {
-
-                                                            DB::table('terceros_niveles')->insertGetId(
-                                                                [
-                                                                    'tercero_id' => $padre_tres->id,
-                                                                    'nivel' =>  3,
-                                                                    'puntos' =>  $puntos,
-                                                                ]
-                                                            );
-
-                                                        } else {
-
-                                                            $result = DB::table('terceros_niveles')
-                                                                ->where('tercero_id', $padre_tres->id)
-                                                                ->where('nivel', 3)
-                                                                ->first();
-
-                                                            if (count($result) > 0) {
-
-                                                                DB::table('terceros_niveles')
-                                                                    ->where('tercero_id', $padre_tres->id)
-                                                                    ->where('nivel', 3)
-                                                                    ->update(['puntos' => $result->puntos + $puntos]);
-
-                                                            } else {
-
-                                                                DB::table('terceros_niveles')->insertGetId(
-                                                                    [
-                                                                        'tercero_id' => $padre_tres->id,
-                                                                        'nivel' =>  3,
-                                                                        'puntos' =>  $puntos,
-                                                                    ]
-                                                                );
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    $this->OrderPaid($order, $order_create, $puntos);
                 }
             }
         }
     }
     public function update()
     {
-
         $input = file_get_contents('php://input');
         $order = json_decode($input, true);
         $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
@@ -2322,36 +2011,7 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
-
-                                if (count($variant) > 0) {
-
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
-                                }
-                            }
-                        }
-
-
-
+                        $this->OrderCancelled($result, $order);
                     }
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
@@ -2453,7 +2113,7 @@ class OrdersController extends Controller
                         $n = 0;
                     }
 
-                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+                    Order::createOrder($order, 'good', $puntos, $tipo_orden);
                     $tipo_orden = '';
 
                     return response()->json(['status' => 'The resource is created successfully'], 200);
@@ -2466,33 +2126,7 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
-
-                                if (count($variant) > 0) {
-
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
-                                }
-                            }
-                        }
+                        $this->OrderCancelled($result, $order);
 
                         return response()->json(['status' => 'order processed'], 200);
                     }
@@ -2596,7 +2230,7 @@ class OrdersController extends Controller
                         $n = 0;
                     }
 
-                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+                    Order::createOrder($order, 'good', $puntos, $tipo_orden);
 
                     $tipo_orden = '';
 
@@ -2620,25 +2254,7 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
-
-                                if (count($variant) > 0) {
-
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
-                                }
-                            }
-                        }
+                        $this->OrderPaid($order, $update, $update->points);
 
                         return response()->json(['status' => 'order has been processed'], 200);
 
@@ -2654,6 +2270,11 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
+                        if ($update->cargue_puntos == null ) {
+
+                            $this->OrderPaid($order, $update, $update->points);
+                        }
+
                         return response()->json(['status' => 'order processed'], 200);
                     }
 
@@ -2667,25 +2288,7 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
-
-                                if (count($variant) > 0) {
-
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
-                                }
-                            }
-                        }
+                        $this->OrderPaid($order, $update, $update->points);
 
                         return response()->json(['status' => 'order has been processed'], 200);
                     }
@@ -2700,25 +2303,7 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
-
-                                if (count($variant) > 0) {
-
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
-                                }
-                            }
-                        }
+                        $this->OrderPaid($order, $update, $update->points);
 
                         return response()->json(['status' => 'order has been processed'], 200);
 
@@ -2788,26 +2373,7 @@ class OrdersController extends Controller
 
                     $tipo_orden = '';
 
-
-                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                        foreach ($order['line_items'] as $item) {
-
-                            $variant = Variant::where('id', $item['variant_id'])
-                                ->where('product_id', $item['product_id'])
-                                ->where('shop', 'good')
-                                ->first();
-
-                            if (count($variant) > 0) {
-
-                                DB::table('variants')
-                                    ->where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
-                            }
-                        }
-                    }
+                    $this->OrderPaid($order, $order_create, $puntos);
 
                     return response()->json(['status' => 'The resource is created successfully'], 200);
                 }
@@ -2829,24 +2395,7 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
-
-                                if (count($variant) > 0) {
-
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
-                                }
-                            }
-                        }
+                        $this->OrderCancelled($result, $order);
                     }
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
@@ -2948,7 +2497,7 @@ class OrdersController extends Controller
                         $n = 0;
                     }
 
-                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+                    Order::createOrder($order, 'good', $puntos, $tipo_orden);
 
                     $tipo_orden = '';
 
@@ -2959,6 +2508,7 @@ class OrdersController extends Controller
             return response()->json(['status' => 'order not processed'], 200);
         }
     }
+
     public function payment()
     {
         $input = file_get_contents('php://input');
@@ -2991,25 +2541,7 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
-
-                                if (count($variant) > 0) {
-
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
-                                }
-                            }
-                        }
+                        $this->OrderPaid($order, $update, $update->points);
 
                         return response()->json(['status' => 'order has been processed'], 200);
 
@@ -3025,6 +2557,11 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
+                        if ($update->cargue_puntos == null ) {
+
+                            $this->OrderPaid($order, $update, $update->points);
+                        }
+
                         return response()->json(['status' => 'order processed'], 200);
                     }
 
@@ -3038,25 +2575,7 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
-
-                                if (count($variant) > 0) {
-
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
-                                }
-                            }
-                        }
+                        $this->OrderPaid($order, $update, $update->points);
 
                         return response()->json(['status' => 'order has been processed'], 200);
                     }
@@ -3071,25 +2590,7 @@ class OrdersController extends Controller
                         $update->updated_at = Carbon::parse($order['updated_at']);
                         $update->save();
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
-
-                                if (count($variant) > 0) {
-
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
-                                }
-                            }
-                        }
+                        $this->OrderPaid($order, $update, $update->points);
 
                         return response()->json(['status' => 'order has been processed'], 200);
 
@@ -3159,25 +2660,7 @@ class OrdersController extends Controller
 
                     $tipo_orden = '';
 
-                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                        foreach ($order['line_items'] as $item) {
-
-                            $variant = Variant::where('id', $item['variant_id'])
-                                ->where('product_id', $item['product_id'])
-                                ->where('shop', 'good')
-                                ->first();
-
-                            if (count($variant) > 0) {
-
-                                DB::table('variants')
-                                    ->where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
-                            }
-                        }
-                    }
+                    $this->OrderPaid($order, $order_create, $puntos);
 
                     return response()->json(['status' => 'The resource is created successfully'], 200);
                 }
@@ -3202,296 +2685,129 @@ class OrdersController extends Controller
                 ->where('shop', 'good')
                 ->first();
 
-            if ($order['cancelled_at'] != null && $order['financial_status'] != 'paid') {
+            if (count($result) > 0) {
 
-                if (count($result) > 0) {
+                if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
-                    if ($result->financial_status == "paid" && $result->cancelled_at == null) {
+                    $update = Order::find($result->id);
+                    $update->closed_at = $order['closed_at'];
+                    $update->cancelled_at = $order['cancelled_at'];
+                    $update->cancel_reason = $order['cancel_reason'];
+                    $update->financial_status = $order['financial_status'];
+                    $update->updated_at = Carbon::parse($order['updated_at']);
+                    $update->save();
 
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
+                    $this->OrderCancelled($result, $order);
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
+                    return response()->json(['status' => 'order processed'], 200);
 
-                            foreach ($order['line_items'] as $item) {
+                }
 
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
+                if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-                                if (count($variant) > 0) {
+                    $update = Order::find($result->id);
+                    $update->closed_at = $order['closed_at'];
+                    $update->cancelled_at = $order['cancelled_at'];
+                    $update->cancel_reason = $order['cancel_reason'];
+                    $update->financial_status = $order['financial_status'];
+                    $update->updated_at = Carbon::parse($order['updated_at']);
+                    $update->save();
 
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
-                                }
-                            }
-                        }
+                    return response()->json(['status' => 'order processed'], 200);
+                }
 
-                        return response()->json(['status' => 'order processed'], 200);
+                if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                    }
-
-                    if ($result->financial_status != "paid" && $result->cancelled_at == null) {
-
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        return response()->json(['status' => 'order processed'], 200);
-                    }
-
-                    if ($result->financial_status == "paid" && $result->cancelled_at != null) {
-
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        return response()->json(['status' => 'The resource is created successfully'], 200);
-                    }
-
-                    if ($result->financial_status != "paid" && $result->cancelled_at != null) {
-
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        return response()->json(['status' => 'order processed'], 200);
-                    }
-
-                    return response()->json(['status' => 'order not processed'], 200);
-
-                } else {
-
-                    $tipo_orden = '';
-                    $i = 0;
-                    $n = 0;
-                    $puntos = 0;
-
-                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                        foreach ($order['line_items'] as $item) {
-
-                            $v = Variant::where('id', $item['variant_id'])
-                                ->where('shop', 'good')
-                                ->where('product_id', $item['product_id'])
-                                ->first();
-
-                            if (count($v) > 0) {
-
-                                $puntos = $puntos + $v->points;
-
-                                $line_item = LineItems::where('line_item_id', $item['id'])
-                                    ->where('shop', 'good')
-                                    ->where('variant_id', $item['variant_id'])
-                                    ->first();
-
-                                if (count($line_item) == 0) {
-
-                                    LineItems::createLineItem($item, $order, $v->points, 'good');
-                                }
-
-                                $product = Product::find($item['product_id']);
-
-                                if ($product->tipo_producto == 'nacional') {
-                                    $n++;
-                                }
-                                if ($product->tipo_producto == 'internacional') {
-                                    $i++;
-                                }
-                            }
-                        }
-                    }
-
-                    if ($i > 0 && $n > 0) {
-                        $tipo_orden .= 'nacional/internacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-                    if ($i > 0 && $n == 0) {
-                        $tipo_orden .= 'internacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-                    if ($i == 0 && $n > 0) {
-                        $tipo_orden .= 'nacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-
-                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
-                    $tipo_orden = '';
+                    $update = Order::find($result->id);
+                    $update->closed_at = $order['closed_at'];
+                    $update->cancelled_at = $order['cancelled_at'];
+                    $update->cancel_reason = $order['cancel_reason'];
+                    $update->financial_status = $order['financial_status'];
+                    $update->updated_at = Carbon::parse($order['updated_at']);
+                    $update->save();
 
                     return response()->json(['status' => 'The resource is created successfully'], 200);
                 }
-            }
 
-            if ($order['cancelled_at'] != null && $order['financial_status'] == 'paid') {
+                if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                if (count($result) > 0) {
+                    $update = Order::find($result->id);
+                    $update->closed_at = $order['closed_at'];
+                    $update->cancelled_at = $order['cancelled_at'];
+                    $update->cancel_reason = $order['cancel_reason'];
+                    $update->financial_status = $order['financial_status'];
+                    $update->updated_at = Carbon::parse($order['updated_at']);
+                    $update->save();
 
-                    if ($result->financial_status == "paid" && $result->cancelled_at == null) {
+                    return response()->json(['status' => 'order processed'], 200);
+                }
 
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
+                return response()->json(['status' => 'order not processed'], 200);
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
+            } else {
 
-                            foreach ($order['line_items'] as $item) {
+                $tipo_orden = '';
+                $i = 0;
+                $n = 0;
+                $puntos = 0;
 
-                                $variant = Variant::where('id', $item['variant_id'])
-                                    ->where('product_id', $item['product_id'])
-                                    ->where('shop', 'good')
-                                    ->first();
+                if (isset($order['line_items']) && count($order['line_items']) > 0) {
 
-                                if (count($variant) > 0) {
+                    foreach ($order['line_items'] as $item) {
 
-                                    DB::table('variants')
-                                        ->where('id', $item['variant_id'])
-                                        ->where('product_id', $item['product_id'])
-                                        ->where('shop', 'good')
-                                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
-                                }
-                            }
-                        }
+                        $v = Variant::where('id', $item['variant_id'])
+                            ->where('shop', 'good')
+                            ->where('product_id', $item['product_id'])
+                            ->first();
 
-                        return response()->json(['status' => 'order processed'], 200);
+                        if (count($v) > 0) {
 
-                    }
+                            $puntos = $puntos + $v->points;
 
-                    if ($result->financial_status != "paid" && $result->cancelled_at == null) {
-
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        return response()->json(['status' => 'order processed'], 200);
-                    }
-
-                    if ($result->financial_status == "paid" && $result->cancelled_at != null) {
-
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        return response()->json(['status' => 'The resource is created successfully'], 200);
-                    }
-
-                    if ($result->financial_status != "paid" && $result->cancelled_at != null) {
-
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        return response()->json(['status' => 'order processed'], 200);
-                    }
-
-                    return response()->json(['status' => 'order not processed'], 200);
-
-                } else {
-
-                    $tipo_orden = '';
-                    $i = 0;
-                    $n = 0;
-                    $puntos = 0;
-
-                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                        foreach ($order['line_items'] as $item) {
-
-                            $v = Variant::where('id', $item['variant_id'])
+                            $line_item = LineItems::where('line_item_id', $item['id'])
                                 ->where('shop', 'good')
-                                ->where('product_id', $item['product_id'])
+                                ->where('variant_id', $item['variant_id'])
                                 ->first();
 
-                            if (count($v) > 0) {
+                            if (count($line_item) == 0) {
 
-                                $puntos = $puntos + $v->points;
+                                LineItems::createLineItem($item, $order, $v->points, 'good');
+                            }
 
-                                $line_item = LineItems::where('line_item_id', $item['id'])
-                                    ->where('shop', 'good')
-                                    ->where('variant_id', $item['variant_id'])
-                                    ->first();
+                            $product = Product::find($item['product_id']);
 
-                                if (count($line_item) == 0) {
-
-                                    LineItems::createLineItem($item, $order, $v->points, 'good');
-                                }
-
-                                $product = Product::find($item['product_id']);
-
-                                if ($product->tipo_producto == 'nacional') {
-                                    $n++;
-                                }
-                                if ($product->tipo_producto == 'internacional') {
-                                    $i++;
-                                }
+                            if ($product->tipo_producto == 'nacional') {
+                                $n++;
+                            }
+                            if ($product->tipo_producto == 'internacional') {
+                                $i++;
                             }
                         }
                     }
-
-                    if ($i > 0 && $n > 0) {
-                        $tipo_orden .= 'nacional/internacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-                    if ($i > 0 && $n == 0) {
-                        $tipo_orden .= 'internacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-                    if ($i == 0 && $n > 0) {
-                        $tipo_orden .= 'nacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-
-                    $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
-
-                    $tipo_orden = '';
-
-                    return response()->json(['status' => 'The resource is created successfully'], 200);
                 }
+
+                if ($i > 0 && $n > 0) {
+                    $tipo_orden .= 'nacional/internacional';
+                    $i = 0;
+                    $n = 0;
+                }
+                if ($i > 0 && $n == 0) {
+                    $tipo_orden .= 'internacional';
+                    $i = 0;
+                    $n = 0;
+                }
+                if ($i == 0 && $n > 0) {
+                    $tipo_orden .= 'nacional';
+                    $i = 0;
+                    $n = 0;
+                }
+
+                Order::createOrder($order, 'good', $puntos, $tipo_orden);
+                $tipo_orden = '';
+
+                return response()->json(['status' => 'The resource is created successfully'], 200);
             }
 
-            return response()->json(['status' => 'order not processed'], 200);
         }
     }
     public function contador()
