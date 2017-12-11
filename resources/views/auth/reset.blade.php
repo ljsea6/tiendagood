@@ -248,14 +248,14 @@
                         <label for="user-id">Escriba su nueva contraseña</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input type="password" name="password" id="email_1" class="form-control campo-access" placeholder="Ingresa tu correo electronico">
+                            <input type="password" name="password" id="password_1" class="form-control campo-access" placeholder="Ingresa tu correo electronico">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="user-id">Vuelva a escribir la contraseña</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input type="password"  id="email_2" class="form-control campo-access" placeholder="Ingresa tu correo electronico">
+                            <input type="password"  id="password_2" class="form-control campo-access" placeholder="Ingresa tu correo electronico">
                         </div>
                     </div>
                     <div class="form-group text-center">
@@ -277,7 +277,19 @@
 <script type="text/javascript">
     $('.submit').on('submit',function(event){
 
-                if ($('#email_1').val() == '' || $('#email_2').val() == '') {
+            var password = $('#password_1').val();
+
+                if (password.length < 5) { 
+                  swal({
+                  title: 'Vuelva a intentarlo',
+                  html: $('<div>').text('Lo sentimos, pero tiene que escribir una contraseña (minimo 6 digitos).'),
+                  animation: false,
+                  customClass: 'animated tada'
+                  });
+
+                    event.preventDefault() ;
+                }   
+                if ($('#password_1').val() == '' || $('#password_2').val() == '') {
                   swal({
                   title: 'Vuelva a intentarlo',
                   html: $('<div>').text('Lo sentimos, pero tiene que digitar una contraseña.'),
@@ -287,7 +299,7 @@
 
                     event.preventDefault() ;
                 }        //
-                 if ($('#email_1').val() != $('#email_2').val()) {
+                 if ($('#password_1').val() != $('#password_2').val()) {
                   swal({
                   title: 'Vuelva a intentarlo',
                   html: $('<div>').text('Lo sentimos, pero las contraseñas no coinciden.'),
