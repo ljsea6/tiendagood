@@ -470,7 +470,7 @@ class UsuariosController extends Controller {
 
         $good_id  = '';
         $mercando_id = '';
-
+/*
         if (count($usuario) > 0) {
 
             $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
@@ -562,7 +562,7 @@ class UsuariosController extends Controller {
                 }
             }
         }
-
+*/
         DB::table('terceros_tiendas')->insertGetId(
             [
                 'tercero_id' => $usuario->id,
