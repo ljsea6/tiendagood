@@ -41,8 +41,7 @@ class VerifyCsrfToken extends BaseVerifier {
                 'validate/dni',
                 'admin/level/one',
                 'admin/level/two',
-                'admin/level/tree'
-
-               
+                'admin/level/tree',
+                'admin/terceros/padretercero'
         ];
 }

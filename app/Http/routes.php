@@ -1,20 +1,20 @@
 <?php
+
 /*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
+  |--------------------------------------------------------------------------
+  | Application Routes
+  |--------------------------------------------------------------------------
+  |
+  | Here is where you can register all of the routes for an application.
+  | It's a breeze. Simply tell Laravel the URIs it should respond to
+  | and give it the controller to call when that URI is requested.
+  |
  */
 
 
 /**
  * Routes Dingo API
  */
-
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
@@ -28,13 +28,11 @@ $api->version('v1', function ($api) {
         $api->group(['middleware' => 'api.auth'], function ($api) {
 
             $api->get('users', ['uses' => 'UsersController@index', 'as' => 'api.users.index']);
-
         });
-        
+
         $api->get('oauth/authorize', ['uses' => 'UsersController@authorizeGet', 'as' => 'oauth.authorize.get', 'middleware' => ['check-authorization-params', 'auth']]);
 
         $api->post('oauth/authorize', ['uses' => 'UsersController@authorizePost', 'as' => 'oauth.authorize.post', 'middleware' => ['csrf', 'check-authorization-params', 'auth']]);
-
     });
 });
 
@@ -103,7 +101,10 @@ route::post('register', ['uses' => 'UsuariosController@storenuevo', 'as' => 'adm
 Route::get('/envio_registro/{id}', 'UsuariosController@envio_registro');
 
 // Password reset
-Route::get('registro/payu', [ 'as' => 'PayuController@paybefore', 'as' =>'admin.payu.payu']);
+
+Route::get('recuperar-contraseña/{token}', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@getReset']);
+Route::post('recuperar-contraseña', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@postReset']);
+Route::get('registro/payu', ['as' => 'PayuController@paybefore', 'as' => 'admin.payu.payu']);
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
@@ -250,8 +251,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('uploads_init', ['as' => 'uploads_init', 'uses' => 'FilesController@postUploads']);
     Route::resource('files', 'FilesController');
     //Para las envios
-
-
     //Para los reportes
     Route::any('reportes/product', ['uses' => 'ProductsController@welcome', 'as' => 'admin.reportes.product']);
 
@@ -291,11 +290,12 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('terceros/{id}', ['uses' => 'TercerosController@show', 'as' => 'admin.terceros.show']);
     Route::get('terceros/{id}/edit', ['uses' => 'TercerosController@edit', 'as' => 'admin.terceros.edit']);
     Route::put('terceros/{id}', ['uses' => 'TercerosController@update', 'as' => 'admin.terceros.update']);
-
     Route::any('terceros/show/data', ['uses' => 'TercerosController@anyShow', 'as' => 'admin.terceros.anyshow']);
+    Route::get('terceros/padre/cambiar', ['uses' => 'TercerosController@padreCambiar', 'as' => 'admin.terceros.padrecambiar']);
+    Route::post('terceros/padre/tercero', ['uses' => 'TercerosController@padreTercero', 'as' => 'admin.terceros.padretercero']);
+
 
     //productos
     Route::get('products', ['uses' => 'ProductsController@index', 'as' => 'admin.products.index']);
     Route::get('products/data', ['uses' => 'ProductsController@anyData', 'as' => 'admin.products.data']);
-
 });
