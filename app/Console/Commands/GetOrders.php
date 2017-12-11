@@ -231,66 +231,173 @@ class GetOrders extends Command
                                     }
                                 }
                             }
-                        }
 
-                        $tercero = Tercero::where('email', strtolower($order['email']))
-                            ->where('state', true)
-                            ->first();
+                            $tercero = Tercero::where('email', strtolower($order['email']))
+                                ->where('state', true)
+                                ->first();
 
-                        if (count($tercero) > 0) {
+                            if (count($tercero) > 0) {
 
-                            $update = Tercero::with('networks', 'levels', 'cliente')->find($tercero->id);
+                                $update = Tercero::with('networks', 'levels', 'cliente')->find($tercero->id);
+
+                                if ($update->cliente->id == 85) {
+
+                                    if (count($update->networks) > 0) {
+
+                                        $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
+
+                                        if (count($padre_uno) > 0 && $padre_uno->state == true) {
+
+                                            $padre_uno->mispuntos = $padre_uno->mispuntos + $puntos;
+                                            $padre_uno->save();
 
 
-                            if ($update->cliente->id == 85) {
+                                            if (count($padre_uno->networks) > 0) {
 
-                                if (count($update->networks) > 0) {
+                                                $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
 
-                                    $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
+                                                if (count($padre_dos) > 0 && $padre_dos->state == true) {
 
-                                    if (count($padre_uno) > 0 && $padre_uno->state == true) {
+                                                    if (count($padre_dos->levels) == 0) {
 
-                                        $padre_uno->mispuntos = $padre_uno->mispuntos + $puntos;
-                                        $padre_uno->save();
+                                                        DB::table('terceros_niveles')->insertGetId(
+                                                            [
+                                                                'tercero_id' => $padre_dos->id,
+                                                                'nivel' =>  1,
+                                                                'puntos' =>  $puntos,
+                                                            ]
+                                                        );
+
+                                                    } else {
+
+                                                        $result = DB::table('terceros_niveles')
+                                                            ->where('tercero_id', $padre_dos->id)
+                                                            ->where('nivel', 1)
+                                                            ->first();
+
+                                                        if (count($result) > 0) {
+
+                                                            DB::table('terceros_niveles')
+                                                                ->where('tercero_id', $padre_dos->id)
+                                                                ->where('nivel', 1)
+                                                                ->update(['puntos' => $result->puntos + $puntos]);
+
+                                                        } else {
+
+                                                            DB::table('terceros_niveles')->insertGetId(
+                                                                [
+                                                                    'tercero_id' => $padre_dos->id,
+                                                                    'nivel' =>  1,
+                                                                    'puntos' =>  $puntos,
+                                                                ]
+                                                            );
+                                                        }
+                                                    }
+
+                                                    if (count($padre_dos->networks) > 0) {
+
+                                                        $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
+
+                                                        if (count($padre_tres) > 0 && $padre_tres->state == true) {
+
+                                                            if (count($padre_tres->levels) == 0) {
+
+                                                                DB::table('terceros_niveles')->insertGetId(
+                                                                    [
+                                                                        'tercero_id' => $padre_tres->id,
+                                                                        'nivel' =>  2,
+                                                                        'puntos' =>  $puntos,
+                                                                    ]
+                                                                );
+
+                                                            } else {
+
+                                                                $result = DB::table('terceros_niveles')
+                                                                    ->where('tercero_id', $padre_tres->id)
+                                                                    ->where('nivel', 2)
+                                                                    ->first();
+
+                                                                if (count($result) > 0) {
+
+                                                                    DB::table('terceros_niveles')
+                                                                        ->where('tercero_id', $padre_tres->id)
+                                                                        ->where('nivel', 2)
+                                                                        ->update(['puntos' => $result->puntos + $puntos]);
+
+                                                                } else {
+
+                                                                    DB::table('terceros_niveles')->insertGetId(
+                                                                        [
+                                                                            'tercero_id' => $padre_tres->id,
+                                                                            'nivel' =>  2,
+                                                                            'puntos' =>  $puntos,
+                                                                        ]
+                                                                    );
+                                                                }
+                                                            }
+
+                                                            if (count($padre_tres->networks) > 0) {
+
+                                                                $padre_cuatro = Tercero::with('networks', 'levels')->find($padre_tres->networks[0]['pivot']['padre_id']);
+
+                                                                if (count($padre_cuatro) > 0 && $padre_cuatro->state == true) {
+
+                                                                    if (count($padre_cuatro->levels) == 0) {
+
+                                                                        DB::table('terceros_niveles')->insertGetId(
+                                                                            [
+                                                                                'tercero_id' => $padre_cuatro->id,
+                                                                                'nivel' =>  3,
+                                                                                'puntos' =>  $puntos,
+                                                                            ]
+                                                                        );
+
+                                                                    } else {
+
+                                                                        $result = DB::table('terceros_niveles')
+                                                                            ->where('tercero_id', $padre_cuatro->id)
+                                                                            ->where('nivel', 3)
+                                                                            ->first();
+
+                                                                        if (count($result) > 0) {
+
+                                                                            DB::table('terceros_niveles')
+                                                                                ->where('tercero_id', $padre_cuatro->id)
+                                                                                ->where('nivel', 3)
+                                                                                ->update(['puntos' => $result->puntos + $puntos]);
+
+                                                                        } else {
+
+                                                                            DB::table('terceros_niveles')->insertGetId(
+                                                                                [
+                                                                                    'tercero_id' => $padre_cuatro->id,
+                                                                                    'nivel' =>  3,
+                                                                                    'puntos' =>  $puntos,
+                                                                                ]
+                                                                            );
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                }
 
-                            } else {
+                                } else {
 
-                                $update->mispuntos = $update->mispuntos + $order_create->points;
-                                $update->save();
+                                    $update->mispuntos = $update->mispuntos + $order_create->points;
+                                    $update->save();
 
-                                if (count($update->networks) > 0) {
+                                    if (count($update->networks) > 0) {
 
-                                    $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
+                                        $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
 
-                                    if (count($padre_uno) > 0 && $padre_uno->state == true) {
+                                        if (count($padre_uno) > 0 && $padre_uno->state == true) {
 
-                                        if (count($padre_uno->levels) == 0) {
-
-                                            DB::table('terceros_niveles')->insertGetId(
-                                                [
-                                                    'tercero_id' => $padre_uno->id,
-                                                    'nivel' =>  1,
-                                                    'puntos' =>  $puntos,
-                                                ]
-                                            );
-
-                                        } else {
-
-                                            $result = DB::table('terceros_niveles')
-                                                ->where('tercero_id', $padre_uno->id)
-                                                ->where('nivel', 1)
-                                                ->first();
-
-                                            if (count($result) > 0) {
-
-                                                DB::table('terceros_niveles')
-                                                    ->where('tercero_id', $padre_uno->id)
-                                                    ->where('nivel', 1)
-                                                    ->update(['puntos' => $result->puntos + $puntos]);
-
-                                            } else {
+                                            if (count($padre_uno->levels) == 0) {
 
                                                 DB::table('terceros_niveles')->insertGetId(
                                                     [
@@ -299,40 +406,40 @@ class GetOrders extends Command
                                                         'puntos' =>  $puntos,
                                                     ]
                                                 );
-                                            }
-                                        }
 
-                                        if (count($padre_uno->networks) > 0) {
+                                            } else {
 
-                                            $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
+                                                $result = DB::table('terceros_niveles')
+                                                    ->where('tercero_id', $padre_uno->id)
+                                                    ->where('nivel', 1)
+                                                    ->first();
 
-                                            if (count($padre_dos) > 0 && $padre_dos->state == true) {
+                                                if (count($result) > 0) {
 
-                                                if (count($padre_dos->levels) == 0) {
-
-                                                    DB::table('terceros_niveles')->insertGetId(
-                                                        [
-                                                            'tercero_id' => $padre_dos->id,
-                                                            'nivel' =>  2,
-                                                            'puntos' =>  $puntos,
-                                                        ]
-                                                    );
+                                                    DB::table('terceros_niveles')
+                                                        ->where('tercero_id', $padre_uno->id)
+                                                        ->where('nivel', 1)
+                                                        ->update(['puntos' => $result->puntos + $puntos]);
 
                                                 } else {
 
-                                                    $result = DB::table('terceros_niveles')
-                                                        ->where('tercero_id', $padre_dos->id)
-                                                        ->where('nivel', 2)
-                                                        ->first();
+                                                    DB::table('terceros_niveles')->insertGetId(
+                                                        [
+                                                            'tercero_id' => $padre_uno->id,
+                                                            'nivel' =>  1,
+                                                            'puntos' =>  $puntos,
+                                                        ]
+                                                    );
+                                                }
+                                            }
 
-                                                    if (count($result) > 0) {
+                                            if (count($padre_uno->networks) > 0) {
 
-                                                        DB::table('terceros_niveles')
-                                                            ->where('tercero_id', $padre_dos->id)
-                                                            ->where('nivel', 2)
-                                                            ->update(['puntos' => $result->puntos + $puntos]);
+                                                $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
 
-                                                    } else {
+                                                if (count($padre_dos) > 0 && $padre_dos->state == true) {
+
+                                                    if (count($padre_dos->levels) == 0) {
 
                                                         DB::table('terceros_niveles')->insertGetId(
                                                             [
@@ -341,40 +448,40 @@ class GetOrders extends Command
                                                                 'puntos' =>  $puntos,
                                                             ]
                                                         );
-                                                    }
-                                                }
 
-                                                if (count($padre_dos->networks) > 0) {
+                                                    } else {
 
-                                                    $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
+                                                        $result = DB::table('terceros_niveles')
+                                                            ->where('tercero_id', $padre_dos->id)
+                                                            ->where('nivel', 2)
+                                                            ->first();
 
-                                                    if (count($padre_tres) > 0 && $padre_tres->state == true) {
+                                                        if (count($result) > 0) {
 
-                                                        if (count($padre_tres->levels) == 0) {
-
-                                                            DB::table('terceros_niveles')->insertGetId(
-                                                                [
-                                                                    'tercero_id' => $padre_tres->id,
-                                                                    'nivel' =>  3,
-                                                                    'puntos' =>  $puntos,
-                                                                ]
-                                                            );
+                                                            DB::table('terceros_niveles')
+                                                                ->where('tercero_id', $padre_dos->id)
+                                                                ->where('nivel', 2)
+                                                                ->update(['puntos' => $result->puntos + $puntos]);
 
                                                         } else {
 
-                                                            $result = DB::table('terceros_niveles')
-                                                                ->where('tercero_id', $padre_tres->id)
-                                                                ->where('nivel', 3)
-                                                                ->first();
+                                                            DB::table('terceros_niveles')->insertGetId(
+                                                                [
+                                                                    'tercero_id' => $padre_dos->id,
+                                                                    'nivel' =>  2,
+                                                                    'puntos' =>  $puntos,
+                                                                ]
+                                                            );
+                                                        }
+                                                    }
 
-                                                            if (count($result) > 0) {
+                                                    if (count($padre_dos->networks) > 0) {
 
-                                                                DB::table('terceros_niveles')
-                                                                    ->where('tercero_id', $padre_tres->id)
-                                                                    ->where('nivel', 3)
-                                                                    ->update(['puntos' => $result->puntos + $puntos]);
+                                                        $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
 
-                                                            } else {
+                                                        if (count($padre_tres) > 0 && $padre_tres->state == true) {
+
+                                                            if (count($padre_tres->levels) == 0) {
 
                                                                 DB::table('terceros_niveles')->insertGetId(
                                                                     [
@@ -383,6 +490,31 @@ class GetOrders extends Command
                                                                         'puntos' =>  $puntos,
                                                                     ]
                                                                 );
+
+                                                            } else {
+
+                                                                $result = DB::table('terceros_niveles')
+                                                                    ->where('tercero_id', $padre_tres->id)
+                                                                    ->where('nivel', 3)
+                                                                    ->first();
+
+                                                                if (count($result) > 0) {
+
+                                                                    DB::table('terceros_niveles')
+                                                                        ->where('tercero_id', $padre_tres->id)
+                                                                        ->where('nivel', 3)
+                                                                        ->update(['puntos' => $result->puntos + $puntos]);
+
+                                                                } else {
+
+                                                                    DB::table('terceros_niveles')->insertGetId(
+                                                                        [
+                                                                            'tercero_id' => $padre_tres->id,
+                                                                            'nivel' =>  3,
+                                                                            'puntos' =>  $puntos,
+                                                                        ]
+                                                                    );
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -391,10 +523,7 @@ class GetOrders extends Command
                                         }
                                     }
                                 }
-
                             }
-
-
                         }
                     }
                 }
