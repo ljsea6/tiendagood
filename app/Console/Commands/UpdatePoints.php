@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Variant;
+use Illuminate\Console\Command;
+use GuzzleHttp\Exception\ClientException;
+
 
 class UpdatePoints extends Command
 {
@@ -44,7 +46,7 @@ class UpdatePoints extends Command
         $variants = Variant::where('shop', 'good')->get();
 
         foreach ($variants as $variant) {
-            
+
             try {
 
                 $res = $client->request('get', $api_url_good . '/admin/variants/'. $variant->id .'/metafields.json');
