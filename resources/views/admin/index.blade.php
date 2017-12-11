@@ -22,7 +22,7 @@
       </div>
       <div class="card-content">
          <p class="category">Estos son tus puntos</p>
-         <h3 class="title">0
+         <h3 class="title">{{ number_format($send->mispuntos) }}
             <small>Pts</small>
          </h3>
       </div>
@@ -69,8 +69,17 @@
                         <i class="fa" style="font-size: 25px">1</i>
                      </div>
                   </td>
+
                   <td>#{{$uno}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>0 Puntos</td>
+                  @if (isset($send->levels) && count($send->levels) > 0)
+                     @foreach($send->levels as $level)
+                        @if($level->nivel == 1)
+                           <td>{{ number_format($level->puntos) }} Puntos</td>
+                        @endif
+                     @endforeach
+                  @else
+                     <td>0 Puntos</td>
+                  @endif
                   <td>$ 0</td>
                   </a>
                </tr>
@@ -81,7 +90,15 @@
                      </div>
                   </td>
                   <td>#{{$dos}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>0 Puntos</td>
+                  @if (isset($send->levels) && count($send->levels) > 0)
+                     @foreach($send->levels as $level)
+                        @if($level->nivel == 2)
+                           <td>{{ number_format($level->puntos) }} Puntos</td>
+                        @endif
+                     @endforeach
+                  @else
+                     <td>0 Puntos</td>
+                  @endif
                   <td>$ 0</td>
                </tr>
                <tr onclick="link(3)">
@@ -91,7 +108,15 @@
                      </div>
                   </td>
                   <td>#{{$tres}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>0 Puntos</td>
+                  @if (isset($send->levels) && count($send->levels) > 0)
+                     @foreach($send->levels as $level)
+                        @if($level->nivel == 3)
+                           <td>{{ number_format($level->puntos) }} Puntos</td>
+                        @endif
+                     @endforeach
+                  @else
+                     <td>0 Puntos</td>
+                  @endif
                   <td>$ 0</td>
                </tr>
             </tbody>
