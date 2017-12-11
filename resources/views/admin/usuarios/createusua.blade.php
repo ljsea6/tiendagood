@@ -293,6 +293,7 @@
                                 RUT (No obligatorio para registro)
                                 <input type="file" id="rut" name="rut" class="custom-file-input campo">
                                 <span class="custom-file-control"></span>
+                                <label style="color: #F00707"> Recuerde que su RUT debe tener código de actividad 7499 </label>
                             </label>
                         </div>
 

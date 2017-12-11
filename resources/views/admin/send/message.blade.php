@@ -1,407 +1,1507 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head>
-    <meta charset="utf-8"> <!-- utf-8 works for most cases -->
-    <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
-    <meta name="x-apple-disable-message-reformatting">  <!-- Disable auto-scale in iOS 10 Mail entirely -->
-    <title></title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-    <!-- Web Font / @font-face : BEGIN -->
-    <!-- NOTE: If web fonts are not required, lines 10 - 27 can be safely removed. -->
-
-    <!-- Desktop Outlook chokes on web font references and defaults to Times New Roman, so we force a safe fallback font. -->
-    <!--[if mso]>
-        <style>
-            * {
-                font-family: sans-serif !important;
-            }
-        </style>
-    <![endif]-->
-
-    <!-- All other clients get the webfont reference; some will render the font and others will silently fail to the fallbacks. More on that here: http://stylecampaign.com/blog/2015/02/webfont-support-in-email/ -->
-    <!--[if !mso]><!-->
-    <!-- insert web font reference, eg: <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'> -->
-    <!--<![endif]-->
-
-    <!-- Web Font / @font-face : END -->
-    <link href="https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800" rel="stylesheet">
-    <!-- CSS Reset : BEGIN -->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Bienvenido</title>
+     <link href="https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800" rel="stylesheet">
     <style>
+      .wrapper {
+  width: 100%; }
 
-        /* What it does: Remove spaces around the email design added by some email clients. */
-        /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
-        html,
-        body {
-            margin: 0 auto !important;
-            padding: 0 !important;
-            height: 100% !important;
-            width: 100% !important;
-            font-family: 'Dosis', sans-serif;
-        }
+#outlook a {
+  padding: 0; }
 
-        /* What it does: Stops email clients resizing small text. */
-        * {
-            -ms-text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%;
-        }
+body {
+  width: 100% !important;
+  min-width: 100%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  margin: 0;
+  Margin: 0;
+  padding: 0;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
 
-        /* What it does: Centers email on Android 4.4 */
-        div[style*="margin: 16px 0"] {
-            margin: 0 !important;
-        }
+.ExternalClass {
+  width: 100%; }
+  .ExternalClass,
+  .ExternalClass p,
+  .ExternalClass span,
+  .ExternalClass font,
+  .ExternalClass td,
+  .ExternalClass div {
+    line-height: 100%; }
 
-        /* What it does: Stops Outlook from adding extra spacing to tables. */
-        table,
-        td {
-            mso-table-lspace: 0pt !important;
-            mso-table-rspace: 0pt !important;
-        }
+#backgroundTable {
+  margin: 0;
+  Margin: 0;
+  padding: 0;
+  width: 100% !important;
+  line-height: 100% !important; }
 
-        /* What it does: Fixes webkit padding issue. Fix for Yahoo mail table alignment bug. Applies table-layout to the first 2 tables then removes for anything nested deeper. */
-        table {
-            border-spacing: 0 !important;
-            border-collapse: collapse !important;
-            table-layout: fixed !important;
-            margin: 0 auto !important;
-        }
-        table table table {
-            table-layout: auto;
-        }
+img {
+  outline: none;
+  text-decoration: none;
+  -ms-interpolation-mode: bicubic;
+  width: auto;
+  max-width: 100%;
+  clear: both;
+  display: block; }
 
-        /* What it does: Uses a better rendering method when resizing images in IE. */
-        img {
-            -ms-interpolation-mode:bicubic;
-        }
+center {
+  width: 100%;
+  min-width: 580px; }
 
-        /* What it does: A work-around for email clients meddling in triggered links. */
-        *[x-apple-data-detectors],  /* iOS */
-        .x-gmail-data-detectors,    /* Gmail */
-        .x-gmail-data-detectors *,
-        .aBn {
-            border-bottom: 0 !important;
-            cursor: default !important;
-            color: inherit !important;
-            text-decoration: none !important;
-            font-size: inherit !important;
-            font-family: inherit !important;
-            font-weight: inherit !important;
-            line-height: inherit !important;
-        }
+a img {
+  border: none; }
 
-        /* What it does: Prevents Gmail from displaying an download button on large, non-linked images. */
-        .a6S {
-            display: none !important;
-            opacity: 0.01 !important;
-        }
-        /* If the above doesn't work, add a .g-img class to any image in question. */
-        img.g-img + div {
-            display: none !important;
-        }
+p {
+  margin: 0 0 0 10px;
+  Margin: 0 0 0 10px; }
 
-        /* What it does: Prevents underlining the button text in Windows 10 */
-        .button-link {
-            text-decoration: none !important;
-        }
+table {
+  border-spacing: 0;
+  border-collapse: collapse; }
 
-        /* What it does: Removes right gutter in Gmail iOS app: https://github.com/TedGoas/Cerberus/issues/89  */
-        /* Create one of these media queries for each additional viewport size you'd like to fix */
-        /* Thanks to Eric Lepetit @ericlepetitsf) for help troubleshooting */
-        @media only screen and (min-device-width: 375px) and (max-device-width: 413px) { /* iPhone 6 and 6+ */
-            .email-container {
-                min-width: 375px !important;
-            }
-        }
+td {
+  word-wrap: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+  border-collapse: collapse !important; }
 
-        /* What it does: Forces Gmail app to display email full width */
-        u ~ div .email-container {
-          min-width: 100vw;
-        }
+table, tr, td {
+  padding: 0;
+  vertical-align: top;
+  text-align: left; }
+
+@media only screen {
+  html {
+    min-height: 100%;
+    background: #f3f3f3; } }
+
+table.body {
+  background: #f3f3f3;
+  height: 100%;
+  width: 100%; }
+
+table.container {
+  background: #fefefe;
+  width: 580px;
+  margin: 0 auto;
+  Margin: 0 auto;
+  text-align: inherit; }
+
+table.row {
+  padding: 0;
+  width: 100%;
+  position: relative; }
+
+table.spacer {
+  width: 100%; }
+  table.spacer td {
+    mso-line-height-rule: exactly; }
+
+table.container table.row {
+  display: table; }
+
+td.columns,
+td.column,
+th.columns,
+th.column {
+  margin: 0 auto;
+  Margin: 0 auto;
+  padding-left: 16px;
+  padding-bottom: 16px; }
+  td.columns .column,
+  td.columns .columns,
+  td.column .column,
+  td.column .columns,
+  th.columns .column,
+  th.columns .columns,
+  th.column .column,
+  th.column .columns {
+    padding-left: 0 !important;
+    padding-right: 0 !important; }
+    td.columns .column center,
+    td.columns .columns center,
+    td.column .column center,
+    td.column .columns center,
+    th.columns .column center,
+    th.columns .columns center,
+    th.column .column center,
+    th.column .columns center {
+      min-width: none !important; }
+
+td.columns.last,
+td.column.last,
+th.columns.last,
+th.column.last {
+  padding-right: 16px; }
+
+td.columns table:not(.button),
+td.column table:not(.button),
+th.columns table:not(.button),
+th.column table:not(.button) {
+  width: 100%; }
+
+td.large-1,
+th.large-1 {
+  width: 32.33333px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-1.first,
+th.large-1.first {
+  padding-left: 16px; }
+
+td.large-1.last,
+th.large-1.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-1,
+.collapse > tbody > tr > th.large-1 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 48.33333px; }
+
+.collapse td.large-1.first,
+.collapse th.large-1.first,
+.collapse td.large-1.last,
+.collapse th.large-1.last {
+  width: 56.33333px; }
+
+td.large-1 center,
+th.large-1 center {
+  min-width: 0.33333px; }
+
+.body .columns td.large-1,
+.body .column td.large-1,
+.body .columns th.large-1,
+.body .column th.large-1 {
+  width: 8.33333%; }
+
+td.large-2,
+th.large-2 {
+  width: 80.66667px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-2.first,
+th.large-2.first {
+  padding-left: 16px; }
+
+td.large-2.last,
+th.large-2.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-2,
+.collapse > tbody > tr > th.large-2 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 96.66667px; }
+
+.collapse td.large-2.first,
+.collapse th.large-2.first,
+.collapse td.large-2.last,
+.collapse th.large-2.last {
+  width: 104.66667px; }
+
+td.large-2 center,
+th.large-2 center {
+  min-width: 48.66667px; }
+
+.body .columns td.large-2,
+.body .column td.large-2,
+.body .columns th.large-2,
+.body .column th.large-2 {
+  width: 16.66667%; }
+
+td.large-3,
+th.large-3 {
+  width: 129px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-3.first,
+th.large-3.first {
+  padding-left: 16px; }
+
+td.large-3.last,
+th.large-3.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-3,
+.collapse > tbody > tr > th.large-3 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 145px; }
+
+.collapse td.large-3.first,
+.collapse th.large-3.first,
+.collapse td.large-3.last,
+.collapse th.large-3.last {
+  width: 153px; }
+
+td.large-3 center,
+th.large-3 center {
+  min-width: 97px; }
+
+.body .columns td.large-3,
+.body .column td.large-3,
+.body .columns th.large-3,
+.body .column th.large-3 {
+  width: 25%; }
+
+td.large-4,
+th.large-4 {
+  width: 177.33333px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-4.first,
+th.large-4.first {
+  padding-left: 16px; }
+
+td.large-4.last,
+th.large-4.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-4,
+.collapse > tbody > tr > th.large-4 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 193.33333px; }
+
+.collapse td.large-4.first,
+.collapse th.large-4.first,
+.collapse td.large-4.last,
+.collapse th.large-4.last {
+  width: 201.33333px; }
+
+td.large-4 center,
+th.large-4 center {
+  min-width: 145.33333px; }
+
+.body .columns td.large-4,
+.body .column td.large-4,
+.body .columns th.large-4,
+.body .column th.large-4 {
+  width: 33.33333%; }
+
+td.large-5,
+th.large-5 {
+  width: 225.66667px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-5.first,
+th.large-5.first {
+  padding-left: 16px; }
+
+td.large-5.last,
+th.large-5.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-5,
+.collapse > tbody > tr > th.large-5 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 241.66667px; }
+
+.collapse td.large-5.first,
+.collapse th.large-5.first,
+.collapse td.large-5.last,
+.collapse th.large-5.last {
+  width: 249.66667px; }
+
+td.large-5 center,
+th.large-5 center {
+  min-width: 193.66667px; }
+
+.body .columns td.large-5,
+.body .column td.large-5,
+.body .columns th.large-5,
+.body .column th.large-5 {
+  width: 41.66667%; }
+
+td.large-6,
+th.large-6 {
+  width: 274px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-6.first,
+th.large-6.first {
+  padding-left: 16px; }
+
+td.large-6.last,
+th.large-6.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-6,
+.collapse > tbody > tr > th.large-6 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 290px; }
+
+.collapse td.large-6.first,
+.collapse th.large-6.first,
+.collapse td.large-6.last,
+.collapse th.large-6.last {
+  width: 298px; }
+
+td.large-6 center,
+th.large-6 center {
+  min-width: 242px; }
+
+.body .columns td.large-6,
+.body .column td.large-6,
+.body .columns th.large-6,
+.body .column th.large-6 {
+  width: 50%; }
+
+td.large-7,
+th.large-7 {
+  width: 322.33333px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-7.first,
+th.large-7.first {
+  padding-left: 16px; }
+
+td.large-7.last,
+th.large-7.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-7,
+.collapse > tbody > tr > th.large-7 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 338.33333px; }
+
+.collapse td.large-7.first,
+.collapse th.large-7.first,
+.collapse td.large-7.last,
+.collapse th.large-7.last {
+  width: 346.33333px; }
+
+td.large-7 center,
+th.large-7 center {
+  min-width: 290.33333px; }
+
+.body .columns td.large-7,
+.body .column td.large-7,
+.body .columns th.large-7,
+.body .column th.large-7 {
+  width: 58.33333%; }
+
+td.large-8,
+th.large-8 {
+  width: 370.66667px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-8.first,
+th.large-8.first {
+  padding-left: 16px; }
+
+td.large-8.last,
+th.large-8.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-8,
+.collapse > tbody > tr > th.large-8 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 386.66667px; }
+
+.collapse td.large-8.first,
+.collapse th.large-8.first,
+.collapse td.large-8.last,
+.collapse th.large-8.last {
+  width: 394.66667px; }
+
+td.large-8 center,
+th.large-8 center {
+  min-width: 338.66667px; }
+
+.body .columns td.large-8,
+.body .column td.large-8,
+.body .columns th.large-8,
+.body .column th.large-8 {
+  width: 66.66667%; }
+
+td.large-9,
+th.large-9 {
+  width: 419px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-9.first,
+th.large-9.first {
+  padding-left: 16px; }
+
+td.large-9.last,
+th.large-9.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-9,
+.collapse > tbody > tr > th.large-9 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 435px; }
+
+.collapse td.large-9.first,
+.collapse th.large-9.first,
+.collapse td.large-9.last,
+.collapse th.large-9.last {
+  width: 443px; }
+
+td.large-9 center,
+th.large-9 center {
+  min-width: 387px; }
+
+.body .columns td.large-9,
+.body .column td.large-9,
+.body .columns th.large-9,
+.body .column th.large-9 {
+  width: 75%; }
+
+td.large-10,
+th.large-10 {
+  width: 467.33333px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-10.first,
+th.large-10.first {
+  padding-left: 16px; }
+
+td.large-10.last,
+th.large-10.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-10,
+.collapse > tbody > tr > th.large-10 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 483.33333px; }
+
+.collapse td.large-10.first,
+.collapse th.large-10.first,
+.collapse td.large-10.last,
+.collapse th.large-10.last {
+  width: 491.33333px; }
+
+td.large-10 center,
+th.large-10 center {
+  min-width: 435.33333px; }
+
+.body .columns td.large-10,
+.body .column td.large-10,
+.body .columns th.large-10,
+.body .column th.large-10 {
+  width: 83.33333%; }
+
+td.large-11,
+th.large-11 {
+  width: 515.66667px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-11.first,
+th.large-11.first {
+  padding-left: 16px; }
+
+td.large-11.last,
+th.large-11.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-11,
+.collapse > tbody > tr > th.large-11 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 531.66667px; }
+
+.collapse td.large-11.first,
+.collapse th.large-11.first,
+.collapse td.large-11.last,
+.collapse th.large-11.last {
+  width: 539.66667px; }
+
+td.large-11 center,
+th.large-11 center {
+  min-width: 483.66667px; }
+
+.body .columns td.large-11,
+.body .column td.large-11,
+.body .columns th.large-11,
+.body .column th.large-11 {
+  width: 91.66667%; }
+
+td.large-12,
+th.large-12 {
+  width: 564px;
+  padding-left: 8px;
+  padding-right: 8px; }
+
+td.large-12.first,
+th.large-12.first {
+  padding-left: 16px; }
+
+td.large-12.last,
+th.large-12.last {
+  padding-right: 16px; }
+
+.collapse > tbody > tr > td.large-12,
+.collapse > tbody > tr > th.large-12 {
+  padding-right: 0;
+  padding-left: 0;
+  width: 580px; }
+
+.collapse td.large-12.first,
+.collapse th.large-12.first,
+.collapse td.large-12.last,
+.collapse th.large-12.last {
+  width: 588px; }
+
+td.large-12 center,
+th.large-12 center {
+  min-width: 532px; }
+
+.body .columns td.large-12,
+.body .column td.large-12,
+.body .columns th.large-12,
+.body .column th.large-12 {
+  width: 100%; }
+
+td.large-offset-1,
+td.large-offset-1.first,
+td.large-offset-1.last,
+th.large-offset-1,
+th.large-offset-1.first,
+th.large-offset-1.last {
+  padding-left: 64.33333px; }
+
+td.large-offset-2,
+td.large-offset-2.first,
+td.large-offset-2.last,
+th.large-offset-2,
+th.large-offset-2.first,
+th.large-offset-2.last {
+  padding-left: 112.66667px; }
+
+td.large-offset-3,
+td.large-offset-3.first,
+td.large-offset-3.last,
+th.large-offset-3,
+th.large-offset-3.first,
+th.large-offset-3.last {
+  padding-left: 161px; }
+
+td.large-offset-4,
+td.large-offset-4.first,
+td.large-offset-4.last,
+th.large-offset-4,
+th.large-offset-4.first,
+th.large-offset-4.last {
+  padding-left: 209.33333px; }
+
+td.large-offset-5,
+td.large-offset-5.first,
+td.large-offset-5.last,
+th.large-offset-5,
+th.large-offset-5.first,
+th.large-offset-5.last {
+  padding-left: 257.66667px; }
+
+td.large-offset-6,
+td.large-offset-6.first,
+td.large-offset-6.last,
+th.large-offset-6,
+th.large-offset-6.first,
+th.large-offset-6.last {
+  padding-left: 306px; }
+
+td.large-offset-7,
+td.large-offset-7.first,
+td.large-offset-7.last,
+th.large-offset-7,
+th.large-offset-7.first,
+th.large-offset-7.last {
+  padding-left: 354.33333px; }
+
+td.large-offset-8,
+td.large-offset-8.first,
+td.large-offset-8.last,
+th.large-offset-8,
+th.large-offset-8.first,
+th.large-offset-8.last {
+  padding-left: 402.66667px; }
+
+td.large-offset-9,
+td.large-offset-9.first,
+td.large-offset-9.last,
+th.large-offset-9,
+th.large-offset-9.first,
+th.large-offset-9.last {
+  padding-left: 451px; }
+
+td.large-offset-10,
+td.large-offset-10.first,
+td.large-offset-10.last,
+th.large-offset-10,
+th.large-offset-10.first,
+th.large-offset-10.last {
+  padding-left: 499.33333px; }
+
+td.large-offset-11,
+td.large-offset-11.first,
+td.large-offset-11.last,
+th.large-offset-11,
+th.large-offset-11.first,
+th.large-offset-11.last {
+  padding-left: 547.66667px; }
+
+td.expander,
+th.expander {
+  visibility: hidden;
+  width: 0;
+  padding: 0 !important; }
+
+table.container.radius {
+  border-radius: 0;
+  border-collapse: separate; }
+
+.block-grid {
+  width: 100%;
+  max-width: 580px; }
+  .block-grid td {
+    display: inline-block;
+    padding: 8px; }
+
+.up-2 td {
+  width: 274px !important; }
+
+.up-3 td {
+  width: 177px !important; }
+
+.up-4 td {
+  width: 129px !important; }
+
+.up-5 td {
+  width: 100px !important; }
+
+.up-6 td {
+  width: 80px !important; }
+
+.up-7 td {
+  width: 66px !important; }
+
+.up-8 td {
+  width: 56px !important; }
+
+table.text-center,
+th.text-center,
+td.text-center,
+h1.text-center,
+h2.text-center,
+h3.text-center,
+h4.text-center,
+h5.text-center,
+h6.text-center,
+p.text-center,
+span.text-center {
+  text-align: center; }
+
+table.text-left,
+th.text-left,
+td.text-left,
+h1.text-left,
+h2.text-left,
+h3.text-left,
+h4.text-left,
+h5.text-left,
+h6.text-left,
+p.text-left,
+span.text-left {
+  text-align: left; }
+
+table.text-right,
+th.text-right,
+td.text-right,
+h1.text-right,
+h2.text-right,
+h3.text-right,
+h4.text-right,
+h5.text-right,
+h6.text-right,
+p.text-right,
+span.text-right {
+  text-align: right; }
+
+span.text-center {
+  display: block;
+  width: 100%;
+  text-align: center; }
+
+@media only screen and (max-width: 596px) {
+  .small-float-center {
+    margin: 0 auto !important;
+    float: none !important;
+    text-align: center !important; }
+  .small-text-center {
+    text-align: center !important; }
+  .small-text-left {
+    text-align: left !important; }
+  .small-text-right {
+    text-align: right !important; } }
+
+img.float-left {
+  float: left;
+  text-align: left; }
+
+img.float-right {
+  float: right;
+  text-align: right; }
+
+img.float-center,
+img.text-center {
+  margin: 0 auto;
+  Margin: 0 auto;
+  float: none;
+  text-align: center; }
+
+table.float-center,
+td.float-center,
+th.float-center {
+  margin: 0 auto;
+  Margin: 0 auto;
+  float: none;
+  text-align: center; }
+
+.hide-for-large {
+  display: none !important;
+  mso-hide: all;
+  overflow: hidden;
+  max-height: 0;
+  font-size: 0;
+  width: 0;
+  line-height: 0; }
+  @media only screen and (max-width: 596px) {
+    .hide-for-large {
+      display: block !important;
+      width: auto !important;
+      overflow: visible !important;
+      max-height: none !important;
+      font-size: inherit !important;
+      line-height: inherit !important; } }
+
+table.body table.container .hide-for-large * {
+  mso-hide: all; }
+
+@media only screen and (max-width: 596px) {
+  table.body table.container .hide-for-large,
+  table.body table.container .row.hide-for-large {
+    display: table !important;
+    width: 100% !important; } }
+
+@media only screen and (max-width: 596px) {
+  table.body table.container .callout-inner.hide-for-large {
+    display: table-cell !important;
+    width: 100% !important; } }
+
+@media only screen and (max-width: 596px) {
+  table.body table.container .show-for-large {
+    display: none !important;
+    width: 0;
+    mso-hide: all;
+    overflow: hidden; } }
+
+body,
+table.body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+td,
+th,
+a {
+  color: #0a0a0a;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+  Margin: 0;
+  text-align: left;
+  line-height: 1.3; }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: inherit;
+  word-wrap: normal;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  margin-bottom: 10px;
+  Margin-bottom: 10px; }
+
+h1 {
+  font-size: 34px; }
+
+h2 {
+  font-size: 30px; }
+
+h3 {
+  font-size: 28px; }
+
+h4 {
+  font-size: 24px; }
+
+h5 {
+  font-size: 20px; }
+
+h6 {
+  font-size: 18px; }
+
+body,
+table.body,
+p,
+td,
+th {
+  font-size: 16px;
+  line-height: 1.3; }
+
+p {
+  margin-bottom: 10px;
+  Margin-bottom: 10px; }
+  p.lead {
+    font-size: 20px;
+    line-height: 1.6; }
+  p.subheader {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    Margin-top: 4px;
+    Margin-bottom: 8px;
+    font-weight: normal;
+    line-height: 1.4;
+    color: #8a8a8a; }
+
+small {
+  font-size: 80%;
+  color: #cacaca; }
 
 a {
-  color: #348eda;
-  text-decoration: underline;
-}
+  color: #2199e8;
+  text-decoration: none; }
+  a:hover {
+    color: #147dc2; }
+  a:active {
+    color: #147dc2; }
+  a:visited {
+    color: #2199e8; }
 
-.btn-primary {
-  text-decoration: none;
-  color: #fff;
-  background-color: #c9302c;
-  border: solid #c9302c;
-  border-width: 10px 20px;
-  line-height: 2em;
-  /* 2em * 14px = 28px, use px to get airier line-height also in Thunderbird, and Yahoo!, Outlook.com, AOL webmail clients */
-  /*line-height: 28px;*/
-  font-weight: bold;
-  text-align: center;
-  cursor: pointer;
+h1 a,
+h1 a:visited,
+h2 a,
+h2 a:visited,
+h3 a,
+h3 a:visited,
+h4 a,
+h4 a:visited,
+h5 a,
+h5 a:visited,
+h6 a,
+h6 a:visited {
+  color: #2199e8; }
+
+pre {
+  background: #f3f3f3;
+  margin: 30px 0;
+  Margin: 30px 0; }
+  pre code {
+    color: #cacaca; }
+    pre code span.callout {
+      color: #8a8a8a;
+      font-weight: bold; }
+    pre code span.callout-strong {
+      color: #ff6908;
+      font-weight: bold; }
+
+table.hr {
+  width: 100%; }
+  table.hr th {
+    height: 0;
+    max-width: 580px;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 1px solid #0a0a0a;
+    border-left: 0;
+    margin: 20px auto;
+    Margin: 20px auto;
+    clear: both; }
+
+.stat {
+  font-size: 40px;
+  line-height: 1; }
+  p + .stat {
+    margin-top: -16px;
+    Margin-top: -16px; }
+
+span.preheader {
+  display: none !important;
+  visibility: hidden;
+  mso-hide: all !important;
+  font-size: 1px;
+  color: #f3f3f3;
+  line-height: 1px;
+  max-height: 0px;
+  max-width: 0px;
+  opacity: 0;
+  overflow: hidden; }
+
+table.button {
+  width: auto;
+  margin: 0 0 16px 0;
+  Margin: 0 0 16px 0; }
+  table.button table td {
+    text-align: left;
+    color: #fefefe;
+    background: #2199e8;
+    border: 2px solid #2199e8; }
+    table.button table td a {
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fefefe;
+      text-decoration: none;
+      display: inline-block;
+      padding: 8px 16px 8px 16px;
+      border: 0 solid #2199e8;
+      border-radius: 3px; }
+  table.button.radius table td {
+    border-radius: 3px;
+    border: none; }
+  table.button.rounded table td {
+    border-radius: 500px;
+    border: none; }
+
+table.button:hover table tr td a,
+table.button:active table tr td a,
+table.button table tr td a:visited,
+table.button.tiny:hover table tr td a,
+table.button.tiny:active table tr td a,
+table.button.tiny table tr td a:visited,
+table.button.small:hover table tr td a,
+table.button.small:active table tr td a,
+table.button.small table tr td a:visited,
+table.button.large:hover table tr td a,
+table.button.large:active table tr td a,
+table.button.large table tr td a:visited {
+  color: #fefefe; }
+
+table.button.tiny table td,
+table.button.tiny table a {
+  padding: 4px 8px 4px 8px; }
+
+table.button.tiny table a {
+  font-size: 10px;
+  font-weight: normal; }
+
+table.button.small table td,
+table.button.small table a {
+  padding: 5px 10px 5px 10px;
+  font-size: 12px; }
+
+table.button.large table a {
+  padding: 10px 20px 10px 20px;
+  font-size: 20px; }
+
+table.button.expand,
+table.button.expanded {
+  width: 100% !important; }
+  table.button.expand table,
+  table.button.expanded table {
+    width: 100%; }
+    table.button.expand table a,
+    table.button.expanded table a {
+      text-align: center;
+      width: 100%;
+      padding-left: 0;
+      padding-right: 0; }
+  table.button.expand center,
+  table.button.expanded center {
+    min-width: 0; }
+
+table.button:hover table td,
+table.button:visited table td,
+table.button:active table td {
+  background: #147dc2;
+  color: #fefefe; }
+
+table.button:hover table a,
+table.button:visited table a,
+table.button:active table a {
+  border: 0 solid #147dc2; }
+
+table.button.secondary table td {
+  background: #777777;
+  color: #fefefe;
+  border: 0px solid #777777; }
+
+table.button.secondary table a {
+  color: #fefefe;
+  border: 0 solid #777777; }
+
+table.button.secondary:hover table td {
+  background: #919191;
+  color: #fefefe; }
+
+table.button.secondary:hover table a {
+  border: 0 solid #919191; }
+
+table.button.secondary:hover table td a {
+  color: #fefefe; }
+
+table.button.secondary:active table td a {
+  color: #fefefe; }
+
+table.button.secondary table td a:visited {
+  color: #fefefe; }
+
+table.button.success table td {
+  background: #3adb76;
+  border: 0px solid #3adb76; }
+
+table.button.success table a {
+  border: 0 solid #3adb76; }
+
+table.button.success:hover table td {
+  background: #23bf5d; }
+
+table.button.success:hover table a {
+  border: 0 solid #23bf5d; }
+
+table.button.alert table td {
+  background: #ec5840;
+  border: 0px solid #ec5840; }
+
+table.button.alert table a {
+  border: 0 solid #ec5840; }
+
+table.button.alert:hover table td {
+  background: #e23317; }
+
+table.button.alert:hover table a {
+  border: 0 solid #e23317; }
+
+table.button.warning table td {
+  background: #ffae00;
+  border: 0px solid #ffae00; }
+
+table.button.warning table a {
+  border: 0px solid #ffae00; }
+
+table.button.warning:hover table td {
+  background: #cc8b00; }
+
+table.button.warning:hover table a {
+  border: 0px solid #cc8b00; }
+
+table.callout {
+  margin-bottom: 16px;
+  Margin-bottom: 16px; }
+
+th.callout-inner {
+  width: 100%;
+  border: 1px solid #cbcbcb;
+  padding: 10px;
+  background: #fefefe; }
+  th.callout-inner.primary {
+    background: #def0fc;
+    border: 1px solid #444444;
+    color: #0a0a0a; }
+  th.callout-inner.secondary {
+    background: #ebebeb;
+    border: 1px solid #444444;
+    color: #0a0a0a; }
+  th.callout-inner.success {
+    background: #e1faea;
+    border: 1px solid #1b9448;
+    color: #fefefe; }
+  th.callout-inner.warning {
+    background: #fff3d9;
+    border: 1px solid #996800;
+    color: #fefefe; }
+  th.callout-inner.alert {
+    background: #fce6e2;
+    border: 1px solid #b42912;
+    color: #fefefe; }
+
+.thumbnail {
+  border: solid 4px #fefefe;
+  box-shadow: 0 0 0 1px rgba(10, 10, 10, 0.2);
   display: inline-block;
-  border-radius: 5px;
-  
-}
-       
+  line-height: 0;
+  max-width: 100%;
+  transition: box-shadow 200ms ease-out;
+  border-radius: 3px;
+  margin-bottom: 16px; }
+  .thumbnail:hover, .thumbnail:focus {
+    box-shadow: 0 0 6px 1px rgba(33, 153, 232, 0.5); }
 
-    </style>
-    <!-- CSS Reset : END -->
+table.menu {
+  width: 580px; }
+  table.menu td.menu-item,
+  table.menu th.menu-item {
+    padding: 10px;
+    padding-right: 10px; }
+    table.menu td.menu-item a,
+    table.menu th.menu-item a {
+      color: #2199e8; }
 
-    <!-- Progressive Enhancements : BEGIN -->
+table.menu.vertical td.menu-item,
+table.menu.vertical th.menu-item {
+  padding: 10px;
+  padding-right: 0;
+  display: block; }
+  table.menu.vertical td.menu-item a,
+  table.menu.vertical th.menu-item a {
+    width: 100%; }
+
+table.menu.vertical td.menu-item table.menu.vertical td.menu-item,
+table.menu.vertical td.menu-item table.menu.vertical th.menu-item,
+table.menu.vertical th.menu-item table.menu.vertical td.menu-item,
+table.menu.vertical th.menu-item table.menu.vertical th.menu-item {
+  padding-left: 10px; }
+
+table.menu.text-center a {
+  text-align: center; }
+
+.menu[align="center"] {
+  width: auto !important; }
+
+body.outlook p {
+  display: inline !important; }
+
+@media only screen and (max-width: 596px) {
+  table.body img {
+    width: auto;
+    height: auto; }
+  table.body center {
+    min-width: 0 !important; }
+  table.body .container {
+    width: 95% !important; }
+  table.body .columns,
+  table.body .column {
+    height: auto !important;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-left: 16px !important;
+    padding-right: 16px !important; }
+    table.body .columns .column,
+    table.body .columns .columns,
+    table.body .column .column,
+    table.body .column .columns {
+      padding-left: 0 !important;
+      padding-right: 0 !important; }
+  table.body .collapse .columns,
+  table.body .collapse .column {
+    padding-left: 0 !important;
+    padding-right: 0 !important; }
+  td.small-1,
+  th.small-1 {
+    display: inline-block !important;
+    width: 8.33333% !important; }
+  td.small-2,
+  th.small-2 {
+    display: inline-block !important;
+    width: 16.66667% !important; }
+  td.small-3,
+  th.small-3 {
+    display: inline-block !important;
+    width: 25% !important; }
+  td.small-4,
+  th.small-4 {
+    display: inline-block !important;
+    width: 33.33333% !important; }
+  td.small-5,
+  th.small-5 {
+    display: inline-block !important;
+    width: 41.66667% !important; }
+  td.small-6,
+  th.small-6 {
+    display: inline-block !important;
+    width: 50% !important; }
+  td.small-7,
+  th.small-7 {
+    display: inline-block !important;
+    width: 58.33333% !important; }
+  td.small-8,
+  th.small-8 {
+    display: inline-block !important;
+    width: 66.66667% !important; }
+  td.small-9,
+  th.small-9 {
+    display: inline-block !important;
+    width: 75% !important; }
+  td.small-10,
+  th.small-10 {
+    display: inline-block !important;
+    width: 83.33333% !important; }
+  td.small-11,
+  th.small-11 {
+    display: inline-block !important;
+    width: 91.66667% !important; }
+  td.small-12,
+  th.small-12 {
+    display: inline-block !important;
+    width: 100% !important; }
+  .columns td.small-12,
+  .column td.small-12,
+  .columns th.small-12,
+  .column th.small-12 {
+    display: block !important;
+    width: 100% !important; }
+  table.body td.small-offset-1,
+  table.body th.small-offset-1 {
+    margin-left: 8.33333% !important;
+    Margin-left: 8.33333% !important; }
+  table.body td.small-offset-2,
+  table.body th.small-offset-2 {
+    margin-left: 16.66667% !important;
+    Margin-left: 16.66667% !important; }
+  table.body td.small-offset-3,
+  table.body th.small-offset-3 {
+    margin-left: 25% !important;
+    Margin-left: 25% !important; }
+  table.body td.small-offset-4,
+  table.body th.small-offset-4 {
+    margin-left: 33.33333% !important;
+    Margin-left: 33.33333% !important; }
+  table.body td.small-offset-5,
+  table.body th.small-offset-5 {
+    margin-left: 41.66667% !important;
+    Margin-left: 41.66667% !important; }
+  table.body td.small-offset-6,
+  table.body th.small-offset-6 {
+    margin-left: 50% !important;
+    Margin-left: 50% !important; }
+  table.body td.small-offset-7,
+  table.body th.small-offset-7 {
+    margin-left: 58.33333% !important;
+    Margin-left: 58.33333% !important; }
+  table.body td.small-offset-8,
+  table.body th.small-offset-8 {
+    margin-left: 66.66667% !important;
+    Margin-left: 66.66667% !important; }
+  table.body td.small-offset-9,
+  table.body th.small-offset-9 {
+    margin-left: 75% !important;
+    Margin-left: 75% !important; }
+  table.body td.small-offset-10,
+  table.body th.small-offset-10 {
+    margin-left: 83.33333% !important;
+    Margin-left: 83.33333% !important; }
+  table.body td.small-offset-11,
+  table.body th.small-offset-11 {
+    margin-left: 91.66667% !important;
+    Margin-left: 91.66667% !important; }
+  table.body table.columns td.expander,
+  table.body table.columns th.expander {
+    display: none !important; }
+  table.body .right-text-pad,
+  table.body .text-pad-right {
+    padding-left: 10px !important; }
+  table.body .left-text-pad,
+  table.body .text-pad-left {
+    padding-right: 10px !important; }
+  table.menu {
+    width: 100% !important; }
+    table.menu td,
+    table.menu th {
+      width: auto !important;
+      display: inline-block !important; }
+    table.menu.vertical td,
+    table.menu.vertical th, table.menu.small-vertical td,
+    table.menu.small-vertical th {
+      display: block !important; }
+  table.menu[align="center"] {
+    width: auto !important; }
+  table.button.small-expand,
+  table.button.small-expanded {
+    width: 100% !important; }
+    table.button.small-expand table,
+    table.button.small-expanded table {
+      width: 100%; }
+      table.button.small-expand table a,
+      table.button.small-expanded table a {
+        text-align: center !important;
+        width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important; }
+    table.button.small-expand center,
+    table.button.small-expanded center {
+      min-width: 0; } }
+    
+    </style>  
+
     <style>
-
-    /* What it does: Hover styles for buttons */
-    .button-td,
-    .button-a {
-        transition: all 100ms ease-in;
-    }
-    .button-td:hover,
-    .button-a:hover {
-        background: #555555 !important;
-        border-color: #555555 !important;
-    }
-
-    /* Media Queries */
-    @media screen and (max-width: 480px) {
-
-        /* What it does: Forces elements to resize to the full width of their container. Useful for resizing images beyond their max-width. */
-        .fluid {
-            width: 100% !important;
-            max-width: 100% !important;
-            height: auto !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-        }
-
-        /* What it does: Forces table cells into full-width rows. */
-        .stack-column,
-        .stack-column-center {
-            display: block !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            direction: ltr !important;
-        }
-        /* And center justify these ones. */
-        .stack-column-center {
-            text-align: center !important;
-        }
-
-        /* What it does: Generic utility class for centering. Useful for images, buttons, and nested tables. */
-        .center-on-narrow {
-            text-align: center !important;
-            display: block !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            float: none !important;
-        }
-        table.center-on-narrow {
-            display: inline-block !important;
-        }
-
-        /* What it does: Adjust typography on small screens to improve readability */
-        .email-container p {
-            font-size: 17px !important;
-        }
-    }
-
+      .header {
+        background: #8a8a8a;
+      }
+      
+      .header .columns {
+        padding-bottom: 0;
+      }
+      
+      .header p {
+        color: #fff;
+        margin-bottom: 0;
+      }
+      
+      .header .wrapper-inner {
+        padding: 20px;
+        /*controls the height of the header*/
+      }
+      
+      .header .container {
+        background: #8a8a8a;
+      }
+      
+      .wrapper.secondary {
+        background: #f3f3f3;
+      }
     </style>
-    <!-- Progressive Enhancements : END -->
+  </head>
 
-    <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
-    <!--[if gte mso 9]>
-    <xml>
-        <o:OfficeDocumentSettings>
-            <o:AllowPNG/>
-            <o:PixelsPerInch>96</o:PixelsPerInch>
-        </o:OfficeDocumentSettings>
-    </xml>
-    <![endif]-->
-    
-</head>
-<body width="100%" style="margin: 0; mso-line-height-rule: exactly; background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/concrete_seamless.png?9056281280774010986); background-position: top left" >
-    <center style="width: 100%;  text-align: left;">
-
-        <!-- Visually Hidden Preheader Text : BEGIN -->
-        <div style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
-            (Optional) This text will appear in the inbox preview, but not the email body. It can be used to supplement the email subject line or even summarize the email's contents. Extended text preheaders (~490 characters) seems like a better UX for anyone using a screenreader or voice-command apps like Siri to dictate the contents of an email. If this text is not included, email clients will automatically populate it using the text (including image alt text) at the start of the email's body.
-        </div>
-        <!-- Visually Hidden Preheader Text : END -->
-
-        <!--
-            Set the email width. Defined in two places:
-            1. max-width for all clients except Desktop Windows Outlook, allowing the email to squish on narrow but never go wider than 680px.
-            2. MSO tags for Desktop Windows Outlook enforce a 680px width.
-            Note: The Fluid and Responsive templates have a different width (600px). The hybrid grid is more "fragile", and I've found that 680px is a good width. Change with caution.
-        -->
-        <div style="max-width: 680px; margin: auto; background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/mailing-bienvenida.jpg?3438792757920694350); background-size: cover; background-position: center; background-repeat: no-repeat; box-shadow: 0px 0px 2px 3px rgba(0,0,0,.3);" class="email-container" >
-            <!--[if mso]>
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="680" align="center">
-            <tr>
-            <td>
-            <![endif]-->
-
-            <!-- Email Header : BEGIN -->
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;">
+  <body>
+    <!-- <style> -->
+    <table class="body" data-made-with-foundation="" style=" background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/concrete_seamless.png?9056281280774010986); background-position: top left; ">
+      <tr>
+        <td class="float-center" align="center" valign="top">
+          <center data-parsed="">
+            <!-- move the above styles into your custom stylesheet -->
+            <table align="center" class="container float-center" style="width: 580px; background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/background-2.jpg?4167178239788578953); background-size: cover; background-position: top; background-repeat: no-repeat; box-shadow: 0px 0px 2px 2px rgba(0,0,0,.3);">
+              <tbody>
                 <tr>
-                    <td style="padding: 20px 0; text-align: center; ">
-                        <img src="https://cdn.shopify.com/s/files/1/2256/3751/files/favicon.png?9056281280774010986" width="270" height="50" alt="alt_text" border="0" style="height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                    </td>
-                </tr>
-            </table>
-            <!-- Email Header : END -->
-
-            <!-- Email Body : BEGIN -->
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;" class="email-container">
-
-
-                <!-- 1 Column Text + Button : BEGIN -->
-                <tr>
-                    <td>
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                            <tr>
-                                <td style="padding: 40px 40px 20px; text-align: center;">
-                                    <h1 style="margin: 0; font-family: 'Dosis', sans-serif; font-size: 34px; line-height: 125%; color: white; font-weight: bolder; ">¡Tienda Good!</h1>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0 40px 40px; font-family: sans-serif; font-size: 19px; line-height: 140%; color: white; text-align: center; font-family: 'Dosis', sans-serif;">
-                                    <p style="margin: 0;">A partir de este momento tu vida tendrá un antes y un después, comenzarás a cuestionarte sobre todas las compras que has realizado en todo este tiempo, ya que Good cambiará la forma en cómo funciona el mercado Online y Offline en el mundo.<br>
-                                    </p>
-                                </td>
-                            </tr>
-                            
-
-                        </table>
-                    </td>
-                </tr>
-                <!-- 1 Column Text + Button : END -->
-
-                  <!-- Hero Image, Flush : BEGIN -->
-                <!--<tr>
-                    <td align="center">
-                        <img src="http://placehold.it/1360x600" width="680" height="" alt="alt_text" border="0" align="center" style="width: 100%; max-width: 680px; height: auto; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555; margin: auto;" class="fluid g-img">
-                    </td>
-                </tr>-->
-                <!-- Hero Image, Flush : END -->
-
-                <!-- Background Image with Text : BEGIN -->
-                <tr>
-                    <!-- Bulletproof Background Images c/o https://backgrounds.cm -->
-                    <td background="https://cdn.shopify.com/s/files/1/2256/3751/files/fondo_0b97d532-7f39-4c21-a21a-992c783cf061.png?14667147426592629453"  valign="middle" style="text-align: center; background-position: center center !important; background-size: cover !important; box-shadow: 0px 2px 3px 3px rgba(0,0,0,.3">
-                        <!--[if gte mso 9]>
-                        <v:image xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="border: 0; display: inline-block; width: 680px; height: 180px;" src="http://placehold.it/680x180/222222/666666" />
-                        <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="border: 0; display: inline-block; position: absolute; width: 680px; height: 180px;">
-                        <v:fill opacity="0%" color="#222222" />
-                        <![endif]-->
-                        <div>
-                            <!--[if mso]>
-                            <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="500">
-                            <tr>
-                            <td align="center" valign="top" width="500">
-                            <![endif]-->
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" width="100%" style="max-width:400px; margin: auto;">
-                                <tr>
-                                    <td valign="middle" style="text-align: center; padding: 40px 20px; font-family: 'Dosis'; font-size: 15px; line-height: 140%; color: #ffffff;">
-                                        <p style="margin: 0;"> Para todos nosotros es normal hacer nuestras compras de mercado, ropa, tecnología, restaurantes y mil cosas más de la manera habitual, ya sea a través de una aplicación o directamente en la tienda, pero te has preguntado. ¿Cuantas personas al igual que tu hacen lo mismo todos los días?. </p>
-                                    </td>
-                                </tr>
-                            </table>
-                            <!--[if mso]>
-                            </td>
-                            </tr>
-                            </table>
-                            <![endif]-->
-                        </div>
-                        <!--[if gte mso 9]>
-                        </v:fill>
-                        </v:rect>
-                        </v:image>
-                        <![endif]-->
-                    </td>
-                </tr>
-                <!-- Background Image with Text : END -->
-
-                <!-- 2 Even Columns : BEGIN -->
-    
-                <!-- 2 Even Columns : END -->
-
-                <!-- 3 Even Columns : BEGIN -->
-             
-                <!-- 3 Even Columns : END -->
-
-                <!-- Thumbnail Left, Text Right : BEGIN -->
-              
-                <!-- Clear Spacer : END -->
-
-                <!-- 1 Column Text : BEGIN -->
-                <tr>
-                    <td>
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                            <tr>
-                                <td style="padding: 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: white; font-family: 'Dosis'; text-align: center">
-                                    <h1 style="margin: 0; font-family: 'Dosis', sans-serif; font-size: 34px; line-height: 125%; color: white; font-weight: bolder; ">{{$body}}</h1>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0 40px 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
-                                    <!-- Button : BEGIN -->
-                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto;">
-                                        <tr>
-                                            <td style="border-radius: 3px;  text-align: center;" class="button-td">
-                                                <a href="http://demo.tiendagood.com/?q={{$code}}" style="background: #222222; border: 15px solid #222222; font-family: sans-serif; font-size: 13px; line-height: 110%; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: bold;" class="button-a">
-                                                    <span style="color:#ffffff;" class="button-link">¡Registrate con mi código <strong>{{$code}}</strong> dando click aquí!</span>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <!-- Button : END -->
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <!-- 1 Column Text : END -->
-
-            </table>
-            <!-- Email Body : END -->
-
-            <!-- Email Footer : BEGIN -->
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px; font-family: sans-serif; color: white; font-size: 12px; line-height: 140%; background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/footer.png?9056281280774010986); background-size: cover; background-position: top; background-repeat: no-repeat;">
-                <tr>
-                    <td style="padding: 40px 10px; width: 100%; font-family: 'Dosis'; font-size: 22px; line-height: 140%; text-align: center; color: #888888; " class="x-gmail-data-detectors">
-                        <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold; font-family: 'Dosis'"></webversion>
-                        <br><br>
-                        Dirección: <br>Carrera 10 # 67A -09<br>
-                    </td>
-                </tr>
-            </table>
-            <!-- Email Footer : END -->
-
-            <!--[if mso]>
-            </td>
-            </tr>
-            </table>
-            <![endif]-->
-        </div>
-
-        <!-- Full Bleed Background Section : BEGIN -->
-        <table role="presentation" bgcolor="orange" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
-            <tr>
-                <td valign="top" align="center">
-                    <div style="max-width: 680px; margin: auto;" class="email-container">
-                        <!--[if mso]>
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="680" align="center">
+                  <td>
+                    <table class="spacer">
+                      <tbody>
                         <tr>
-                        <td>
-                        <![endif]-->
-                        <!--[if mso]>
-                        </td>
+                          <td height="16px" style="font-size:16px;line-height:16px;">&#xA0;</td>
                         </tr>
-                        </table>
-                        <![endif]-->
-                    </div>
-                </td>
-            </tr>
-        </table>
-        <!-- Full Bleed Background Section : END -->
+                      </tbody>
+                    </table>
+                    <table class="row">
+                      <tbody>
+                        <tr>
+                          <th class="small-12 large-12 columns first last">
+                            <table>
+                              <tr>
+                                <th>
+                                  <img src="https://cdn.shopify.com/s/files/1/2256/3751/files/logo_dbb09a83-599a-4193-9638-7bc449d6ae66.png?4167178239788578953" alt="" style="width: 300px; height: auto; display: block; margin: 0 auto; padding-top: 50px"/>
+                                  <table class="callout">
+                                    <tr>
+                                      <th class="primary">
+                                         <img src="https://cdn.shopify.com/s/files/1/2256/3751/files/felicitaciones.png?4271936251202030282" alt="" style="width: 90%; height: auto; display: block; margin: 0 auto; padding-top: 50px; margin-bottom: 30px"/>
+            
+                                      </th>
+                                       
+                                      <th class="expander"></th>
+                                    </tr>
+                                    <tr>
+                                      <th class="primary" style="background-color: #fd6a15; border-radius: 20px; box-shadow: 3px 3px 2px 1px rgba(0,0,0, .3); margin-top: 40px;">
+                                         <p style="margin: 0; font-family: 'Dosis', sans-serif; font-size: 23px; color: white; padding: 20px; text-align: center; "> Estás realizando un excelente trabajo, en este momento <span style="font-weight: 800;">tienes un miembro más en tu negocio, el cual se ha inscrito con tu código en el nivel:</span> <br> <br> 
+                                          <span style=" padding: 10px 20px; clear: both; background-color: white; color: #fd6a15; font-size: 2.5em; border-radius: 20px; margin-top: 10px; box-shadow: 3px 3px 2px 1px rgba(0,0,0, .3)"> 3 </span>
+                                         </p>
+                                         
+                                      </th>
+                                    </tr>
+                                     <tr>
+                                      <th class="primary">
+                                         <p style="margin: 0; font-family: 'Dosis', sans-serif; font-size: 30px; color: white; padding: 20px; text-align: center; "> ¡ Recuerda que entre más personas invites a ser parte de tu negocio más puntos vas a ganar !
+                                         
+                                         </p>
+                                         
+                                      </th>
+                                    </tr>
+                                  </table>
+                                </th>
+                                <th class="expander"></th>
+                              </tr>
+                            </table>
+                          </th>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table class="row collapsed footer" style=" background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/footer.png?9056281280774010986); background-size: cover; background-position: top; background-repeat: no-repeat; padding: 20px 0;">
+                      <tbody>
+                        <tr>
+                          <th class="small-12 large-12 columns first last">
+                            <table>
+                              <tr>
+                                <th>
+                                  <table class="spacer">
+                                    <tbody>
+                                      <tr>
+                                        <td height="16px" style="font-size:16px;line-height:16px;">&#xA0;</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                  <!--<p class="text-center">@copywrite nobody<br> <a href="#">hello@nocopywrite.com</a> | <a href="#">Manage Email Notifications</a> | <a href="#">Unsubscribe</a></p>-->
+                                  <center data-parsed="">
+                                    <table align="center" class="menu float-center">
+                                      <tr>
+                                        <td>
+                                          <table>
+                                            <tr>
+                                              <th class="menu-item float-center">
+                                                <a href="https://www.facebook.com/Good-1730606817248294/"><img src="https://cdn.shopify.com/s/files/1/2256/3751/files/facebook.png?6161415350792567381" alt="" style="width: 50px; height: auto"></a>
+                                              </th>
+                                              <th class="menu-item float-center">
+                                                <a href="http://bit.ly/2nQ5lza"><img src="https://cdn.shopify.com/s/files/1/2256/3751/files/youtube.png?6161415350792567381" alt="" style="width: 50px; height: auto"></a>
+                                              </th>
+                                              <th class="menu-item float-center">
+                                                <a href="https://www.instagram.com/goodcolombia/"><img src="https://cdn.shopify.com/s/files/1/2256/3751/files/instagram.png?6161415350792567381" alt="" style="width: 50px; height: auto"></a>
+                                              </th>
+                                             
+                                            
+                                            </tr>
+                                          </table>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                  </center>
+                                </th>
+                                <th class="expander"></th>
+                              </tr>
+                            </table>
+                          </th>
+                        </tr>
+                      </tbody>
+                    </table>
+                 
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </center>
+        </td>
+      </tr>
+    </table>
+  </body>
 
-    </center>
-</body>
 </html>
