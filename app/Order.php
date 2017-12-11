@@ -47,7 +47,7 @@ class Order extends Model
     public static function createOrder($order, $shop, $points, $tipo_orden)
     {
         return Order::create([
-            'billing_address' => $order['billing_address'],
+            'billing_address' => (isset($order['billing_address'])) ? $order['billing_address'] : null,
             'browser_ip' => $order['browser_ip'],
             'buyer_accepts_marketing' => $order['buyer_accepts_marketing'],
             'cancel_reason' => $order['cancel_reason'],

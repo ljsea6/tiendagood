@@ -167,7 +167,7 @@ class GetOrders extends Command
 
                                 if (count($v) > 0) {
 
-                                    $this->info('Total por variante y cantidad: ' . $v->percentage * (int)$item['quantity']);
+                                    $this->info('Puntos:' . $v->percentage . ' * ' . (int)$item['quantity'] . ' = ' . $v->percentage * (int)$item['quantity']);
 
                                     $puntos = $puntos + $v->percentage * (int)$item['quantity'];
 
