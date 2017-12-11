@@ -164,8 +164,11 @@ class GetOrders extends Command
                                 $this->info('Puntos: ' . $v->percentage . ' la variante: ' .  $v->title);
 
 
+
                                 if (count($v) > 0) {
-                                    
+
+                                    $this->info('Total por variante y cantidad: ' . $v->percentage * (int)$item['quantity']);
+
                                     $puntos = $puntos + $v->percentage * (int)$item['quantity'];
 
                                     $line_item = LineItems::where('line_item_id', $item['id'])
