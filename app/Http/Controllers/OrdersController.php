@@ -1873,7 +1873,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->points;
+                                $puntos = $puntos + $v->percentage;
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -1882,7 +1882,7 @@ class OrdersController extends Controller
 
                                 if (count($line_item) == 0) {
 
-                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
                                 }
 
                                 $product = Product::find($item['product_id']);
@@ -2090,7 +2090,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->points;
+                                $puntos = $puntos + $v->percentage;
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2099,7 +2099,7 @@ class OrdersController extends Controller
 
                                 if (count($line_item) == 0) {
 
-                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
                                 }
 
                                 $product = Product::find($item['product_id']);
@@ -2207,7 +2207,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->points;
+                                $puntos = $puntos + $v->percentage;
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2216,7 +2216,7 @@ class OrdersController extends Controller
 
                                 if (count($line_item) == 0) {
 
-                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
                                 }
 
                                 $product = Product::find($item['product_id']);
@@ -2476,7 +2476,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->points;
+                                $puntos = $puntos + $v->percentage;
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2485,7 +2485,7 @@ class OrdersController extends Controller
 
                                 if (count($line_item) == 0) {
 
-                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
                                 }
 
                                 $product = Product::find($item['product_id']);
@@ -2781,7 +2781,7 @@ class OrdersController extends Controller
 
                         if (count($v) > 0) {
 
-                            $puntos = $puntos + $v->points;
+                            $puntos = $puntos + $v->percentage;
 
                             $line_item = LineItems::where('line_item_id', $item['id'])
                                 ->where('shop', 'good')
@@ -2790,7 +2790,7 @@ class OrdersController extends Controller
 
                             if (count($line_item) == 0) {
 
-                                LineItems::createLineItem($item, $order, $v->points, 'good');
+                                LineItems::createLineItem($item, $order, $v->percentage, 'good');
                             }
 
                             $product = Product::find($item['product_id']);
