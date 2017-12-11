@@ -195,7 +195,9 @@ trait OrderPaid
                         }
                     }
 
-                } else {
+                }
+
+                else {
 
                     $update->mispuntos = $update->mispuntos + $order_create->points;
                     $update->save();
