@@ -159,7 +159,7 @@ a {
     }
 
     /* Media Queries */
-    @media screen and (max-width: 480px) {
+    @media screen and (max-width: 690px) {
 
         /* What it does: Forces elements to resize to the full width of their container. Useful for resizing images beyond their max-width. */
         .fluid {
@@ -230,7 +230,7 @@ a {
             2. MSO tags for Desktop Windows Outlook enforce a 680px width.
             Note: The Fluid and Responsive templates have a different width (600px). The hybrid grid is more "fragile", and I've found that 680px is a good width. Change with caution.
         -->
-        <div style="max-width: 680px; margin: auto; background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/mailing-bienvenida.jpg?3438792757920694350); background-size: cover; background-position: center; background-repeat: no-repeat; box-shadow: 0px 0px 2px 3px rgba(0,0,0,.3);" class="email-container" >
+        <div style="width: 680px; max-width: 680px; margin: auto; background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/mailing-bienvenida.jpg?3438792757920694350); background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; box-shadow: 0px 0px 2px 3px rgba(0,0,0,.3);" class="email-container" >
             <!--[if mso]>
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="680" align="center">
             <tr>
@@ -350,9 +350,9 @@ a {
             <!-- Email Body : END -->
 
             <!-- Email Footer : BEGIN -->
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px; font-family: sans-serif; color: white; font-size: 12px; line-height: 140%; background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/footer.png?9056281280774010986); background-size: cover; background-position: top; background-repeat: no-repeat;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px; font-family: sans-serif; color: white; font-size: 12px; line-height: 140%; background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/footer.png?9056281280774010986); background-size: cover !important; background-position: top; background-repeat: no-repeat !important;">
                 <tr>
-                    <td style="padding: 40px 10px; width: 100%; font-family: 'Dosis'; font-size: 22px; line-height: 140%; text-align: center; color: #888888; " class="x-gmail-data-detectors">
+                    <td style="padding: 40px 10px; width: 100%; font-family: 'Dosis' !important; font-size: 22px !important; line-height: 140% !important; text-align: center; color: white; " class="x-gmail-data-detectors">
                         <webversion style="color: #cccccc; text-decoration: underline; font-weight: bold; font-family: 'Dosis'"></webversion>
                         <br><br>
                         Dirección: <br>Carrera 10 # 67A -09<br>
@@ -372,7 +372,7 @@ a {
         <table role="presentation" bgcolor="orange" cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
             <tr>
                 <td valign="top" align="center">
-                    <div style="max-width: 680px; margin: auto;" class="email-container">
+                    <div style="width: 680px; max-width: 680px; margin: auto;" class="email-container">
                         <!--[if mso]>
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="680" align="center">
                         <tr>
