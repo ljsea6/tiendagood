@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Entities\Tercero_network;
-use app\Traits\OrderCancelled;
+
+use App\Traits\OrderCancelled;
 use App\Traits\OrderPaid;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -2508,7 +2508,6 @@ class OrdersController extends Controller
             return response()->json(['status' => 'order not processed'], 200);
         }
     }
-
     public function payment()
     {
         $input = file_get_contents('php://input');
