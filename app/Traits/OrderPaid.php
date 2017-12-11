@@ -32,8 +32,6 @@ trait OrderPaid
 
                     if (count($variant) > 0) {
 
-                        $this->info('Sumando: ' . $item['quantity']);
-
                         DB::table('variants')
                             ->where('id', $item['variant_id'])
                             ->where('product_id', $item['product_id'])
