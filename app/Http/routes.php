@@ -57,10 +57,12 @@ Route::get('gifts', 'CustomersController@gifts');
  */
 
 Route::post('customers/create', 'CustomersController@create');
-Route::post('orders/create', 'OrdersController@create');
-Route::post('orders/update', 'OrdersController@update');
-Route::post('orders/delete', 'OrdersController@delete');
-Route::post('orders/payment', 'OrdersController@payment');
+
+
+Route::post('orders/good/create', 'OrdersController@create');
+Route::post('orders/good/update', 'OrdersController@update');
+Route::post('orders/good/cancelled', 'OrdersController@cancelled');
+Route::post('orders/good/payment', 'OrdersController@payment');
 Route::post('products/good/create', 'ProductsController@create');
 Route::post('products/good/update', 'ProductsController@update');
 Route::post('products/mercando/create', 'ProductsController@create_mercando');
