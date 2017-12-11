@@ -17,7 +17,7 @@ class LineItems extends Model
 
     protected $guarded = [];
 
-    public static function createLineItem($item, $order, $points = 0, $shop)
+    public static function createLineItem($item, $order, $points, $shop)
     {
         LineItems::create([
             'variant_id' =>$item['variant_id'],
