@@ -83,7 +83,7 @@ class PasswordController extends Controller {
 
             $usuario = Tercero::findOrFail($remember_token['id']);
             $usuario->contraseña = bcrypt($request->password);
-           // $usuario->remember_token = '';
+            $usuario->remember_token = '';
             $usuario->save();
 
             if($usuario) {
@@ -103,7 +103,7 @@ class PasswordController extends Controller {
     public function api_cambio_password($api, $email, $password) {
        
         $client = new \GuzzleHttp\Client();
-        
+
                 try {
                     $good = $client->request('GET', $api . '/admin/customers/search.json?query=email:'. $email );
                     $headers = $good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
