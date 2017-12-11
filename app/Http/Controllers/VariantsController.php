@@ -274,8 +274,8 @@ class VariantsController extends Controller
                                 continue;
                             }
                         }
-                    }
-                    else {
+
+                    } else {
 
                         DB::table('variants')
                             ->where('id', $r[0])

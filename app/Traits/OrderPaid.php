@@ -49,7 +49,7 @@ trait OrderPaid
 
                 $update = Tercero::with('networks', 'levels', 'cliente')->find($tercero->id);
 
-                if ($update->cliente->id == 85) {
+                if (isset($update->cliente) && $update->cliente->id == 85) {
 
                     if (count($update->networks) > 0) {
 
@@ -195,7 +195,9 @@ trait OrderPaid
                         }
                     }
 
-                } else {
+                }
+
+                if (isset($update->cliente) && $update->cliente->id != 85){
 
                     $update->mispuntos = $update->mispuntos + $order_create->points;
                     $update->save();

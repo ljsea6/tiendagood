@@ -50,7 +50,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('get:orders')
                  ->twiceDaily(14, 23);
 
-        //$schedule->command('get:mercadopago')->dailyAt('22:30');
+        $schedule->command('get:update-points')->dailyAt('01:30');
 
         //$schedule->command('get:metafields')->dailyAt('23:30');
 
