@@ -42,7 +42,7 @@ class LineItems extends Model
             'total_discount' => $item['total_discount'],
             'fulfillment_status' =>$item['fulfillment_status'],
             'tax_lines' => $item['tax_lines'],
-            'origin_location' =>$item['origin_location'],
+            'origin_location' =>(isset($item['origin_location'])) ? isset($item['origin_location']) : null,
             'destination_location' => (isset($item['destination_location'])) ? $item['destination_location'] : null,
             'order_name' => $order['name'],
             'order_id' => $order['id'],
