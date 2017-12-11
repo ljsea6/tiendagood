@@ -165,8 +165,8 @@ class GetOrders extends Command
 
 
                                 if (count($v) > 0) {
-
-                                    $puntos = $puntos + $v->percentage * $item['quantity'];
+                                    
+                                    $puntos = $puntos + $v->percentage * (int)$item['quantity'];
 
                                     $line_item = LineItems::where('line_item_id', $item['id'])
                                         ->where('shop', 'good')
