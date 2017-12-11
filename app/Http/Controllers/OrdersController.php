@@ -1873,7 +1873,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->percentage;
+                                $puntos = ((int)$puntos + ((int)$v->percentage * (int)$item['quantity']));
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2090,7 +2090,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->percentage;
+                                $puntos = ((int)$puntos + ((int)$v->percentage * (int)$item['quantity']));
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2207,7 +2207,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->percentage;
+                                $puntos = ((int)$puntos + ((int)$v->percentage * (int)$item['quantity']));
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2476,7 +2476,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->percentage;
+                                $puntos = ((int)$puntos + ((int)$v->percentage * (int)$item['quantity']));
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2781,7 +2781,7 @@ class OrdersController extends Controller
 
                         if (count($v) > 0) {
 
-                            $puntos = $puntos + $v->percentage;
+                            $puntos = ((int)$puntos + ((int)$v->percentage * (int)$item['quantity']));
 
                             $line_item = LineItems::where('line_item_id', $item['id'])
                                 ->where('shop', 'good')

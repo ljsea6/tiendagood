@@ -160,10 +160,7 @@ class GetOrders extends Command
                                     ->where('shop', 'good')
                                     ->where('product_id', $item['product_id'])
                                     ->first();
-
-                                $this->info('Puntos: ' . $v->percentage . ' la variante: ' .  $v->title);
-
-
+                                
 
                                 if (count($v) > 0) {
 
