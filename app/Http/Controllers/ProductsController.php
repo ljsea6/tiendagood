@@ -150,7 +150,9 @@ class ProductsController extends Controller
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -181,13 +183,17 @@ class ProductsController extends Controller
 
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
                     }
 
@@ -237,7 +243,9 @@ class ProductsController extends Controller
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -267,13 +275,18 @@ class ProductsController extends Controller
 
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
+
                         }
                     }
 
@@ -362,7 +375,9 @@ class ProductsController extends Controller
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -393,13 +408,17 @@ class ProductsController extends Controller
 
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
                     }
 
@@ -514,7 +533,9 @@ class ProductsController extends Controller
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -545,13 +566,17 @@ class ProductsController extends Controller
 
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
                     }
 
@@ -603,7 +628,9 @@ class ProductsController extends Controller
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -633,13 +660,17 @@ class ProductsController extends Controller
 
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
                     }
 
@@ -729,7 +760,9 @@ class ProductsController extends Controller
 
                                     } catch (ClientException $e) {
 
-                                        return json_decode(($e->getResponse()->getBody()), true);
+                                        if ($e->getResponse()) {
+                                            continue;
+                                        }
                                     }
                                 }
                             }
@@ -757,16 +790,19 @@ class ProductsController extends Controller
                                     usleep(10000000);
                                 }
 
-
                             } catch (ClientException $e) {
 
-                                return json_decode(($e->getResponse()->getBody()), true);
+                                if ($e->getResponse()) {
+                                    continue;
+                                }
                             }
                         }
 
                     } catch (ClientException $e) {
 
-                        return json_decode(($e->getResponse()->getBody()), true);
+                        if ($e->getResponse()) {
+                            continue;
+                        }
                     }
                 }
 
