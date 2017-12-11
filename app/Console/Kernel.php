@@ -21,7 +21,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\MercadoPago::class,
         \App\Console\Commands\Metafields::class,
         \App\Console\Commands\GiftsCards::class,
-        \App\Console\Commands\GetProductsMercando::class
+        \App\Console\Commands\GetProductsMercando::class,
+        \App\Console\Commands\GetUsers::class,
     ];
 
     /**
@@ -35,8 +36,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('inspire')
                  ->hourly();
 
-        $schedule->command('subirbd')
-                 ->everyFiveMinutes();
+        //$schedule->command('subirbd')->everyFiveMinutes();
 
         $schedule->command('get:products')
                  ->twiceDaily(1, 20);
@@ -44,19 +44,15 @@ class Kernel extends ConsoleKernel
         $schedule->command('get:products-mercando')
                  ->twiceDaily(2, 21);
 
-        $schedule->command('get:customers')
-                 ->twiceDaily(2, 21);
+        //$schedule->command('get:customers')->twiceDaily(2, 21);
 
         $schedule->command('get:orders')
                  ->twiceDaily(14, 23);
 
-        $schedule->command('get:mercadopago')
-            ->dailyAt('22:30');
+        //$schedule->command('get:mercadopago')->dailyAt('22:30');
 
-        $schedule->command('get:metafields')
-            ->dailyAt('23:30');
+        //$schedule->command('get:metafields')->dailyAt('23:30');
 
-        $schedule->command('get:giftscards')
-            ->monthly();
+        //$schedule->command('get:giftscards')->monthly();
     }
 }

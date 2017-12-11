@@ -18,14 +18,14 @@ use GuzzleHttp\Exception\ClientException;
 class VariantsController extends Controller
 {
 
-
     public function variants()
     {
         $variants = DB::table('variants')
             ->join('products', 'variants.product_id', '=', 'products.id')
-            ->select('variants.id as id', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
-            ->where('products.tipo_producto', 'nacional')
+            ->select('products.tipo_producto as tipo', 'variants.id as id', 'products.vendor as vendor', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
             ->where('products.shop', 'good')
+            ->where('products.handle', '!=', 'example-t-shirt')
+            ->orderBy('products.created_at', 'asc')
             ->get();
 
         $send = collect($variants);
@@ -46,6 +46,12 @@ class VariantsController extends Controller
                 }
 
             })
+            ->addColumn('tipo', function ($send) {
+                return '<div align=left>' . ucwords($send->tipo) . '</div>';
+            })
+            ->addColumn('vendor', function ($send) {
+                return '<div align=left>' . ucwords($send->vendor) . '</div>';
+            })
             ->addColumn('price', function ($send) {
                 return '<div align=left>' . number_format($send->price) . '</div>';
             })
@@ -64,6 +70,7 @@ class VariantsController extends Controller
             ->join('products', 'variants.product_id', '=', 'products.id')
             ->select('variants.id as id', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
             ->where('products.tipo_producto', 'nacional')
+            ->where('products.handle', '!=', 'example-t-shirt')
             ->where('products.shop', 'mercando')
             ->get();
 
@@ -175,13 +182,17 @@ class VariantsController extends Controller
 
                 $r = explode('=', $data);
 
-                $variant = Variant::find($r[0]);
+                $variant = Variant::where('id', $r[0])->where('shop', 'good')->first();
 
                 if (count($variant) > 0) {
 
                     if ($r[1] != "") {
 
-                        $variant->percentage = $r[1];
+                        DB::table('variants')
+                            ->where('id', $r[0])
+                            ->where('shop', 'good')
+                            ->where('product_id', $variant->product_id)
+                            ->update(['percentage' => $r[1]]);
 
                         try {
 
@@ -216,11 +227,12 @@ class VariantsController extends Controller
                                                 usleep(10000000);
                                             }
 
-                                            //return json_decode($res->getBody(), true);
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -248,27 +260,28 @@ class VariantsController extends Controller
                                         usleep(10000000);
                                     }
 
-                                    $result = json_decode($res->getBody(), true);
-
-                                    //return response()->json($result);
-
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
-
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
-
-                        $variant->save();
 
                     } else {
 
-                        $variant->percentage = null;
+                        DB::table('variants')
+                            ->where('id', $r[0])
+                            ->where('shop', 'good')
+                            ->where('product_id', $variant->product_id)
+                            ->update(['percentage' => 0]);
 
                         try {
 
@@ -303,11 +316,12 @@ class VariantsController extends Controller
                                                 usleep(10000000);
                                             }
 
-                                            //return json_decode($res->getBody(), true);
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -335,25 +349,21 @@ class VariantsController extends Controller
                                         usleep(10000000);
                                     }
 
-                                    $result = json_decode($res->getBody(), true);
-
-                                    //return response()->json($result);
 
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
-
-
-
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
-
-                        $variant->save();
                     }
                 }
             }
@@ -374,13 +384,18 @@ class VariantsController extends Controller
 
                 $r = explode('=', $data);
 
-                $variant = Variant::find($r[0]);
+                $variant = Variant::where('id', $r[0])->where('shop', 'mercando')->first();
 
                 if (count($variant) > 0) {
 
+
                     if ($r[1] != "") {
 
-                        $variant->percentage = $r[1];
+                        DB::table('variants')
+                            ->where('id', $r[0])
+                            ->where('shop', 'mercando')
+                            ->where('product_id', $variant->product_id)
+                            ->update(['percentage' => $r[1]]);
 
                         try {
 
@@ -419,7 +434,9 @@ class VariantsController extends Controller
 
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -447,27 +464,28 @@ class VariantsController extends Controller
                                         usleep(10000000);
                                     }
 
-                                    $result = json_decode($res->getBody(), true);
-
-                                    //return response()->json($result);
-
                                 } catch (ClientException $e) {
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
                                 }
-
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
-
-                        $variant->save();
 
                     } else {
 
-                        $variant->percentage = null;
+                        DB::table('variants')
+                            ->where('id', $r[0])
+                            ->where('shop', 'mercando')
+                            ->where('product_id', $variant->product_id)
+                            ->update(['percentage' => 0]);
 
                         try {
 
@@ -502,11 +520,11 @@ class VariantsController extends Controller
                                                 usleep(10000000);
                                             }
 
-                                            //return json_decode($res->getBody(), true);
-
                                         } catch (ClientException $e) {
 
-                                            return json_decode(($e->getResponse()->getBody()), true);
+                                            if ($e->getResponse()) {
+                                                continue;
+                                            }
                                         }
                                     }
                                 }
@@ -535,20 +553,25 @@ class VariantsController extends Controller
                                     }
 
                                 } catch (ClientException $e) {
+                                    if ($e->getResponse()) {
+                                        continue;
+                                    }
 
-                                    return json_decode(($e->getResponse()->getBody()), true);
                                 }
 
                             }
 
                         } catch (ClientException $e) {
 
-                            return json_decode(($e->getResponse()->getBody()), true);
+                            if ($e->getResponse()) {
+                                continue;
+                            }
                         }
 
-                        $variant->save();
+
                     }
                 }
+
             }
             return response()->json(['data' => 'actualización terminada']);
         }

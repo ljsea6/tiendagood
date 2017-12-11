@@ -10,8 +10,10 @@ use Carbon\Carbon;
 use App\Entities\Tercero;
 use DB;
 use Faker\Factory as Faker;
+
 class GetCustomers extends Command
 {
+
     /**
      * The name and signature of the console command.
      *
@@ -44,9 +46,6 @@ class GetCustomers extends Command
     public function handle()
     {
         $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-
-
-
         $client = new \GuzzleHttp\Client();
         $resa = $client->request('GET', $api_url . '/admin/customers/count.json');
         $countCustomers = json_decode($resa->getBody(), true);
@@ -86,8 +85,6 @@ class GetCustomers extends Command
                 if(count($response) == 0) {
 
                     $this->info('Customer no existe');
-
-                    //$c = Customer::createCustomer($customer);
 
                     if (count($tercero) == 0) {
 

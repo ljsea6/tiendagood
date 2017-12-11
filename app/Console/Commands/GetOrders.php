@@ -47,10 +47,8 @@ class GetOrders extends Command
      */
     public function handle()
     {
-        //$api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-        $api_url = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';
+        $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $client = new \GuzzleHttp\Client();
-
         $result = true;
         $h = 1;
 
@@ -73,56 +71,48 @@ class GetOrders extends Command
                 $response = Order::where('network_id', 1)
                     ->where('name', $order['name'])
                     ->where('order_id', $order['id'])
+                    ->where('shop', 'good')
                     ->first();
 
-                if ($order['cancelled_at'] != null && $order['cancel_reason'] != null) {
+                if ($order['cancelled_at'] != null || $order['cancel_reason'] != null) {
 
                     if(count($response) == 0) {
 
                         $tipo_orden = '';
                         $i = 0;
                         $n = 0;
+                        $puntos = 0;
 
                         if (isset($order['line_items']) && count($order['line_items']) > 0) {
 
                             foreach ($order['line_items'] as $item) {
 
-                                $variant = Variant::find($item['variant_id']);
+                                $v = Variant::where('id', $item['variant_id'])
+                                    ->where('shop', 'good')
+                                    ->where('product_id', $item['product_id'])
+                                    ->first();
 
-                                $search = Order::where('name', $order['name'])->first();
+                                if (count($v) > 0) {
 
-                                if(count($search) > 0) {
+                                    $puntos = $puntos + $v->points;
 
-                                    $update = Order::find($search->id);
-                                    $update->points = $update->points + $variant->percentage;
-                                    $update->save();
-                                }
+                                    $line_item = LineItems::where('line_item_id', $item['id'])
+                                        ->where('shop', 'good')
+                                        ->where('variant_id', $item['variant_id'])
+                                        ->first();
 
+                                    if (count($line_item) == 0) {
 
-
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($line_item) == 0) {
-
-                                    LineItems::createLineItem($item, $order, (isset($variant->percentage)) ? $variant->percentage : 0);
-                                }
-
-                                $product = Product::find($item['product_id']);
-
-                                if (strtolower($item['vendor'])  == 'nacional' || strtolower($item['vendor'])  == 'a - nacional') {
-                                    $n++;
-
-                                    if (count($product) > 0) {
-                                        $product->tipo_producto = 'nacional';
-                                        $product->save();
+                                        LineItems::createLineItem($item, $order, $v->points, 'good');
                                     }
-                                }
-                                if (strtolower($item['vendor'])  != 'nacional' && strtolower($item['vendor'])  != 'a - nacional') {
-                                    $i++;
 
-                                    if (count($product) > 0) {
-                                        $product->tipo_producto = 'internacional';
-                                        $product->save();
+                                    $product = Product::find($item['product_id']);
+
+                                    if ($product->tipo_producto == 'nacional') {
+                                        $n++;
+                                    }
+                                    if ($product->tipo_producto == 'internacional') {
+                                        $i++;
                                     }
                                 }
                             }
@@ -144,55 +134,59 @@ class GetOrders extends Command
                             $n = 0;
                         }
 
-                        $order = Order::createOrder($order, $tipo_orden);
+                        $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
 
                         $tipo_orden = '';
 
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::find($item['variant_id']);
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($variant) > 0) {
-
-                                    $update = Order::find($order->id);
-                                    $update->points = $update->points + $variant->percentage;
-                                    $update->save();
-
-
-                                    if (count($line_item) == 0) {
-
-                                        LineItems::createLineItem($item, $order, (isset($variant->percentage)) ? $variant->percentage : 0);
-                                    }
-                                } else {
-
-                                    $update = Order::find($order->id);
-                                    $update->points = $update->points + 0;
-                                    $update->save();
-
-                                    if (count($line_item) == 0) {
-
-                                        LineItems::createLineItem($item, $order, 0);
-                                    }
-
-                                }
-                            }
-                        }
                     }
                 }
 
                 if ($order['cancelled_at'] == null && $order['cancel_reason'] == null) {
 
-
                     if(count($response) == 0) {
-
 
                         $tipo_orden = '';
                         $i = 0;
                         $n = 0;
+                        $puntos = 0;
 
+                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                            foreach ($order['line_items'] as $item) {
+
+                                $v = Variant::where('id', $item['variant_id'])
+                                    ->where('shop', 'good')
+                                    ->where('product_id', $item['product_id'])
+                                    ->first();
+
+                                $this->info('Puntos: ' . $v->percentage . ' la variante: ' .  $v->title);
+
+
+                                if (count($v) > 0) {
+
+                                    $puntos = $puntos + $v->percentage * $item['quantity'];
+
+                                    $line_item = LineItems::where('line_item_id', $item['id'])
+                                        ->where('shop', 'good')
+                                        ->where('variant_id', $item['variant_id'])
+                                        ->first();
+
+                                    if (count($line_item) == 0) {
+
+                                        LineItems::createLineItem($item, $order, $v->percentage, 'good');
+                                    }
+
+                                    $product = Product::find($item['product_id']);
+
+                                    if ($product->tipo_producto == 'nacional') {
+                                        $n++;
+                                    }
+                                    if ($product->tipo_producto == 'internacional') {
+                                        $i++;
+                                    }
+                                }
+                            }
+                        }
 
                         if ($i > 0 && $n > 0) {
                             $tipo_orden .= 'nacional/internacional';
@@ -210,62 +204,9 @@ class GetOrders extends Command
                             $n = 0;
                         }
 
-                        $order = Order::createOrder($order, $tipo_orden);
+                        $order_create = Order::createOrder($order, 'good', $puntos, $tipo_orden);
 
                         $tipo_orden = '';
-
-                        if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                            foreach ($order['line_items'] as $item) {
-
-                                $variant = Variant::find($item['variant_id']);
-                                $line_item = LineItems::find($item['id']);
-
-                                if (count($variant) > 0) {
-
-                                    $update = Order::find($order->id);
-                                    $update->points = $update->points + $variant->percentage;
-                                    $update->save();
-
-
-                                    if (count($line_item) == 0) {
-
-                                        LineItems::createLineItem($item, $order, (isset($variant->percentage)) ? $variant->percentage : 0);
-                                    }
-                                } else {
-
-                                    $update = Order::find($order->id);
-                                    $update->points = $update->points + 0;
-                                    $update->save();
-
-                                    if (count($line_item) == 0) {
-
-                                        LineItems::createLineItem($item, $order, 0);
-                                    }
-
-                                }
-
-
-                                $product = Product::find($item['product_id']);
-
-                                if (strtolower($item['vendor'])  == 'nacional' || strtolower($item['vendor'])  == 'a - nacional') {
-                                    $n++;
-
-                                    if (count($product) > 0) {
-                                        $product->tipo_producto = 'nacional';
-                                        $product->save();
-                                    }
-                                }
-                                if (strtolower($item['vendor'])  != 'nacional' && strtolower($item['vendor'])  != 'a - nacional') {
-                                    $i++;
-
-                                    if (count($product) > 0) {
-                                        $product->tipo_producto = 'internacional';
-                                        $product->save();
-                                    }
-                                }
-                            }
-                        }
 
                         if ($order['financial_status'] == "paid") {
 
@@ -273,158 +214,172 @@ class GetOrders extends Command
 
                                 foreach ($order['line_items'] as $item) {
 
-                                    $variant = Variant::find($item['variant_id']);
+                                    $variant = Variant::where('id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', 'good')
+                                        ->first();
 
                                     if (count($variant) > 0) {
-                                        $variant->sold_units = $variant->sold_units + $item['quantity'];
-                                        $variant->save();
+
+                                        $this->info('Sumando: ' . $item['quantity']);
+
+                                        DB::table('variants')
+                                            ->where('id', $item['variant_id'])
+                                            ->where('product_id', $item['product_id'])
+                                            ->where('shop', 'good')
+                                            ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
                                     }
                                 }
                             }
 
-                            /*$tercero = Tercero::with('networks')->where('email', $order['email'])->first();
+                            $tercero = Tercero::where('email', strtolower($order['email']))
+                                ->where('state', true)
+                                ->first();
 
                             if (count($tercero) > 0) {
 
-                                if (isset($tercero->networks) && isset($tercero->networks[0]) && isset($tercero->networks[0]['pivot']) && count($tercero->networks[0]['pivot']['padre_id']) > 0 && $tercero->state == true) {
+                                $update = Tercero::with('networks', 'levels', 'cliente')->find($tercero->id);
 
-                                    $padre = Tercero::where('id', $tercero->networks[0]['pivot']['padre_id'])->first();
+                                if ($update->cliente->id == 85) {
 
-                                    if (count($padre) > 0) {
+                                    if (count($update->networks) > 0) {
 
-                                        if ($padre->state) {
+                                        $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
 
-                                            $find = Tercero::find($padre->id);
-                                            $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                            $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                            $find->ganacias = $find->total_price_orders * 0.05;
-                                            $find->save();
+                                        if (count($padre_uno) > 0 && $padre_uno->state == true) {
 
-                                            $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
-
-                                            if (count($customer) > 0) {
-                                                $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                                $metafields = json_decode($res->getBody(), true);
+                                            $padre_uno->mispuntos = $padre_uno->mispuntos + $puntos;
+                                            $padre_uno->save();
 
 
-                                                if (count($metafields['metafields']) > 0) {
+                                            if (count($padre_uno->networks) > 0) {
 
-                                                    foreach ($metafields['metafields'] as $metafield) {
-                                                        if ($metafield['key'] === 'referidos') {
-                                                            $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                    'form_params' => array(
-                                                                        'metafield' => array(
-                                                                            'namespace' => 'customers',
-                                                                            'key' => 'referidos',
-                                                                            'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                            'value_type' => 'integer'
-                                                                        )
-                                                                    )
-                                                                )
-                                                            );
+                                                $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
 
-                                                        }
+                                                if (count($padre_dos) > 0 && $padre_dos->state == true) {
 
-                                                        if ($metafield['key'] === 'compras') {
-                                                            $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                    'form_params' => array(
-                                                                        'metafield' => array(
-                                                                            'namespace' => 'customers',
-                                                                            'key' => 'compras',
-                                                                            'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                            'value_type' => 'integer'
-                                                                        )
-                                                                    )
-                                                                )
-                                                            );
+                                                    if (count($padre_dos->levels) == 0) {
 
-                                                        }
+                                                        DB::table('terceros_niveles')->insertGetId(
+                                                            [
+                                                                'tercero_id' => $padre_dos->id,
+                                                                'nivel' =>  1,
+                                                                'puntos' =>  $puntos,
+                                                            ]
+                                                        );
 
-                                                        if ($metafield['key'] === 'valor') {
-                                                            $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                    'form_params' => array(
-                                                                        'metafield' => array(
-                                                                            'namespace' => 'customers',
-                                                                            'key' => 'valor',
-                                                                            'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                            'value_type' => 'string'
-                                                                        )
-                                                                    )
-                                                                )
+                                                    } else {
+
+                                                        $result = DB::table('terceros_niveles')
+                                                            ->where('tercero_id', $padre_dos->id)
+                                                            ->where('nivel', 1)
+                                                            ->first();
+
+                                                        if (count($result) > 0) {
+
+                                                            DB::table('terceros_niveles')
+                                                                ->where('tercero_id', $padre_dos->id)
+                                                                ->where('nivel', 1)
+                                                                ->update(['puntos' => $result->puntos + $puntos]);
+
+                                                        } else {
+
+                                                            DB::table('terceros_niveles')->insertGetId(
+                                                                [
+                                                                    'tercero_id' => $padre_dos->id,
+                                                                    'nivel' =>  1,
+                                                                    'puntos' =>  $puntos,
+                                                                ]
                                                             );
                                                         }
                                                     }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
 
-                            } else {
+                                                    if (count($padre_dos->networks) > 0) {
 
-                                $padre = Tercero::where('email', strtolower($order['billing_address']['last_name']))->first();
+                                                        $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
 
-                                if (count($padre) > 0) {
+                                                        if (count($padre_tres) > 0 && $padre_tres->state == true) {
 
-                                    if ($padre->state) {
+                                                            if (count($padre_tres->levels) == 0) {
 
-                                        $find = Tercero::find($padre->id);
-                                        $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                        $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                        $find->ganacias = $find->total_price_orders * 0.05;
-                                        $find->save();
+                                                                DB::table('terceros_niveles')->insertGetId(
+                                                                    [
+                                                                        'tercero_id' => $padre_tres->id,
+                                                                        'nivel' =>  2,
+                                                                        'puntos' =>  $puntos,
+                                                                    ]
+                                                                );
 
-                                        $customer = Customer::where('customer_id', $padre->customer_id)->where('network_id', 1)->first();
+                                                            } else {
 
-                                        if (count($customer) > 0) {
-                                            $res = $client->request('get', $api_url . '/admin/customers/' . $find->customer_id . '/metafields.json');
-                                            $metafields = json_decode($res->getBody(), true);
+                                                                $result = DB::table('terceros_niveles')
+                                                                    ->where('tercero_id', $padre_tres->id)
+                                                                    ->where('nivel', 2)
+                                                                    ->first();
 
+                                                                if (count($result) > 0) {
 
-                                            if (count($metafields['metafields']) > 0) {
+                                                                    DB::table('terceros_niveles')
+                                                                        ->where('tercero_id', $padre_tres->id)
+                                                                        ->where('nivel', 2)
+                                                                        ->update(['puntos' => $result->puntos + $puntos]);
 
-                                                foreach ($metafields['metafields'] as $metafield) {
-                                                    if ($metafield['key'] === 'referidos') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'referidos',
-                                                                        'value' => ($find->numero_referidos == null || $find->numero_referidos == 0) ? 0 : $find->numero_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
-                                                    }
+                                                                } else {
 
-                                                    if ($metafield['key'] === 'compras') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'compras',
-                                                                        'value' => ($find->numero_ordenes_referidos == null || $find->numero_ordenes_referidos == 0) ? 0 : $find->numero_ordenes_referidos,
-                                                                        'value_type' => 'integer'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
+                                                                    DB::table('terceros_niveles')->insertGetId(
+                                                                        [
+                                                                            'tercero_id' => $padre_tres->id,
+                                                                            'nivel' =>  2,
+                                                                            'puntos' =>  $puntos,
+                                                                        ]
+                                                                    );
+                                                                }
+                                                            }
 
-                                                    }
+                                                            if (count($padre_tres->networks) > 0) {
 
-                                                    if ($metafield['key'] === 'valor') {
-                                                        $res = $client->request('put', $api_url . '/admin/customers/' . $find->customer_id . '/metafields/' . $metafield['id'] . '.json', array(
-                                                                'form_params' => array(
-                                                                    'metafield' => array(
-                                                                        'namespace' => 'customers',
-                                                                        'key' => 'valor',
-                                                                        'value' => '' . ($find->ganacias == null || $find->ganacias == 0) ? 0 : number_format($find->ganacias) . '',
-                                                                        'value_type' => 'string'
-                                                                    )
-                                                                )
-                                                            )
-                                                        );
+                                                                $padre_cuatro = Tercero::with('networks', 'levels')->find($padre_tres->networks[0]['pivot']['padre_id']);
+
+                                                                if (count($padre_cuatro) > 0 && $padre_cuatro->state == true) {
+
+                                                                    if (count($padre_cuatro->levels) == 0) {
+
+                                                                        DB::table('terceros_niveles')->insertGetId(
+                                                                            [
+                                                                                'tercero_id' => $padre_cuatro->id,
+                                                                                'nivel' =>  3,
+                                                                                'puntos' =>  $puntos,
+                                                                            ]
+                                                                        );
+
+                                                                    } else {
+
+                                                                        $result = DB::table('terceros_niveles')
+                                                                            ->where('tercero_id', $padre_cuatro->id)
+                                                                            ->where('nivel', 3)
+                                                                            ->first();
+
+                                                                        if (count($result) > 0) {
+
+                                                                            DB::table('terceros_niveles')
+                                                                                ->where('tercero_id', $padre_cuatro->id)
+                                                                                ->where('nivel', 3)
+                                                                                ->update(['puntos' => $result->puntos + $puntos]);
+
+                                                                        } else {
+
+                                                                            DB::table('terceros_niveles')->insertGetId(
+                                                                                [
+                                                                                    'tercero_id' => $padre_cuatro->id,
+                                                                                    'nivel' =>  3,
+                                                                                    'puntos' =>  $puntos,
+                                                                                ]
+                                                                            );
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -433,18 +388,145 @@ class GetOrders extends Command
 
                                 } else {
 
-                                    $find = Tercero::find(1);
-                                    $find->numero_ordenes_referidos = $find->numero_ordenes_referidos + 1;
-                                    $find->total_price_orders = $find->total_price_orders + $order['total_price'];
-                                    $find->ganacias = $find->total_price_orders * 0.05;
-                                    $find->save();
+                                    $update->mispuntos = $update->mispuntos + $order_create->points;
+                                    $update->save();
+
+                                    if (count($update->networks) > 0) {
+
+                                        $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
+
+                                        if (count($padre_uno) > 0 && $padre_uno->state == true) {
+
+                                            if (count($padre_uno->levels) == 0) {
+
+                                                DB::table('terceros_niveles')->insertGetId(
+                                                    [
+                                                        'tercero_id' => $padre_uno->id,
+                                                        'nivel' =>  1,
+                                                        'puntos' =>  $puntos,
+                                                    ]
+                                                );
+
+                                            } else {
+
+                                                $result = DB::table('terceros_niveles')
+                                                    ->where('tercero_id', $padre_uno->id)
+                                                    ->where('nivel', 1)
+                                                    ->first();
+
+                                                if (count($result) > 0) {
+
+                                                    DB::table('terceros_niveles')
+                                                        ->where('tercero_id', $padre_uno->id)
+                                                        ->where('nivel', 1)
+                                                        ->update(['puntos' => $result->puntos + $puntos]);
+
+                                                } else {
+
+                                                    DB::table('terceros_niveles')->insertGetId(
+                                                        [
+                                                            'tercero_id' => $padre_uno->id,
+                                                            'nivel' =>  1,
+                                                            'puntos' =>  $puntos,
+                                                        ]
+                                                    );
+                                                }
+                                            }
+
+                                            if (count($padre_uno->networks) > 0) {
+
+                                                $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
+
+                                                if (count($padre_dos) > 0 && $padre_dos->state == true) {
+
+                                                    if (count($padre_dos->levels) == 0) {
+
+                                                        DB::table('terceros_niveles')->insertGetId(
+                                                            [
+                                                                'tercero_id' => $padre_dos->id,
+                                                                'nivel' =>  2,
+                                                                'puntos' =>  $puntos,
+                                                            ]
+                                                        );
+
+                                                    } else {
+
+                                                        $result = DB::table('terceros_niveles')
+                                                            ->where('tercero_id', $padre_dos->id)
+                                                            ->where('nivel', 2)
+                                                            ->first();
+
+                                                        if (count($result) > 0) {
+
+                                                            DB::table('terceros_niveles')
+                                                                ->where('tercero_id', $padre_dos->id)
+                                                                ->where('nivel', 2)
+                                                                ->update(['puntos' => $result->puntos + $puntos]);
+
+                                                        } else {
+
+                                                            DB::table('terceros_niveles')->insertGetId(
+                                                                [
+                                                                    'tercero_id' => $padre_dos->id,
+                                                                    'nivel' =>  2,
+                                                                    'puntos' =>  $puntos,
+                                                                ]
+                                                            );
+                                                        }
+                                                    }
+
+                                                    if (count($padre_dos->networks) > 0) {
+
+                                                        $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
+
+                                                        if (count($padre_tres) > 0 && $padre_tres->state == true) {
+
+                                                            if (count($padre_tres->levels) == 0) {
+
+                                                                DB::table('terceros_niveles')->insertGetId(
+                                                                    [
+                                                                        'tercero_id' => $padre_tres->id,
+                                                                        'nivel' =>  3,
+                                                                        'puntos' =>  $puntos,
+                                                                    ]
+                                                                );
+
+                                                            } else {
+
+                                                                $result = DB::table('terceros_niveles')
+                                                                    ->where('tercero_id', $padre_tres->id)
+                                                                    ->where('nivel', 3)
+                                                                    ->first();
+
+                                                                if (count($result) > 0) {
+
+                                                                    DB::table('terceros_niveles')
+                                                                        ->where('tercero_id', $padre_tres->id)
+                                                                        ->where('nivel', 3)
+                                                                        ->update(['puntos' => $result->puntos + $puntos]);
+
+                                                                } else {
+
+                                                                    DB::table('terceros_niveles')->insertGetId(
+                                                                        [
+                                                                            'tercero_id' => $padre_tres->id,
+                                                                            'nivel' =>  3,
+                                                                            'puntos' =>  $puntos,
+                                                                        ]
+                                                                    );
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
-                            }*/
+                            }
                         }
                     }
                 }
-
-
             }
 
             $h++;

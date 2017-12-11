@@ -468,6 +468,9 @@ class UsuariosController extends Controller {
 
         $city = Ciudad::find($request->city);
 
+        $good_id  = '';
+        $mercando_id = '';
+
         if (count($usuario) > 0) {
 
             $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
@@ -483,20 +486,6 @@ class UsuariosController extends Controller {
                                 'email' => strtolower($request->email),
                                 'verified_email' => true,
                                 'phone' => $p,
-                                'addresses' => [
-
-                                    [
-                                        'address1' => strtolower($request->address),
-                                        'city' => strtolower($city->nombre),
-                                        'province' => '',
-
-                                        "zip" => '',
-                                        'first_name' => strtolower($request['first-name']),
-                                        'last_name' => strtolower($request['last-name']),
-                                        'country' => 'CO'
-                                    ],
-
-                                ],
                                 "password" => $request->password,
                                 "password_confirmation" => $request->password_confirmation,
                                 'send_email_invite' => false,
@@ -508,24 +497,18 @@ class UsuariosController extends Controller {
 
                 $customer = json_decode($res->getBody(), true);
 
-                $search = Tercero::find($usuario->id);
+                $good_id = '' . $customer['customer']['id'];
 
-                $search->customer_id = $customer['customer']['id'];
-
-                $search->save();
 
             } catch (ClientException $e) {
 
                 $err = json_decode(($e->getResponse()->getBody()), true);
-
-                //return redirect()->back()->with(['err' => $err]);
 
                 foreach ($err['errors'] as $key => $value) {
 
                     echo $key . ' ' . $value[0] . "\n";
                 }
             }
-
 
             $api_url = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
             $client = new \GuzzleHttp\Client();
@@ -565,11 +548,7 @@ class UsuariosController extends Controller {
 
                 $customer = json_decode($res->getBody(), true);
 
-                $search = Tercero::find($usuario->id);
-
-                $search->customer_id = $customer['customer']['id'];
-
-                $search->save();
+                $mercando_id = '' . $customer['customer']['id'];
 
             } catch (ClientException $e) {
 
@@ -582,8 +561,15 @@ class UsuariosController extends Controller {
                     echo $key . ' ' . $value[0] . "\n";
                 }
             }
-
         }
+
+        DB::table('terceros_tiendas')->insertGetId(
+            [
+                'tercero_id' => $usuario->id,
+                'customer_id_good' =>  $good_id,
+                'customer_id_mercando' =>  $mercando_id,
+            ]
+        );
 
         $padre = Tercero::with('networks')->where('identificacion', '=', '' .$request->code. '')->first();
 
@@ -601,7 +587,6 @@ class UsuariosController extends Controller {
 
                     $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
                 }
-
 
             } else {
 
@@ -635,10 +620,8 @@ class UsuariosController extends Controller {
             return redirect()->route('admin.index');
         }*/
 
-
-        
-        //$data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
-        //$this->envio_registro($request->code, $data);
+        $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
+        $this->envio_registro($request->code, $data);
 
         return redirect()->route('login')->with(['message' => 'Felicitaciones, has sido registrado correctamente.']);
     }

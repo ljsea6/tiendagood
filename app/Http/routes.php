@@ -36,6 +36,8 @@ $api->version('v1', function ($api) {
     });
 });
 
+Route::get('/carga', ['uses' => 'AdminController@carga', 'as' => 'admin.index']);
+
 Route::get('orders/list/paid', ['uses' => 'OrdersController@contador', 'as' => 'admin.orders.list.paid']);
 
 
@@ -59,8 +61,11 @@ Route::post('orders/create', 'OrdersController@create');
 Route::post('orders/update', 'OrdersController@update');
 Route::post('orders/delete', 'OrdersController@delete');
 Route::post('orders/payment', 'OrdersController@payment');
-Route::post('products/create', 'ProductsController@create');
-Route::post('products/update', 'ProductsController@update');
+Route::post('products/good/create', 'ProductsController@create');
+Route::post('products/good/update', 'ProductsController@update');
+Route::post('products/mercando/create', 'ProductsController@create_mercando');
+Route::post('products/mercando/update', 'ProductsController@update_mercando');
+
 
 /*
  * Final web hooks
@@ -87,12 +92,16 @@ Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout
 // Password reset link
 Route::get('olvido-contraseña', ['as' => 'reset', 'uses' => 'Auth\PasswordController@getEmail']);
 Route::post('olvido-contraseña', ['as' => 'reset', 'uses' => 'Auth\PasswordController@postEmail']);
+Route::get('recuperar-contraseña/{token}', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@getReset']);
+Route::post('recuperar-contraseña', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@postReset']);
+
 //Registrar nuevo usuario
 Route::get('/', ['uses' => 'UsuariosController@getusuario', 'as' => 'admin.usuarios.registerGet']);
 route::post('register', ['uses' => 'UsuariosController@storenuevo', 'as' => 'admin.usuarios.registerPost']);
 Route::get('/envio_registro/{id}', 'UsuariosController@envio_registro');
 
 // Password reset
+
 Route::get('recuperar-contraseña/{token}', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@getReset']);
 Route::post('recuperar-contraseña', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@postReset']);
 Route::get('registro/payu', ['as' => 'PayuController@paybefore', 'as' => 'admin.payu.payu']);

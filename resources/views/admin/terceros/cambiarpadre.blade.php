@@ -3,6 +3,7 @@
 @section('titulo','Cambiar Padre')
 
 @section('content')
+<<<<<<< HEAD
 <div class="panel panel-default">
     <div class="panel-body">
         <div class="stepwizard">
@@ -105,5 +106,4 @@
                                     }
 
 </script>
-@endsection
 
