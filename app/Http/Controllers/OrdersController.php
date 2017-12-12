@@ -2528,7 +2528,7 @@ class OrdersController extends Controller
         }
     }
 
-    public function payment()
+    /*public function payment()
     {
         $input = file_get_contents('php://input');
         $order = json_decode($input, true);
@@ -2687,7 +2687,7 @@ class OrdersController extends Controller
 
             return response()->json(['status' => 'order not processed'], 200);
         }
-    }
+    }*/
 
     public function cancelled()
     {
