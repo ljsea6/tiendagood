@@ -16,7 +16,7 @@
                     </div>
                 @endif
                 <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                    <table data-order='[[ 0, "asc" ]]' id="terceros" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
+                    <table data-order='[[ 0, "asc" ]]' id="terceros_cambio" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -39,7 +39,7 @@
 <script>
     $(document).ready(function(){
         $(function() {
-            $('#terceros').DataTable({
+            $('#terceros_cambio').DataTable({
                //dom: 'Bfrtip',
                //buttons: [
                 //    'copy', 'csv', 'excel', 'pdf', 'print'

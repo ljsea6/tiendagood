@@ -40,6 +40,13 @@
                                 Cambiar Padre
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin.terceros.lista_documentos') }}" class="text-left">
+                                <i class="fa fa-edit">
+                                </i>
+                                Documentación
+                            </a>
+                        </li>
 
                     </ul>
                 </div>
