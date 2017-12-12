@@ -295,7 +295,8 @@ $('.submit').on('submit',function(event){
                     event.preventDefault() ;
                 }
 
-         
+ 
+         $('#enviar').prop('disabled', true);        
 });
 
 @if(Session::has('flash_msg'))
