@@ -23,6 +23,7 @@ trait OrderPaid
                         ->where('shop', 'good')
                         ->first();
                     if (count($variant) > 0) {
+                        $this->info('Sumando: ' . $item['quantity']);
                         DB::table('variants')
                             ->where('id', $item['variant_id'])
                             ->where('product_id', $item['product_id'])
@@ -36,7 +37,7 @@ trait OrderPaid
                 ->first();
             if (count($tercero) > 0) {
                 $update = Tercero::with('networks', 'levels', 'cliente')->find($tercero->id);
-                if (isset($update->cliente) && $update->cliente->id == 85) {
+                if ($update->cliente->id == 85) {
                     if (count($update->networks) > 0) {
                         $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
                         if (count($padre_uno) > 0 && $padre_uno->state == true) {
@@ -143,8 +144,7 @@ trait OrderPaid
                             }
                         }
                     }
-                }
-                if (isset($update->cliente) && $update->cliente->id != 85){
+                } else {
                     $update->mispuntos = $update->mispuntos + $order_create->points;
                     $update->save();
                     if (count($update->networks) > 0) {
