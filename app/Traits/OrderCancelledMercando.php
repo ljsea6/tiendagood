@@ -6,7 +6,7 @@
  * Time: 09:11 PM
  */
 
-namespace app\Traits;
+namespace App\Traits;
 
 use DB;
 use App\Order;
