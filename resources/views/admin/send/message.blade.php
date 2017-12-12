@@ -284,7 +284,7 @@ a {
                 <!-- Background Image with Text : BEGIN -->
                 <tr>
                     <!-- Bulletproof Background Images c/o https://backgrounds.cm -->
-                    <td background="https://cdn.shopify.com/s/files/1/2256/3751/files/fondo_0b97d532-7f39-4c21-a21a-992c783cf061.png?14667147426592629453"  valign="middle" style="text-align: center; background-position: center center !important; background-size: cover !important; box-shadow: 0px 2px 3px 3px rgba(0,0,0,.3">
+                    <td background="https://cdn.shopify.com/s/files/1/2256/3751/files/fondo_0b97d532-7f39-4c21-a21a-992c783cf061.png?14667147426592629453"  valign="middle" style="text-align: center; background-position: center center !important; background-size: cover !important; box-shadow: 0px 2px 3px 3px rgba(0,0,0,.3);">
                         <!--[if gte mso 9]>
                         <v:image xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="border: 0; display: inline-block; width: 680px; height: 180px;" src="http://placehold.it/680x180/222222/666666" />
                         <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="border: 0; display: inline-block; position: absolute; width: 680px; height: 180px;">

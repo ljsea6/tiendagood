@@ -74,6 +74,8 @@
 
     {!! Html::script('css/material.min.js') !!}
     {!! Html::script('css/material-dashboard.js') !!}
+    
+    {!! Html::script('js/validaciones.js') !!}
 
     {!! Html::script('js/dataTables.bootstrap.min.js') !!}
     
