@@ -133,6 +133,8 @@ class AdminController extends Controller {
             $results = Tercero::with('networks')
                 ->where('email', '=', "".strtolower($request['email'])."")   
                 ->orWhere(DB::raw("(nombres)"), '=', "".strtolower($request['email'])."")
+                ->orWhere(DB::raw("(apellidos)"), '=', "".strtolower($request['email'])."")
+                ->orWhere(DB::raw("concat(nombres, ' ', apellidos)"), '=', "".strtolower($request['email'])."")
                 ->where('state', true)
                 ->first();
 
