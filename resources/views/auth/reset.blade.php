@@ -241,7 +241,7 @@
                         <label for="user-id">Correo electronico</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input type="email" id="email" class="form-control campo-access" value="{{$email}}">
+                            <input readonly type="email" id="email" class="form-control campo-access" value="{{$email}}">
                         </div>
                     </div>
                     <div class="form-group">
