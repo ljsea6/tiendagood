@@ -456,7 +456,7 @@ class AdminController extends Controller {
                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                     ->where('tk.padre_id',  $request->id)
                     ->where('t.state',  true)
-                    ->select('t.id', 't.nombres', 't.mispuntos')
+                    ->select('t.id', 't.nombres', 't.apellidos','t.mispuntos')
                     ->get();
 
 
@@ -467,6 +467,9 @@ class AdminController extends Controller {
                     })
                     ->addColumn('nombres', function ($send) {
                         return '<div align=left>' . ucwords($send->nombres) . '</div>';
+                    })
+                    ->addColumn('apellidos', function ($send) {
+                        return '<div align=left>' . ucwords($send->apellidos) . '</div>';
                     })
                     ->addColumn('puntos', function ($send) {
                         return '<div align=left>' . number_format($send->mispuntos)  . '</div>';
@@ -500,7 +503,7 @@ class AdminController extends Controller {
                             ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                             ->where('tk.padre_id',  $n->id)
                             ->where('t.state',  true)
-                            ->select('t.id', 't.nombres', 't.mispuntos')
+                            ->select('t.id', 't.nombres', 't.apellidos', 't.mispuntos')
                             ->get();
 
                         if (count($dos) > 0) {
@@ -520,6 +523,9 @@ class AdminController extends Controller {
                     })
                     ->addColumn('nombres', function ($send) {
                         return '<div align=left>' . ucwords($send->nombres) . '</div>';
+                    })
+                    ->addColumn('apellidos', function ($send) {
+                        return '<div align=left>' . ucwords($send->apellidos) . '</div>';
                     })
                     ->addColumn('puntos', function ($send) {
                         return '<div align=left>' . number_format($send->mispuntos) . '</div>';
@@ -564,7 +570,7 @@ class AdminController extends Controller {
                                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                                     ->where('tk.padre_id',  $d->id)
                                     ->where('t.state',  true)
-                                    ->select('t.id', 't.nombres', 't.mispuntos')
+                                    ->select('t.id', 't.nombres', 't.apellidos', 't.mispuntos')
                                     ->get();
 
                                 if (count($tres) > 0) {
@@ -587,6 +593,9 @@ class AdminController extends Controller {
                     })
                     ->addColumn('nombres', function ($send) {
                         return '<div align=left>' . ucwords($send->nombres) . '</div>';
+                    })
+                    ->addColumn('apellidos', function ($send) {
+                        return '<div align=left>' . ucwords($send->apellidos) . '</div>';
                     })
                     ->addColumn('puntos', function ($send) {
                         return '<div align=left>' . number_format($send->mispuntos) . '</div>';
