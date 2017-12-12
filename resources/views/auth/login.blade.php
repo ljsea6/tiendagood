@@ -246,14 +246,14 @@
                         <label for="user-id">Usuario</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input readonly type="text" name="usuario" id="usuario" class="form-control campo-access" placeholder="Ingresa tu usuario">
+                            <input  type="text" name="usuario" id="usuario" class="form-control campo-access" placeholder="Ingresa tu usuario">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="pass-id">Contraseña</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-unlock-alt" aria-hidden="true"></i></span>
-                            <input readonly type="password" name="password" id="password" class="form-control  campo-access" placeholder="Ingresa tu password">
+                            <input  type="password" name="password" id="password" class="form-control  campo-access" placeholder="Ingresa tu password">
                         </div>
                     </div>
 
@@ -267,9 +267,10 @@
 
                     <div class="form-group text-center">
                         
-                        <input disabled="true" type="submit" name="submit" value="Ingresar" id="submit-form" class="btn submit-access col-xs-12">
+                        <input  type="submit" name="submit" value="Ingresar" id="submit-form" class="btn submit-access col-xs-12">
                         <br><br>
-                        <a href="/" style="color: white" class="btn submit-access col-xs-12">Registrarme</a>
+                        <a href="/" style="color: white" class="btn submit-access col-xs-12">Registrarme</a><br><br><br><br>
+                        <a href="/olvido-contraseña" style="color: white" class="btn submit-access col-xs-12">¿Olvidaste la contraseña?</a>
 
                     </div>
                 </div>
