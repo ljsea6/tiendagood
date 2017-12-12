@@ -130,11 +130,13 @@ class AdminController extends Controller {
     {
         if ($request->has('email') && $request->has('id')) {
 
+            $campo = trim(str_replace(" ","%",$request['email']));
+
             $results = Tercero::with('networks')
-                ->where('email', '=', "".strtolower($request['email'])."")   
-                ->orWhere(DB::raw("(nombres)"), '=', "".strtolower($request['email'])."")
-                ->orWhere(DB::raw("(apellidos)"), '=', "".strtolower($request['email'])."")
-                ->orWhere(DB::raw("concat(nombres, ' ', apellidos)"), '=', "".strtolower($request['email'])."")
+                ->where('email', '=', "".strtolower($campo)."")   
+                ->orWhere(DB::raw("(nombres)"), 'like', "%".strtolower($campo)."%")
+                ->orWhere(DB::raw("(apellidos)"), 'like', "%".strtolower($campo)."%")
+                //->orWhere(DB::raw("nombres like '%".strtolower($campo)."%' "))
                 ->where('state', true)
                 ->first();
 
