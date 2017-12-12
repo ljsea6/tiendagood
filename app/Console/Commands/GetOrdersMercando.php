@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 
-use app\Traits\OrderCancelledMercando;
+use App\Traits\OrderCancelledMercando;
 use Illuminate\Console\Command;
 use App\Order;
 use Carbon\Carbon;
