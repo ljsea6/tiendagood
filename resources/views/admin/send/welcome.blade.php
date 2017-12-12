@@ -1424,8 +1424,7 @@ body.outlook p {
                                     </tr>
                                     <tr>
                                       <th class="primary" style="background-color: #fd6a15; border-radius: 20px; box-shadow: 3px 3px 2px 1px rgba(0,0,0, .3); margin-top: 40px;">
-                                         <p style="margin: 0; font-family: 'Dosis', sans-serif !important; font-size: 23px; color: white; padding: 20px; text-align: center; "> Estás realizando un excelente trabajo, en este momento <span style="font-weight: 800;">tienes un miembro más en tu negocio, el cual se ha inscrito con tu código en el nivel: {{$nivel}}</span> <br> <br> 
-                                          <span style=" padding: 10px 20px; clear: both; background-color: white; color: #fd6a15; font-size: 2.5em; border-radius: 20px; margin-top: 10px; box-shadow: 3px 3px 2px 1px rgba(0,0,0, .3)"> 3 </span>
+                                         <p style="margin: 0; font-family: 'Dosis', sans-serif !important; font-size: 23px; color: white; padding: 20px; text-align: center; "> Estás realizando un excelente trabajo, en este momento <span style="font-weight: 800;">tienes un miembro más en tu negocio, el cual se ha inscrito con tu código en el nivel: {{$nivel}}</span> <br> <br>  
                                          </p>
                                          
                                       </th>
