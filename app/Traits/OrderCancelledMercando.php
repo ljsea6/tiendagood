@@ -65,7 +65,7 @@ trait OrderCancelledMercando
 
                         if (count($padre_uno) > 0 && $padre_uno->state == true) {
 
-                            $padre_uno->mispuntos = $padre_uno->mispuntos - $update_order->points;
+                            $padre_uno->mispuntos = (int)$padre_uno->mispuntos - (int)$update_order->points;
                             $padre_uno->save();
 
 
@@ -140,7 +140,7 @@ trait OrderCancelledMercando
 
                 } else {
 
-                    $update->mispuntos = $update->mispuntos - $update_order->points;
+                    $update->mispuntos = (int)$update->mispuntos - (int)$update_order->points;
                     $update->save();
 
                     if (count($update->networks) > 0) {
