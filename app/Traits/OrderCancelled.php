@@ -55,77 +55,80 @@ trait OrderCancelled
 
             $update = Tercero::with('networks', 'levels', 'cliente')->find($tercero->id);
 
-            if ($update->cliente->id == 85) {
+            if(isset($update->cliente)) {
 
-                if (count($update->networks) > 0) {
+                if ($update->cliente->id == 85) {
 
-                    $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
+                    if (count($update->networks) > 0) {
 
-                    if (count($padre_uno) > 0 && $padre_uno->state == true) {
+                        $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
 
-                        $padre_uno->mispuntos = $padre_uno->mispuntos - $update_order->points;
-                        $padre_uno->save();
+                        if (count($padre_uno) > 0 && $padre_uno->state == true) {
+
+                            $padre_uno->mispuntos = $padre_uno->mispuntos - $update_order->points;
+                            $padre_uno->save();
 
 
-                        if (count($padre_uno->networks) > 0) {
+                            if (count($padre_uno->networks) > 0) {
 
-                            $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
+                                $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
 
-                            if (count($padre_dos) > 0 && $padre_dos->state == true) {
+                                if (count($padre_dos) > 0 && $padre_dos->state == true) {
 
-                                $result = DB::table('terceros_niveles')
-                                    ->where('tercero_id', $padre_dos->id)
-                                    ->where('nivel', 1)
-                                    ->first();
-
-                                if (count($result) > 0) {
-
-                                    DB::table('terceros_niveles')
+                                    $result = DB::table('terceros_niveles')
                                         ->where('tercero_id', $padre_dos->id)
                                         ->where('nivel', 1)
-                                        ->update(['puntos' => $result->puntos - $update_order->points]);
+                                        ->first();
 
-                                }
+                                    if (count($result) > 0) {
 
-                                if (count($padre_dos->networks) > 0) {
+                                        DB::table('terceros_niveles')
+                                            ->where('tercero_id', $padre_dos->id)
+                                            ->where('nivel', 1)
+                                            ->update(['puntos' => $result->puntos - $update_order->points]);
 
-                                    $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
+                                    }
 
-                                    if (count($padre_tres) > 0 && $padre_tres->state == true) {
+                                    if (count($padre_dos->networks) > 0) {
 
-                                        $result = DB::table('terceros_niveles')
-                                            ->where('tercero_id', $padre_tres->id)
-                                            ->where('nivel', 2)
-                                            ->first();
+                                        $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
 
-                                        if (count($result) > 0) {
+                                        if (count($padre_tres) > 0 && $padre_tres->state == true) {
 
-                                            DB::table('terceros_niveles')
+                                            $result = DB::table('terceros_niveles')
                                                 ->where('tercero_id', $padre_tres->id)
                                                 ->where('nivel', 2)
-                                                ->update(['puntos' => $result->puntos - $update_order->points]);
+                                                ->first();
 
-                                        }
+                                            if (count($result) > 0) {
+
+                                                DB::table('terceros_niveles')
+                                                    ->where('tercero_id', $padre_tres->id)
+                                                    ->where('nivel', 2)
+                                                    ->update(['puntos' => $result->puntos - $update_order->points]);
+
+                                            }
 
 
-                                        if (count($padre_tres->networks) > 0) {
+                                            if (count($padre_tres->networks) > 0) {
 
-                                            $padre_cuatro = Tercero::with('networks', 'levels')->find($padre_tres->networks[0]['pivot']['padre_id']);
+                                                $padre_cuatro = Tercero::with('networks', 'levels')->find($padre_tres->networks[0]['pivot']['padre_id']);
 
-                                            if (count($padre_cuatro) > 0 && $padre_cuatro->state == true) {
+                                                if (count($padre_cuatro) > 0 && $padre_cuatro->state == true) {
 
-                                                $result = DB::table('terceros_niveles')
-                                                    ->where('tercero_id', $padre_cuatro->id)
-                                                    ->where('nivel', 3)
-                                                    ->first();
-
-                                                if (count($result) > 0) {
-
-                                                    DB::table('terceros_niveles')
+                                                    $result = DB::table('terceros_niveles')
                                                         ->where('tercero_id', $padre_cuatro->id)
                                                         ->where('nivel', 3)
-                                                        ->update(['puntos' => $result->puntos - $update_order->points]);
+                                                        ->first();
 
+                                                    if (count($result) > 0) {
+
+                                                        DB::table('terceros_niveles')
+                                                            ->where('tercero_id', $padre_cuatro->id)
+                                                            ->where('nivel', 3)
+                                                            ->update(['puntos' => $result->puntos - $update_order->points]);
+
+                                                    }
                                                 }
                                             }
                                         }
@@ -134,71 +137,71 @@ trait OrderCancelled
                             }
                         }
                     }
-                }
 
-            } else {
+                } else {
 
-                $update->mispuntos = $update->mispuntos - $update_order->points;
-                $update->save();
+                    $update->mispuntos = $update->mispuntos - $update_order->points;
+                    $update->save();
 
-                if (count($update->networks) > 0) {
+                    if (count($update->networks) > 0) {
 
-                    $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
+                        $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
 
-                    if (count($padre_uno) > 0 && $padre_uno->state == true) {
+                        if (count($padre_uno) > 0 && $padre_uno->state == true) {
 
 
-                        $result = DB::table('terceros_niveles')
-                            ->where('tercero_id', $padre_uno->id)
-                            ->where('nivel', 1)
-                            ->first();
-
-                        if (count($result) > 0) {
-
-                            DB::table('terceros_niveles')
+                            $result = DB::table('terceros_niveles')
                                 ->where('tercero_id', $padre_uno->id)
                                 ->where('nivel', 1)
-                                ->update(['puntos' => $result->puntos - $update_order->points]);
-                        }
+                                ->first();
 
-                        if (count($padre_uno->networks) > 0) {
+                            if (count($result) > 0) {
 
-                            $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
+                                DB::table('terceros_niveles')
+                                    ->where('tercero_id', $padre_uno->id)
+                                    ->where('nivel', 1)
+                                    ->update(['puntos' => $result->puntos - $update_order->points]);
+                            }
 
-                            if (count($padre_dos) > 0 && $padre_dos->state == true) {
+                            if (count($padre_uno->networks) > 0) {
 
-                                $result = DB::table('terceros_niveles')
-                                    ->where('tercero_id', $padre_dos->id)
-                                    ->where('nivel', 2)
-                                    ->first();
+                                $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
 
-                                if (count($result) > 0) {
+                                if (count($padre_dos) > 0 && $padre_dos->state == true) {
 
-                                    DB::table('terceros_niveles')
+                                    $result = DB::table('terceros_niveles')
                                         ->where('tercero_id', $padre_dos->id)
                                         ->where('nivel', 2)
-                                        ->update(['puntos' => $result->puntos - $update_order->points]);
+                                        ->first();
 
-                                }
+                                    if (count($result) > 0) {
 
-                                if (count($padre_dos->networks) > 0) {
+                                        DB::table('terceros_niveles')
+                                            ->where('tercero_id', $padre_dos->id)
+                                            ->where('nivel', 2)
+                                            ->update(['puntos' => $result->puntos - $update_order->points]);
 
-                                    $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
+                                    }
 
-                                    if (count($padre_tres) > 0 && $padre_tres->state == true) {
+                                    if (count($padre_dos->networks) > 0) {
 
-                                        $result = DB::table('terceros_niveles')
-                                            ->where('tercero_id', $padre_tres->id)
-                                            ->where('nivel', 3)
-                                            ->first();
+                                        $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
 
-                                        if (count($result) > 0) {
+                                        if (count($padre_tres) > 0 && $padre_tres->state == true) {
 
-                                            DB::table('terceros_niveles')
+                                            $result = DB::table('terceros_niveles')
                                                 ->where('tercero_id', $padre_tres->id)
                                                 ->where('nivel', 3)
-                                                ->update(['puntos' => $result->puntos - $update_order->points]);
+                                                ->first();
 
+                                            if (count($result) > 0) {
+
+                                                DB::table('terceros_niveles')
+                                                    ->where('tercero_id', $padre_tres->id)
+                                                    ->where('nivel', 3)
+                                                    ->update(['puntos' => $result->puntos - $update_order->points]);
+
+                                            }
                                         }
                                     }
                                 }

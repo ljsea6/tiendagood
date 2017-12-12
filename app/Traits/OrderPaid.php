@@ -18,6 +18,7 @@ trait OrderPaid
     public function OrderPaid($order, $order_create, $puntos)
     {
         if ($order['financial_status'] == "paid") {
+            
             if (isset($order['line_items']) && count($order['line_items']) > 0) {
                 foreach ($order['line_items'] as $item) {
                     $variant = Variant::where('id', $item['variant_id'])
@@ -47,7 +48,7 @@ trait OrderPaid
                         if (count($update->networks) > 0) {
                             $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
                             if (count($padre_uno) > 0 && $padre_uno->state == true) {
-                                $padre_uno->mispuntos = $padre_uno->mispuntos + $puntos;
+                                $padre_uno->mispuntos = $padre_uno->mispuntos + $order_create->points;
                                 $padre_uno->save();
                                 if (count($padre_uno->networks) > 0) {
                                     $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
@@ -57,7 +58,7 @@ trait OrderPaid
                                                 [
                                                     'tercero_id' => $padre_dos->id,
                                                     'nivel' =>  1,
-                                                    'puntos' =>  $puntos,
+                                                    'puntos' => $order_create->points,
                                                 ]
                                             );
                                         } else {
@@ -69,13 +70,13 @@ trait OrderPaid
                                                 DB::table('terceros_niveles')
                                                     ->where('tercero_id', $padre_dos->id)
                                                     ->where('nivel', 1)
-                                                    ->update(['puntos' => $result->puntos + $puntos]);
+                                                    ->update(['puntos' => $result->puntos + $order_create->points]);
                                             } else {
                                                 DB::table('terceros_niveles')->insertGetId(
                                                     [
                                                         'tercero_id' => $padre_dos->id,
                                                         'nivel' =>  1,
-                                                        'puntos' =>  $puntos,
+                                                        'puntos' => $order_create->points,
                                                     ]
                                                 );
                                             }
@@ -88,7 +89,7 @@ trait OrderPaid
                                                         [
                                                             'tercero_id' => $padre_tres->id,
                                                             'nivel' =>  2,
-                                                            'puntos' =>  $puntos,
+                                                            'puntos' => $order_create->points,
                                                         ]
                                                     );
                                                 } else {
@@ -100,13 +101,13 @@ trait OrderPaid
                                                         DB::table('terceros_niveles')
                                                             ->where('tercero_id', $padre_tres->id)
                                                             ->where('nivel', 2)
-                                                            ->update(['puntos' => $result->puntos + $puntos]);
+                                                            ->update(['puntos' => $result->puntos + $order_create->points]);
                                                     } else {
                                                         DB::table('terceros_niveles')->insertGetId(
                                                             [
                                                                 'tercero_id' => $padre_tres->id,
                                                                 'nivel' =>  2,
-                                                                'puntos' =>  $puntos,
+                                                                'puntos' => $order_create->points,
                                                             ]
                                                         );
                                                     }
@@ -119,7 +120,7 @@ trait OrderPaid
                                                                 [
                                                                     'tercero_id' => $padre_cuatro->id,
                                                                     'nivel' =>  3,
-                                                                    'puntos' =>  $puntos,
+                                                                    'puntos' => $order_create->points,
                                                                 ]
                                                             );
                                                         } else {
@@ -131,13 +132,13 @@ trait OrderPaid
                                                                 DB::table('terceros_niveles')
                                                                     ->where('tercero_id', $padre_cuatro->id)
                                                                     ->where('nivel', 3)
-                                                                    ->update(['puntos' => $result->puntos + $puntos]);
+                                                                    ->update(['puntos' => $result->puntos + $order_create->points]);
                                                             } else {
                                                                 DB::table('terceros_niveles')->insertGetId(
                                                                     [
                                                                         'tercero_id' => $padre_cuatro->id,
                                                                         'nivel' =>  3,
-                                                                        'puntos' =>  $puntos,
+                                                                        'puntos' => $order_create->points,
                                                                     ]
                                                                 );
                                                             }
@@ -168,7 +169,7 @@ trait OrderPaid
                                         [
                                             'tercero_id' => $padre_uno->id,
                                             'nivel' =>  1,
-                                            'puntos' =>  $puntos,
+                                            'puntos' => $order_create->points,
                                         ]
                                     );
                                 } else {
@@ -182,14 +183,14 @@ trait OrderPaid
                                         DB::table('terceros_niveles')
                                             ->where('tercero_id', $padre_uno->id)
                                             ->where('nivel', 1)
-                                            ->update(['puntos' => $result->puntos + $puntos]);
+                                            ->update(['puntos' => $result->puntos + $order_create->points]);
                                     } else {
 
                                         DB::table('terceros_niveles')->insertGetId(
                                             [
                                                 'tercero_id' => $padre_uno->id,
                                                 'nivel' =>  1,
-                                                'puntos' =>  $puntos,
+                                                'puntos' => $order_create->points,
                                             ]
                                         );
                                     }
@@ -207,7 +208,7 @@ trait OrderPaid
                                                 [
                                                     'tercero_id' => $padre_dos->id,
                                                     'nivel' =>  2,
-                                                    'puntos' =>  $puntos,
+                                                    'puntos' => $order_create->points,
                                                 ]
                                             );
 
@@ -222,13 +223,13 @@ trait OrderPaid
                                                 DB::table('terceros_niveles')
                                                     ->where('tercero_id', $padre_dos->id)
                                                     ->where('nivel', 2)
-                                                    ->update(['puntos' => $result->puntos + $puntos]);
+                                                    ->update(['puntos' => $result->puntos + $order_create->points]);
                                             } else {
                                                 DB::table('terceros_niveles')->insertGetId(
                                                     [
                                                         'tercero_id' => $padre_dos->id,
                                                         'nivel' =>  2,
-                                                        'puntos' =>  $puntos,
+                                                        'puntos' => $order_create->points,
                                                     ]
                                                 );
                                             }
@@ -246,7 +247,7 @@ trait OrderPaid
                                                         [
                                                             'tercero_id' => $padre_tres->id,
                                                             'nivel' =>  3,
-                                                            'puntos' =>  $puntos,
+                                                            'puntos' => $order_create->points,
                                                         ]
                                                     );
                                                 } else {
@@ -260,14 +261,14 @@ trait OrderPaid
                                                         DB::table('terceros_niveles')
                                                             ->where('tercero_id', $padre_tres->id)
                                                             ->where('nivel', 3)
-                                                            ->update(['puntos' => $result->puntos + $puntos]);
+                                                            ->update(['puntos' => $result->puntos + $order_create->points]);
 
                                                     } else {
                                                         DB::table('terceros_niveles')->insertGetId(
                                                             [
                                                                 'tercero_id' => $padre_tres->id,
                                                                 'nivel' =>  3,
-                                                                'puntos' =>  $puntos,
+                                                                'puntos' => $order_create->points,
                                                             ]
                                                         );
                                                     }
