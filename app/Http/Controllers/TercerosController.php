@@ -279,14 +279,71 @@ class TercerosController extends Controller {
 
     public function setData() {
         if (isset($_POST['id']) && isset($_POST['_token'])) {
+
+            $api_url_good = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+            $api_url_mercando = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+
             $model = Tercero::find($_POST['id']);
-            $model->email = $_POST['identificacion'];
+            $email_old = $model->email;
+            $model->identificacion = $_POST['identificacion'];
             $model->email = $_POST['email'];
             $model->tipo_cliente_id = $_POST['tipo_cliente_id'];
             if ($model->save()) {
+                $this->api_set_email($api_url_good, $email_old, $model->email);
+                $this->api_set_email($api_url_mercando, $email_old, $model->email);
+               
                 echo true;
             } else {
                 echo 'Hubo un error al actualizar los datos';
+            }
+        }
+    }
+
+    public function api_set_email($api, $email_old, $email) {
+
+        $client = new \GuzzleHttp\Client();
+
+        try {
+            $good = $client->request('GET', $api . '/admin/customers/search.json?query=email:' . $email_old);
+            $headers = $good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+            $x = explode('/', $headers[0]);
+            $diferencia = $x[1] - $x[0];
+            if ($diferencia < 20) {
+                usleep(10000000);
+            }
+
+            $results = json_decode($good->getBody(), true);
+            if (count($results['customers']) > 0) {
+
+                try {
+                    $res = $client->request('put', $api . '/admin/customers/' . $results['customers'][0]['id'] . '.json', array(
+                        'form_params' => array(
+                            'customer' => array(
+                                "email" => $email,
+                            )
+                        )
+                            )
+                    );
+
+                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+                    if ($diferencia < 20) {
+                        usleep(10000000);
+                    }
+                } catch (ClientException $e) {
+
+                    if ($e->hasResponse()) {
+
+                        return redirect()->back()->with(['err' => 'Se actualizó su email en el backoffice pero el usuario no existe en tiendagood']);
+                    }
+                }
+            }
+        } catch (ClientException $e) {
+
+            if ($e->hasResponse()) {
+
+                return redirect()->back()->with(['err' => 'Se actualizó su email en el backoffice pero el usuario no existe en tiendagood']);
             }
         }
     }
@@ -324,7 +381,7 @@ class TercerosController extends Controller {
                     echo 'Hubo un error al actualizar los datos';
                 }
             }
-        }else{
+        } else {
             
         }
     }
@@ -332,7 +389,7 @@ class TercerosController extends Controller {
     function editarDatos() {
         return view('admin.terceros.editardatos');
     }
-    
+
     function cambiarPadre() {
         return view('admin.terceros.cambiarpadre');
     }
