@@ -7,6 +7,10 @@
 
         {!! Html::style('css/material-dashboard.css?act=4') !!}
 
+<link href="https://fonts.googleapis.com/css?family=Bungee|Roboto+Slab:100,300,400,700" rel="stylesheet">
+
+
+
             <section class="invoice">
                 <div class="col-lg-12">
     
@@ -54,7 +58,8 @@
    </div>
 </div>
 <div class="col-lg-4 col-md-6 col-sm-6">
-    <h1 class="hidden-xs" style="text-transform: uppercase; color: gray; padding: 20px; font-size: 1.8em;">Bienvenidos a my good</h1>
+    <h1 class="hidden-xs" style="text-transform: uppercase; color: gray; padding: 20px; font-size: 1.8em;">Bienvenidos a my good <br> <br> <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> Fecha de corte 21 de diciembre</span></h1>
+
 </div>
 <div class="col-lg-12 col-md-12">
    <div class="card">
@@ -65,8 +70,8 @@
             <tbody>
                <tr onclick="link(1)">
                   <td>
-                     <div class="card-header" data-background-color="orange" style="width: 50px; height: 50px; margin-top: 10px; border-radius: 20px;">
-                        <i class="fa" style="font-size: 25px">1</i>
+                     <div class="card-header" data-background-color="orange" style="width: 80px; height: 80px; margin-top: 10px; border-radius: 50%; position: relative;">
+                        <i class="fa" style="font-size: 25px; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-family: 'Roboto Slab', serif; font-weight: 800;">1</i>
                      </div>
                   </td>
 
@@ -85,8 +90,8 @@
                </tr>
                <tr onclick="link(2)">
                   <td>
-                     <div class="card-header" data-background-color="orange" style="width: 50px; height: 50px; margin-top: 10px; border-radius: 20px;">
-                        <i class="fa">2</i>
+                     <div class="card-header" data-background-color="orange" style="width: 80px; height: 80px; margin-top: 10px; border-radius: 50%; position: relative;">
+                        <i class="fa" style="font-size: 25px; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-family: 'Roboto Slab', serif; font-weight: 800;">2</i>
                      </div>
                   </td>
                   <td>#{{$dos}} <span class="fa fa-user" aria-hidden="true"></span></td>
@@ -103,8 +108,8 @@
                </tr>
                <tr onclick="link(3)">
                   <td>
-                     <div class="card-header" data-background-color="orange" style="width: 50px; height: 50px; margin-top: 10px; border-radius: 20px;">
-                        <i class="fa">3</i>
+                     <div class="card-header" data-background-color="orange" style="width: 80px; height: 80px; margin-top: 10px; border-radius: 50%; position: relative;">
+                        <i class="fa" style="font-size: 25px; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-family: 'Roboto Slab', serif; font-weight: 800;">3</i>
                      </div>
                   </td>
                   <td>#{{$tres}} <span class="fa fa-user" aria-hidden="true"></span></td>

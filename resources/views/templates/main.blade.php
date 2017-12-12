@@ -30,6 +30,8 @@
     {!! Html::script('js/modernizr.min.js') !!}
     {!! Html::script('js/jquery.slimscroll.min.js') !!}
     {!! Html::script('js/jquery.animsition.min.js') !!}
+    
+    {!! Html::script('js/validaciones.js') !!}
     {!! Html::script('js/Jit/Examples/Extras/excanvas.js') !!}
     {!! Html::script('js/Jit/jit.js') !!}
     {!! Html::script('js/Jit/Examples/Spacetree/example1.js') !!}
