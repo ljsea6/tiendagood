@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width">
     <title>Bienvenido</title>
-     <link href="https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800" rel="stylesheet">
     <style>
       .wrapper {
   width: 100%; }
@@ -836,7 +836,7 @@ td,
 th,
 a {
   color: #0a0a0a;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: 'Dosis', sans-serif;
   font-weight: normal;
   padding: 0;
   margin: 0;
@@ -852,7 +852,7 @@ h5,
 h6 {
   color: inherit;
   word-wrap: normal;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: 'Dosis', sans-serif;
   font-weight: normal;
   margin-bottom: 10px;
   Margin-bottom: 10px; }
@@ -981,7 +981,7 @@ table.button {
     background: #2199e8;
     border: 2px solid #2199e8; }
     table.button table td a {
-      font-family: Helvetica, Arial, sans-serif;
+      font-family: 'Dosis', sans-serif;
       font-size: 16px;
       font-weight: bold;
       color: #fefefe;
@@ -1389,12 +1389,12 @@ body.outlook p {
 
   <body>
     <!-- <style> -->
-    <table class="body" data-made-with-foundation="" style=" background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/concrete_seamless.png?9056281280774010986); background-position: top left; ">
+    <table class="body" data-made-with-foundation="" style=" background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/concrete_seamless.png?9056281280774010986); background-position: top left; width: 100%;">
       <tr>
         <td class="float-center" align="center" valign="top">
           <center data-parsed="">
             <!-- move the above styles into your custom stylesheet -->
-            <table align="center" class="container float-center" style=" background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/background-2.jpg?4167178239788578953); background-size: cover; background-position: top; background-repeat: no-repeat; box-shadow: 0px 0px 2px 2px rgba(0,0,0,.3);">
+            <table align="center" class="container float-center" style="width: 580px; background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/background-2.jpg?4167178239788578953); background-size: cover; background-position: top; background-repeat: no-repeat; box-shadow: 0px 0px 2px 2px rgba(0,0,0,.3); margin: 0 auto; Margin: 0 auto; text-align: inherit;">
               <tbody>
                 <tr>
                   <td>
@@ -1424,7 +1424,7 @@ body.outlook p {
                                     </tr>
                                     <tr>
                                       <th class="primary" style="background-color: #fd6a15; border-radius: 20px; box-shadow: 3px 3px 2px 1px rgba(0,0,0, .3); margin-top: 40px;">
-                                         <p style="margin: 0; font-family: 'Dosis', sans-serif; font-size: 23px; color: white; padding: 20px; text-align: center; "> Estás realizando un excelente trabajo, en este momento <span style="font-weight: 800;">tienes un miembro más en tu negocio, el cual se ha inscrito con tu código en el nivel:</span> <br> <br> 
+                                         <p style="margin: 0; font-family: 'Dosis', sans-serif !important; font-size: 23px; color: white; padding: 20px; text-align: center; "> Estás realizando un excelente trabajo, en este momento <span style="font-weight: 800;">tienes un miembro más en tu negocio, el cual se ha inscrito con tu código en el nivel: {{$nivel}}</span> <br> <br> 
                                           <span style=" padding: 10px 20px; clear: both; background-color: white; color: #fd6a15; font-size: 2.5em; border-radius: 20px; margin-top: 10px; box-shadow: 3px 3px 2px 1px rgba(0,0,0, .3)"> 3 </span>
                                          </p>
                                          
@@ -1432,7 +1432,7 @@ body.outlook p {
                                     </tr>
                                      <tr>
                                       <th class="primary">
-                                         <p style="margin: 0; font-family: 'Dosis', sans-serif; font-size: 30px; color: white; padding: 20px; text-align: center; "> ¡ Recuerda que entre más personas invites a ser parte de tu negocio más puntos vas a ganar !
+                                         <p style="margin: 0; font-family: 'Dosis', sans-serif !important; font-size: 30px; color: white; padding: 20px; text-align: center; "> ¡ Recuerda que entre más personas invites a ser parte de tu negocio más puntos vas a ganar !
                                          
                                          </p>
                                          
@@ -1447,14 +1447,14 @@ body.outlook p {
                         </tr>
                       </tbody>
                     </table>
-                    <table class="row collapsed footer" style=" background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/footer.png?9056281280774010986); background-size: cover; background-position: top; background-repeat: no-repeat; padding: 20px 0;">
+                    <table class="row" style=" background: url(https://cdn.shopify.com/s/files/1/2256/3751/files/footer.png?9056281280774010986); background-size: cover; background-position: top; background-repeat: no-repeat; padding: 20px 0; width: 100%;">
                       <tbody>
                         <tr>
                           <th class="small-12 large-12 columns first last">
-                            <table>
+                            <table style="width: 100%">
                               <tr>
                                 <th>
-                                  <table class="spacer">
+                                  <table style="width: 100%">
                                     <tbody>
                                       <tr>
                                         <td height="16px" style="font-size:16px;line-height:16px;">&#xA0;</td>
@@ -1463,22 +1463,16 @@ body.outlook p {
                                   </table>
                                   <!--<p class="text-center">@copywrite nobody<br> <a href="#">hello@nocopywrite.com</a> | <a href="#">Manage Email Notifications</a> | <a href="#">Unsubscribe</a></p>-->
                                   <center data-parsed="">
-                                    <table align="center" class="menu float-center">
+                                    <table align="center" style="margin: 0 auto !important; float: none !important; text-align: center !important;">
                                       <tr>
-                                        <td>
+                                        <td style="text-align: center;">
                                           <table>
-                                            <tr>
-                                              <th class="menu-item float-center">
-                                                <a href="https://www.facebook.com/Good-1730606817248294/"><img src="https://cdn.shopify.com/s/files/1/2256/3751/files/facebook.png?6161415350792567381" alt="" style="width: 50px; height: auto"></a>
-                                              </th>
-                                              <th class="menu-item float-center">
-                                                <a href="http://bit.ly/2nQ5lza"><img src="https://cdn.shopify.com/s/files/1/2256/3751/files/youtube.png?6161415350792567381" alt="" style="width: 50px; height: auto"></a>
-                                              </th>
-                                              <th class="menu-item float-center">
-                                                <a href="https://www.instagram.com/goodcolombia/"><img src="https://cdn.shopify.com/s/files/1/2256/3751/files/instagram.png?6161415350792567381" alt="" style="width: 50px; height: auto"></a>
-                                              </th>
-                                             
+                                            <tr style="text-align: center; display: block; width: 100%;">
+                                                <a href="https://www.facebook.com/Good-1730606817248294/" style="width: 50px; height: auto; display: inline-block;"><img src="https://cdn.shopify.com/s/files/1/2256/3751/files/facebook.png?6161415350792567381" alt="" style="width: 50px; height: auto"></a>
                                             
+                                                <a href="http://bit.ly/2nQ5lza" style="width: 50px; height: auto; display: inline-block;"><img src="https://cdn.shopify.com/s/files/1/2256/3751/files/youtube.png?6161415350792567381" alt="" style="width: 50px; height: auto"></a>
+                                            
+                                                <a href="https://www.instagram.com/goodcolombia/" style="width: 50px; height: auto; display: inline-block;"><img src="https://cdn.shopify.com/s/files/1/2256/3751/files/instagram.png?6161415350792567381" alt="" style="width: 50px; height: auto"></a>
                                             </tr>
                                           </table>
                                         </td>

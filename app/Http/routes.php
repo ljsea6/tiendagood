@@ -295,6 +295,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::any('terceros/show/data', ['uses' => 'TercerosController@anyShow', 'as' => 'admin.terceros.anyshow']);
     Route::get('terceros/padre/cambiar', ['uses' => 'TercerosController@padreCambiar', 'as' => 'admin.terceros.padrecambiar']);
     Route::post('terceros/padre/tercero', ['uses' => 'TercerosController@padreTercero', 'as' => 'admin.terceros.padretercero']);
+    Route::get('terceros/documentos/lista', ['uses' => 'TercerosController@lista_documentos', 'as' => 'admin.terceros.lista_documentos']);
+    Route::get('terceros/documentos/descargar/{id}', ['uses' => 'TercerosController@descargar_documentos', 'as' => 'admin.terceros.descargar_documentos']);
 
 
     //productos
