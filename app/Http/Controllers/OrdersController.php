@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Traits\OrderCancelled;
-use app\Traits\OrderCancelledMercando;
+use App\Traits\OrderCancelledMercando;
 use App\Traits\OrderPaid;
 use App\Traits\OrderPaidMercando;
 use Illuminate\Http\Request;
