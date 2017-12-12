@@ -87,8 +87,9 @@ class PasswordController extends Controller {
             $usuario->save();
 
             if($usuario) {
-              $this->api_cambio_password($api_url_good, $email, $request->password);
-              $this->api_cambio_password($api_url_mercando, $email, $request->password);
+              $this->api_cambio_password($api_url_good, $email, $request->password, $remember_token);
+              $this->api_cambio_password($api_url_mercando, $email, $request->password, $remember_token);
+
             }
 
             //cambio de clave
@@ -100,7 +101,7 @@ class PasswordController extends Controller {
         }
     }
 
-    public function api_cambio_password($api, $email, $password) {
+    public function api_cambio_password($api, $email, $password, $datos) {
        
         $client = new \GuzzleHttp\Client();
 
@@ -141,6 +142,48 @@ class PasswordController extends Controller {
                               //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                           }
                       }
+                    }
+                    else{
+
+
+                       $res = $client->request('post', $api . '/admin/customers.json', array(
+                        'form_params' => array(
+                            'customer' => array(
+                                'first_name' => strtolower($datos['nombres']),
+                                'last_name' => strtolower($datos['apellidos']),
+                                'email' => strtolower($datos['email']),
+                                'verified_email' => true,
+                                'phone' => $datos['telefono'],
+                                "password" => $password,
+                                "password_confirmation" => $password,
+                                 'addresses' => [
+
+                                    [
+                                        'address1' => strtolower($datos['direccion']),
+                                        'city' => strtolower($datos['ciudad_id']),
+                                        'province' => '',
+
+                                        "zip" => '',
+                                        'first_name' => strtolower($datos['nombres']),
+                                        'last_name' => strtolower($datos['apellidos']),
+                                        'country' => 'CO'
+                                    ],
+
+                                ],                               
+                                'send_email_invite' => false,
+                                'send_email_welcome' => false
+                                )
+                              )
+                            )
+                          );
+
+                      $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                      $x = explode('/', $headers[0]);
+                      $diferencia = $x[1] - $x[0];
+                      if ($diferencia < 20) {
+                          usleep(10000000);
+                      }                      
+
                     }
 
                 } catch (ClientException $e) {
