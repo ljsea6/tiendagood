@@ -316,7 +316,6 @@ class VariantsController extends Controller
                                                 usleep(10000000);
                                             }
 
-
                                         } catch (ClientException $e) {
 
                                             if ($e->getResponse()) {
@@ -348,7 +347,6 @@ class VariantsController extends Controller
 
                                         usleep(10000000);
                                     }
-
 
                                 } catch (ClientException $e) {
 

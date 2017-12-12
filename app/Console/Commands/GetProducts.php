@@ -258,7 +258,6 @@ class GetProducts extends Command
                             }
                         }
                     }
-
                 }
 
                 if (count($response) > 0 ) {

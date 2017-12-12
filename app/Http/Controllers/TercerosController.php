@@ -23,7 +23,7 @@ class TercerosController extends Controller {
 
     public function anyData() {
 
-        $referidos = Tercero::select('id', 'identificacion', 'nombres', 'apellidos', 'email', 'nivel_1', 'nivel_2', 'nivel_3', 'mispuntos', 'puntos_vendidos')
+        $referidos = Tercero::select('id', 'identificacion', 'nombres', 'apellidos', 'email', 'nivel_1', 'nivel_2', 'nivel_3', 'mispuntos', 'puntos_vendidos','rut','cedula','cuenta')
                 ->where('state', true)
                 ->get();
 
@@ -47,6 +47,9 @@ class TercerosController extends Controller {
                         ->addColumn('apellidos', function ($send) {
                             return '<div align=left>' . $send['apellidos'] . '</div>';
                         })
+                        ->addColumn('email', function ($send) {
+                            return '<div align=left>' . $send['email'] . '</div>';
+                        })
                         ->addColumn('nivel_1', function ($send) {
                             return '<div align=left>' . number_format($send['nivel_1']) . '</div>';
                         })
@@ -66,6 +69,32 @@ class TercerosController extends Controller {
                             return '<div align=center><a href="' . route('admin.terceros.edit', $send['id']) . '"  class="btn btn-warning btn-xs">
                         Editar
                 </a></div>';
+                        })
+                        ->addColumn('rut', function ($send) {                
+                            if($send['rut'] == NULL){
+                                return 'Sin RUT';
+                            }
+                            else{
+                                $rut = $send['rut'];
+                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos',$send['rut']) .'"  class="btn btn-primary btn-xs"> RUT </a></div>';
+                            }                           
+                        })
+                        ->addColumn('CC', function ($send) {
+                            if($send['cedula'] == NULL){
+                                return 'Sin cédula o Documento';
+                            }
+                            else{ 
+                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos',$send['cedula']) .'"  class="btn btn-success btn-xs"> Cédula o Documento </a></div>';
+                            }                               
+                            
+                        })
+                        ->addColumn('BANK', function ($send) {
+                            if($send['cuenta'] == NULL){
+                                return 'Sin certificación bancaria';
+                            }
+                            else{ 
+                                 return '<div align=center><a href="' . route('admin.terceros.descargar_documentos',$send['cuenta']) .'"  class="btn btn-warning btn-xs"> Certificación bancaria  </a></div>';
+                            }                              
                         })
                         ->make(true);
     }
@@ -264,6 +293,31 @@ class TercerosController extends Controller {
 
     function padreCambiar() {
         return view('admin.terceros.cambiarpadre');
+    }    
+
+    public function lista_documentos() {
+        return view('admin.terceros.lista_documentos');
+    }   
+
+    public function descargar_documentos($nombre) {
+ 
+        if ($nombre != '0') {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename='.basename(public_path() . "/uploads/".$nombre));
+            header('Content-Transfer-Encoding: binary');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize(public_path() . "/uploads/".$nombre));
+            ob_clean();
+            flush();
+            readfile($nombre);
+            exit;  
+        } else {
+            return view('admin.terceros.lista_documentos');
+        }
+         
     }
 
 }
