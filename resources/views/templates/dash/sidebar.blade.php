@@ -17,7 +17,9 @@
                     <span class="nav-text">Buscar Referidos</span>
                 </a>
             </li>
-
+            
+            
+            @role('administrador')
             <li class="has-submenu">
                 <a href="#terceros" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-user">
@@ -40,10 +42,19 @@
                                 Cambiar Padre
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin.terceros.asignarorden') }}" class="text-left">
+                                <i class="fa fa-edit">
+                                </i>
+                                Asignar Orden de Venta
+                            </a>
+                        </li>
 
                     </ul>
                 </div>
             </li>
+            @endrole
+            
             
             <li class="has-submenu">
                 <a href="#send" data-toggle="collapse" aria-expanded="false" class="text-left">
