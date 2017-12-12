@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 
-use App\Traits\OrderCancelledMercando;
+use App\Traits\OrderPaidMercando;
 use Illuminate\Console\Command;
 use App\Order;
 use Carbon\Carbon;
@@ -18,7 +18,7 @@ use App\Variant;
 
 class GetOrdersMercando extends Command
 {
-    use OrderCancelledMercando;
+    use OrderPaidMercando;
     /**
      * The name and signature of the console command.
      *
@@ -150,7 +150,7 @@ class GetOrdersMercando extends Command
 
                         $order_create = Order::createOrder($order, 'mercando', $puntos, 'nacional');
 
-                        $this->OrderCancelledMercando($order, $order_create, $puntos);
+                        $this->OrderPaidMercando($order, $order_create, $puntos);
                     }
                 }
             }
