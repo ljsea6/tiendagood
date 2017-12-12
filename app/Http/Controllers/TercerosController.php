@@ -220,7 +220,7 @@ class TercerosController extends Controller {
         }
     }
 
-    public function padreTercero(Request $request) {
+    public function getData(Request $request) {
         if ($request->has('textbuscar') && $request->has('id')) {
             $data = ['error' => false];
             $tercero = Tercero::with('networks')
@@ -233,7 +233,7 @@ class TercerosController extends Controller {
                 $father = $networks[0]['pivot']['padre_id'];
 
                 $tipo_cliente = \App\Entities\Tipo::find($tercero->tipo_cliente_id)->nombre;
-                $data['tercero'] = ['id' => $tercero->id, 'nombre' => "$tercero->nombres $tercero->apellidos", 'identificacion' => $tercero->identificacion, 'email' => $tercero->email, 'tipo_cliente_id' => $tercero->tipo_cliente_id, 'error' => false];
+                $data['tercero'] = ['id' => $tercero->id, 'nombre' => "$tercero->nombres $tercero->apellidos", 'identificacion' => $tercero->identificacion, 'email' => $tercero->email, 'tipo_cliente' => $tipo_cliente, 'tipo_cliente_id' => $tercero->tipo_cliente_id, 'error' => false];
 
                 if (!is_null($father)) {
                     $padre = Tercero::find($father);
@@ -277,7 +277,7 @@ class TercerosController extends Controller {
         }
     }
 
-    public function editarDatos() {
+    public function setData() {
         if (isset($_POST['id']) && isset($_POST['_token'])) {
             $model = Tercero::find($_POST['id']);
             $model->email = $_POST['identificacion'];
@@ -291,7 +291,7 @@ class TercerosController extends Controller {
         }
     }
 
-    public function cambiarPadre(Request $request) {
+    public function setPadre(Request $request) {
         if ($request->has('tercero_id') && $request->has('padre_id')) {
 
             $tercero = Tercero::with('networks')
@@ -324,10 +324,16 @@ class TercerosController extends Controller {
                     echo 'Hubo un error al actualizar los datos';
                 }
             }
+        }else{
+            
         }
     }
 
-    function Consultar() {
+    function editarDatos() {
+        return view('admin.terceros.editardatos');
+    }
+    
+    function cambiarPadre() {
         return view('admin.terceros.cambiarpadre');
     }
 

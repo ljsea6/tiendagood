@@ -19,18 +19,25 @@
             </li>
 
             <li class="has-submenu">
-                <a href="#send" data-toggle="collapse" aria-expanded="false" class="text-left">
+                <a href="#terceros" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-user">
                     </i>
                     <span class="nav-text">Terceros</span>
                 </a>
-                <div class="sub-menu collapse secondary list-style-circle" id="send">
+                <div class="sub-menu collapse secondary list-style-circle" id="terceros">
                     <ul>
                         <li>
-                            <a href="{{ route('admin.terceros.cunsultar') }}" class="text-left">
+                            <a href="{{ route('admin.terceros.editardatos') }}" class="text-left">
                                 <i class="fa fa-edit">
                                 </i>
                                 Editar Datos
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.terceros.cambiarpadre') }}" class="text-left">
+                                <i class="fa fa-edit">
+                                </i>
+                                Cambiar Padre
                             </a>
                         </li>
 
