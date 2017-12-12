@@ -248,14 +248,14 @@
                         <label for="user-id">Escriba su nueva contraseña</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input type="password" name="password" id="password_1" class="form-control campo-access" placeholder="Ingresa tu correo electronico">
+                            <input type="password" name="password" id="password_1" class="form-control campo-access" placeholder="Escriba su nueva contraseña">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="user-id">Vuelva a escribir la contraseña</label>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>
-                            <input type="password"  id="password_2" class="form-control campo-access" placeholder="Ingresa tu correo electronico">
+                            <input type="password"  id="password_2" class="form-control campo-access" placeholder="Vuelva a escribir la contraseña">
                         </div>
                     </div>
                     <div class="form-group text-center">
