@@ -90,7 +90,7 @@ class ProductsController extends Controller
                 $diferencia = $x[1] - $x[0];
                 if ($diferencia < 20) {
 
-                    usleep(10000000);
+                    usleep(20000000);
                 }
 
                 $collections = json_decode($a->getBody(), true);
@@ -145,7 +145,7 @@ class ProductsController extends Controller
                                             $x = explode('/', $headers[0]);
                                             $diferencia = $x[1] - $x[0];
                                             if ($diferencia < 10) {
-                                                usleep(10000000);
+                                                usleep(20000000);
                                             }
 
                                         } catch (ClientException $e) {
@@ -177,7 +177,7 @@ class ProductsController extends Controller
                                     $diferencia = $x[1] - $x[0];
                                     if ($diferencia < 20) {
 
-                                        usleep(10000000);
+                                        usleep(20000000);
                                     }
 
 
@@ -237,7 +237,7 @@ class ProductsController extends Controller
                                             $x = explode('/', $headers[0]);
                                             $diferencia = $x[1] - $x[0];
                                             if ($diferencia < 10) {
-                                                usleep(10000000);
+                                                usleep(20000000);
                                             }
 
 
@@ -270,7 +270,7 @@ class ProductsController extends Controller
                                     $diferencia = $x[1] - $x[0];
                                     if ($diferencia < 20) {
 
-                                        usleep(10000000);
+                                        usleep(20000000);
                                     }
 
                                 } catch (ClientException $e) {
@@ -370,7 +370,7 @@ class ProductsController extends Controller
                                             $x = explode('/', $headers[0]);
                                             $diferencia = $x[1] - $x[0];
                                             if ($diferencia < 10) {
-                                                usleep(10000000);
+                                                usleep(20000000);
                                             }
 
                                         } catch (ClientException $e) {
@@ -402,7 +402,7 @@ class ProductsController extends Controller
                                     $diferencia = $x[1] - $x[0];
                                     if ($diferencia < 20) {
 
-                                        usleep(10000000);
+                                        usleep(20000000);
                                     }
 
 
@@ -473,7 +473,7 @@ class ProductsController extends Controller
                 $diferencia = $x[1] - $x[0];
                 if ($diferencia < 20) {
 
-                    usleep(10000000);
+                    usleep(20000000);
                 }
 
                 $collections = json_decode($a->getBody(), true);
@@ -528,7 +528,7 @@ class ProductsController extends Controller
                                             $x = explode('/', $headers[0]);
                                             $diferencia = $x[1] - $x[0];
                                             if ($diferencia < 10) {
-                                                usleep(10000000);
+                                                usleep(20000000);
                                             }
 
                                         } catch (ClientException $e) {
@@ -560,7 +560,7 @@ class ProductsController extends Controller
                                     $diferencia = $x[1] - $x[0];
                                     if ($diferencia < 20) {
 
-                                        usleep(10000000);
+                                        usleep(20000000);
                                     }
 
 
@@ -622,7 +622,7 @@ class ProductsController extends Controller
                                             $x = explode('/', $headers[0]);
                                             $diferencia = $x[1] - $x[0];
                                             if ($diferencia < 10) {
-                                                usleep(10000000);
+                                                usleep(20000000);
                                             }
 
 
@@ -655,7 +655,7 @@ class ProductsController extends Controller
                                     $diferencia = $x[1] - $x[0];
                                     if ($diferencia < 20) {
 
-                                        usleep(10000000);
+                                        usleep(20000000);
                                     }
 
                                 } catch (ClientException $e) {
@@ -755,7 +755,7 @@ class ProductsController extends Controller
                                         $x = explode('/', $headers[0]);
                                         $diferencia = $x[1] - $x[0];
                                         if ($diferencia < 10) {
-                                            usleep(10000000);
+                                            usleep(20000000);
                                         }
 
                                     } catch (ClientException $e) {
@@ -787,7 +787,7 @@ class ProductsController extends Controller
                                 $diferencia = $x[1] - $x[0];
                                 if ($diferencia < 20) {
 
-                                    usleep(10000000);
+                                    usleep(20000000);
                                 }
 
                             } catch (ClientException $e) {

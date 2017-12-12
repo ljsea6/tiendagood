@@ -44,10 +44,10 @@ class Order extends Model
         return $this->belongsTo(Network::class, 'network_id', 'id');
     }
 
-    public static function createOrder($order, $shop, $points = 0, $tipo_orden)
+    public static function createOrder($order, $shop, $points, $tipo_orden)
     {
         return Order::create([
-            'billing_address' => $order['billing_address'],
+            'billing_address' => (isset($order['billing_address'])) ? $order['billing_address'] : null,
             'browser_ip' => $order['browser_ip'],
             'buyer_accepts_marketing' => $order['buyer_accepts_marketing'],
             'cancel_reason' => $order['cancel_reason'],

@@ -1873,7 +1873,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->points;
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -1882,7 +1882,7 @@ class OrdersController extends Controller
 
                                 if (count($line_item) == 0) {
 
-                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
                                 }
 
                                 $product = Product::find($item['product_id']);
@@ -1945,7 +1945,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->percentage * $item['quantity'];
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2090,7 +2090,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->points;
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2099,7 +2099,7 @@ class OrdersController extends Controller
 
                                 if (count($line_item) == 0) {
 
-                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
                                 }
 
                                 $product = Product::find($item['product_id']);
@@ -2207,7 +2207,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->points;
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2216,7 +2216,7 @@ class OrdersController extends Controller
 
                                 if (count($line_item) == 0) {
 
-                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
                                 }
 
                                 $product = Product::find($item['product_id']);
@@ -2346,7 +2346,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->percentage * $item['quantity'];
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2476,7 +2476,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->points;
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2485,7 +2485,7 @@ class OrdersController extends Controller
 
                                 if (count($line_item) == 0) {
 
-                                    LineItems::createLineItem($item, $order, $v->points, 'good');
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
                                 }
 
                                 $product = Product::find($item['product_id']);
@@ -2527,6 +2527,7 @@ class OrdersController extends Controller
             return response()->json(['status' => 'order not processed'], 200);
         }
     }
+
     public function payment()
     {
         $input = file_get_contents('php://input');
@@ -2634,7 +2635,7 @@ class OrdersController extends Controller
 
                             if (count($v) > 0) {
 
-                                $puntos = $puntos + $v->percentage * $item['quantity'];
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
 
                                 $line_item = LineItems::where('line_item_id', $item['id'])
                                     ->where('shop', 'good')
@@ -2780,7 +2781,7 @@ class OrdersController extends Controller
 
                         if (count($v) > 0) {
 
-                            $puntos = $puntos + $v->points;
+                            $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
 
                             $line_item = LineItems::where('line_item_id', $item['id'])
                                 ->where('shop', 'good')
@@ -2789,7 +2790,7 @@ class OrdersController extends Controller
 
                             if (count($line_item) == 0) {
 
-                                LineItems::createLineItem($item, $order, $v->points, 'good');
+                                LineItems::createLineItem($item, $order, $v->percentage, 'good');
                             }
 
                             $product = Product::find($item['product_id']);

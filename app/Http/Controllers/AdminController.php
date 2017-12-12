@@ -299,6 +299,7 @@ class AdminController extends Controller {
     	$level_dos = 0;
     	$level_tres = 0;
 
+
                 $uno  = DB::table('terceros as t')
                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                     ->where('tk.padre_id',  currentUser()->id)
@@ -348,7 +349,7 @@ class AdminController extends Controller {
                     }
                 }
    		      
-        $send = Tercero::find(currentUser()->id);
+        $send =  Tercero::with('cliente', 'levels')->find(currentUser()->id);
         return view('admin.index')->with(['send' => $send, 'uno' => $level_uno, 'dos' => $level_dos, 'tres' => $level_tres]);
     }
 

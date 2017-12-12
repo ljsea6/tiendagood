@@ -160,13 +160,13 @@ class GetOrders extends Command
                                     ->where('shop', 'good')
                                     ->where('product_id', $item['product_id'])
                                     ->first();
-
-                                $this->info('Puntos: ' . $v->percentage . ' la variante: ' .  $v->title);
-
+                                
 
                                 if (count($v) > 0) {
 
-                                    $puntos = $puntos + $v->percentage * $item['quantity'];
+                                    $this->info('Puntos:' . $v->percentage . ' * ' . (int)$item['quantity'] . ' = ' . $v->percentage * (int)$item['quantity']);
+
+                                    $puntos = ((int)$puntos + ((int)$v->percentage * (int)$item['quantity']));
 
                                     $line_item = LineItems::where('line_item_id', $item['id'])
                                         ->where('shop', 'good')
