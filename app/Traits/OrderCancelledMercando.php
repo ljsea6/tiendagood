@@ -42,7 +42,7 @@ trait OrderCancelledMercando
                         ->where('id', $item['variant_id'])
                         ->where('product_id', $item['product_id'])
                         ->where('shop', 'mercando')
-                        ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
+                        ->update(['sold_units' => (int)$variant->sold_units - (int)$item['quantity']]);
                 }
             }
         }
