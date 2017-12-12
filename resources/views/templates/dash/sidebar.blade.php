@@ -20,6 +20,26 @@
 
             <li class="has-submenu">
                 <a href="#send" data-toggle="collapse" aria-expanded="false" class="text-left">
+                    <i class="fa fa-user">
+                    </i>
+                    <span class="nav-text">Terceros</span>
+                </a>
+                <div class="sub-menu collapse secondary list-style-circle" id="send">
+                    <ul>
+                        <li>
+                            <a href="{{ route('admin.terceros.cunsultar') }}" class="text-left">
+                                <i class="fa fa-edit">
+                                </i>
+                                Editar Datos
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+            
+            <li class="has-submenu">
+                <a href="#send" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-folder-open">
                     </i>
                     <span class="nav-text">Invitaciones</span>

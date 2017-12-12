@@ -23,7 +23,7 @@ class TercerosController extends Controller {
 
     public function anyData() {
 
-        $referidos = Tercero::select('id', 'identificacion', 'nombres', 'apellidos', 'email', 'nivel_1', 'nivel_2', 'nivel_3', 'mispuntos', 'puntos_vendidos','rut','cedula','cuenta')
+        $referidos = Tercero::select('id', 'identificacion', 'nombres', 'apellidos', 'email', 'nivel_1', 'nivel_2', 'nivel_3', 'mispuntos', 'puntos_vendidos', 'rut', 'cedula', 'cuenta')
                 ->where('state', true)
                 ->get();
 
@@ -70,31 +70,27 @@ class TercerosController extends Controller {
                         Editar
                 </a></div>';
                         })
-                        ->addColumn('rut', function ($send) {                
-                            if($send['rut'] == NULL){
+                        ->addColumn('rut', function ($send) {
+                            if ($send['rut'] == NULL) {
                                 return 'Sin RUT';
-                            }
-                            else{
+                            } else {
                                 $rut = $send['rut'];
-                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos',$send['rut']) .'"  class="btn btn-primary btn-xs"> RUT </a></div>';
-                            }                           
+                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos', $send['rut']) . '"  class="btn btn-primary btn-xs"> RUT </a></div>';
+                            }
                         })
                         ->addColumn('CC', function ($send) {
-                            if($send['cedula'] == NULL){
+                            if ($send['cedula'] == NULL) {
                                 return 'Sin cédula o Documento';
+                            } else {
+                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos', $send['cedula']) . '"  class="btn btn-success btn-xs"> Cédula o Documento </a></div>';
                             }
-                            else{ 
-                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos',$send['cedula']) .'"  class="btn btn-success btn-xs"> Cédula o Documento </a></div>';
-                            }                               
-                            
                         })
                         ->addColumn('BANK', function ($send) {
-                            if($send['cuenta'] == NULL){
+                            if ($send['cuenta'] == NULL) {
                                 return 'Sin certificación bancaria';
+                            } else {
+                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos', $send['cuenta']) . '"  class="btn btn-warning btn-xs"> Certificación bancaria  </a></div>';
                             }
-                            else{ 
-                                 return '<div align=center><a href="' . route('admin.terceros.descargar_documentos',$send['cuenta']) .'"  class="btn btn-warning btn-xs"> Certificación bancaria  </a></div>';
-                            }                              
                         })
                         ->make(true);
     }
@@ -264,7 +260,7 @@ class TercerosController extends Controller {
                 if ($padre->identificacion != $request['tercero']) {
                     if ($padre->tipo_cliente_id == 83) {
                         $tipo_padre = \App\Entities\Tipo::find($padre->tipo_cliente_id)->nombre;
-                        $data = ['nombre' => "$padre->nombres $padre->apellidos", 'email' => $padre->email, 'tipo_cliente' => $tipo_padre];
+                        $data = ['id' => $padre->id, 'nombre' => "$padre->nombres $padre->apellidos", 'email' => $padre->email, 'tipo_cliente' => $tipo_padre];
                         echo json_encode($data);
                     } else {
                         $data['error'] = '¡El usuario padre no es un vendedor!';
@@ -287,37 +283,76 @@ class TercerosController extends Controller {
             $model->email = $_POST['identificacion'];
             $model->email = $_POST['email'];
             $model->tipo_cliente_id = $_POST['tipo_cliente_id'];
-            print_r($model->save());
+            if ($model->save()) {
+                echo true;
+            } else {
+                echo 'Hubo un error al actualizar los datos';
+            }
         }
     }
 
-    function padreCambiar() {
+    public function cambiarPadre(Request $request) {
+        if ($request->has('tercero_id') && $request->has('padre_id')) {
+
+            $tercero = Tercero::with('networks')
+                    ->where('id', '=', $request['tercero_id'])
+                    ->first();
+
+            if (count($tercero) > 0) {
+                $networks = $tercero['networks'][0]['pivot'];
+                $update = DB::table('terceros_networks')->where('customer_id', $networks->customer_id)->update(['padre_id' => $request['padre_id']]);
+                if ($update) {
+                    DB::insert('insert into referidos_logs (tercero_id, old_father, new_father, created_at, updated_at) values (?, ?, ?, ?, ?)', [
+                        $networks->customer_id,
+                        $networks->padre_id,
+                        $request['padre_id'],
+                        Carbon::now(),
+                        Carbon::now(),
+                    ]);
+
+                    DB::table('terceros_logs')->insert([
+                        'tercero_id' => $networks->customer_id,
+                        'padre_id' => $request['padre_id'],
+                        'user' => currentUser()->nombre_completo,
+                        'ip' => $request->ip(),
+                        'browser' => $request->server('HTTP_USER_AGENT'),
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now()
+                    ]);
+                    echo true;
+                } else {
+                    echo 'Hubo un error al actualizar los datos';
+                }
+            }
+        }
+    }
+
+    function Consultar() {
         return view('admin.terceros.cambiarpadre');
-    }    
+    }
 
     public function lista_documentos() {
         return view('admin.terceros.lista_documentos');
-    }   
+    }
 
     public function descargar_documentos($nombre) {
- 
+
         if ($nombre != '0') {
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename='.basename(public_path() . "/uploads/".$nombre));
+            header('Content-Disposition: attachment; filename=' . basename(public_path() . "/uploads/" . $nombre));
             header('Content-Transfer-Encoding: binary');
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
-            header('Content-Length: ' . filesize(public_path() . "/uploads/".$nombre));
+            header('Content-Length: ' . filesize(public_path() . "/uploads/" . $nombre));
             ob_clean();
             flush();
             readfile($nombre);
-            exit;  
+            exit;
         } else {
             return view('admin.terceros.lista_documentos');
         }
-         
     }
 
 }

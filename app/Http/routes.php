@@ -293,10 +293,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('terceros/{id}/edit', ['uses' => 'TercerosController@edit', 'as' => 'admin.terceros.edit']);
     Route::put('terceros/{id}', ['uses' => 'TercerosController@update', 'as' => 'admin.terceros.update']);
     Route::any('terceros/show/data', ['uses' => 'TercerosController@anyShow', 'as' => 'admin.terceros.anyshow']);
-    Route::get('terceros/padre/cambiar', ['uses' => 'TercerosController@padreCambiar', 'as' => 'admin.terceros.padrecambiar']);
+    Route::get('terceros/consultar/datos', ['uses' => 'TercerosController@Consultar', 'as' => 'admin.terceros.cunsultar']);
     Route::post('terceros/padre/tercero', ['uses' => 'TercerosController@padreTercero', 'as' => 'admin.terceros.padretercero']);
     Route::post('terceros/editardatos', ['uses' => 'TercerosController@editarDatos', 'as' => 'admin.terceros.editardatos']);
     Route::post('terceros/getpadre', ['uses' => 'TercerosController@getPadre', 'as' => 'admin.terceros.getpadre']);
+    Route::post('terceros/cambiarpadre', ['uses' => 'TercerosController@cambiarPadre', 'as' => 'admin.terceros.cambiarpadre']);
     Route::get('terceros/documentos/lista', ['uses' => 'TercerosController@lista_documentos', 'as' => 'admin.terceros.lista_documentos']);
     Route::get('terceros/documentos/descargar/{id}', ['uses' => 'TercerosController@descargar_documentos', 'as' => 'admin.terceros.descargar_documentos']);
 
