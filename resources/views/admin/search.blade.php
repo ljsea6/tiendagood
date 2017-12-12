@@ -13,7 +13,6 @@
                     </div>
                 </div>
             </div>
-            <form action="{{route('admin.finder')}}" method="post" class="form-horizontal">
                 <div class="row setup-content" id="step-1">
                     <div class="col-xs-12">
                         <div class="col-md-12">
@@ -26,7 +25,7 @@
                                     <label for="email">Ingresar correo o el nombre de la persona</label>
                                     <input id="tercero" name="email" type="text" class="form-control" required>
                                 </div>
-                            </div>
+                            </div><br><br><br><br><br><br>
 
                          <table id="referidos" class="table table-bordered font-12">
                             <thead>
@@ -46,20 +45,6 @@
                         </div>
                     </div>
                 </div>
-            </form>
-
-
-            <span class="price">}
-                <span style="font-size: .5em;text-transform: uppercase; color: white; background: #f9a358; padding: 4px 10px; border-radius: 20px; position: relative;">
-
-                </span>
-            </span>
-            <span class="price">
-                <span style="font-size: .5em;text-transform: uppercase; color: white; background: #f9a358; padding: 4px 10px; border-radius: 20px; position: relative;">
-
-                </span>
-            </span>
-
         </div>
     </div>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">

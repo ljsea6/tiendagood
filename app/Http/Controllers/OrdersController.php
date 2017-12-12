@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Traits\OrderCancelled;
+use app\Traits\OrderCancelledMercando;
 use App\Traits\OrderPaid;
+use app\Traits\OrderPaidMercando;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -32,7 +34,7 @@ use GuzzleHttp\Exception\ClientException;
 
 class OrdersController extends Controller
 {
-    use OrderPaid, OrderCancelled;
+    use OrderPaid, OrderCancelled, OrderPaidMercando, OrderCancelledMercando;
 
     public function listpaid()
     {
@@ -1836,6 +1838,7 @@ class OrdersController extends Controller
         $calculated_hmac = base64_encode(hash_hmac('sha256', $data, 'afc86df7e11dcbe0ab414fa158ac1767', true));
         return hash_equals($hmac_header, $calculated_hmac);
     }
+
     public function create()
     {
 
@@ -2527,167 +2530,6 @@ class OrdersController extends Controller
             return response()->json(['status' => 'order not processed'], 200);
         }
     }
-
-    public function payment()
-    {
-        $input = file_get_contents('php://input');
-        $order = json_decode($input, true);
-        $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
-        $verified = $this->verify_webhook(collect($order), $hmac_header);
-        $resultapi = error_log('Webhook verified: ' . var_export($verified, true));
-
-        if ($resultapi == 'true') {
-
-            $result = Order::where('network_id', 1)
-                ->where('name', $order['name'])
-                ->where('order_id', $order['id'])
-                ->where('shop', 'good')
-                ->first();
-
-            if ($order['cancelled_at'] == null && $order['financial_status'] == 'paid') {
-
-                if (count($result) > 0) {
-
-                    // envio de notificaciones en esta parte. OJO
-
-                    if ($result->financial_status != "paid" && $result->cancelled_at == null) {
-
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        $this->OrderPaid($order, $update, $update->points);
-
-                        return response()->json(['status' => 'order has been processed'], 200);
-
-                    }
-
-                    if ($result->financial_status == "paid" && $result->cancelled_at == null) {
-
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        if ($update->cargue_puntos == null ) {
-
-                            $this->OrderPaid($order, $update, $update->points);
-                        }
-
-                        return response()->json(['status' => 'order processed'], 200);
-                    }
-
-                    if ($result->financial_status != "paid" && $result->cancelled_at != null) {
-
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        $this->OrderPaid($order, $update, $update->points);
-
-                        return response()->json(['status' => 'order has been processed'], 200);
-                    }
-
-                    if ($result->financial_status == "paid" && $result->cancelled_at != null) {
-
-                        $update = Order::find($result->id);
-                        $update->closed_at = $order['closed_at'];
-                        $update->cancelled_at = $order['cancelled_at'];
-                        $update->cancel_reason = $order['cancel_reason'];
-                        $update->financial_status = $order['financial_status'];
-                        $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->save();
-
-                        $this->OrderPaid($order, $update, $update->points);
-
-                        return response()->json(['status' => 'order has been processed'], 200);
-
-                    }
-
-                    return response()->json(['status' => 'order not processed'], 200);
-
-                } else {
-
-                    $tipo_orden = '';
-                    $i = 0;
-                    $n = 0;
-                    $puntos = 0;
-
-                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
-
-                        foreach ($order['line_items'] as $item) {
-
-                            $v = Variant::where('id', $item['variant_id'])
-                                ->where('shop', 'good')
-                                ->where('product_id', $item['product_id'])
-                                ->first();
-
-                            if (count($v) > 0) {
-
-                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
-
-                                $line_item = LineItems::where('line_item_id', $item['id'])
-                                    ->where('shop', 'good')
-                                    ->where('variant_id', $item['variant_id'])
-                                    ->first();
-
-                                if (count($line_item) == 0) {
-
-                                    LineItems::createLineItem($item, $order, $v->percentage, 'good');
-                                }
-
-                                $product = Product::find($item['product_id']);
-
-                                if ($product->tipo_producto == 'nacional') {
-                                    $n++;
-                                }
-                                if ($product->tipo_producto == 'internacional') {
-                                    $i++;
-                                }
-                            }
-                        }
-                    }
-
-                    if ($i > 0 && $n > 0) {
-                        $tipo_orden .= 'nacional/internacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-                    if ($i > 0 && $n == 0) {
-                        $tipo_orden .= 'internacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-                    if ($i == 0 && $n > 0) {
-                        $tipo_orden .= 'nacional';
-                        $i = 0;
-                        $n = 0;
-                    }
-
-                    $order_create = Order::createOrder($order, 'good', $puntos, $tipo_orden);
-
-                    $tipo_orden = '';
-
-                    $this->OrderPaid($order, $order_create, $puntos);
-
-                    return response()->json(['status' => 'The resource is created successfully'], 200);
-                }
-            }
-
-            return response()->json(['status' => 'order not processed'], 200);
-        }
-    }
     public function cancelled()
     {
         $input = file_get_contents('php://input');
@@ -2830,6 +2672,634 @@ class OrdersController extends Controller
         }
     }
 
+    public function create_mercando()
+    {
+
+        $input = file_get_contents('php://input');
+        $order = json_decode($input, true);
+        $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
+        $verified = $this->verify_webhook(collect($order), $hmac_header);
+        $resultapi = error_log('Webhook verified: ' . var_export($verified, true));
+
+        if ($resultapi == 'true') {
+
+            $response = Order::where('network_id', 1)
+                ->where('name', $order['name'])
+                ->where('order_id', $order['id'])
+                ->where('shop', 'mercando')
+                ->first();
+
+            if ($order['cancelled_at'] != null || $order['cancel_reason'] != null) {
+
+                if(count($response) == 0) {
+
+                    $puntos = 0;
+
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                        foreach ($order['line_items'] as $item) {
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'mercando')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'mercando')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'mercando');
+                                }
+                            }
+                        }
+                    }
+
+                    Order::createOrder($order, 'mercando', $puntos, 'nacional');
+
+                    return response()->json(['status' => 'order processed'], 200);
+
+                } else {
+
+                    return response()->json(['status' => 'order not processed'], 200);
+                }
+            }
+
+            if ($order['cancelled_at'] == null && $order['cancel_reason'] == null) {
+
+                if(count($response) == 0) {
+
+                    $puntos = 0;
+
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                        foreach ($order['line_items'] as $item) {
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'mercando')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'mercando')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'mercando');
+                                }
+                            }
+                        }
+                    }
+
+                    $order_create = Order::createOrder($order, 'mercando', $puntos, 'nacional');
+
+                    $this->OrderPaidMercando($order, $order_create, $puntos);
+
+                    return response()->json(['status' => 'order processed'], 200);
+
+                } else {
+
+                    return response()->json(['status' => 'order not processed'], 200);
+                }
+            }
+
+            return response()->json(['status' => 'order not processed'], 200);
+
+        } else {
+
+            return response()->json(['status' => 'Bad Request'], 400);
+        }
+    }
+    public function update_mercando()
+    {
+        $input = file_get_contents('php://input');
+        $order = json_decode($input, true);
+        $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
+        $verified = $this->verify_webhook(collect($order), $hmac_header);
+        $resultapi = error_log('Webhook verified: ' . var_export($verified, true));
+
+        if ($resultapi == 'true') {
+
+            $result = Order::where('network_id', 1)
+                ->where('name', $order['name'])
+                ->where('order_id', $order['id'])
+                ->where('shop', 'mercando')
+                ->first();
+
+            if ($order['cancelled_at'] != null && $order['financial_status'] != 'paid') {
+
+                if (count($result) > 0) {
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at == null) {
+
+                        $this->OrderCancelledMercando($result, $order);
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'The resource is created successfully'], 200);
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    return response()->json(['status' => 'order not processed'], 200);
+
+                } else {
+
+                    $puntos = 0;
+
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                        foreach ($order['line_items'] as $item) {
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'mercando')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'mercando')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'mercando');
+                                }
+
+
+                            }
+                        }
+                    }
+
+                    Order::createOrder($order, 'mercando', $puntos, 'nacional');
+
+                    return response()->json(['status' => 'The resource has been created successfully'], 200);
+                }
+            }
+
+            if ($order['cancelled_at'] != null && $order['financial_status'] == 'paid') {
+
+                if (count($result) > 0) {
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at == null) {
+
+                        $this->OrderCancelledMercando($result, $order);
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'The resource is created successfully'], 200);
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    return response()->json(['status' => 'order not processed'], 200);
+
+                } else {
+
+                    $puntos = 0;
+
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                        foreach ($order['line_items'] as $item) {
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'mercando')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'mercando')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'mercando');
+                                }
+
+                            }
+                        }
+                    }
+
+                    Order::createOrder($order, 'mercando', $puntos, 'nacional');
+
+                    return response()->json(['status' => 'The resource has been created successfully'], 200);
+                }
+            }
+
+            if ($order['cancelled_at'] == null && $order['financial_status'] == 'paid') {
+
+                if (count($result) > 0) {
+
+                    // envio de notificaciones en esta parte. OJO
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        $this->OrderPaidMercando($order, $update, $update->points);
+
+                        return response()->json(['status' => 'order has been processed'], 200);
+
+                    }
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        if ($update->cargue_puntos == null ) {
+
+                            $this->OrderPaidMercando($order, $update, $update->points);
+                        }
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        $this->OrderPaidMercando($order, $update, $update->points);
+
+                        return response()->json(['status' => 'order has been processed'], 200);
+                    }
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        $this->OrderPaidMercando($order, $update, $update->points);
+
+                        return response()->json(['status' => 'order has been processed'], 200);
+
+                    }
+
+                    return response()->json(['status' => 'order not processed'], 200);
+
+                } else {
+
+                    $puntos = 0;
+
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                        foreach ($order['line_items'] as $item) {
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'mercando')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'mercando')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'mercando');
+                                }
+                            }
+                        }
+                    }
+
+                    $order_create = Order::createOrder($order, 'mercando', $puntos, 'nacional');
+
+                    $this->OrderPaidMercando($order, $order_create, $puntos);
+
+                    return response()->json(['status' => 'The resource has been created successfully'], 200);
+                }
+            }
+
+            if ($order['cancelled_at'] == null && $order['financial_status'] != 'paid') {
+
+                if (count($result) > 0) {
+
+                    // envio de notificaciones en esta parte. OJO
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        $this->OrderCancelledMercando($result, $order);
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at == null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    if ($result->financial_status == "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'The resource is created successfully'], 200);
+                    }
+
+                    if ($result->financial_status != "paid" && $result->cancelled_at != null) {
+
+                        $update = Order::find($result->id);
+                        $update->closed_at = $order['closed_at'];
+                        $update->cancelled_at = $order['cancelled_at'];
+                        $update->cancel_reason = $order['cancel_reason'];
+                        $update->financial_status = $order['financial_status'];
+                        $update->updated_at = Carbon::parse($order['updated_at']);
+                        $update->save();
+
+                        return response()->json(['status' => 'order processed'], 200);
+                    }
+
+                    return response()->json(['status' => 'order not processed'], 200);
+
+                } else {
+
+                    $puntos = 0;
+
+                    if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                        foreach ($order['line_items'] as $item) {
+
+                            $v = Variant::where('id', $item['variant_id'])
+                                ->where('shop', 'mercando')
+                                ->where('product_id', $item['product_id'])
+                                ->first();
+
+                            if (count($v) > 0) {
+
+                                $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
+
+                                $line_item = LineItems::where('line_item_id', $item['id'])
+                                    ->where('shop', 'mercando')
+                                    ->where('variant_id', $item['variant_id'])
+                                    ->first();
+
+                                if (count($line_item) == 0) {
+
+                                    LineItems::createLineItem($item, $order, $v->percentage, 'mercando');
+                                }
+
+                            }
+                        }
+                    }
+
+                    Order::createOrder($order, 'mercando', $puntos, 'nacional');
+
+                    return response()->json(['status' => 'The resource has been created successfully'], 200);
+                }
+            }
+
+            return response()->json(['status' => 'order not processed'], 200);
+        }
+    }
+    public function cancelled_mercando()
+    {
+        $input = file_get_contents('php://input');
+        $order = json_decode($input, true);
+        $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
+        $verified = $this->verify_webhook(collect($order), $hmac_header);
+        $resultapi = error_log('Webhook verified: ' . var_export($verified, true));
+
+        if ($resultapi == 'true') {
+
+            $result = Order::where('network_id', 1)
+                ->where('name', $order['name'])
+                ->where('order_id', $order['id'])
+                ->where('shop', 'mercando')
+                ->first();
+
+            if (count($result) > 0) {
+
+                if ($result->financial_status == "paid" && $result->cancelled_at == null) {
+
+                    $update = Order::find($result->id);
+                    $update->closed_at = $order['closed_at'];
+                    $update->cancelled_at = $order['cancelled_at'];
+                    $update->cancel_reason = $order['cancel_reason'];
+                    $update->financial_status = $order['financial_status'];
+                    $update->updated_at = Carbon::parse($order['updated_at']);
+                    $update->save();
+
+                    $this->OrderCancelledMercando($result, $order);
+
+                    return response()->json(['status' => 'order processed'], 200);
+                }
+
+                if ($result->financial_status != "paid" && $result->cancelled_at == null) {
+
+                    $update = Order::find($result->id);
+                    $update->closed_at = $order['closed_at'];
+                    $update->cancelled_at = $order['cancelled_at'];
+                    $update->cancel_reason = $order['cancel_reason'];
+                    $update->financial_status = $order['financial_status'];
+                    $update->updated_at = Carbon::parse($order['updated_at']);
+                    $update->save();
+
+                    return response()->json(['status' => 'order processed'], 200);
+                }
+
+                if ($result->financial_status == "paid" && $result->cancelled_at != null) {
+
+                    $update = Order::find($result->id);
+                    $update->closed_at = $order['closed_at'];
+                    $update->cancelled_at = $order['cancelled_at'];
+                    $update->cancel_reason = $order['cancel_reason'];
+                    $update->financial_status = $order['financial_status'];
+                    $update->updated_at = Carbon::parse($order['updated_at']);
+                    $update->save();
+
+                    return response()->json(['status' => 'The resource is created successfully'], 200);
+                }
+
+                if ($result->financial_status != "paid" && $result->cancelled_at != null) {
+
+                    $update = Order::find($result->id);
+                    $update->closed_at = $order['closed_at'];
+                    $update->cancelled_at = $order['cancelled_at'];
+                    $update->cancel_reason = $order['cancel_reason'];
+                    $update->financial_status = $order['financial_status'];
+                    $update->updated_at = Carbon::parse($order['updated_at']);
+                    $update->save();
+
+                    return response()->json(['status' => 'order processed'], 200);
+                }
+
+                return response()->json(['status' => 'order not processed'], 200);
+
+            } else {
+
+                $puntos = 0;
+
+                if (isset($order['line_items']) && count($order['line_items']) > 0) {
+
+                    foreach ($order['line_items'] as $item) {
+
+                        $v = Variant::where('id', $item['variant_id'])
+                            ->where('shop', 'mercando')
+                            ->where('product_id', $item['product_id'])
+                            ->first();
+
+                        if (count($v) > 0) {
+
+                            $puntos = $puntos + (int)$v->percentage * (int)$item['quantity'];
+
+                            $line_item = LineItems::where('line_item_id', $item['id'])
+                                ->where('shop', 'mercando')
+                                ->where('variant_id', $item['variant_id'])
+                                ->first();
+
+                            if (count($line_item) == 0) {
+
+                                LineItems::createLineItem($item, $order, $v->percentage, 'mercando');
+                            }
+
+                        }
+                    }
+                }
+
+                Order::createOrder($order, 'mercando', $puntos, 'nacional');
+
+                return response()->json(['status' => 'The resource has been created successfully'], 200);
+            }
+
+        }
+    }
 
     public function contador()
     {

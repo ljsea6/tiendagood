@@ -25,6 +25,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nombres</th>
+                                <th>Apellidos</th>
                                 <th>Puntos</th>
                             </tr>
                             </thead>
@@ -53,6 +54,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nombres</th>
+                                <th>Apellidos</th>
                                 <th>Puntos</th>
                             </tr>
                             </thead>
@@ -81,6 +83,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nombres</th>
+                                <th>Apellidos</th>
                                 <th>Puntos</th>
                             </tr>
                             </thead>
@@ -117,6 +120,7 @@
                    columns: [
                         { data: 'id', name: 'id', orderable: true, searchable: false },
                         { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
+                        { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true  },
                         { data: 'puntos', name: 'puntos', orderable: true }
                     ],
                     language: {
@@ -143,6 +147,7 @@
                 columns: [
                     { data: 'id', name: 'id', orderable: true, searchable: false },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
+                    { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true  },
                     { data: 'puntos', name: 'puntos', orderable: true }
                 ],
                 language: {
@@ -169,6 +174,7 @@
                 columns: [
                     { data: 'id', name: 'id', orderable: true, searchable: false },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
+                    { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true  },
                     { data: 'puntos', name: 'puntos', orderable: true }
                 ],
                 language: {

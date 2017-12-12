@@ -3,8 +3,9 @@
  * Created by PhpStorm.
  * User: desarrollo
  * Date: 11/12/17
- * Time: 10:35 AM
+ * Time: 09:09 PM
  */
+
 namespace App\Traits;
 
 use DB;
@@ -13,23 +14,23 @@ use App\Variant;
 use Carbon\Carbon;
 use App\Entities\Tercero;
 
-trait OrderPaid
+trait OrderPaidMercando
 {
-    public function OrderPaid($order, $order_create, $puntos)
+    public function OrderPaidMercando($order, $order_create, $puntos)
     {
         if ($order['financial_status'] == "paid") {
-            
+
             if (isset($order['line_items']) && count($order['line_items']) > 0) {
                 foreach ($order['line_items'] as $item) {
                     $variant = Variant::where('id', $item['variant_id'])
                         ->where('product_id', $item['product_id'])
-                        ->where('shop', 'good')
+                        ->where('shop', 'mercando')
                         ->first();
                     if (count($variant) > 0) {
                         DB::table('variants')
                             ->where('id', $item['variant_id'])
                             ->where('product_id', $item['product_id'])
-                            ->where('shop', 'good')
+                            ->where('shop', 'mercando')
                             ->update(['sold_units' => $variant->sold_units + $item['quantity']]);
                     }
                 }

@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: desarrollo
  * Date: 11/12/17
- * Time: 11:06 AM
+ * Time: 09:11 PM
  */
 
 namespace App\Traits;
@@ -14,9 +14,9 @@ use App\Variant;
 use Carbon\Carbon;
 use App\Entities\Tercero;
 
-trait OrderCancelled
+trait OrderCancelledMercando
 {
-    public function OrderCancelled($result, $order)
+    public function OrderCancelledMercando($result, $order)
     {
         $update_order = Order::find($result->id);
         $update_order->closed_at = $order['closed_at'];
@@ -33,7 +33,7 @@ trait OrderCancelled
 
                 $variant = Variant::where('id', $item['variant_id'])
                     ->where('product_id', $item['product_id'])
-                    ->where('shop', 'good')
+                    ->where('shop', 'mercando')
                     ->first();
 
                 if (count($variant) > 0) {
@@ -41,7 +41,7 @@ trait OrderCancelled
                     DB::table('variants')
                         ->where('id', $item['variant_id'])
                         ->where('product_id', $item['product_id'])
-                        ->where('shop', 'good')
+                        ->where('shop', 'mercando')
                         ->update(['sold_units' => $variant->sold_units - $item['quantity']]);
                 }
             }

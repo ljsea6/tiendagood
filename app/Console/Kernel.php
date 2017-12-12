@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\GetOrdersMercando;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -17,6 +18,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\SubirBaseEnvios::class,
         \App\Console\Commands\GetProducts::class,
         \App\Console\Commands\GetOrders::class,
+        \App\Console\Commands\GetOrdersMercando::class,
         \App\Console\Commands\GetCustomers::class,
         \App\Console\Commands\MercadoPago::class,
         \App\Console\Commands\Metafields::class,
@@ -49,6 +51,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('get:orders')
                  ->twiceDaily(14, 23);
+
+        $schedule->command('get:orders-mercando')
+            ->twiceDaily(14, 23);
 
         $schedule->command('get:update-points')->dailyAt('01:30');
 

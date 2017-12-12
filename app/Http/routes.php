@@ -62,7 +62,12 @@ Route::post('customers/create', 'CustomersController@create');
 Route::post('orders/good/create', 'OrdersController@create');
 Route::post('orders/good/update', 'OrdersController@update');
 Route::post('orders/good/cancelled', 'OrdersController@cancelled');
-Route::post('orders/good/payment', 'OrdersController@payment');
+
+Route::post('orders/mercando/create', 'OrdersController@create_mercando');
+Route::post('orders/mercando/update', 'OrdersController@update_mercando');
+Route::post('orders/mercando/cancelled', 'OrdersController@cancelled_mercando');
+
+
 Route::post('products/good/create', 'ProductsController@create');
 Route::post('products/good/update', 'ProductsController@update');
 Route::post('products/mercando/create', 'ProductsController@create_mercando');
