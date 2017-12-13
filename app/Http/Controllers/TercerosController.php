@@ -63,7 +63,7 @@ class TercerosController extends Controller {
                                 return 'Sin RUT';
                             } else {
                                 $rut = $send['rut'];
-                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos', $send['rut']) . '"  class="btn btn-primary btn-xs"> RUT </a></div>';
+                                return '<div align=center><a href="' . $send['rut']. '"  class="btn btn-primary btn-xs"> RUT </a></div>';
                             }
                         })
                         ->addColumn('CC', function ($send) {
@@ -389,7 +389,7 @@ class TercerosController extends Controller {
     public function descargar_documentos($nombre) {
         if ($nombre != '0') {
             //$download = public_path().'/uploads/' . $nombre.'';
-            $download = public_path('/uploads/' . $nombre.'');
+            $download = public_path('/uploads' . $nombre.'');
             return response()->download($download);
         } else {
             return view('admin.terceros.lista_documentos');
