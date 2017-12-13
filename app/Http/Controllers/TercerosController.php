@@ -389,18 +389,8 @@ class TercerosController extends Controller {
     public function descargar_documentos($nombre) {
 
         if ($nombre != '0') {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename=' . basename(public_path() . "/uploads/" . $nombre));
-            header('Content-Transfer-Encoding: binary');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize(public_path() . "/uploads/" . $nombre));
-            ob_clean();
-            flush();
-            readfile($nombre);
-            exit;
+            $download = public_path().'/uploads/' . $nombre.'';
+            return response()->download($download);
         } else {
             return view('admin.terceros.lista_documentos');
         }
