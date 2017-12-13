@@ -45,7 +45,7 @@
       </div>
       <div class="card-content">
          <p class="category">Estos son tus puntos Vendidos</p>
-         <h3 class="title">0
+         <h3 class="title">{{ number_format($points_level_1 + $points_level_2 + $points_level_3) }}
             <small>Pts</small>
          </h3>
       </div>
