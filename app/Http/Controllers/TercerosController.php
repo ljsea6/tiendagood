@@ -49,7 +49,7 @@ class TercerosController extends Controller {
                         })
                         ->addColumn('email', function ($send) {
                             return '<div align=left>' . $send['email'] . '</div>';
-                        }) 
+                        })
                         ->addColumn('mispuntos', function ($send) {
                             return '<div align=left>' . number_format($send['mispuntos']) . '</div>';
                         })
@@ -221,7 +221,15 @@ class TercerosController extends Controller {
                 $father = $networks[0]['pivot']['padre_id'];
 
                 $tipo_cliente = \App\Entities\Tipo::find($tercero->tipo_cliente_id)->nombre;
-                $data['tercero'] = ['id' => $tercero->id, 'nombre' => "$tercero->nombres $tercero->apellidos", 'identificacion' => $tercero->identificacion, 'email' => $tercero->email, 'tipo_cliente' => $tipo_cliente, 'tipo_cliente_id' => $tercero->tipo_cliente_id, 'error' => false];
+                $data['tercero'] = ['id' => $tercero->id,
+                    'nombre' => "$tercero->nombres $tercero->apellidos",
+                    'identificacion' => $tercero->identificacion,
+                    'direccion' => $tercero->direccion,
+                    'telefono' => $tercero->telefono,
+                    'email' => $tercero->email,
+                    'tipo_cliente' => $tipo_cliente,
+                    'tipo_cliente_id' => $tercero->tipo_cliente_id,
+                    'error' => false];
 
                 if (!is_null($father)) {
                     $padre = Tercero::find($father);
@@ -275,11 +283,13 @@ class TercerosController extends Controller {
             $email_old = $model->email;
             $model->identificacion = $_POST['identificacion'];
             $model->email = $_POST['email'];
+            $model->direccion = $_POST['direccion'];
+            $model->telefono = $_POST['telefono'];
             $model->tipo_cliente_id = $_POST['tipo_cliente_id'];
             if ($model->save()) {
                 $this->api_set_email($api_url_good, $email_old, $model->email);
                 $this->api_set_email($api_url_mercando, $email_old, $model->email);
-               
+
                 echo true;
             } else {
                 echo 'Hubo un error al actualizar los datos';
@@ -380,6 +390,44 @@ class TercerosController extends Controller {
 
     public function cambiarPadre() {
         return view('admin.terceros.cambiarpadre');
+    }
+
+    function asignarOrden() {
+        return view('admin.terceros.asignarorden');
+    }
+
+    public function getOrden(Request $request) {
+        if ($request->has('no_orden')) {
+            $data = ['error' => false];
+            $orden = DB::table('orders')
+                    ->where('order_number', $request['no_orden'])
+                    ->first();
+            if ($orden != NULL) {
+                $data = ['id' => $orden->id, 'tienda' => $orden->shop, 'estado' => $orden->financial_status];
+                echo json_encode($data);
+            } else {
+                $data['error'] = '¡No se encuentra la orden de venta!';
+                echo json_encode($data);
+            }
+        }
+    }
+
+    public function setOrden(Request $request) {
+        if ($request->has('tercero_id') && $request->has('orden_id')) {
+            $tercero = DB::table('terceros')
+                    ->where('id', $request['tercero_id'])
+                    ->first();
+            if ($tercero != NULL) {
+                $update = DB::table('orders')->where('id', $request['orden_id'])->update(['email' => $tercero->email]);
+                if ($update) {
+                    echo true;
+                } else {
+                    echo 'Hubo un error al actualizar los datos';
+                }
+            } else {
+                echo 'Hubo un error al encontrar el tercero';
+            }
+        }
     }
 
     public function lista_documentos() {
