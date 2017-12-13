@@ -306,7 +306,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('terceros/setpadre', ['uses' => 'TercerosController@setPadre', 'as' => 'admin.terceros.setpadre']);
     Route::get('terceros/asignar/orden', ['uses' => 'TercerosController@asignarOrden', 'as' => 'admin.terceros.asignarorden']);
     Route::get('terceros/documentos/lista', ['uses' => 'TercerosController@lista_documentos', 'as' => 'admin.terceros.lista_documentos']);
-    Route::get('terceros/documentos/descargar/{id}', ['uses' => 'TercerosController@descargar_documentos', 'as' => 'admin.terceros.descargar_documentos']);
+    Route::get('terceros/documentos/descargar/{id}/{tipo}', ['uses' => 'TercerosController@descargar_documentos', 'as' => 'admin.terceros.descargar_documentos']);
 
 
 
