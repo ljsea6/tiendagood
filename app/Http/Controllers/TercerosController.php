@@ -23,7 +23,7 @@ class TercerosController extends Controller {
 
     public function anyData() {
 
-        $referidos = Tercero::select('id', 'identificacion', 'nombres', 'apellidos', 'email', 'nivel_1', 'nivel_2', 'nivel_3', 'mispuntos', 'puntos_vendidos', 'rut', 'cedula', 'cuenta')
+        $referidos = Tercero::select('id', 'identificacion', 'nombres', 'apellidos', 'email', 'mispuntos', 'rut', 'cedula', 'cuenta')
                 ->where('state', true)
                 ->get();
 
@@ -49,21 +49,9 @@ class TercerosController extends Controller {
                         })
                         ->addColumn('email', function ($send) {
                             return '<div align=left>' . $send['email'] . '</div>';
-                        })
-                        ->addColumn('nivel_1', function ($send) {
-                            return '<div align=left>' . number_format($send['nivel_1']) . '</div>';
-                        })
-                        ->addColumn('nivel_2', function ($send) {
-                            return '<div align=left>' . number_format($send['nivel_2']) . '</div>';
-                        })
-                        ->addColumn('nivel_3', function ($send) {
-                            return '<div align=left>' . number_format($send['nivel_3']) . '</div>';
-                        })
+                        }) 
                         ->addColumn('mispuntos', function ($send) {
                             return '<div align=left>' . number_format($send['mispuntos']) . '</div>';
-                        })
-                        ->addColumn('puntos_vendidos', function ($send) {
-                            return '<div align=left>' . number_format($send['puntos_vendidos']) . '</div>';
                         })
                         ->addColumn('edit', function ($send) {
                             return '<div align=center><a href="' . route('admin.terceros.edit', $send['id']) . '"  class="btn btn-warning btn-xs">
