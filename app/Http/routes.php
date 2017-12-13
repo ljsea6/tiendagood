@@ -300,11 +300,13 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::any('terceros/show/data', ['uses' => 'TercerosController@anyShow', 'as' => 'admin.terceros.anyshow']);
     Route::get('terceros/editar/datos', ['uses' => 'TercerosController@editarDatos', 'as' => 'admin.terceros.editardatos']);
     Route::get('terceros/cambiar/padre', ['uses' => 'TercerosController@cambiarPadre', 'as' => 'admin.terceros.cambiarpadre']);
+    Route::get('terceros/asignar/orden', ['uses' => 'TercerosController@asignarOrden', 'as' => 'admin.terceros.asignarorden']);
     Route::post('terceros/getdata', ['uses' => 'TercerosController@getData', 'as' => 'admin.terceros.getdata']);
     Route::post('terceros/setdata', ['uses' => 'TercerosController@setData', 'as' => 'admin.terceros.setdata']);
     Route::post('terceros/getpadre', ['uses' => 'TercerosController@getPadre', 'as' => 'admin.terceros.getpadre']);
     Route::post('terceros/setpadre', ['uses' => 'TercerosController@setPadre', 'as' => 'admin.terceros.setpadre']);
-    Route::get('terceros/asignar/orden', ['uses' => 'TercerosController@asignarOrden', 'as' => 'admin.terceros.asignarorden']);
+    Route::post('terceros/getorden', ['uses' => 'TercerosController@getOrden', 'as' => 'admin.terceros.getorden']);
+    Route::post('terceros/setorden', ['uses' => 'TercerosController@setOrden', 'as' => 'admin.terceros.setorden']);
     Route::get('terceros/documentos/lista', ['uses' => 'TercerosController@lista_documentos', 'as' => 'admin.terceros.lista_documentos']);
     Route::get('terceros/documentos/descargar/{id}', ['uses' => 'TercerosController@descargar_documentos', 'as' => 'admin.terceros.descargar_documentos']);
 

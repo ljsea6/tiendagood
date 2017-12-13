@@ -34,6 +34,8 @@
                             <tr>
                                 <th>Nombres</th>
                                 <th>Numero de identificación</th>
+                                <th>Direcciòn</th>
+                                <th>Telefono</th>
                                 <th>Email</th>
                                 <th>Tipo Cliente</th>
                             </tr>
@@ -68,6 +70,8 @@
                                                 tercero += '<tr>';
                                                 tercero += '<td class="text-left"><input id="nombre" name="nombre" type="text" class="form-control" value="' + data.tercero.nombre + '" disabled></td>';
                                                 tercero += '<td class="text-left"><input id="identificacion" name="identificacion" type="text" class="form-control" value="' + data.tercero.identificacion + '" ></td>';
+                                                tercero += '<td class="text-left"><input id="direccion" name="direccion" type="text" class="form-control" value="' + data.tercero.direccion + '" ></td>';
+                                                tercero += '<td class="text-left"><input id="telefono" name="telefono" type="text" class="form-control" value="' + data.tercero.telefono + '" ></td>';
                                                 tercero += '<td class="text-left"><input id="email" name="email" type="email" class="form-control" value="' + data.tercero.email + '" ></td>';
                                                 tercero += '<td class="text-left">{!! Form::select("tipo_cliente", [""=>"Seleccione..",83=>"Vendedor",84=>"Cliente",85=>"Amparado"], "", ["class" => "form-control", "id" => "tipo_cliente"]); !!}</td>';
                                                 tercero += '<td class="text-left"><a class="btn btn-danger" id="btnEditarDatos" onclick="editarDatos()" role="button">Editar Datos</a></td>';
@@ -86,6 +90,8 @@
                                     var msn = "";
                                     var tercero_id = $("#terceroid").val();
                                     var identificacion = $("#identificacion").val();
+                                    var direccion = $("#direccion").val();
+                                    var telefono = $("#telefono").val();
                                     var email = $("#email").val();
                                     var tipo_cliente = $("#tipo_cliente").val();
                                     var _token = $("#_token").val();
@@ -110,7 +116,7 @@
                                     $("#btnEditarDatos").prop("disabled", true);
                                     $.ajax({url: '{{route("admin.terceros.setdata")}}',
                                         dataType: "json", type: "POST",
-                                        data: {id: tercero_id, _token: _token, identificacion: identificacion, email: email, tipo_cliente_id: tipo_cliente},
+                                        data: {id: tercero_id, _token: _token, identificacion: identificacion, email: email, direccion: direccion, telefono: telefono, tipo_cliente_id: tipo_cliente},
                                         success: function (response) {
                                             if (response == true) {
                                                 // $('#list-datos').DataTable().ajax.reload();
