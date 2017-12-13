@@ -387,11 +387,9 @@ class TercerosController extends Controller {
     }
 
     public function descargar_documentos($nombre) {
-echo  public_path();
-exit();
         if ($nombre != '0') {
             //$download = public_path().'/uploads/' . $nombre.'';
-            $download = public_path().'/uploads/' . $nombre.'';
+            $download = public_path('/uploads/' . $nombre.'');
             return response()->download($download);
         } else {
             return view('admin.terceros.lista_documentos');
