@@ -303,6 +303,10 @@ class AdminController extends Controller {
     	$level_dos = 0;
     	$level_tres = 0;
 
+        $points_level_1 = 0;
+        $points_level_2 = 0;
+        $points_level_3 = 0;
+
 
                 $uno  = DB::table('terceros as t')
                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
@@ -317,7 +321,14 @@ class AdminController extends Controller {
 
                 	$level_uno = $level_uno + count($uno);
 
-                    foreach ($uno as $n) {
+                    foreach ($uno as $n) { 
+
+                            $uno_orders  = DB::table('orders')->where('customer_id',  $n->id)->where('financial_status',  'paid')->select('points')->get();
+                            foreach ($uno_orders as $value) {
+                               $points_level_1 += $value->points;
+                            }
+                        
+                            $points_level_1;
 
                         $dos  = DB::table('terceros as t')
                             ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
@@ -332,6 +343,13 @@ class AdminController extends Controller {
 
                             foreach ($dos as $d) {
 
+                                $dos_orders  = DB::table('orders')->where('customer_id',  $d->id)->where('financial_status',  'paid')->select('points')->get();
+                                foreach ($dos_orders as $value) {
+                                    $points_level_2 += $value->points;
+                                }
+                        
+                                $points_level_2;
+
                                 $tres  = DB::table('terceros as t')
                                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                                     ->where('tk.padre_id',  $d->id)
@@ -345,6 +363,13 @@ class AdminController extends Controller {
 
                                     foreach ($tres as $t) {
 
+                                        $tres_orders  = DB::table('orders')->where('customer_id',  $t->id)->where('financial_status',  'paid')->select('points')->get();
+                                        foreach ($tres_orders as $value) {
+                                            $points_level_3 += $value->points;
+                                        }
+                        
+                                        $points_level_3;
+
                                         array_push($results, $t);
                                     }
                                 }
@@ -352,9 +377,10 @@ class AdminController extends Controller {
                         }
                     }
                 }
-   		      
+  
         $send =  Tercero::with('cliente', 'levels')->find(currentUser()->id);
-        return view('admin.index')->with(['send' => $send, 'uno' => $level_uno, 'dos' => $level_dos, 'tres' => $level_tres]);
+        return view('admin.index')->with(['send' => $send, 'uno' => $level_uno, 'dos' => $level_dos, 'tres' => $level_tres, 
+            'points_level_1' => $points_level_1, 'points_level_2' => $points_level_2, 'points_level_3' => $points_level_3]);
     }
 
     public function carga()
