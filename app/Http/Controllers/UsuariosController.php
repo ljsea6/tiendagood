@@ -89,7 +89,7 @@ class UsuariosController extends Controller {
     {
         if ($request->has('code')) {
 
-            $code = Tercero::where('identificacion', strtolower($request->code))->first();
+            $code = Tercero::where(DB::raw('UPPER(identificacion)'), strtoupper($request->code))->first();
 
             if (count($code) > 0 && $code->tipo_cliente_id == 83 && $code->state == true) {
                 return response()->json(['msg' => 'código valido'], 200);
