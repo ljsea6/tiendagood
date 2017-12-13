@@ -113,6 +113,9 @@ Route::get('recuperar-contraseña/{token}', ['as' => 'recuperar', 'uses' => 'Aut
 Route::post('recuperar-contraseña', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@postReset']);
 Route::get('registro/payu', ['as' => 'PayuController@paybefore', 'as' => 'admin.payu.payu']);
 
+Route::get('terceros/actualizar-datos', ['uses' => 'TercerosController@actualizar_mis_datos', 'as' => 'admin.terceros.actualizar_mis_datos']);
+Route::post('terceros/actualizar-datos', ['uses' => 'TercerosController@actualizar_mis_datos', 'as' => 'admin.terceros.actualizar_mis_datos']);
+
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     /*
@@ -307,8 +310,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('terceros/asignar/orden', ['uses' => 'TercerosController@asignarOrden', 'as' => 'admin.terceros.asignarorden']);
     Route::get('terceros/documentos/lista', ['uses' => 'TercerosController@lista_documentos', 'as' => 'admin.terceros.lista_documentos']);
     Route::get('terceros/documentos/descargar/{id}/{tipo}', ['uses' => 'TercerosController@descargar_documentos', 'as' => 'admin.terceros.descargar_documentos']);
-
-
 
     //productos
     Route::get('products', ['uses' => 'ProductsController@index', 'as' => 'admin.products.index']);
