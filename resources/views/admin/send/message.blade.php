@@ -1470,7 +1470,8 @@ body.outlook p {
                                     </tr>
                                      <tr>
                                       <th class="primary">
-                                         <p style="margin: 0; font-family: 'Dosis', sans-serif !important; font-size: 30px; color: white; padding: 20px; text-align: center; "> ¡Registrate con mi código <strong>{{$code}}</strong> 
+                                         <p style="margin: 0; font-family: 'Dosis', sans-serif !important; font-size: 30px; color: white; padding: 20px; text-align: center; ">  
+                                          <a href="{{url()}}/?q= {{$code}}" style="color:#fd6a15;text-align:center;border-radius:20px;background-color:white;margin:10px auto;padding:10px 8px;display:block;width:300px;">¡Registrate con mi código <strong>{{$code}}</strong>  dando click aquí!</a>
                                          
                                          </p>
                                          

@@ -63,21 +63,21 @@ class TercerosController extends Controller {
                                 return 'Sin RUT';
                             } else {
                                 $rut = $send['rut'];
-                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos', $send['rut']) . '"  class="btn btn-primary btn-xs"> RUT </a></div>';
+                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos', ['id' => $send['id'], 'tipo' => 'rut']) . '"  class="btn btn-primary btn-xs"> RUT </a></div>';
                             }
                         })
                         ->addColumn('CC', function ($send) {
                             if ($send['cedula'] == NULL) {
                                 return 'Sin cédula o Documento';
                             } else {
-                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos', $send['cedula']) . '"  class="btn btn-success btn-xs"> Cédula o Documento </a></div>';
+                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos', ['id' => $send['id'], 'tipo' => 'cedula']) . '"  class="btn btn-success btn-xs"> Cédula o Documento </a></div>';
                             }
                         })
                         ->addColumn('BANK', function ($send) {
                             if ($send['cuenta'] == NULL) {
                                 return 'Sin certificación bancaria';
                             } else {
-                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos', $send['cuenta']) . '"  class="btn btn-warning btn-xs"> Certificación bancaria  </a></div>';
+                                return '<div align=center><a href="' . route('admin.terceros.descargar_documentos', ['id' => $send['id'], 'tipo' => 'cuenta']) . '"  class="btn btn-warning btn-xs"> Certificación bancaria  </a></div>';
                             }
                         })
                         ->make(true);
@@ -434,21 +434,16 @@ class TercerosController extends Controller {
         return view('admin.terceros.lista_documentos');
     }
 
-    public function descargar_documentos($nombre) {
+    public function descargar_documentos($id=0, $tipo='') {
+        $tercero = Tercero::with('networks')->where('id', '=', $id)->first();
+
+        if($tipo == 'rut'){  $nombre = $tercero->rut; }
+            if($tipo == 'cedula'){  $nombre = $tercero->cedula; }
+                if($tipo == 'cuenta'){  $nombre = $tercero->cuenta; } 
 
         if ($nombre != '0') {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename=' . basename(public_path() . "/uploads/" . $nombre));
-            header('Content-Transfer-Encoding: binary');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize(public_path() . "/uploads/" . $nombre));
-            ob_clean();
-            flush();
-            readfile($nombre);
-            exit;
+            $download = public_path($nombre);
+            return response()->download($download);
         } else {
             return view('admin.terceros.lista_documentos');
         }
