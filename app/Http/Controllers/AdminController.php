@@ -312,7 +312,7 @@ class AdminController extends Controller {
                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                     ->where('tk.padre_id',  currentUser()->id)
                     ->where('t.state',  true)
-                    ->select('t.id')
+                    ->select('t.id','t.email')
                     ->get();
 
                 $results = array();
@@ -323,7 +323,7 @@ class AdminController extends Controller {
 
                     foreach ($uno as $n) { 
 
-                            $uno_orders  = DB::table('orders')->where('customer_id',  $n->id)->where('financial_status',  'paid')->select('points')->get();
+                            $uno_orders  = DB::table('orders')->where('email',  $n->email)->where('financial_status',  'paid')->select('points')->get();
                             foreach ($uno_orders as $value) {
                                $points_level_1 += $value->points;
                             }
@@ -333,8 +333,8 @@ class AdminController extends Controller {
                         $dos  = DB::table('terceros as t')
                             ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                             ->where('tk.padre_id',  $n->id)
-                            ->where('t.state',  true)
-                            ->select('t.id')
+                            ->where('t.state',  true) 
+                            ->select('t.id','t.email')
                             ->get();
 
                         if (count($dos) > 0) {
@@ -343,7 +343,7 @@ class AdminController extends Controller {
 
                             foreach ($dos as $d) {
 
-                                $dos_orders  = DB::table('orders')->where('customer_id',  $d->id)->where('financial_status',  'paid')->select('points')->get();
+                                $dos_orders  = DB::table('orders')->where('email',  $d->email)->where('financial_status',  'paid')->select('points')->get();
                                 foreach ($dos_orders as $value) {
                                     $points_level_2 += $value->points;
                                 }
@@ -354,7 +354,7 @@ class AdminController extends Controller {
                                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                                     ->where('tk.padre_id',  $d->id)
                                     ->where('t.state',  true)
-                                    ->select('t.id', 't.nombres', 't.email')
+                                    ->select('t.id','t.email')
                                     ->get();
 
                                 if (count($tres) > 0) {
@@ -363,7 +363,7 @@ class AdminController extends Controller {
 
                                     foreach ($tres as $t) {
 
-                                        $tres_orders  = DB::table('orders')->where('customer_id',  $t->id)->where('financial_status',  'paid')->select('points')->get();
+                                        $tres_orders  = DB::table('orders')->where('email',  $t->email)->where('financial_status',  'paid')->select('points')->get();
                                         foreach ($tres_orders as $value) {
                                             $points_level_3 += $value->points;
                                         }
