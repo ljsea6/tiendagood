@@ -18,7 +18,7 @@
                 </a>
             </li>
             <li class="has-submenu">
-                <a href="{{ route('admin.search') }}" class="animsition-link text-left">
+                <a href="{{ route('terceros.actualizar_mis_datos') }}" class="animsition-link text-left">
                     <i class="glyphicon glyphicon-pencil">
                     </i>
                     <span class="nav-text">Actualizar mis datos</span>
