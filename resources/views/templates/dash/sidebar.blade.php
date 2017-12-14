@@ -17,6 +17,13 @@
                     <span class="nav-text">Buscar Referidos</span>
                 </a>
             </li>
+            <li class="has-submenu">
+                <a href="{{ route('admin.search') }}" class="animsition-link text-left">
+                    <i class="glyphicon glyphicon-pencil">
+                    </i>
+                    <span class="nav-text">Actualizar mis datos</span>
+                </a>
+            </li>
             
             
             @role('dirsac|administrador')
