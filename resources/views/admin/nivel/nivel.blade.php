@@ -27,6 +27,7 @@
                                 <th>Nombres</th>
                                 <th>Apellidos</th>
                                 <th>Puntos</th>
+                                <th>Referidos</th>
                             </tr>
                             </thead>
                         </table>
@@ -56,6 +57,7 @@
                                 <th>Nombres</th>
                                 <th>Apellidos</th>
                                 <th>Puntos</th>
+                                <th>Referidos</th>
                             </tr>
                             </thead>
                         </table>
@@ -85,6 +87,7 @@
                                 <th>Nombres</th>
                                 <th>Apellidos</th>
                                 <th>Puntos</th>
+                                <th>Referidos</th>
                             </tr>
                             </thead>
                         </table>
@@ -121,7 +124,8 @@
                         { data: 'id', name: 'id', orderable: true, searchable: false },
                         { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
                         { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true  },
-                        { data: 'puntos', name: 'puntos', orderable: true }
+                        { data: 'puntos', name: 'puntos', orderable: true },
+                        { data: 'referidos', name: 'referidos', orderable: true }
                     ],
                     language: {
                         url: "{{ asset('css/Spanish.json') }}"
@@ -148,7 +152,9 @@
                     { data: 'id', name: 'id', orderable: true, searchable: false },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
                     { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true  },
-                    { data: 'puntos', name: 'puntos', orderable: true }
+                    { data: 'puntos', name: 'puntos', orderable: true },
+                    { data: 'referidos', name: 'referidos', orderable: true }
+                    
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"
@@ -175,7 +181,8 @@
                     { data: 'id', name: 'id', orderable: true, searchable: false },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true  },
                     { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true  },
-                    { data: 'puntos', name: 'puntos', orderable: true }
+                    { data: 'puntos', name: 'puntos', orderable: true },
+                    { data: 'referidos', name: 'referidos', orderable: true }
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"
