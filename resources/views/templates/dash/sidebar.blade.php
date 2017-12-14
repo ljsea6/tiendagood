@@ -17,9 +17,16 @@
                     <span class="nav-text">Buscar Referidos</span>
                 </a>
             </li>
+            <li class="has-submenu">
+                <a href="{{ route('terceros.actualizar_mis_datos') }}" class="animsition-link text-left">
+                    <i class="glyphicon glyphicon-pencil">
+                    </i>
+                    <span class="nav-text">Actualizar mis datos</span>
+                </a>
+            </li>
             
             
-            @role('administrador')
+            @role('dirsac|administrador')
             <li class="has-submenu">
                 <a href="#terceros" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-user">
@@ -28,20 +35,21 @@
                 </a>
                 <div class="sub-menu collapse secondary list-style-circle" id="terceros">
                     <ul>
-                        <li>
+                        <li>@role('dirsac')
                             <a href="{{ route('admin.terceros.editardatos') }}" class="text-left">
                                 <i class="fa fa-edit">
                                 </i>
                                 Editar Datos
                             </a>
-                        </li>
+                        </li> @endrole
+                        @role('administrador')
                         <li>
                             <a href="{{ route('admin.terceros.cambiarpadre') }}" class="text-left">
                                 <i class="fa fa-edit">
                                 </i>
                                 Cambiar Padre
                             </a>
-                        </li>
+                        </li>@endrole
                         <li>
                             <a href="{{ route('admin.terceros.asignarorden') }}" class="text-left">
                                 <i class="fa fa-edit">

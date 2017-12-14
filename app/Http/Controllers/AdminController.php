@@ -307,7 +307,6 @@ class AdminController extends Controller {
         $points_level_2 = 0;
         $points_level_3 = 0;
 
-
                 $uno  = DB::table('terceros as t')
                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                     ->where('tk.padre_id',  currentUser()->id)
@@ -323,7 +322,7 @@ class AdminController extends Controller {
 
                     foreach ($uno as $n) { 
 
-                            $uno_orders  = DB::table('orders')->where('email',  $n->email)->where('financial_status',  'paid')->select('points')->get();
+                            $uno_orders  = DB::table('orders')->where('tercero_id',  $n->id)->where('financial_status',  'paid')->select('points')->get();
                             foreach ($uno_orders as $value) {
                                $points_level_1 += $value->points;
                             }
@@ -343,7 +342,7 @@ class AdminController extends Controller {
 
                             foreach ($dos as $d) {
 
-                                $dos_orders  = DB::table('orders')->where('email',  $d->email)->where('financial_status',  'paid')->select('points')->get();
+                                $dos_orders  = DB::table('orders')->where('tercero_id',  $d->id)->where('financial_status',  'paid')->select('points')->get();
                                 foreach ($dos_orders as $value) {
                                     $points_level_2 += $value->points;
                                 }
@@ -363,7 +362,7 @@ class AdminController extends Controller {
 
                                     foreach ($tres as $t) {
 
-                                        $tres_orders  = DB::table('orders')->where('email',  $t->email)->where('financial_status',  'paid')->select('points')->get();
+                                        $tres_orders  = DB::table('orders')->where('tercero_id',  $t->id)->where('financial_status',  'paid')->select('points')->get();
                                         foreach ($tres_orders as $value) {
                                             $points_level_3 += $value->points;
                                         }

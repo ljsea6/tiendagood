@@ -1,6 +1,7 @@
 <?php
 namespace App\Entities;
 
+use App\Order;
 use App\Tipo;
 use App\Prime;
 use App\Shop;
@@ -128,7 +129,7 @@ class Tercero extends Model implements AuthenticatableContract, CanResetPassword
 
     public function orders()
     {
-        return $this->belongsToMany(Tercero::class, 'orders', 'customer_id', 'network_id');
+        return $this->hasMany(Order::class, 'tercero_id');
     }
 
     public function networks()
