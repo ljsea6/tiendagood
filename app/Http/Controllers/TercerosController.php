@@ -283,7 +283,8 @@ class TercerosController extends Controller {
             $model = Tercero::find($_POST['id']);
             $email_old = $model->email;
             $model->identificacion = $_POST['identificacion'];
-            $model->email = $_POST['email'];
+            $model->email = strtolower($_POST['email']);
+            $model->usuario = strtolower($_POST['email']);
             $model->direccion = $_POST['direccion'];
             $model->telefono = $_POST['telefono'];
             $model->tipo_cliente_id = $_POST['tipo_cliente_id'];
