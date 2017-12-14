@@ -33,10 +33,9 @@ class Order extends Model
 
     protected $guarded = [];
 
-
     public function tercero()
     {
-        return $this->belongsTo(Tercero::class, 'customer_id', 'id');
+        return $this->belongsTo(Tercero::class, 'tercero_id', 'id');
     }
 
     public function network()
