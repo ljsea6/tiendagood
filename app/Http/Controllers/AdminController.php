@@ -307,7 +307,6 @@ class AdminController extends Controller {
         $points_level_2 = 0;
         $points_level_3 = 0;
 
-
                 $uno  = DB::table('terceros as t')
                     ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                     ->where('tk.padre_id',  currentUser()->id)

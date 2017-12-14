@@ -44,7 +44,7 @@ class Order extends Model
         return $this->belongsTo(Network::class, 'network_id', 'id');
     }
 
-    public static function createOrder($order, $shop, $points, $tipo_orden)
+    public static function createOrder($order, $shop, $points, $tipo_orden, $id)
     {
         return Order::create([
             'billing_address' => (isset($order['billing_address'])) ? $order['billing_address'] : null,
@@ -110,7 +110,8 @@ class Order extends Model
             'origin' => 'webhooks',
             'tipo_orden' => $tipo_orden,
             'points' => $points,
-            'shop' => $shop
+            'shop' => $shop,
+            'tercero_id' => $id
         ]);
     }
 
