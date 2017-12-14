@@ -113,7 +113,7 @@ class ProductsController extends Controller
 
                     foreach ($product['variants'] as $variant) {
 
-                        Variant::createVariant($variant, 0, 'good');
+                        Variant::createVariant($variant,  'good');
 
                         try {
 
@@ -205,7 +205,7 @@ class ProductsController extends Controller
 
                     foreach ($product['variants'] as $variant) {
 
-                        Variant::createVariant($variant, 0, 'good');
+                        Variant::createVariant($variant,  'good');
 
                         try {
 
@@ -298,7 +298,7 @@ class ProductsController extends Controller
 
                 foreach ($product['variants'] as $variant) {
 
-                    Variant::updateVariant($variant, 'good', 0);
+                    Variant::updateVariant($variant, 'good');
                 }
 
                 $update = Product::find($response->id);
@@ -338,7 +338,7 @@ class ProductsController extends Controller
 
                 foreach ($product['variants'] as $variant) {
 
-                        Variant::createVariant($variant, 0, 'mercando');
+                        Variant::createVariant($variant, 'mercando');
 
                         try {
 
@@ -429,7 +429,7 @@ class ProductsController extends Controller
 
                 foreach ($product['variants'] as $variant) {
 
-                    Variant::updateVariant($variant, 'mercando', 0);
+                    Variant::updateVariant($variant, 'mercando');
                 }
 
                 $update = Product::find($response->id);
@@ -496,7 +496,7 @@ class ProductsController extends Controller
 
                     foreach ($product['variants'] as $variant) {
 
-                        Variant::createVariant($variant, 0, 'good');
+                        Variant::createVariant($variant,  'good');
 
                         try {
 
@@ -590,7 +590,7 @@ class ProductsController extends Controller
 
 
 
-                        Variant::createVariant($variant, 0, 'good');
+                        Variant::createVariant($variant,  'good');
 
                         try {
 
@@ -683,7 +683,7 @@ class ProductsController extends Controller
 
                 foreach ($product['variants'] as $variant) {
 
-                    Variant::updateVariant($variant, 'good', 0);
+                    Variant::updateVariant($variant, 'good');
                 }
 
                 $update = Product::find($response->id);
@@ -723,7 +723,7 @@ class ProductsController extends Controller
 
                 foreach ($product['variants'] as $variant) {
 
-                    Variant::createVariant($variant, 0, 'mercando');
+                    Variant::createVariant($variant,  'mercando');
 
                     try {
 
@@ -814,7 +814,7 @@ class ProductsController extends Controller
 
                 foreach ($product['variants'] as $variant) {
 
-                    Variant::updateVariant($variant, 'mercando', 0);
+                    Variant::updateVariant($variant, 'mercando');
                 }
 
                 $update = Product::find($response->id);
