@@ -37,7 +37,7 @@
                 {!! Form::open(['route' => 'terceros.actualizar_mis_datos', 'method' => 'POST', 'class' => 'form-access submit', 'enctype' => 'multipart/form-data']) !!}
                 <div class="row">
                
-                    <div class="col-sm-2">
+                    <div class="col-sm-3" style="height: 90">
                             <div class="row">
                             @if (currentUser()->avatar !== NULL)
                             <img src="{{ asset(currentUser()->avatar) }}" class="hidden-sm" alt="{{ currentUser()->nombre_completo }}" width="90%" />
@@ -45,15 +45,17 @@
                             <img src="{{ asset("img/avatar-bg.png") }}" class="hidden-sm" alt="{{ currentUser()->nombre_completo }}" width="90%" />
                             @endif
                              </div> <br>  
-                             <span class="btn btn-default btn-file" style="background: black; color: white"> Cambiar mi foto  <input type="file" id="foto" name="foto"> </span>
+                             <span class="btn btn-default" style="background: black; color: white"> Cambiar mi foto  <input type="file" id="foto" name="foto"> </span>
                              <hr>
+                            <div class="row">
                             @if ($tercero['tipo_cliente_id'] == 83)
                               <a href="#">
-                                          <input class="btn btn-default btn-file" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar contrato">
+                                          <input class="btn btn-default" style="background: #3783F9; color: white" type="button" id="d" name="d" value="Descargar contrato">
                             </a> 
-                            @endif                          
+                            @endif  
+                            </div>                        
                     </div>                   
-                    <div class="col-sm-10"> 
+                    <div class="col-sm-9"> 
                             <h3 class="text-center">Actualizar mis datos</h3>
                             <hr>
                             <input type="hidden" name="_method" value="PUT">
@@ -64,7 +66,7 @@
                                   <label  class="col-sm-1">Nombres </label> 
                                   <div class="col-sm-5"> <input type="text" name="first-name" placeholder="Nombres" class="f1-first-name form-control campo input-error" id="first-name" required="" value="{{$tercero['nombres']}}"> </div>
                                   <label  class="col-sm-1">Apellidos </label> 
-                                  <div class="col-sm-5"> <input type="text" name="last-name" placeholder="Apellidoss" class="f1-first-name form-control campo" id="last-name" required=""value="{{$tercero['apellidos']}}"> </div>
+                                  <div class="col-sm-5"> <input type="text" name="last-name" placeholder="Apellidos" class="f1-first-name form-control campo" id="last-name" required=""value="{{$tercero['apellidos']}}"> </div>
                             </div> <br>
                             <div class="row">
                                   <label  class="col-sm-1">Teléfono </label> 
