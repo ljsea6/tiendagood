@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use DB;
 use Illuminate\Console\Command;
 
 class UpdateEmail extends Command
@@ -37,6 +38,15 @@ class UpdateEmail extends Command
      */
     public function handle()
     {
-        //
+        $terceros = DB::select('select id, email, usuario from terceros WHERE email <> usuario');
+
+        if (count($terceros) > 0) {
+
+            foreach ($terceros as $tercero) {
+
+            }
+
+        }
+
     }
 }
