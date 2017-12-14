@@ -99,6 +99,31 @@ class GetUsers extends Command
                         );
                     }
 
+                    try {
+                        $res = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] .'.json', array(
+                                'form_params' => array(
+                                    'customer' => array(
+                                        "email" => $tercero->email,
+                                    )
+                                )
+                            )
+                        );
+
+                        $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                        $x = explode('/', $headers[0]);
+                        $diferencia = $x[1] - $x[0];
+                        if ($diferencia < 20) {
+                            usleep(10000000);
+                        }
+
+                    } catch (ClientException $e) {
+
+                        if ($e->hasResponse()) {
+
+                            //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                        }
+                    }
+
                 } else {
 
                     $this->info('El usuario no existe en mercando, se creará.');
@@ -163,7 +188,10 @@ class GetUsers extends Command
 
                     } catch (ClientException $e) {
 
-                        return $err = json_decode(($e->getResponse()->getBody()), true);
+                        if ($e->hasResponse()) {
+
+                            //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                        }
                     }
                 }
             }
