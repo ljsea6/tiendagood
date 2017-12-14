@@ -392,7 +392,6 @@ class UsuariosController extends Controller {
             $p .= $request->phone;
         }
 
-
         $usuario = new Tercero();
         $usuario->nombres = strtolower($request['first-name']);
         $usuario->apellidos = strtolower($request['last-name']);
