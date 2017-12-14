@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Variant;
 use Illuminate\Console\Command;
+use GuzzleHttp\Exception\ClientException;
 
 class UpdatePointsMercando extends Command
 {
