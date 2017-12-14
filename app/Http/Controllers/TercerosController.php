@@ -8,6 +8,7 @@ use Yajra\Datatables\Datatables;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
+use Session;
 
 class TercerosController extends Controller {
 
@@ -436,7 +437,7 @@ class TercerosController extends Controller {
 
     public function descargar_documentos($id=0, $tipo='') {
         $tercero = Tercero::with('networks')->where('id', '=', $id)->first();
-
+        $nombre = '';
         if($tipo == 'rut'){  $nombre = $tercero->rut; }
             if($tipo == 'cedula'){  $nombre = $tercero->cedula; }
                 if($tipo == 'cuenta'){  $nombre = $tercero->cuenta; } 
@@ -449,18 +450,28 @@ class TercerosController extends Controller {
         }
     }
 
+    public function post_actualizar_mis_datos(Request $request) {
+
+    }
+
     public function actualizar_mis_datos(Request $request) {
 
-        if ($request->has('identificacion')) { 
+        if ($request->has('first-name')) { 
 
+        $api_url_good = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $api_url_mercando = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO'); 
+
+        $this->api_set_email($api_url_good, $request['email_old'], $request->email);
+        $this->api_set_email($api_url_mercando, $request['email_old'], $request->email);           
+
+        $p = '';
         if (strlen($request->phone) == 13) {
             $p .= ltrim( $request->phone , '+57' );
         }else {
             $p .= $request->phone;
         }
 
-        $usuario = Tercero::find(currentUser()->id);
-        $flight = App\Flight::find(1);
+        $usuario = Tercero::find(currentUser()->id); 
         $usuario->nombres = strtolower($request['first-name']);
         $usuario->apellidos = strtolower($request['last-name']);
         $usuario->direccion = strtolower($request->address);
@@ -510,10 +521,9 @@ class TercerosController extends Controller {
 
         // Usuario creado
         $usuario->save();
+ 
 
-        exit();
-
-            Session::flash('flash_msg', 'la actualización de sus datos se realizaron correctamente');
+            Session::flash('flash_msg', 'la actualizaci\u00F3n de sus datos se realizaron correctamente');
             return redirect()->action('TercerosController@actualizar_mis_datos');
         }
 

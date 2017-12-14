@@ -113,8 +113,8 @@ Route::get('recuperar-contraseña/{token}', ['as' => 'recuperar', 'uses' => 'Aut
 Route::post('recuperar-contraseña', ['as' => 'recuperar', 'uses' => 'Auth\PasswordController@postReset']);
 Route::get('registro/payu', ['as' => 'PayuController@paybefore', 'as' => 'admin.payu.payu']);
 
-Route::get('terceros/actualizar-datos', ['uses' => 'TercerosController@actualizar_mis_datos', 'as' => 'admin.terceros.actualizar_mis_datos']);
-Route::post('terceros/actualizar-datos', ['uses' => 'TercerosController@actualizar_mis_datos', 'as' => 'admin.terceros.actualizar_mis_datos']);
+Route::any('terceros/actualizar-datos', ['uses' => 'TercerosController@actualizar_mis_datos', 'as' => 'terceros.actualizar_mis_datos']);
+//Route::post('terceros/actualizar-datos/cambio', ['uses' => 'TercerosController@post_actualizar_mis_datos', 'as' => 'terceros.actualizar_mis_datos']);
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
