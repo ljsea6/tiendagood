@@ -6,13 +6,7 @@ namespace App\Console\Commands;
 use App\Traits\OrderPaidMercando;
 use Illuminate\Console\Command;
 use App\Order;
-use Carbon\Carbon;
-use App\Entities\Network;
 use DB;
-use App\Customer;
-use App\Entities\Tercero;
-use App\Product;
-use App\Logorder;
 use App\LineItems;
 use App\Variant;
 

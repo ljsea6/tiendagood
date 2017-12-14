@@ -8,6 +8,7 @@ use Yajra\Datatables\Datatables;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
+use Session;
 
 class TercerosController extends Controller {
 
@@ -49,7 +50,7 @@ class TercerosController extends Controller {
                         })
                         ->addColumn('email', function ($send) {
                             return '<div align=left>' . $send['email'] . '</div>';
-                        }) 
+                        })
                         ->addColumn('mispuntos', function ($send) {
                             return '<div align=left>' . number_format($send['mispuntos']) . '</div>';
                         })
@@ -221,7 +222,15 @@ class TercerosController extends Controller {
                 $father = $networks[0]['pivot']['padre_id'];
 
                 $tipo_cliente = \App\Entities\Tipo::find($tercero->tipo_cliente_id)->nombre;
-                $data['tercero'] = ['id' => $tercero->id, 'nombre' => "$tercero->nombres $tercero->apellidos", 'identificacion' => $tercero->identificacion, 'email' => $tercero->email, 'tipo_cliente' => $tipo_cliente, 'tipo_cliente_id' => $tercero->tipo_cliente_id, 'error' => false];
+                $data['tercero'] = ['id' => $tercero->id,
+                    'nombre' => "$tercero->nombres $tercero->apellidos",
+                    'identificacion' => $tercero->identificacion,
+                    'direccion' => $tercero->direccion,
+                    'telefono' => $tercero->telefono,
+                    'email' => $tercero->email,
+                    'tipo_cliente' => $tipo_cliente,
+                    'tipo_cliente_id' => $tercero->tipo_cliente_id,
+                    'error' => false];
 
                 if (!is_null($father)) {
                     $padre = Tercero::find($father);
@@ -275,11 +284,13 @@ class TercerosController extends Controller {
             $email_old = $model->email;
             $model->identificacion = $_POST['identificacion'];
             $model->email = $_POST['email'];
+            $model->direccion = $_POST['direccion'];
+            $model->telefono = $_POST['telefono'];
             $model->tipo_cliente_id = $_POST['tipo_cliente_id'];
             if ($model->save()) {
                 $this->api_set_email($api_url_good, $email_old, $model->email);
                 $this->api_set_email($api_url_mercando, $email_old, $model->email);
-               
+
                 echo true;
             } else {
                 echo 'Hubo un error al actualizar los datos';
@@ -374,12 +385,50 @@ class TercerosController extends Controller {
         }
     }
 
-    function editarDatos() {
+    public function editarDatos() {
         return view('admin.terceros.editardatos');
     }
 
-    function cambiarPadre() {
+    public function cambiarPadre() {
         return view('admin.terceros.cambiarpadre');
+    }
+
+    function asignarOrden() {
+        return view('admin.terceros.asignarorden');
+    }
+
+    public function getOrden(Request $request) {
+        if ($request->has('no_orden')) {
+            $data = ['error' => false];
+            $orden = DB::table('orders')
+                    ->where('order_number', $request['no_orden'])
+                    ->first();
+            if ($orden != NULL) {
+                $data = ['id' => $orden->id, 'tienda' => $orden->shop, 'estado' => $orden->financial_status];
+                echo json_encode($data);
+            } else {
+                $data['error'] = '¡No se encuentra la orden de venta!';
+                echo json_encode($data);
+            }
+        }
+    }
+
+    public function setOrden(Request $request) {
+        if ($request->has('tercero_id') && $request->has('orden_id')) {
+            $tercero = DB::table('terceros')
+                    ->where('id', $request['tercero_id'])
+                    ->first();
+            if ($tercero != NULL) {
+                $update = DB::table('orders')->where('id', $request['orden_id'])->update(['email' => $tercero->email]);
+                if ($update) {
+                    echo true;
+                } else {
+                    echo 'Hubo un error al actualizar los datos';
+                }
+            } else {
+                echo 'Hubo un error al encontrar el tercero';
+            }
+        }
     }
 
     public function lista_documentos() {
@@ -388,7 +437,7 @@ class TercerosController extends Controller {
 
     public function descargar_documentos($id=0, $tipo='') {
         $tercero = Tercero::with('networks')->where('id', '=', $id)->first();
-
+        $nombre = '';
         if($tipo == 'rut'){  $nombre = $tercero->rut; }
             if($tipo == 'cedula'){  $nombre = $tercero->cedula; }
                 if($tipo == 'cuenta'){  $nombre = $tercero->cuenta; } 
@@ -399,6 +448,90 @@ class TercerosController extends Controller {
         } else {
             return view('admin.terceros.lista_documentos');
         }
+    }
+
+    public function post_actualizar_mis_datos(Request $request) {
+
+    }
+
+    public function actualizar_mis_datos(Request $request) {
+
+        if ($request->has('first-name')) { 
+
+        $api_url_good = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $api_url_mercando = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO'); 
+
+        $this->api_set_email($api_url_good, $request['email_old'], $request->email);
+        $this->api_set_email($api_url_mercando, $request['email_old'], $request->email);           
+
+        $p = '';
+        if (strlen($request->phone) == 13) {
+            $p .= ltrim( $request->phone , '+57' );
+        }else {
+            $p .= $request->phone;
+        }
+
+        $usuario = Tercero::find(currentUser()->id); 
+        $usuario->nombres = strtolower($request['first-name']);
+        $usuario->apellidos = strtolower($request['last-name']);
+        $usuario->direccion = strtolower($request->address);
+        $usuario->telefono = strtolower($p);
+        $usuario->email = strtolower($request->email);
+        $usuario->usuario = strtolower($request->email);   
+        $usuario->celular = strtolower($p);     
+        $usuario->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->birthday);
+
+        if ($request->file('banco')) {
+            $cuenta        = $request->file('banco');
+            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+            $path          = public_path() . "/uploads";
+            $cuenta->move($path, $cuenta_nombre);
+            $usuario->cuenta = "uploads/" . $cuenta_nombre;
+        }
+
+        if ($request->file('cedula')) {
+
+            $cuenta        = $request->file('cedula');
+            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+            $path          = public_path() . "/uploads";
+            $cuenta->move($path, $cuenta_nombre);
+            $usuario->cedula = "uploads/" . $cuenta_nombre;
+
+        }
+
+        if ($request->file('rut')) {
+
+            $cuenta        = $request->file('rut');
+            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+            $path          = public_path() . "/uploads";
+            $cuenta->move($path, $cuenta_nombre);
+            $usuario->rut = "uploads/" . $cuenta_nombre;
+
+        }
+
+        if ($request->file('foto')) {
+
+            $cuenta        = $request->file('foto');
+            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+            $path          = public_path() . "/uploads";
+            $cuenta->move($path, $cuenta_nombre);
+            $usuario->avatar = "uploads/" . $cuenta_nombre;
+
+        }
+
+        // Usuario creado
+        $usuario->save();
+ 
+
+            Session::flash('flash_msg', 'la actualizaci\u00F3n de sus datos se realizaron correctamente');
+            return redirect()->action('TercerosController@actualizar_mis_datos');
+        }
+
+        $tercero = Tercero::with('networks')->find(currentUser()->id);
+        $fecha_nacimiento = $tercero['fecha_nacimiento'];
+        $fecha_nacimiento = date("d/m/Y", strtotime($fecha_nacimiento));
+
+        return view('admin.terceros.actualizar_datos', compact('tercero','fecha_nacimiento'));
     }
 
 }
