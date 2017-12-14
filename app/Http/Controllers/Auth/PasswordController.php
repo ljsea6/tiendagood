@@ -115,6 +115,7 @@ class PasswordController extends Controller {
                     }
 
                     $results = json_decode($good->getBody(), true);
+
                     if(count($results['customers']) > 0) {
 
                        try {
