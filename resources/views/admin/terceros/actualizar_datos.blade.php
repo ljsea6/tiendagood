@@ -47,6 +47,12 @@
                             @endif
                              </div> <br>  
                              <span class="btn btn-default btn-file" style="background: black; color: white"> Cambiar mi foto  <input type="file" id="foto" name="foto"> </span>
+                             <hr>
+                            @if ($tercero['tipo_cliente_id'] == 83)
+                              <a href="#">
+                                          <input class="btn btn-default btn-file" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar contrato">
+                            </a> 
+                            @endif                          
                     </div>                   
                     <div class="col-sm-10"> 
                             <h3 class="text-center">Actualizar mis datos</h3>
@@ -80,26 +86,36 @@
                              <hr>
                             <div class="row"> 
                                     <label  class="col-sm-6">RUT <label style="color: #F00707"> Recuerde que su RUT debe tener código de actividad 8299 </label> </label>
-                                    <div class="col-sm-3"> <span >
+                                    <div class="col-sm-3"> 
+                                      @if ($tercero['rut'] != '')  
                                         <a href="{{route('admin.terceros.descargar_documentos', ['id' => currentUser()->id, 'tipo' => 'rut'])}}">
-                                          <input class="btn btn-default btn-file" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar"> </span>  
+                                          <input class="btn btn-default btn-file" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar">
+                                        </a> 
+                                      @endif 
                                     </div>     
-                                    <div class="col-sm-3"> <span class="btn btn-default btn-file" style="background: black; color: white"> Cambiar <input type="file" id="rut" name="rut"> </a> </span>  </div>                                                       
+                                    <div class="col-sm-3"> <span class="btn btn-default btn-file" style="background: black; color: white"> Agregar <input type="file" id="rut" name="rut">  </span>  </div>                                                       
                             </div>  <br>
                             <div class="row"> 
                                     <label  class="col-sm-6">Cédula o Documento</label>
-                                    <div class="col-sm-3"> <span >
+                                    <div class="col-sm-3">
+                                      @if ($tercero['cedula'] != '')  
                                         <a href="{{route('admin.terceros.descargar_documentos', ['id' => currentUser()->id, 'tipo' => 'cedula'])}}">
-                                          <input class="btn btn-default btn-file" style="background: #3783F9; color: white" type="button" id="d" name="d"  value="descargar"> </span> 
+                                          <input class="btn btn-default btn-file" style="background: #3783F9; color: white" type="button" id="d" name="d"  value="descargar"> 
+                                        </a>
+                                      @endif 
                                     </div>   
-                                    <div class="col-sm-3"> <span class="btn btn-default btn-file" style="background: black; color: white"> Cambiar <input type="file" id="cedula" name="cedula"> </a>  </span> </div>                                      
+                                    <div class="col-sm-3"> <span class="btn btn-default btn-file" style="background: black; color: white"> Agregar <input type="file" id="cedula" name="cedula">   </span> </div>                                      
                             </div> <br>
                             <div class="row"> 
                                     <label  class="col-sm-6">Certificación bancaria (No obligatorio para registro) </label>
-                                    <div class="col-sm-3">  <span > 
+                                    <div class="col-sm-3">  
+                                      @if ($tercero['cuenta'] != '')   
                                        <a href="{{route('admin.terceros.descargar_documentos', ['id' => currentUser()->id, 'tipo' => 'cuenta'])}}">
-                                      <input class="btn btn-default btn-file" style="background: #3783F9; color: white" type="button" id="d" name="d"  value="descargar"> </span> </div>  
-                                    <div class="col-sm-3">  <span class="btn btn-default btn-file" style="background: black; color: white"> Cambiar <input type="file" id="banco" name="banco"> </a>  </span> </div>                                  
+                                       <input class="btn btn-default btn-file" style="background: #3783F9; color: white" type="button" id="d" name="d"  value="descargar"> 
+                                      </a> 
+                                      @endif 
+                                    </div>  
+                                    <div class="col-sm-3">  <span class="btn btn-default btn-file" style="background: black; color: white"> Agregar <input type="file" id="banco" name="banco">   </span> </div>                                  
                             </div>  <br>
                             <div class="row"> 
                                 <div class="col-sm-12">
