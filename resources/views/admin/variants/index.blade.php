@@ -65,35 +65,17 @@
                 }
             });
 
-            $('#next').on( 'click', function () {
-                var data = table.$('input, select').serialize();
-                console.log(data);
-            } );
-
-            $('#previous').on( 'click', function () {
-                var data = table.$('input, select').serialize();
-                console.log(data);
-            } );
-
 
             $('#update').click( function() {
 
-               /* $("#g").prop("disabled",true);
-                $("div#divLoading").show();*/
+                $("#g").prop("disabled",true);
+                $("div#divLoading").show();
 
                 var data = table.$('input, select').serialize();
 
-
-
-
-
-                /*setInterval( function () {
-                    table.ajax.reload();
-                }, 30000 );*/
-
-                /*$.ajax({
-                    url: "route('admin.variants.update'",
-                    data: { value: data, _token: 'csrf_token()'},
+                $.ajax({
+                    url: "{{route('admin.variants.update')}}",
+                    data: { value: data, _token: '{{ csrf_token() }}'},
                     type: 'POST',
                     dataType: 'json',
                     success: function(data) {
@@ -106,8 +88,8 @@
                     }
 
                 });
-*/
-                //table._fnAjaxUpdate();
+
+                table._fnAjaxUpdate();
                 return false;
             } );
         });
