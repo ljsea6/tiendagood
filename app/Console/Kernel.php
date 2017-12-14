@@ -25,7 +25,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\GiftsCards::class,
         \App\Console\Commands\GetProductsMercando::class,
         \App\Console\Commands\GetUsers::class,
-        \App\Console\Commands\UpdatePoints::class
+        \App\Console\Commands\UpdatePoints::class,
+        \App\Console\Commands\UpdatePointsMercando::class,
     ];
 
     /**
@@ -56,6 +57,7 @@ class Kernel extends ConsoleKernel
             ->twiceDaily(14, 23);
 
         $schedule->command('get:update-points')->dailyAt('01:30');
+        $schedule->command('get:update-points-mercando')->dailyAt('01:30');
 
         //$schedule->command('get:metafields')->dailyAt('23:30');
 
