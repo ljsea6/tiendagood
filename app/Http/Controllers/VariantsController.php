@@ -61,7 +61,7 @@ class VariantsController extends Controller
             ->addColumn('percentage', function ($send) {
                 return '<div align=left>
                             <input id='. $send->id .' name='. $send->id .'  type="number" value="'.number_format($send->percentage).'">
-                            <input id='. $send->id .' name='. $send->id .'  type="hidden" value="'.number_format($send->percentage).'">
+                           
                         </div>';
             })
             ->make(true);
