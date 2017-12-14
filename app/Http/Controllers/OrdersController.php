@@ -3696,7 +3696,7 @@ class OrdersController extends Controller
 
     public function contador()
     {
-        $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        /*$api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
         $client = new \GuzzleHttp\Client();
 
@@ -3844,9 +3844,9 @@ class OrdersController extends Controller
                     }
                 }
             }
-        }
+        }*/
 
-        /*$orders = Order::all();
+        $orders = Order::all();
 
         foreach ($orders as $order) {
 
@@ -3865,6 +3865,6 @@ class OrdersController extends Controller
 
         }
 
-        return response()->json(['msg' => 'Hecho']);*/
+        return response()->json(['msg' => 'Hecho']);
     }
 }
