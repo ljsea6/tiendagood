@@ -400,7 +400,7 @@ class TercerosController extends Controller {
         if ($request->has('no_orden')) {
             $data = ['error' => false];
             $orden = DB::table('orders')
-                    ->where('order_number', $request['no_orden'])
+                    ->where('name', '' . $request['no_orden'] . '')
                     ->first();
             if ($orden != NULL) {
                 $data = ['id' => $orden->id, 'tienda' => $orden->shop, 'estado' => $orden->financial_status];
@@ -414,18 +414,11 @@ class TercerosController extends Controller {
 
     public function setOrden(Request $request) {
         if ($request->has('tercero_id') && $request->has('orden_id')) {
-            $tercero = DB::table('terceros')
-                    ->where('id', $request['tercero_id'])
-                    ->first();
-            if ($tercero != NULL) {
-                $update = DB::table('orders')->where('id', $request['orden_id'])->update(['email' => $tercero->email]);
-                if ($update) {
-                    echo true;
-                } else {
-                    echo 'Hubo un error al actualizar los datos';
-                }
+            $update = DB::table('orders')->where('id', $request['orden_id'])->update(['tercero_id' => $request['tercero_id']]);
+            if ($update) {
+                echo true;
             } else {
-                echo 'Hubo un error al encontrar el tercero';
+                echo 'Hubo un error al actualizar los datos';
             }
         }
     }
@@ -434,12 +427,18 @@ class TercerosController extends Controller {
         return view('admin.terceros.lista_documentos');
     }
 
-    public function descargar_documentos($id=0, $tipo='') {
+    public function descargar_documentos($id = 0, $tipo = '') {
         $tercero = Tercero::with('networks')->where('id', '=', $id)->first();
 
-        if($tipo == 'rut'){  $nombre = $tercero->rut; }
-            if($tipo == 'cedula'){  $nombre = $tercero->cedula; }
-                if($tipo == 'cuenta'){  $nombre = $tercero->cuenta; } 
+        if ($tipo == 'rut') {
+            $nombre = $tercero->rut;
+        }
+        if ($tipo == 'cedula') {
+            $nombre = $tercero->cedula;
+        }
+        if ($tipo == 'cuenta') {
+            $nombre = $tercero->cuenta;
+        }
 
         if ($nombre != '0') {
             $download = public_path($nombre);
