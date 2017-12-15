@@ -83,10 +83,12 @@ class PasswordController extends Controller {
 
             $usuario = Tercero::findOrFail($remember_token['id']);
             $usuario->contraseña = bcrypt($request->password);
-            $usuario->remember_token = '';
+            //$usuario->remember_token = '';
             $usuario->save();
 
             if($usuario) {
+
+              echo strtolower($email);
               $this->api_cambio_password($api_url_good, strtolower($email), $request->password, $remember_token);
               $this->api_cambio_password($api_url_mercando, strtolower($email), $request->password, $remember_token);
 
@@ -102,6 +104,8 @@ class PasswordController extends Controller {
     }
 
     public function api_cambio_password($api, $email, $password, $datos) {
+
+
        
         $client = new \GuzzleHttp\Client();
 
