@@ -120,7 +120,7 @@ class PasswordController extends Controller {
             }
 
             $results = json_decode($good->getBody(), true);
-            
+
             if(count($results['customers']) == 1) {
 
                 try {
@@ -193,8 +193,6 @@ class PasswordController extends Controller {
                     }
                 }
 
-
-
             }
         } catch (ClientException $e) {
             if ($e->hasResponse()) {
@@ -203,21 +201,5 @@ class PasswordController extends Controller {
             }
         }
     }
-
-
-    /*
-
-        public function __construct() {
-            $this->middleware('guest');
-        }
-
-        public function redirectPath() {
-            return route('admin');
-        }
-
-        protected function getEmailSubject() {
-            return 'Recupera tu contraseñad';
-        }
-     */
 
 }
