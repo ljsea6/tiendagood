@@ -107,6 +107,7 @@ class PasswordController extends Controller {
         $client = new \GuzzleHttp\Client();
 
                 try {
+
                     $good = $client->request('GET', $api . '/admin/customers/search.json?query=email:'. $email );
 
                     $headers = $good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
@@ -143,7 +144,7 @@ class PasswordController extends Controller {
                           if ($e->hasResponse()) {
 
                               $response = $e->getResponse();
-                              return $response->getBody()->getContents();
+                              return $response->getBody();
 
                               return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                           }
@@ -198,7 +199,7 @@ class PasswordController extends Controller {
                     if ($e->hasResponse()) {
 
                         $response = $e->getResponse();
-                        return $response->getBody()->getContents();
+                        return $response->getBody();
 
                         return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                     }
