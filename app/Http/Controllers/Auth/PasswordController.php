@@ -121,7 +121,6 @@ class PasswordController extends Controller {
 
             $results = json_decode($good->getBody(), true);
 
-            echo count($results['customers']); die();
 
             if(count($results['customers']) > 0) {
 
