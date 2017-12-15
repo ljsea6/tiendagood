@@ -87,8 +87,7 @@ class PasswordController extends Controller {
             $usuario->save();
 
             if($usuario) {
-                echo $api_url_good . "\n";
-                echo  $request->password . "\n";
+
                 return $this->api_cambio_password($api_url_good, strtolower($email), $request->password, $remember_token);
                 $this->api_cambio_password($api_url_mercando, strtolower($email), $request->password, $remember_token);
 
@@ -121,8 +120,6 @@ class PasswordController extends Controller {
                     $results = json_decode($good->getBody(), true);
 
                     if(count($results['customers']) > 0) {
-
-                        return $results['customers'][0]['id'];
 
                        try {
                        $res = $client->request('put', $api . '/admin/customers/'. $results['customers'][0]['id'] .'.json', array(
