@@ -41,6 +41,12 @@ class UsuariosController extends Controller {
     {
         return view('admin.terms.terms');
     }
+    
+    public function termsprime()
+    {
+        return view('admin.terms.termsprime');
+    }
+
     public function verified_email(Request $request)
     {
         if ($request->has('email')) {

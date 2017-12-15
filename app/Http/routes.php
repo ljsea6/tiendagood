@@ -83,7 +83,9 @@ Route::post('validate/email', 'UsuariosController@verified_email');
 Route::post('validate/code', 'UsuariosController@verified_code');
 Route::post('validate/phone', 'UsuariosController@verified_phone');
 Route::post('validate/dni', 'UsuariosController@verified_dni');
-Route::get('/terms', 'UsuariosController@terms');
+Route::get('/terms', ['as' => 'terms', 'uses' => 'UsuariosController@terms']);
+Route::get('/terms_prime', ['as' => 'terms_prime', 'uses' => 'UsuariosController@termsprime']);
+
 
 
 Route::post('/cities', 'CitiesController@cities');

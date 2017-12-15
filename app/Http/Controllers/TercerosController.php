@@ -537,8 +537,12 @@ class TercerosController extends Controller {
             return redirect()->action('TercerosController@actualizar_mis_datos');
         }
 
-        $tercero = Tercero::with('networks')->find(currentUser()->id);
- 
+        $tercero = Tercero::with('networks', 'primes')->find(currentUser()->id);
+       
+foreach ($tercero->primes as $value) {
+  echo  $value->fecha_inicio;
+}
+exit();
         $fecha_nacimiento = $tercero['fecha_nacimiento'];
         $fecha_nacimiento = date("d/m/Y", strtotime($fecha_nacimiento));
 
