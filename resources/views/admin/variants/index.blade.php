@@ -44,7 +44,7 @@
                 ],
                 responsive: true,
                 processing: true,
-                serverSide: false,
+                serverSide: true,
                 deferRender: true,
                 pagingType: "full_numbers",
                 ajax: '{{route('admin.variants.search')}}',
@@ -63,58 +63,13 @@
                 }
             });
 
-
             $('#update').click( function() {
 
                 $("#g").prop("disabled",true);
                 $("div#divLoading").show();
 
-
-
-                /*var data = table.$('input, select').serialize();
-                var info = table.page.info();
-
-                var temp = new Array();
-                var d = new Array();
-
-                temp = data.split("&");
-
-
-                temp.forEach(function(element) {
-
-                    d = element.split("=");
-
-                    var id = d[0];
-                    var value = d[1];
-                    var c = $('#' + id + '').attr('class');
-
-                    if (c == undefined) {
-                        console.log(id);
-                    }
-
-
-
-                    //console.log(c);
-
-                    /!*if (c != '0' && value != '0') {
-
-                        console.log('bien');
-
-                    } else {
-
-                        console.log(i++);
-                        console.log(c);
-                        console.log(id);
-                        console.log(value);
-                    }*!/
-
-
-                });
-*/
-
-
                 $.ajax({
-                    url: "{{route('admin.variants.update')}}",
+                    url: "{{ route('admin.variants.update') }}",
                     data: { value: data, _token: '{{ csrf_token() }}'},
                     type: 'POST',
                     dataType: 'json',
@@ -126,7 +81,6 @@
                     error : function(xhr, status) {
                         alert('Disculpe, existió un problema');
                     }
-
                 });
 
                 table._fnAjaxUpdate();
