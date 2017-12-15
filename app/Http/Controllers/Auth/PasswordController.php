@@ -144,7 +144,7 @@ class PasswordController extends Controller {
                           if ($e->hasResponse()) {
 
 
-                              return redirect()->back()->with(['err' => $e->getResponse()->getBody()]);
+                              return redirect()->back()->with(['err' => $e->getResponse()]);
                           }
                       }
                     }
@@ -195,7 +195,7 @@ class PasswordController extends Controller {
 
                             if ($e->hasResponse()) {
 
-                                return redirect()->back()->with(['err' => $e->getResponse()->getBody()]);
+                                return redirect()->back()->with(['err' => $e->getResponse()]);
                             }
                         }
                     }
@@ -204,7 +204,7 @@ class PasswordController extends Controller {
 
                     if ($e->hasResponse()) {
 
-                        return redirect()->back()->with(['err' => $e->getResponse()->getBody()]);
+                        return redirect()->back()->with(['err' => $e->getResponse()]);
                     }
                 }  
 
