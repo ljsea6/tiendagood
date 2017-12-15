@@ -119,6 +119,8 @@ class PasswordController extends Controller {
 
                     $results = json_decode($good->getBody(), true);
 
+                    return redirect()->back()->with(['err' => count($results['customers'])]);
+
                     if(isset($results['customers']) && count($results['customers']) > 0) {
 
                        try {
@@ -137,7 +139,9 @@ class PasswordController extends Controller {
                       $diferencia = $x[1] - $x[0];
                       if ($diferencia < 20) {
                           usleep(30000000);
-                      }                      
+                      }
+
+
 
                       } catch (ClientException $e) {
 
@@ -199,7 +203,7 @@ class PasswordController extends Controller {
                                 $response = $e->getResponse();
                                 $responseBodyAsString = $response->getBody()->getContents();
 
-                                return redirect()->back()->with(['err' => 'se está metiendo donde no debe ' . $results['customers'][0]['id']]);
+                                return redirect()->back()->with(['err' => 'se está metiendo donde no debe ']);
                             }
                         }
                     }
