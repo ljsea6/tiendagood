@@ -169,94 +169,98 @@ class VariantsController extends Controller
 
                 $variant = Variant::where('id', $r[0])->where('shop', 'good')->first();
 
+
                 if (count($variant) > 0) {
 
                     if ($r[1] != "") {
 
-                        DB::table('variants')
-                            ->where('id', $r[0])
-                            ->where('shop', 'good')
-                            ->where('product_id', $variant->product_id)
-                            ->update(['percentage' => $r[1]]);
+                        if ((int)$variant->percentage != (int)$r[1]) {
 
-                        try {
+                            DB::table('variants')
+                                ->where('id', $r[0])
+                                ->where('shop', 'good')
+                                ->where('product_id', $variant->product_id)
+                                ->update(['percentage' => $r[1]]);
 
-                            $res = $client->request('get', $api_url . '/admin/variants/'. $variant->id .'/metafields.json');
+                            try {
 
-                            $results = json_decode($res->getBody(), true);
+                                $res = $client->request('get', $api_url . '/admin/variants/'. $variant->id .'/metafields.json');
 
-                            if (count($results['metafields']) > 0) {
+                                $results = json_decode($res->getBody(), true);
 
-                                foreach ($results['metafields'] as $result) {
+                                if (count($results['metafields']) > 0) {
 
-                                    if ($result['key'] == 'points' && $result['namespace'] == 'variants') {
+                                    foreach ($results['metafields'] as $result) {
 
-                                        try {
+                                        if ($result['key'] == 'points' && $result['namespace'] == 'variants') {
 
-                                            $res = $client->request('put', $api_url . '/admin/variants/'. $variant->id .'/metafields/' . $result['id'] . '.json', array(
-                                                    'form_params' => array(
-                                                        'metafield' => array(
-                                                            'namespace' => 'variants',
-                                                            'key' => 'points',
-                                                            'value' => $r[1],
-                                                            'value_type' => 'integer'
+                                            try {
+
+                                                $res = $client->request('put', $api_url . '/admin/variants/'. $variant->id .'/metafields/' . $result['id'] . '.json', array(
+                                                        'form_params' => array(
+                                                            'metafield' => array(
+                                                                'namespace' => 'variants',
+                                                                'key' => 'points',
+                                                                'value' => $r[1],
+                                                                'value_type' => 'integer'
+                                                            )
                                                         )
                                                     )
+                                                );
+
+                                                $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                                $x = explode('/', $headers[0]);
+                                                $diferencia = $x[1] - $x[0];
+                                                if ($diferencia < 10) {
+                                                    usleep(10000000);
+                                                }
+
+
+                                            } catch (ClientException $e) {
+
+                                                if ($e->getResponse()) {
+                                                    continue;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                } else {
+
+                                    try {
+
+                                        $res = $client->request('post', $api_url . '/admin/variants/'. $variant->id .'/metafields.json', array(
+                                            'form_params' => array(
+                                                'metafield' => array(
+                                                    'namespace' => 'variants',
+                                                    'key' => 'points',
+                                                    'value' => $r[1],
+                                                    'value_type' => 'integer'
                                                 )
-                                            );
+                                            )
+                                        ));
 
-                                            $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                            $x = explode('/', $headers[0]);
-                                            $diferencia = $x[1] - $x[0];
-                                            if ($diferencia < 10) {
-                                                usleep(10000000);
-                                            }
+                                        $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                        $x = explode('/', $headers[0]);
+                                        $diferencia = $x[1] - $x[0];
+                                        if ($diferencia < 20) {
 
+                                            usleep(10000000);
+                                        }
 
-                                        } catch (ClientException $e) {
+                                    } catch (ClientException $e) {
 
-                                            if ($e->getResponse()) {
-                                                continue;
-                                            }
+                                        if ($e->getResponse()) {
+                                            continue;
                                         }
                                     }
                                 }
 
-                            } else {
+                            } catch (ClientException $e) {
 
-                                try {
-
-                                    $res = $client->request('post', $api_url . '/admin/variants/'. $variant->id .'/metafields.json', array(
-                                        'form_params' => array(
-                                            'metafield' => array(
-                                                'namespace' => 'variants',
-                                                'key' => 'points',
-                                                'value' => $r[1],
-                                                'value_type' => 'integer'
-                                            )
-                                        )
-                                    ));
-
-                                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                    $x = explode('/', $headers[0]);
-                                    $diferencia = $x[1] - $x[0];
-                                    if ($diferencia < 20) {
-
-                                        usleep(10000000);
-                                    }
-
-                                } catch (ClientException $e) {
-
-                                    if ($e->getResponse()) {
-                                        continue;
-                                    }
+                                if ($e->getResponse()) {
+                                    continue;
                                 }
-                            }
-
-                        } catch (ClientException $e) {
-
-                            if ($e->getResponse()) {
-                                continue;
                             }
                         }
                     }
