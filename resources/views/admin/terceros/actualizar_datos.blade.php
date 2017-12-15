@@ -40,9 +40,9 @@
                     <div class="col-sm-3" style="height: 90">
                             <div class="row">
                             @if (currentUser()->avatar !== NULL)
-                            <img src="{{ asset(currentUser()->avatar) }}" class="hidden-sm" alt="{{ currentUser()->nombre_completo }}" width="90%" />
+                            <output id="list"><img src="{{ asset(currentUser()->avatar) }}" class="hidden-sm" alt="{{ currentUser()->nombre_completo }}" width="90%" /></output>  
                             @else
-                            <img src="{{ asset("img/avatar-bg.png") }}" class="hidden-sm" alt="{{ currentUser()->nombre_completo }}" width="90%" />
+                            <output id="list"><img src="{{ asset("img/avatar-bg.png") }}" class="hidden-sm" alt="{{ currentUser()->nombre_completo }}" width="90%" /></output>  
                             @endif
                              </div> <br>  
                              <span class="btn btn-default" style="background: black; color: white"> Cambiar mi foto  <input type="file" id="foto" name="foto"> </span>
@@ -52,7 +52,8 @@
                               <a href="#">
                                           <input class="btn btn-default" style="background: #3783F9; color: white" type="button" id="d" name="d" value="Descargar contrato">
                             </a> 
-                            @endif  
+                            @endif
+                            
                             </div>                        
                     </div>                   
                     <div class="col-sm-9"> 
@@ -163,8 +164,7 @@
         </div>
     </div>
 
-<script src="http://backoffice.tiendagood.com/assets/js/jquery-1.11.1.min.js"></script>
-<script src="http://backoffice.tiendagood.com/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="http://backoffice.tiendagood.com/assets/js/jquery-1.11.1.min.js"></script> 
 <script src="http://backoffice.tiendagood.com/assets/js/jquery.backstretch.min.js"></script>
 <script src="http://backoffice.tiendagood.com/assets/js/retina-1.1.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
@@ -191,6 +191,9 @@
     var exp_address = /^[0-9a-zA-ZáéíóúàèìòùÀÈÌÒÙÁÉÍÓÚñÑüÜ#.\-_\s]+$/;
     var exp_phone = /^[0-9-()+]{3,20}$/;
     var exp_email = /^[a-zA-Z0-9\._-]+@[a-zA-Z0-9\.]+$/; 
+
+ function archivo(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { if (!f.type.match('image.*')) { continue; } var reader = new FileReader(); reader.onload = (function(theFile) { return function(e) { document.getElementById("list").innerHTML = ['<img  width="90%"  class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join(''); }; })(f); reader.readAsDataURL(f); } } 
+ document.getElementById('foto').addEventListener('change', archivo, false);
 
 $('.submit').on('submit',function(event){
  

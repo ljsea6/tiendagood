@@ -377,7 +377,11 @@ class AdminController extends Controller {
                     }
                 }
   
-        $send =  Tercero::with('cliente', 'levels')->find(currentUser()->id);
+        $send =  Tercero::with('cliente', 'levels', 'networks')->find(currentUser()->id);
+
+dd($send->networks['0']['pivot']['customer_id']);
+exit();
+
         return view('admin.index')->with(['send' => $send, 'uno' => $level_uno, 'dos' => $level_dos, 'tres' => $level_tres, 
             'points_level_1' => $points_level_1, 'points_level_2' => $points_level_2, 'points_level_3' => $points_level_3]);
     }

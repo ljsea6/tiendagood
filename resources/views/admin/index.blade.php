@@ -58,9 +58,14 @@
    </div>
 </div>
 <div class="col-lg-4 col-md-6 col-sm-6">
-    <h1 class="hidden-xs" style="text-transform: uppercase; color: gray; padding: 20px; font-size: 1.8em;">Bienvenidos a my good <br> <br> <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> Fecha del proximo corte 21 de diciembre</span></h1>
-
+   <div class="card card-stats">
+      <div class="card-content">
+         <h1 class="hidden-xs" style="text-transform: uppercase; color: gray; padding: 20px; font-size: 1.8em;">Su patrocinador es  <br>
+         <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> Fecha del proximo corte 21 de diciembre</span></h1>
+      </div>
+   </div>
 </div>
+
 <div class="col-lg-12 col-md-12">
    <div class="card">
       <div class="card-content table-responsive">
