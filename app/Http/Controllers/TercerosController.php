@@ -539,7 +539,9 @@ class TercerosController extends Controller {
 
         $tercero = Tercero::with('networks', 'primes')->find(currentUser()->id);
        
-dd($tercero->primes['0']['pivot']['fecha_inicio']) ;
+foreach ($tercero->primes as $value) {
+  echo  $value->fecha_inicio;
+}
 exit();
         $fecha_nacimiento = $tercero['fecha_nacimiento'];
         $fecha_nacimiento = date("d/m/Y", strtotime($fecha_nacimiento));

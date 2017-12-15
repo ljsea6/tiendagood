@@ -373,7 +373,7 @@ class AdminController extends Controller {
 
         $send = Tercero::with('cliente', 'levels', 'networks')->find(currentUser()->id);
         $patrocinador = '';
-        if (count($send->networks)) {
+        if (count($send->networks) > 0) {
            $patrocinador = Tercero::with('cliente', 'levels')->find($send->networks['0']['pivot']['padre_id']);
            $patrocinador = $patrocinador['nombres'].' '.$patrocinador['apellidos'];
         }
