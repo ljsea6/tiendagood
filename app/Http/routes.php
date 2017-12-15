@@ -148,8 +148,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('variants/good', ['uses' => 'VariantsController@index', 'as' => 'admin.variants.index']);
     Route::get('variants/mercando', ['uses' => 'VariantsController@mercando', 'as' => 'admin.variants.mercando']);
 
-    Route::any('variants/good/search', ['uses' => 'VariantsController@variants', 'as' => 'admin.variants.search']);
-    Route::any('variants/mercando/search', ['uses' => 'VariantsController@variants_mercando', 'as' => 'admin.variants.search_mercando']);
+
 
 
     Route::any('variants/good/update', ['uses' => 'VariantsController@update', 'as' => 'admin.variants.update']);
@@ -273,6 +272,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::any('orders/list/paid', ['uses' => 'OrdersController@paid', 'as' => 'admin.orders.list.paid']);
         Route::any('orders/list/pending', ['uses' => 'OrdersController@pending', 'as' => 'admin.orders.list.pending']);
     });
+
     Route::group(['middleware' => 'role:logistica'], function () {
         Route::get('orders', ['uses' => 'OrdersController@home', 'as' => 'admin.orders.home']);
         Route::post('orders/{id}', ['uses' => 'OrdersController@up', 'as' => 'admin.orders.up']);
@@ -316,6 +316,14 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('terceros/documentos/descargar/{id}/{tipo}', ['uses' => 'TercerosController@descargar_documentos', 'as' => 'admin.terceros.descargar_documentos']);
 
     //productos
-    Route::get('products', ['uses' => 'ProductsController@index', 'as' => 'admin.products.index']);
-    Route::get('products/data', ['uses' => 'ProductsController@anyData', 'as' => 'admin.products.data']);
+    Route::get('products/good', ['uses' => 'ProductsController@indexGood', 'as' => 'admin.products.index.good']);
+    Route::get('products/mercando', ['uses' => 'ProductsController@indexMercando', 'as' => 'admin.products.index.mercando']);
+    Route::get('products/good/data', ['uses' => 'ProductsController@anyDataGood', 'as' => 'admin.products.good']);
+    Route::get('products/mercando/data', ['uses' => 'ProductsController@anyDataMercando', 'as' => 'admin.products.mercando']);
+
+    Route::get('products/good/{id}/variants', ['uses' => 'ProductsController@variants_good', 'as' => 'admin.products.good.variants']);
+    Route::get('products/mercando/{id}/variants', ['uses' => 'ProductsController@variants_mercando', 'as' => 'admin.products.mercando.variants']);
+
+    Route::any('variants/good/search', ['uses' => 'VariantsController@variants', 'as' => 'admin.variants.search']);
+    Route::any('variants/mercando/search', ['uses' => 'VariantsController@variants_mercando', 'as' => 'admin.variants.search_mercando']);
 });

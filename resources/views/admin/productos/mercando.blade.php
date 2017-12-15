@@ -5,7 +5,7 @@
 @section('content')
     <div class="box">
         <div class="panel panel-default">
-            <div class="panel-heading font-header">Listado de productos</div>
+            <div class="panel-heading font-header">Listado de productos de Mercando</div>
             <div class="panel-body">
                 {!! Alert::render() !!}
                 {{--<input type="button" class="btn btn-danger" id="update" value="Actualizar">--}}
@@ -17,6 +17,7 @@
                             <th>Título</th>
                             <th>Tienda</th>
                             <th>Tipo Producto</th>
+                            <th>Acción</th>
                         </tr>
                         </thead>
                     </table>
@@ -26,53 +27,34 @@
     </div>
 @stop
 @push('scripts')
-<script>
-    $(function() {
-        var table = $('#tabla_productos').DataTable({
-      
-            dom: 'Bfrtip',
-            buttons: [
+    <script>
+        $(function() {
+            var table = $('#tabla_productos').DataTable({
+
+                dom: 'Bfrtip',
+                buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
-               responsive: true,
-               processing: true,
-               serverSide: false,
-               deferRender: true,
-               pagingType: "full_numbers",
-               ajax: '{{route('admin.products.data')}}',
-               columns: [
-                    { data: 'id', name: 'id', orderable: true, searchable: false },
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                deferRender: true,
+                pagingType: "full_numbers",
+                ajax: '{{route('admin.products.mercando')}}',
+                columns: [
+                    { data: 'id', name: 'id', orderable: true, searchable: true },
                     { data: 'title', name: 'title', orderable: true, searchable: true },
                     { data: 'shop', name: 'shop', orderable: true, searchable: true },
-                    { data: 'tipo_producto', name: 'tipo_producto', orderable: true, searchable: true}
+                    { data: 'tipo_producto', name: 'tipo_producto', orderable: true, searchable: true},
+                    { data: 'edit', name: 'edit', orderable: true, searchable: false}
 
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"
                 }
-        });
-
-       /* $('#update').click( function() {
-            var data = table.$('input, select').serialize();
-
-            $.ajax({
-                url: "",
-                data: { value: data, _token: ''},
-                type: 'POST',
-                dataType: 'json',
-                success: function(data) {
-                    alert(data.data);
-                },
-                error : function(xhr, status) {
-                    alert('Disculpe, existió un problema');
-                },
-
             });
 
-            table._fnAjaxUpdate();
-            return false;
-        } );*/
-    });
+        });
 
-</script>
+    </script>
 @endpush

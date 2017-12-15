@@ -30,14 +30,20 @@ class ProductsController extends Controller
         return view('admin.reportes.products');
     }
 
-    public function index()
+    public function indexGood()
     {
-        return view('admin.productos.home');
+        return view('admin.productos.good');
     }
 
-    public function anyData()
+    public function indexMercando()
+    {
+        return view('admin.productos.mercando');
+    }
+
+    public function anyDataGood()
     {
         $products = Product::select('id', 'title', 'tipo_producto', 'shop')
+            ->where('shop', 'good')
             ->get();
 
         $send = collect($products);
@@ -56,7 +62,52 @@ class ProductsController extends Controller
             ->addColumn('tipo_producto', function ($send) {
                 return '<div align=left>' . ucwords($send->tipo_producto) . '</div>';
             })
+            ->addColumn('edit', function ($send) {
+                return '<div align=left><a href="' . route('admin.products.good.variants', $send['id']) . '"  class="btn btn-warning btn-xs">
+                        Editar
+                </a></div>';
+            })
             ->make(true);
+    }
+
+    public function anyDataMercando()
+    {
+        $products = Product::select('id', 'title', 'tipo_producto', 'shop')
+            ->where('shop', 'mercando')
+            ->get();
+
+        $send = collect($products);
+
+        return Datatables::of($send)
+
+            ->addColumn('id', function ($send) {
+                return '<div align=left>' . $send['id'] . '</div>';
+            })
+            ->addColumn('title', function ($send) {
+                return '<div align=left>' . ucwords($send['title']) . '</div>';
+            })
+            ->addColumn('shop', function ($send) {
+                return '<div align=left>' . ucwords($send['shop']) . '</div>';
+            })
+            ->addColumn('tipo_producto', function ($send) {
+                return '<div align=left>' . ucwords($send->tipo_producto) . '</div>';
+            })
+            ->addColumn('edit', function ($send) {
+                return '<div align=left><a href="' . route('admin.products.mercando.variants', $send['id']) . '"  class="btn btn-warning btn-xs">
+                        Editar
+                </a></div>';
+            })
+            ->make(true);
+    }
+
+    public function variants_good($id)
+    {
+        return view('admin.productos.variants_good')->with(['id' => $id]);
+    }
+
+    public function variants_mercando($id)
+    {
+        return view('admin.productos.variants_mercando')->with(['id' => $id]);
     }
 
     /**
