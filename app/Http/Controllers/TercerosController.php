@@ -219,8 +219,7 @@ class TercerosController extends Controller {
 
             if (count($tercero) > 0) {
                 $networks = $tercero['networks'];
-                $father = $networks[0]['pivot']['padre_id'];
-
+                $father = count($networks) > 0 ? $networks[0]['pivot']['padre_id'] : NULL;
                 $tipo_cliente = \App\Entities\Tipo::find($tercero->tipo_cliente_id)->nombre;
                 $data['tercero'] = ['id' => $tercero->id,
                     'nombre' => "$tercero->nombres $tercero->apellidos",
