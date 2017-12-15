@@ -233,10 +233,18 @@
 
 
                         <li>
-                            <a href="{{route('admin.products.index')}}" class="text-left">
+                            <a href="{{route('admin.products.index.good')}}" class="text-left">
                                 <i class="fa fa-bookmark">
                                 </i>
-                                Productos
+                                Productos Good
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{route('admin.products.index.mercando')}}" class="text-left">
+                                <i class="fa fa-bookmark">
+                                </i>
+                                Productos Mercando
                             </a>
                         </li>
                         <li>

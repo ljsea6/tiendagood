@@ -17,6 +17,7 @@
                             <th>Título</th>
                             <th>Tienda</th>
                             <th>Tipo Producto</th>
+                            <th>Acción</th>
                         </tr>
                         </thead>
                     </table>
@@ -36,42 +37,22 @@
                 ],
                responsive: true,
                processing: true,
-               serverSide: false,
+               serverSide: true,
                deferRender: true,
                pagingType: "full_numbers",
-               ajax: '{{route('admin.products.data')}}',
+               ajax: '{{route('admin.products.good')}}',
                columns: [
-                    { data: 'id', name: 'id', orderable: true, searchable: false },
+                    { data: 'id', name: 'id', orderable: true, searchable: true },
                     { data: 'title', name: 'title', orderable: true, searchable: true },
                     { data: 'shop', name: 'shop', orderable: true, searchable: true },
-                    { data: 'tipo_producto', name: 'tipo_producto', orderable: true, searchable: true}
-
+                    { data: 'tipo_producto', name: 'tipo_producto', orderable: true, searchable: true},
+                    { data: 'edit', name: 'edit', orderable: true, searchable: false}
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"
                 }
         });
 
-       /* $('#update').click( function() {
-            var data = table.$('input, select').serialize();
-
-            $.ajax({
-                url: "",
-                data: { value: data, _token: ''},
-                type: 'POST',
-                dataType: 'json',
-                success: function(data) {
-                    alert(data.data);
-                },
-                error : function(xhr, status) {
-                    alert('Disculpe, existió un problema');
-                },
-
-            });
-
-            table._fnAjaxUpdate();
-            return false;
-        } );*/
     });
 
 </script>

@@ -18,12 +18,13 @@ use GuzzleHttp\Exception\ClientException;
 class VariantsController extends Controller
 {
 
-    public function variants()
+    public function variants(Request $request)
     {
         $variants = DB::table('variants')
             ->join('products', 'variants.product_id', '=', 'products.id')
             ->select('products.tipo_producto as tipo', 'variants.id as id', 'products.vendor as vendor', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
             ->where('products.shop', 'good')
+            ->where('products.id', $request->id)
             ->where('products.handle', '!=', 'example-t-shirt')
             ->orderBy('products.created_at', 'asc')
             ->get();
@@ -56,12 +57,13 @@ class VariantsController extends Controller
             })
             ->make(true);
     }
-    public function variants_mercando()
+    public function variants_mercando(Request $request)
     {
         $variants = DB::table('variants')
             ->join('products', 'variants.product_id', '=', 'products.id')
-            ->select('variants.id as id', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
+            ->select('products.tipo_producto as tipo', 'variants.id as id', 'products.vendor as vendor', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
             ->where('products.tipo_producto', 'nacional')
+            ->where('products.id', $request->id)
             ->where('products.handle', '!=', 'example-t-shirt')
             ->where('products.shop', 'mercando')
             ->get();
@@ -76,6 +78,9 @@ class VariantsController extends Controller
                 } else {
                     return '<div align=left>' . $send->product . ' ' . $send->title . '</div>';
                 }
+            })
+            ->addColumn('tipo', function ($send) {
+                return '<div align=left>' . ucwords($send->tipo) . '</div>';
             })
             ->addColumn('price', function ($send) {
                 return '<div align=left>' . number_format($send->price) . '</div>';
