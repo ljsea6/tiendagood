@@ -454,124 +454,6 @@ class UsuariosController extends Controller {
         // Usuario creado
         $usuario->save();
 
-        if ($request->has('prime')) {
-            $usuario->primes()->create([
-                'fecha_inicio' => Carbon::now(),
-                'fecha_final' => Carbon::now()->addMonth(),
-                'log' => [
-                    'id' => $request->getClientIp(),
-                    'browser' => $request->header('User-Agent')
-                ]
-            ]);
-        }
-
-        $city = Ciudad::find($request->city);
-
-        $good_id  = '';
-        $mercando_id = '';
-
-        if (count($usuario) > 0) {
-
-            $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-            $client = new \GuzzleHttp\Client();
-
-            try {
-
-                $res = $client->request('post', $api_url . '/admin/customers.json', array(
-                        'form_params' => array(
-                            'customer' => array(
-                                'first_name' => strtolower($request['first-name']),
-                                'last_name' => strtolower($request['last-name']),
-                                'email' => strtolower($request->email),
-                                'verified_email' => true,
-                                'phone' => $p,
-                                "password" => $request->password,
-                                "password_confirmation" => $request->password_confirmation,
-                                'send_email_invite' => false,
-                                'send_email_welcome' => false
-                            )
-                        )
-                    )
-                );
-
-                $customer = json_decode($res->getBody(), true);
-
-                $good_id = '' . $customer['customer']['id'];
-
-
-            } catch (ClientException $e) {
-
-                $err = json_decode(($e->getResponse()->getBody()), true);
-
-                return redirect()->back()->with(['err' => $err]);
-
-                foreach ($err['errors'] as $key => $value) {
-
-                    echo $key . ' ' . $value[0] . "\n";
-                }
-            }
-
-            $api_url = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
-            $client = new \GuzzleHttp\Client();
-
-            try {
-
-                $res = $client->request('post', $api_url . '/admin/customers.json', array(
-                        'form_params' => array(
-                            'customer' => array(
-                                'first_name' => strtolower($request['first-name']),
-                                'last_name' => strtolower($request['last-name']),
-                                'email' => strtolower($request->email),
-                                'verified_email' => true,
-                                'phone' => $p,
-                                'addresses' => [
-
-                                    [
-                                        'address1' => strtolower($request->address),
-                                        'city' => strtolower($city->nombre),
-                                        'province' => '',
-
-                                        "zip" => '',
-                                        'first_name' => strtolower($request['first-name']),
-                                        'last_name' => strtolower($request['last-name']),
-                                        'country' => 'CO'
-                                    ],
-
-                                ],
-                                "password" => $request->password,
-                                "password_confirmation" => $request->password_confirmation,
-                                'send_email_invite' => false,
-                                'send_email_welcome' => false
-                            )
-                        )
-                    )
-                );
-
-                $customer = json_decode($res->getBody(), true);
-
-                $mercando_id = '' . $customer['customer']['id'];
-
-            } catch (ClientException $e) {
-
-                $err = json_decode(($e->getResponse()->getBody()), true);
-
-                return redirect()->back()->with(['err' => $err]);
-
-                foreach ($err['errors'] as $key => $value) {
-
-                    echo $key . ' ' . $value[0] . "\n";
-                }
-            }
-        }
-
-        DB::table('terceros_tiendas')->insertGetId(
-            [
-                'tercero_id' => $usuario->id,
-                'customer_id_good' =>  $good_id,
-                'customer_id_mercando' =>  $mercando_id,
-            ]
-        );
-
         $padre = Tercero::with('networks')->where('identificacion', '=', '' .$request->code. '')->first();
 
         if (count($padre) > 0 ) {
@@ -616,10 +498,119 @@ class UsuariosController extends Controller {
             }
         }
 
-        /*if ($usuario) {
-            \Auth::login($usuario);
-            return redirect()->route('admin.index');
-        }*/
+        if ($request->has('prime')) {
+            $usuario->primes()->create([
+                'fecha_inicio' => Carbon::now(),
+                'fecha_final' => Carbon::now()->addMonth(),
+                'log' => [
+                    'id' => $request->getClientIp(),
+                    'browser' => $request->header('User-Agent')
+                ]
+            ]);
+        }
+
+        $city = Ciudad::find($request->city);
+
+        $good_id  = '';
+        $mercando_id = '';
+
+        if (count($usuario) > 0) {
+
+            $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+            $clienta = new \GuzzleHttp\Client();
+
+            try {
+
+                $resa = $clienta->request('post', $api_url . '/admin/customers.json', array(
+                        'form_params' => array(
+                            'customer' => array(
+                                'first_name' => strtolower($request['first-name']),
+                                'last_name' => strtolower($request['last-name']),
+                                'email' => strtolower($request->email),
+                                'verified_email' => true,
+                                'phone' => $p,
+                                "password" => $request->password,
+                                "password_confirmation" => $request->password_confirmation,
+                                'send_email_invite' => false,
+                                'send_email_welcome' => false
+                            )
+                        )
+                    )
+                );
+
+                $customer = json_decode($resa->getBody(), true);
+
+                $good_id = '' . $customer['customer']['id'];
+
+
+            } catch (ClientException $e) {
+
+                $err = json_decode(($e->getResponse()->getBody()), true);
+
+                foreach ($err['errors'] as $key => $value) {
+
+                    echo $key . ' ' . $value[0] . "\n";
+                }
+            }
+
+            $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+            $clientb = new \GuzzleHttp\Client();
+
+            try {
+
+                $resb = $clientb->request('post', $api_url_mercando . '/admin/customers.json', array(
+                        'form_params' => array(
+                            'customer' => array(
+                                'first_name' => strtolower($request['first-name']),
+                                'last_name' => strtolower($request['last-name']),
+                                'email' => strtolower($request->email),
+                                'verified_email' => true,
+                                'phone' => $p,
+                                'addresses' => [
+
+                                    [
+                                        'address1' => strtolower($request->address),
+                                        'city' => strtolower($city->nombre),
+                                        'province' => '',
+
+                                        "zip" => '',
+                                        'first_name' => strtolower($request['first-name']),
+                                        'last_name' => strtolower($request['last-name']),
+                                        'country' => 'CO'
+                                    ],
+
+                                ],
+                                "password" => $request->password,
+                                "password_confirmation" => $request->password_confirmation,
+                                'send_email_invite' => false,
+                                'send_email_welcome' => false
+                            )
+                        )
+                    )
+                );
+
+                $customer = json_decode($resb->getBody(), true);
+
+                $mercando_id = '' . $customer['customer']['id'];
+
+            } catch (ClientException $e) {
+
+                $err = json_decode(($e->getResponse()->getBody()), true);
+
+                foreach ($err['errors'] as $key => $value) {
+
+                    echo $key . ' ' . $value[0] . "\n";
+                }
+            }
+        }
+
+        DB::table('terceros_tiendas')->insertGetId(
+            [
+                'tercero_id' => $usuario->id,
+                'customer_id_good' =>  $good_id,
+                'customer_id_mercando' =>  $mercando_id,
+            ]
+        );
 
         $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
         $this->envio_registro($request->code, $data);

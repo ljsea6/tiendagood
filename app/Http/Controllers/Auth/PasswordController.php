@@ -88,7 +88,7 @@ class PasswordController extends Controller {
 
             if($usuario) {
 
-                return $this->api_cambio_password($api_url_good, strtolower($email), $request->password, $remember_token);
+                $this->api_cambio_password($api_url_good, strtolower($email), $request->password, $remember_token);
                 $this->api_cambio_password($api_url_mercando, strtolower($email), $request->password, $remember_token);
 
             }
@@ -104,17 +104,16 @@ class PasswordController extends Controller {
 
     public function api_cambio_password($api, $email, $password, $datos) {
 
-
-       
         $client = new \GuzzleHttp\Client();
 
                 try {
                     $good = $client->request('GET', $api . '/admin/customers/search.json?query=email:'. $email );
+
                     $headers = $good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
                     $x = explode('/', $headers[0]);
                     $diferencia = $x[1] - $x[0];
                     if ($diferencia < 20) {
-                        usleep(10000000);
+                        usleep(30000000);
                     }
 
                     $results = json_decode($good->getBody(), true);
@@ -136,16 +135,14 @@ class PasswordController extends Controller {
                       $x = explode('/', $headers[0]);
                       $diferencia = $x[1] - $x[0];
                       if ($diferencia < 20) {
-                          usleep(10000000);
+                          usleep(30000000);
                       }                      
 
                       } catch (ClientException $e) {
 
                           if ($e->hasResponse()) {
 
-                              return $e->hasResponse();
-
-                              //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                              return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                           }
                       }
                     }
@@ -188,7 +185,7 @@ class PasswordController extends Controller {
                       $x = explode('/', $headers[0]);
                       $diferencia = $x[1] - $x[0];
                       if ($diferencia < 20) {
-                          usleep(10000000);
+                          usleep(30000000);
                       }                      
 
                     }
@@ -197,9 +194,7 @@ class PasswordController extends Controller {
 
                     if ($e->hasResponse()) {
 
-                        return $e->hasResponse();
-
-                        //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                        return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                     }
                 }  
 
