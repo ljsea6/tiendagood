@@ -42,7 +42,7 @@
                                 Editar Datos
                             </a>
                         </li> @endrole
-                        @role('administrador')
+                        @role('dirsac')
                         <li>
                             <a href="{{ route('admin.terceros.cambiarpadre') }}" class="text-left">
                                 <i class="fa fa-edit">

@@ -23,7 +23,30 @@
     cursor: inherit;
     display: block;
     color: white;
-}    
+}  
+
+input[type="file"] {display: none;}
+
+.boton-upload { font-family: 'Montserrat',sans-serif; font-size: 12px; outline: none !important; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3); -webkit-box-shadow: inset 0 1px rgba(255,255,255,0.3); display: inline-block; padding: 10px; cursor: pointer;background-color: #949494; color: white;  border-radius: 10px; }
+
+.boton-descargar { font-family: 'Montserrat',sans-serif; font-size: 12px; outline: none !important; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3); -webkit-box-shadow: inset 0 1px rgba(255,255,255,0.3); display: inline-block; padding: 10px; cursor: pointer;background-color: #949494; color: white; border-radius: 10px;  }
+
+.boton-upload:hover{ transition: .5s ease-in; background-color: gray; color: white;  }
+
+.btn-primary{
+    border: none;
+    padding: 20px;
+    text-transform: uppercase;
+    border-radius: 30px;
+}
+
+.title-actualizar{
+    padding: 30px;
+    background-color: orange;
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+}
 
 </style>
 
@@ -36,31 +59,36 @@
           <!--  <form action="{{route('terceros.actualizar_mis_datos')}}" method="post" class="form-horizontal" enctype="multipart/form-data"> -->
                 {!! Form::open(['route' => 'terceros.actualizar_mis_datos', 'method' => 'POST', 'class' => 'form-access submit', 'enctype' => 'multipart/form-data']) !!}
                 <div class="row">
-               
-                    <div class="col-sm-3" style="height: 90">
+                    <div class="col-xs-12">
+                         <h3 class="text-center title-actualizar  col-xs-12">Actualizar mis datos</h3><hr>
+                    </div>
+                    <div class="col-sm-3">
                             <div class="row">
                             @if (currentUser()->avatar !== NULL)
-                            <img src="{{ asset(currentUser()->avatar) }}" class="hidden-sm" alt="{{ currentUser()->nombre_completo }}" width="90%" />
+                            <output id="list"><img src="{{ asset(currentUser()->avatar) }}" class="hidden-sm" alt="{{ currentUser()->nombre_completo }}" width="70%" /></output>  
                             @else
-                            <img src="{{ asset("img/avatar-bg.png") }}" class="hidden-sm" alt="{{ currentUser()->nombre_completo }}" width="90%" />
+                            <output id="list"><img src="{{ asset("img/avatar-bg.png") }}" class="hidden-sm" alt="{{ currentUser()->nombre_completo }}" width="70%" /></output>  
                             @endif
                              </div> <br>  
-                             <span class="btn btn-default" style="background: black; color: white"> Cambiar mi foto  <input type="file" id="foto" name="foto"> </span>
+                                        <label for="foto" class="boton-upload" style="width: 200px;"> 
+                                            <input type="file" id="foto" name="foto"> 
+                                            Cambiar foto
+                                        </label>
                              <hr>
                             <div class="row">
                             @if ($tercero['tipo_cliente_id'] == 83)
-                              <a href="#">
+                              <a href="https://cdn.shopify.com/s/files/1/2256/3751/files/Terminos_y_condiciones_Good_prime.docx?3575541982139248614">
                                           <input class="btn btn-default" style="background: #3783F9; color: white" type="button" id="d" name="d" value="Descargar contrato">
                             </a> 
-                            @endif  
+                            @endif
+                            
                             </div>                        
-                    </div>                   
-                    <div class="col-sm-9"> 
-                            <h3 class="text-center">Actualizar mis datos</h3>
-                            <hr>
+                    </div>
+
+                    <div class="col-sm-9">
+                            
                             <input type="hidden" name="_method" value="PUT">
                             <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
-
 
                             <div class="row">
                                   <label  class="col-sm-1">Nombres </label> 
@@ -83,69 +111,88 @@
                                    value="{{ $fecha_nacimiento }}"/></span>
                                   </div>
                             </div> <br>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-check">
+                                       <label class="form-check-label">
+                                          <input type="checkbox" class="form-check-input">
+                                          Seleccionar usuario prime
+                                        </label>
+                                    </div>
+                                </div>    
+                            </div> <br>
+
                              <h3 class="text-center">Documentos</h3>
                              <hr>
-                            <div class="row"> 
-                                    <label  class="col-sm-6">RUT <label style="color: #F00707"> Recuerde que su RUT debe tener código de actividad 8299 </label> </label>
-                                    <div class="col-sm-3"> 
+
+                             <div class="row">
+                                <div class="col-xs-12 col-sm-4" style="border-right: 1px solid #C3C3C3">
+                                    <label class="col-sm-12 text-center">RUT <span style="color: #F00707"> Recuerde que su RUT debe tener código de actividad 8299 </span> </label>
+                                    <div class="col-xs-12">
                                       @if ($tercero['rut'] != '')  
-                                        <a href="{{route('admin.terceros.descargar_documentos', ['id' => currentUser()->id, 'tipo' => 'rut'])}}">
-                                          <input class="btn btn-default" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar">
-                                        </a> 
+                                        <a href="{{route('admin.terceros.descargar_documentos', ['id' => currentUser()->id, 'tipo' => 'rut'])}}"> 
+                                          <input class="btn btn-default boton-descargar" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar"> 
+                                        </a>
                                       @endif 
-                                    </div>     
-                                    <div class="col-sm-3"> <span class="btn btn-default" style="background: black; color: white"> 
+                                         <label for="rut" class="boton-upload">
+                                            <input type="file" id="rut" name="rut">
                                       @if ($tercero['rut'] != '')  
                                         Cambiar 
                                       @endif 
                                       @if ($tercero['rut'] == '')  
                                         Agregar 
-                                      @endif 
-                                        <input type="file" id="rut" name="rut">  </span>  </div>                                                       
-                            </div>  <br>
-                            <div class="row"> 
-                                    <label  class="col-sm-6">Cédula o Documento</label>
-                                    <div class="col-sm-3">
+                                      @endif  
+                                        </label> <br>
+                                        <p id="texto" class="col-xs-12" style="color: gray; font-style: italic; font-size: .8em;"></p>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-4">
+                                    <label class="col-xs-12 col-sm-12 text-center"> Cédula o Documento </label>
+                                    <div class="col-xs-10 col-xs-offset-1">
                                       @if ($tercero['cedula'] != '')  
                                         <a href="{{route('admin.terceros.descargar_documentos', ['id' => currentUser()->id, 'tipo' => 'cedula'])}}">
-                                          <input class="btn btn-default" style="background: #3783F9; color: white" type="button" id="d" name="d"  value="descargar"> 
+                                          <input class="btn btn-default boton-descargar" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar"> 
                                         </a>
                                       @endif 
-                                    </div>   
-                                    <div class="col-sm-3"> <span class="btn btn-default" style="background: black; color: white"> 
+                                        <label for="cedula" class="boton-upload"> 
+                                            <input type="file" id="cedula" name="cedula">
                                       @if ($tercero['cedula'] != '')  
                                         Cambiar 
                                       @endif 
                                       @if ($tercero['cedula'] == '')  
                                         Agregar 
                                       @endif 
-                                     <input type="file" id="cedula" name="cedula">   </span> </div>                                      
-                            </div> <br>
-                            <div class="row"> 
-                                    <label  class="col-sm-6">Certificación bancaria (No obligatorio para registro) </label>
-                                    <div class="col-sm-3">  
+                                        </label>  <br>
+                                         <p id="texto-cedula" class="col-xs-12" style="color: gray; font-style: italic; font-size: .8em;"></p>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-4" style="border-left: 1px solid #C3C3C3">
+                                    <label class="col-xs-12 col-sm-12 text-center"> Certificación bancaria (No obligatorio para registro)  </label>
+                                    <div class=" col-xs-10 col-xs-offset-1">
                                       @if ($tercero['cuenta'] != '')   
                                        <a href="{{route('admin.terceros.descargar_documentos', ['id' => currentUser()->id, 'tipo' => 'cuenta'])}}">
-                                       <input class="btn btn-default" style="background: #3783F9; color: white" type="button" id="d" name="d"  value="descargar"> 
-                                      </a> 
+                                          <input class="btn btn-default boton-descargar" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar"> 
+                                        </a>
                                       @endif 
-                                    </div>  
-                                    <div class="col-sm-3">  
-                                        <span class="btn btn-default " style="background: black; color: white"> 
+                                         <label for="banco" class="boton-upload">
+                                            <input type="file" id="banco" name="banco">
                                       @if ($tercero['cuenta'] != '')  
                                         Cambiar 
                                       @endif 
                                       @if ($tercero['cuenta'] == '')  
                                         Agregar 
                                       @endif 
-                                         <input type="file" id="banco" name="banco">   </span> 
-                                    </div>                                  
-                            </div>  <br>
-                            <div class="row"> 
-                                <div class="col-sm-12">
-                                    <button class="btn btn-primary" type="submit" data-toggle="modal" data-target="#myModal" id="enviar">Actualizar mis datos</button>
+                                        </label><br>
+                                         <p id="texto-certificacion" class="col-xs-12" style="color: gray; font-style: italic; font-size: .8em;"></p> 
+                                    </div>
                                 </div>
-                            </div>
+                             </div>
+
+                             <input type="hidden" name="rut_old" value="{{$tercero['rut']}}"> 
+                             <input type="hidden" name="cedula_old" value="{{$tercero['cedula']}}"> 
+                             <input type="hidden" name="cuenta_old" value="{{$tercero['cuenta']}}"> 
+                             <input type="hidden" name="foto_old" value="{{currentUser()->avatar}}"> 
+                           
 
                             @if ($errors->any())
                                 <div class="alert alert-danger fade in col-sm-offset-3 col-sm-6">
@@ -158,13 +205,17 @@
                                 </div>
                             @endif 
                     </div>
+                </div><br><br>
+                 <div class="row"> 
+                    <div class="col-sm-12">
+                        <button class="btn btn-primary" type="submit" data-toggle="modal" data-target="#myModal" id="enviar">Actualizar mis datos</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 
-<script src="http://backoffice.tiendagood.com/assets/js/jquery-1.11.1.min.js"></script>
-<script src="http://backoffice.tiendagood.com/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="http://backoffice.tiendagood.com/assets/js/jquery-1.11.1.min.js"></script> 
 <script src="http://backoffice.tiendagood.com/assets/js/jquery.backstretch.min.js"></script>
 <script src="http://backoffice.tiendagood.com/assets/js/retina-1.1.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
@@ -191,6 +242,58 @@
     var exp_address = /^[0-9a-zA-ZáéíóúàèìòùÀÈÌÒÙÁÉÍÓÚñÑüÜ#.\-_\s]+$/;
     var exp_phone = /^[0-9-()+]{3,20}$/;
     var exp_email = /^[a-zA-Z0-9\._-]+@[a-zA-Z0-9\.]+$/; 
+
+
+ function archivo(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { if (!f.type.match('image.*')) { continue; } var reader = new FileReader(); reader.onload = (function(theFile) { return function(e) { document.getElementById("list").innerHTML = ['<img  width="90%"  class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join(''); }; })(f); reader.readAsDataURL(f); } } 
+ document.getElementById('foto').addEventListener('change', archivo, false);
+
+/* Funcion rut span*/
+
+ function rut(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { 
+    if (f.type.match('image.*') || f.type.match('application/pdf')) {
+    var reader = new FileReader(); 
+    reader.onload = (function(theFile) { 
+        return function(e) { 
+            document.getElementById("texto").innerHTML = [ escape(theFile.name) ].join(''); 
+        }; 
+    })(f); 
+    reader.readAsDataURL(f); 
+    }
+    }
+} 
+
+document.getElementById('rut').addEventListener('change', rut, false);
+
+function doc(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { 
+    if (f.type.match('image.*') || f.type.match('application/pdf')) {
+    var reader = new FileReader(); 
+    reader.onload = (function(theFile) { 
+        return function(e) { 
+            document.getElementById("texto-cedula").innerHTML = [ escape(theFile.name) ].join(''); 
+        }; 
+    })(f); 
+    reader.readAsDataURL(f); 
+    } 
+    }
+} 
+
+document.getElementById('cedula').addEventListener('change', doc, false);
+ 
+function cer(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { 
+    if (f.type.match('image.*') || f.type.match('application/pdf')) {
+    var reader = new FileReader(); 
+    reader.onload = (function(theFile) { 
+        return function(e) { 
+            document.getElementById("texto-certificacion").innerHTML = [ escape(theFile.name) ].join(''); 
+        }; 
+    })(f); 
+    reader.readAsDataURL(f); 
+    }
+    } 
+} 
+
+document.getElementById('banco').addEventListener('change', cer, false);
+
 
 $('.submit').on('submit',function(event){
  
@@ -226,7 +329,7 @@ $('.submit').on('submit',function(event){
                 event.preventDefault() ;
             } 
 
-            else if (address.length < 5 ) {
+            else if (!exp_address.test(address)) {
                 swal({ 
                   html: $('<div>').text('La dirección no puede estar en blanco y no se puede usar caracteres especiales.'),
                   animation: false,
