@@ -120,10 +120,8 @@ class PasswordController extends Controller {
             }
 
             $results = json_decode($good->getBody(), true);
-
-            echo count($results['customers']); die();
-
-            if(count($results['customers']) > 0) {
+            
+            if((int)count($results['customers']) == 1) {
 
                 try {
                     $res = $client->request('put', $api . '/admin/customers/'. $results['customers'][0]['id'] .'.json', array(
