@@ -33,18 +33,15 @@
 @stop
 @push('scripts')
     <script>
-
         $(function() {
-
             var table = $('#variants').DataTable({
-
                 dom: 'Bfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
                 ],
                 responsive: true,
                 processing: true,
-                serverSide: true,
+                serverSide: false,
                 deferRender: true,
                 pagingType: "full_numbers",
                 ajax: '{{route('admin.variants.search')}}',
@@ -56,39 +53,30 @@
                     { data: 'price', name: 'price', orderable: true, searchable: true },
                     { data: 'sold_units', name: 'sold_units', orderable: true, searchable: true},
                     { data: 'percentage', name: 'percentage', orderable: true, searchable: true}
-
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"
                 }
             });
-
             $('#update').click( function() {
-
                 $("#g").prop("disabled",true);
                 $("div#divLoading").show();
-
                 var data = table.$('input, select').serialize();
-
                 $.ajax({
-                    url: "{{ route('admin.variants.update') }}",
+                    url: "{{route('admin.variants.update')}}",
                     data: { value: data, _token: '{{ csrf_token() }}'},
                     type: 'POST',
                     dataType: 'json',
                     success: function(data) {
                         $("div#divLoading").hide();
-
-
                     },
                     error : function(xhr, status) {
                         alert('Disculpe, existió un problema');
                     }
                 });
-
                 table._fnAjaxUpdate();
                 return false;
             } );
         });
-
     </script>
 @endpush

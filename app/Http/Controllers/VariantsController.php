@@ -27,24 +27,17 @@ class VariantsController extends Controller
             ->where('products.handle', '!=', 'example-t-shirt')
             ->orderBy('products.created_at', 'asc')
             ->get();
-
         $send = collect($variants);
-
         return Datatables::of($send)
             ->addColumn('id', function ($send) {
                 return '<div align=left>' . $send->id . '</div>';
             })
             ->addColumn('title', function ($send) {
-
                 if ($send->title == 'Default Title') {
-
                     return '<div align=left>' . $send->product . '</div>';
-
                 } else {
-
                     return '<div align=left>' . $send->product . ' ' . $send->title . '</div>';
                 }
-
             })
             ->addColumn('tipo', function ($send) {
                 return '<div align=left>' . ucwords($send->tipo) . '</div>';
@@ -59,21 +52,10 @@ class VariantsController extends Controller
                 return '<div align=left>' . number_format($send->sold_units) . '</div>';
             })
             ->addColumn('percentage', function ($send) {
-
-                if (isset($send->percentage) && $send->percentage != null && $send->percentage != 0) {
-                    return '<div align=left>
-                            <input class="'. $send->percentage  .' points" id='. $send->id .' name='. $send->id .'  type="number" value="'.number_format($send->percentage).'">
-                        </div>';
-                } else {
-                    return '<div align=left>
-                            <input class="0" id='. $send->id .' name='. $send->id .'  type="number" value="'.number_format($send->percentage).'">
-                        </div>';
-                }
-
+                return '<div align=left><input id='. $send->id .' name='. $send->id .'  type="number" value="'.number_format($send->percentage).'"></div>';
             })
             ->make(true);
     }
-
     public function variants_mercando()
     {
         $variants = DB::table('variants')
@@ -83,24 +65,17 @@ class VariantsController extends Controller
             ->where('products.handle', '!=', 'example-t-shirt')
             ->where('products.shop', 'mercando')
             ->get();
-
         $send = collect($variants);
-
         return Datatables::of($send)
             ->addColumn('id', function ($send) {
                 return '<div align=left>' . $send->id . '</div>';
             })
             ->addColumn('title', function ($send) {
-
                 if ($send->title == 'Default Title') {
-
                     return '<div align=left>' . $send->product . '</div>';
-
                 } else {
-
                     return '<div align=left>' . $send->product . ' ' . $send->title . '</div>';
                 }
-
             })
             ->addColumn('price', function ($send) {
                 return '<div align=left>' . number_format($send->price) . '</div>';
