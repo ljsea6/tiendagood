@@ -73,11 +73,14 @@ class PasswordController extends Controller {
     }
 
     public function postReset(Request $request) {
+
         $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
 
         $remember_token = Tercero::where('remember_token', $request->token)->first();
-        if($remember_token != ''){ 
+
+        if($remember_token != ''){
+
             $email = $remember_token['email'];
             $id = $remember_token['id'];
 
@@ -106,135 +109,116 @@ class PasswordController extends Controller {
 
         $client = new \GuzzleHttp\Client();
 
+        try {
+
+            $good = $client->request('GET', $api . '/admin/customers/search.json?query=email:'. $email );
+            $headers = $good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+            $x = explode('/', $headers[0]);
+            $diferencia = $x[1] - $x[0];
+            if ($diferencia < 20) {
+                usleep(10000000);
+            }
+
+            $results = json_decode($good->getBody(), true);
+
+
+            if(count($results['customers']) > 0) {
+
                 try {
+                    $res = $client->request('put', $api . '/admin/customers/'. $results['customers'][0]['id'] .'.json', array(
+                            'form_params' => array(
+                                'customer' => array(
+                                    "password" => $password,
+                                    "password_confirmation" => $password,
+                                )
+                            )
+                        )
+                    );
 
-                    $good = $client->request('GET', $api . '/admin/customers/search.json?query=email:'. $email );
-
-                    $headers = $good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
                     $x = explode('/', $headers[0]);
                     $diferencia = $x[1] - $x[0];
                     if ($diferencia < 20) {
-                        usleep(30000000);
-                    }
-
-                    $results = json_decode($good->getBody(), true);
-
-
-
-                    if(isset($results['customers']) && count($results['customers']) > 0) {
-
-                       try {
-                       $res = $client->request('put', $api . '/admin/customers/'. $results['customers'][0]['id'] .'.json', array(
-                                  'form_params' => array(
-                                      'customer' => array(
-                                          "password" => $password,
-                                          "password_confirmation" => $password,
-                                      )
-                                  )
-                              )
-                          );
-
-                      $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                      $x = explode('/', $headers[0]);
-                      $diferencia = $x[1] - $x[0];
-                      if ($diferencia < 20) {
-                          usleep(30000000);
-                      }
-
-
-
-                      } catch (ClientException $e) {
-
-                          if ($e->hasResponse()) {
-
-
-                             /* $response = $e->getResponse();
-                              $responseBodyAsString = $response->getBody()->getContents();
-
-                              return redirect()->back()->with(['err' => $responseBodyAsString]);*/
-                          }
-                      }
-                    }
-
-                    if (isset($results['customers']) && count($results['customers']) == 0) {
-                        try {
-
-                            $res = $client->request('post', $api . '/admin/customers.json', array(
-                                    'form_params' => array(
-                                        'customer' => array(
-                                            'first_name' => strtolower($datos['nombres']),
-                                            'last_name' => strtolower($datos['apellidos']),
-                                            'email' => strtolower($datos['email']),
-                                            'verified_email' => true,
-                                            'phone' => $datos['telefono'],
-                                            "password" => $password,
-                                            "password_confirmation" => $password,
-                                            'addresses' => [
-
-                                                [
-                                                    'address1' => strtolower($datos['direccion']),
-                                                    'city' => strtolower($datos['ciudad_id']),
-                                                    'province' => '',
-
-                                                    "zip" => '',
-                                                    'first_name' => strtolower($datos['nombres']),
-                                                    'last_name' => strtolower($datos['apellidos']),
-                                                    'country' => 'CO'
-                                                ],
-
-                                            ],
-                                            'send_email_invite' => false,
-                                            'send_email_welcome' => false
-                                        )
-                                    )
-                                )
-                            );
-
-                            $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                            $x = explode('/', $headers[0]);
-                            $diferencia = $x[1] - $x[0];
-                            if ($diferencia < 20) {
-                                usleep(30000000);
-                            }
-
-                        } catch (ClientException $e) {
-
-                            if ($e->hasResponse()) {
-                                $response = $e->getResponse();
-                                $responseBodyAsString = $response->getBody()->getContents();
-
-                                return redirect()->back()->with(['err' => 'se está metiendo donde no debe ']);
-                            }
-                        }
+                        usleep(10000000);
                     }
 
                 } catch (ClientException $e) {
 
                     if ($e->hasResponse()) {
-
-                       /* $response = $e->getResponse();
-                        $responseBodyAsString = $response->getBody()->getContents();
-
-                        return redirect()->back()->with(['err' => $responseBodyAsString]);*/
+                        return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                     }
-                }  
+                }
 
+            } else {
+
+                try {
+
+                    $res = $client->request('post', $api . '/admin/customers.json', array(
+                            'form_params' => array(
+                                'customer' => array(
+                                    'first_name' => strtolower($datos['nombres']),
+                                    'last_name' => strtolower($datos['apellidos']),
+                                    'email' => strtolower($datos['email']),
+                                    'verified_email' => true,
+                                    'phone' => $datos['telefono'],
+                                    "password" => $password,
+                                    "password_confirmation" => $password,
+                                    'addresses' => [
+                                        [
+                                            'address1' => strtolower($datos['direccion']),
+                                            'city' => strtolower($datos['ciudad_id']),
+                                            'province' => '',
+                                            "zip" => '',
+                                            'first_name' => strtolower($datos['nombres']),
+                                            'last_name' => strtolower($datos['apellidos']),
+                                            'country' => 'CO'
+                                        ],
+                                    ],
+                                    'send_email_invite' => false,
+                                    'send_email_welcome' => false
+                                )
+                            )
+                        )
+                    );
+                    $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+                    if ($diferencia < 20) {
+                        usleep(10000000);
+                    }
+
+                } catch (ClientException $e) {
+                    if ($e->hasResponse()) {
+
+                        return redirect()->back()->with(['err' => 'No se pudo crear el usuario en la tienda.']);
+                    }
+                }
+
+
+
+            }
+        } catch (ClientException $e) {
+            if ($e->hasResponse()) {
+
+                return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+            }
+        }
     }
 
 
-/*
+    /*
 
-    public function __construct() {
-        $this->middleware('guest');
-    }
+        public function __construct() {
+            $this->middleware('guest');
+        }
 
-    public function redirectPath() {
-        return route('admin');
-    }
+        public function redirectPath() {
+            return route('admin');
+        }
 
-    protected function getEmailSubject() {
-        return 'Recupera tu contraseñad';
-    }
- */
+        protected function getEmailSubject() {
+            return 'Recupera tu contraseñad';
+        }
+     */
 
 }
