@@ -61,7 +61,7 @@
    <div class="card card-stats">
       <div class="card-content">
          <p class="category">Su patrocinador es</p> <!--<h1 class="hidden-xs" style="text-transform: uppercase; color: gray; padding: 20px; font-size: 1.8em;">  <br>-->
-         <h3 class="title">{{ $patrocinador }}</h3>
+         <h3 class="title">{{ ucwords($patrocinador) }}</h3>
       </div>
       <div class="card-footer" style="display: block;">
          <div class="stats">
