@@ -5,7 +5,7 @@
 @section('content')
     <div class="box">
         <div class="panel panel-default">
-            <div class="panel-heading font-header">Listado de productos</div>
+            <div class="panel-heading font-header">Listado de productos de Good</div>
             <div class="panel-body">
                 {!! Alert::render() !!}
                 {{--<input type="button" class="btn btn-danger" id="update" value="Actualizar">--}}

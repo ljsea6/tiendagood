@@ -231,22 +231,6 @@
                             </a>
                         </li>
 
-
-                        <li>
-                            <a href="{{route('admin.products.index.good')}}" class="text-left">
-                                <i class="fa fa-bookmark">
-                                </i>
-                                Productos Good
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="{{route('admin.products.index.mercando')}}" class="text-left">
-                                <i class="fa fa-bookmark">
-                                </i>
-                                Productos Mercando
-                            </a>
-                        </li>
                         <li>
                             <a href="{{ route('admin.proveedores.index') }}" class="text-left">
                                 <i class="fa fa-user">
@@ -326,10 +310,10 @@
                 <div class="sub-menu collapse secondary list-style-circle" id="submenu10">
                     <ul>
                         <li>
-                            <a href="{{ route('admin.variants.index') }}" class="text-left">
-                                <i class="fa fa-list">
+                            <a href="{{route('admin.products.index.good')}}" class="text-left">
+                                <i class="fa fa-bookmark">
                                 </i>
-                                Variantes Good
+                                Productos Good
                             </a>
                         </li>
 
@@ -349,11 +333,12 @@
                 </a>
                 <div class="sub-menu collapse secondary list-style-circle" id="submenu11">
                     <ul>
+
                         <li>
-                            <a href="{{ route('admin.variants.mercando') }}" class="text-left">
-                                <i class="fa fa-list">
+                            <a href="{{route('admin.products.index.mercando')}}" class="text-left">
+                                <i class="fa fa-bookmark">
                                 </i>
-                                Variantes Mercando
+                                Productos Mercando
                             </a>
                         </li>
 
