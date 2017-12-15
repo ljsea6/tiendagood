@@ -140,7 +140,7 @@ class PasswordController extends Controller {
 
                           if ($e->hasResponse()) {
 
-                              //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                              return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                           }
                       }
                     }
@@ -192,7 +192,7 @@ class PasswordController extends Controller {
 
                     if ($e->hasResponse()) {
 
-                        //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                        return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                     }
                 }  
 

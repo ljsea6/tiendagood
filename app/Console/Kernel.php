@@ -58,7 +58,7 @@ class Kernel extends ConsoleKernel
             ->twiceDaily(14, 23);
 
         $schedule->command('get:update-points')->dailyAt('01:30');
-        $schedule->command('get:update-points-mercando')->dailyAt('01:30');
+        $schedule->command('get:update-points-mercando')->hourly();
 
         //$schedule->command('get:metafields')->dailyAt('23:30');
 
