@@ -86,7 +86,7 @@ class PasswordController extends Controller {
 
             $usuario = Tercero::findOrFail($remember_token['id']);
             $usuario->contraseña = bcrypt($request->password);
-            $usuario->remember_token = '';
+            //$usuario->remember_token = '';
             $usuario->save();
 
             if($usuario) {
@@ -120,9 +120,8 @@ class PasswordController extends Controller {
             }
 
             $results = json_decode($good->getBody(), true);
-
-
-            if(count($results['customers']) > 0) {
+            
+            if(count($results['customers']) == 1) {
 
                 try {
                     $res = $client->request('put', $api . '/admin/customers/'. $results['customers'][0]['id'] .'.json', array(

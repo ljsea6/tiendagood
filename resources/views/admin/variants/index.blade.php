@@ -114,8 +114,8 @@
 
 
                 $.ajax({
-                    url: "route('admin.variants.update')",
-                    data: { value: data, _token: ' csrf_token() '},
+                    url: "{{route('admin.variants.update')}}",
+                    data: { value: data, _token: '{{ csrf_token() }}'},
                     type: 'POST',
                     dataType: 'json',
                     success: function(data) {
