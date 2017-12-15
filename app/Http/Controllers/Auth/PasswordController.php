@@ -88,7 +88,7 @@ class PasswordController extends Controller {
 
             if($usuario) {
 
-                $this->api_cambio_password($api_url_good, strtolower($email), $request->password, $remember_token);
+                return $this->api_cambio_password($api_url_good, strtolower($email), $request->password, $remember_token);
                 $this->api_cambio_password($api_url_mercando, strtolower($email), $request->password, $remember_token);
 
             }
@@ -143,6 +143,8 @@ class PasswordController extends Controller {
 
                           if ($e->hasResponse()) {
 
+                              return $e->hasResponse();
+
                               //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                           }
                       }
@@ -194,6 +196,8 @@ class PasswordController extends Controller {
                 } catch (ClientException $e) {
 
                     if ($e->hasResponse()) {
+
+                        return $e->hasResponse();
 
                         //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                     }
