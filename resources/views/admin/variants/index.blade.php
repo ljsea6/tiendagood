@@ -66,12 +66,12 @@
 
             $('#update').click( function() {
 
-               /* $("#g").prop("disabled",true);
-                $("div#divLoading").show();*/
+                $("#g").prop("disabled",true);
+                $("div#divLoading").show();
 
 
 
-                var data = table.$('input, select').serialize();
+                /*var data = table.$('input, select').serialize();
                 var info = table.page.info();
 
                 var temp = new Array();
@@ -96,7 +96,7 @@
 
                     //console.log(c);
 
-                    /*if (c != '0' && value != '0') {
+                    /!*if (c != '0' && value != '0') {
 
                         console.log('bien');
 
@@ -106,14 +106,14 @@
                         console.log(c);
                         console.log(id);
                         console.log(value);
-                    }*/
+                    }*!/
 
 
                 });
+*/
 
 
-
-               /* $.ajax({
+                $.ajax({
                     url: "route('admin.variants.update')",
                     data: { value: data, _token: ' csrf_token() '},
                     type: 'POST',
@@ -130,7 +130,7 @@
                 });
 
                 table._fnAjaxUpdate();
-                return false;*/
+                return false;
             } );
         });
 
