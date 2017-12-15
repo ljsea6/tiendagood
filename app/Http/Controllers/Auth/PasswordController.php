@@ -144,7 +144,7 @@ class PasswordController extends Controller {
                           if ($e->hasResponse()) {
 
                               $response = $e->getResponse();
-                              return $response->getBody();
+                              return response()->json($response);
 
                               return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                           }
@@ -153,44 +153,56 @@ class PasswordController extends Controller {
 
                     else{
 
+                        try {
 
-                       $res = $client->request('post', $api . '/admin/customers.json', array(
-                        'form_params' => array(
-                            'customer' => array(
-                                'first_name' => strtolower($datos['nombres']),
-                                'last_name' => strtolower($datos['apellidos']),
-                                'email' => strtolower($datos['email']),
-                                'verified_email' => true,
-                                'phone' => $datos['telefono'],
-                                "password" => $password,
-                                "password_confirmation" => $password,
-                                 'addresses' => [
+                            $res = $client->request('post', $api . '/admin/customers.json', array(
+                                    'form_params' => array(
+                                        'customer' => array(
+                                            'first_name' => strtolower($datos['nombres']),
+                                            'last_name' => strtolower($datos['apellidos']),
+                                            'email' => strtolower($datos['email']),
+                                            'verified_email' => true,
+                                            'phone' => $datos['telefono'],
+                                            "password" => $password,
+                                            "password_confirmation" => $password,
+                                            'addresses' => [
 
-                                    [
-                                        'address1' => strtolower($datos['direccion']),
-                                        'city' => strtolower($datos['ciudad_id']),
-                                        'province' => '',
+                                                [
+                                                    'address1' => strtolower($datos['direccion']),
+                                                    'city' => strtolower($datos['ciudad_id']),
+                                                    'province' => '',
 
-                                        "zip" => '',
-                                        'first_name' => strtolower($datos['nombres']),
-                                        'last_name' => strtolower($datos['apellidos']),
-                                        'country' => 'CO'
-                                    ],
+                                                    "zip" => '',
+                                                    'first_name' => strtolower($datos['nombres']),
+                                                    'last_name' => strtolower($datos['apellidos']),
+                                                    'country' => 'CO'
+                                                ],
 
-                                ],                               
-                                'send_email_invite' => false,
-                                'send_email_welcome' => false
+                                            ],
+                                            'send_email_invite' => false,
+                                            'send_email_welcome' => false
+                                        )
+                                    )
                                 )
-                              )
-                            )
-                          );
+                            );
 
-                      $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                      $x = explode('/', $headers[0]);
-                      $diferencia = $x[1] - $x[0];
-                      if ($diferencia < 20) {
-                          usleep(30000000);
-                      }                      
+                            $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                            $x = explode('/', $headers[0]);
+                            $diferencia = $x[1] - $x[0];
+                            if ($diferencia < 20) {
+                                usleep(30000000);
+                            }
+
+                        } catch (ClientException $e) {
+
+                            if ($e->hasResponse()) {
+
+                                $response = $e->getResponse();
+                                return response()->json($response);
+
+                                return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                            }
+                        }
 
                     }
 
@@ -199,7 +211,7 @@ class PasswordController extends Controller {
                     if ($e->hasResponse()) {
 
                         $response = $e->getResponse();
-                        return $response->getBody();
+                        return response()->json($response);
 
                         return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
                     }
