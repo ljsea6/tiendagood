@@ -68,6 +68,8 @@
                 $("#g").prop("disabled",true);
                 $("div#divLoading").show();
 
+                var data = table.$('input, select').serialize();
+
                 $.ajax({
                     url: "{{ route('admin.variants.update') }}",
                     data: { value: data, _token: '{{ csrf_token() }}'},
