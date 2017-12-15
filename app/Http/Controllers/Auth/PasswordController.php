@@ -199,7 +199,7 @@ class PasswordController extends Controller {
                                 $response = $e->getResponse();
                                 $responseBodyAsString = $response->getBody()->getContents();
 
-                                return redirect()->back()->with(['err' => $responseBodyAsString]);
+                                return redirect()->back()->with(['err' => 'se está metiendo donde no debe']);
                             }
                         }
                     }
