@@ -119,7 +119,7 @@ class PasswordController extends Controller {
 
                     $results = json_decode($good->getBody(), true);
 
-                    return redirect()->back()->with(['err' => count($results['customers'])]);
+
 
                     if(isset($results['customers']) && count($results['customers']) > 0) {
 
@@ -148,10 +148,10 @@ class PasswordController extends Controller {
                           if ($e->hasResponse()) {
 
 
-                              $response = $e->getResponse();
+                             /* $response = $e->getResponse();
                               $responseBodyAsString = $response->getBody()->getContents();
 
-                              return redirect()->back()->with(['err' => $responseBodyAsString]);
+                              return redirect()->back()->with(['err' => $responseBodyAsString]);*/
                           }
                       }
                     }
@@ -212,10 +212,10 @@ class PasswordController extends Controller {
 
                     if ($e->hasResponse()) {
 
-                        $response = $e->getResponse();
+                       /* $response = $e->getResponse();
                         $responseBodyAsString = $response->getBody()->getContents();
 
-                        return redirect()->back()->with(['err' => $responseBodyAsString]);
+                        return redirect()->back()->with(['err' => $responseBodyAsString]);*/
                     }
                 }  
 
