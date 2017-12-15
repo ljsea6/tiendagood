@@ -112,11 +112,19 @@ input[type="file"] {display: none;}
                                   </div>
                             </div> <br>
                             <div class="row">
-                                <div class="col-sm-12">
+                                <div class="col-sm-6">
                                     <div class="form-check">
                                        <label class="form-check-label">
-                                          <input type="checkbox" class="form-check-input">
-                                          Seleccionar usuario prime
+                                          <input type="checkbox" disabled="disabled" class="form-check-input">
+                                          activar plan prime  <a href="{{route('terms_prime')}}" target="_blank">terminos y condiciones</a>
+                                        </label>
+                                    </div>
+                                </div>  
+                                <div class="col-sm-6">
+                                    <div class="form-check">
+                                       <label class="form-check-label">
+                                          <input class="form-check-input campo"  type="checkbox" id="terms" name="terms" required />
+                                          Contrato <a href="{{route('terms')}}" target="_blank">terminos</a>
                                         </label>
                                     </div>
                                 </div>    
@@ -244,7 +252,7 @@ input[type="file"] {display: none;}
     var exp_email = /^[a-zA-Z0-9\._-]+@[a-zA-Z0-9\.]+$/; 
 
 
- function archivo(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { if (!f.type.match('image.*')) { continue; } var reader = new FileReader(); reader.onload = (function(theFile) { return function(e) { document.getElementById("list").innerHTML = ['<img  width="90%"  class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join(''); }; })(f); reader.readAsDataURL(f); } } 
+ function archivo(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { if (!f.type.match('image.*')) { continue; } var reader = new FileReader(); reader.onload = (function(theFile) { return function(e) { document.getElementById("list").innerHTML = ['<img  width="70%"  class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join(''); }; })(f); reader.readAsDataURL(f); } } 
  document.getElementById('foto').addEventListener('change', archivo, false);
 
 /* Funcion rut span*/
