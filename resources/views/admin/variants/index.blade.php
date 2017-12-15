@@ -33,11 +33,8 @@
 @stop
 @push('scripts')
     <script>
-
         $(function() {
-
             var table = $('#variants').DataTable({
-
                 dom: 'Bfrtip',
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print'
@@ -56,83 +53,30 @@
                     { data: 'price', name: 'price', orderable: true, searchable: true },
                     { data: 'sold_units', name: 'sold_units', orderable: true, searchable: true},
                     { data: 'percentage', name: 'percentage', orderable: true, searchable: true}
-
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"
                 }
             });
-
-
             $('#update').click( function() {
-
-               /* $("#g").prop("disabled",true);
-                $("div#divLoading").show();*/
-
-
-
+                $("#g").prop("disabled",true);
+                $("div#divLoading").show();
                 var data = table.$('input, select').serialize();
-                var info = table.page.info();
-
-                var temp = new Array();
-                var d = new Array();
-
-                temp = data.split("&");
-
-
-                temp.forEach(function(element) {
-
-                    d = element.split("=");
-
-                    var id = d[0];
-                    var value = d[1];
-                    var c = $('#' + id + '').attr('class');
-
-                    if (c == undefined) {
-                        console.log(id);
-                    }
-
-
-
-                    //console.log(c);
-
-                    /*if (c != '0' && value != '0') {
-
-                        console.log('bien');
-
-                    } else {
-
-                        console.log(i++);
-                        console.log(c);
-                        console.log(id);
-                        console.log(value);
-                    }*/
-
-
-                });
-
-
-
-               /* $.ajax({
-                    url: "route('admin.variants.update')",
-                    data: { value: data, _token: ' csrf_token() '},
+                $.ajax({
+                    url: "{{route('admin.variants.update')}}",
+                    data: { value: data, _token: '{{ csrf_token() }}'},
                     type: 'POST',
                     dataType: 'json',
                     success: function(data) {
                         $("div#divLoading").hide();
-
-
                     },
                     error : function(xhr, status) {
                         alert('Disculpe, existió un problema');
                     }
-
                 });
-
-                table._fnAjaxUpdate();
-                return false;*/
+                //table._fnAjaxUpdate();
+                return false;
             } );
         });
-
     </script>
 @endpush
