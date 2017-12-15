@@ -122,7 +122,7 @@ class PasswordController extends Controller {
 
                     if(count($results['customers']) > 0) {
 
-                        $results['customers'];
+                        return $results['customers'];
 
                        try {
                        $res = $client->request('put', $api . '/admin/customers/'. $results['customers'][0]['id'] .'.json', array(
