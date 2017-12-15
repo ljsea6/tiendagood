@@ -86,7 +86,7 @@ class PasswordController extends Controller {
 
             $usuario = Tercero::findOrFail($remember_token['id']);
             $usuario->contraseña = bcrypt($request->password);
-            $usuario->remember_token = '';
+            //$usuario->remember_token = '';
             $usuario->save();
 
             if($usuario) {
@@ -120,7 +120,11 @@ class PasswordController extends Controller {
             }
 
             $results = json_decode($good->getBody(), true);
-            
+
+            $count  = (int)count($results['customers']);
+
+            echo $count; die();
+
             if((int)count($results['customers']) == 1) {
 
                 try {
