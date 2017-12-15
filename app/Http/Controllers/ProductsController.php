@@ -42,7 +42,7 @@ class ProductsController extends Controller
 
     public function anyDataGood()
     {
-        $products = Product::select('id', 'title', 'tipo_producto', 'shop')
+        $products = Product::distinct()->select('id', 'title', 'tipo_producto', 'shop')
             ->where('shop', 'good')
             ->get();
 
@@ -72,7 +72,7 @@ class ProductsController extends Controller
 
     public function anyDataMercando()
     {
-        $products = Product::select('id', 'title', 'tipo_producto', 'shop')
+        $products = Product::distinct()->select('id', 'title', 'tipo_producto', 'shop')
             ->where('shop', 'mercando')
             ->get();
 
