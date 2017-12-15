@@ -74,7 +74,7 @@
                         alert('Disculpe, existió un problema');
                     }
                 });
-                table._fnAjaxUpdate();
+                //table._fnAjaxUpdate();
                 return false;
             } );
         });
