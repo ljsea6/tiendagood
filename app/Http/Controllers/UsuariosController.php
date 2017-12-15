@@ -392,7 +392,6 @@ class UsuariosController extends Controller {
             $p .= $request->phone;
         }
 
-
         $usuario = new Tercero();
         $usuario->nombres = strtolower($request['first-name']);
         $usuario->apellidos = strtolower($request['last-name']);
@@ -474,11 +473,11 @@ class UsuariosController extends Controller {
         if (count($usuario) > 0) {
 
             $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-            $client = new \GuzzleHttp\Client();
+            $clienta = new \GuzzleHttp\Client();
 
             try {
 
-                $res = $client->request('post', $api_url . '/admin/customers.json', array(
+                $resa = $clienta->request('post', $api_url . '/admin/customers.json', array(
                         'form_params' => array(
                             'customer' => array(
                                 'first_name' => strtolower($request['first-name']),
@@ -495,7 +494,7 @@ class UsuariosController extends Controller {
                     )
                 );
 
-                $customer = json_decode($res->getBody(), true);
+                $customer = json_decode($resa->getBody(), true);
 
                 $good_id = '' . $customer['customer']['id'];
 
@@ -510,12 +509,12 @@ class UsuariosController extends Controller {
                 }
             }
 
-            $api_url = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
-            $client = new \GuzzleHttp\Client();
+            $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+            $clientb = new \GuzzleHttp\Client();
 
             try {
 
-                $res = $client->request('post', $api_url . '/admin/customers.json', array(
+                $resb = $clientb->request('post', $api_url_mercando . '/admin/customers.json', array(
                         'form_params' => array(
                             'customer' => array(
                                 'first_name' => strtolower($request['first-name']),
@@ -546,15 +545,13 @@ class UsuariosController extends Controller {
                     )
                 );
 
-                $customer = json_decode($res->getBody(), true);
+                $customer = json_decode($resb->getBody(), true);
 
                 $mercando_id = '' . $customer['customer']['id'];
 
             } catch (ClientException $e) {
 
                 $err = json_decode(($e->getResponse()->getBody()), true);
-
-                //return redirect()->back()->with(['err' => $err]);
 
                 foreach ($err['errors'] as $key => $value) {
 
@@ -614,11 +611,6 @@ class UsuariosController extends Controller {
                 $usuario->networks()->attach(1, ['padre_id' => 1]);
             }
         }
-
-        /*if ($usuario) {
-            \Auth::login($usuario);
-            return redirect()->route('admin.index');
-        }*/
 
         $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
         $this->envio_registro($request->code, $data);

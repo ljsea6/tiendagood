@@ -59,7 +59,17 @@ class VariantsController extends Controller
                 return '<div align=left>' . number_format($send->sold_units) . '</div>';
             })
             ->addColumn('percentage', function ($send) {
-                return '<div align=left><input id='. $send->id .' name='. $send->id .'  type="number" value="'.number_format($send->percentage).'"></div>';
+
+                if (isset($send->percentage) && $send->percentage != null && $send->percentage != 0) {
+                    return '<div align=left>
+                            <input class="'. $send->percentage  .' points" id='. $send->id .' name='. $send->id .'  type="number" value="'.number_format($send->percentage).'">
+                        </div>';
+                } else {
+                    return '<div align=left>
+                            <input class="0" id='. $send->id .' name='. $send->id .'  type="number" value="'.number_format($send->percentage).'">
+                        </div>';
+                }
+
             })
             ->make(true);
     }

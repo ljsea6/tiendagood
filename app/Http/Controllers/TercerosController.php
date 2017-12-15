@@ -219,8 +219,7 @@ class TercerosController extends Controller {
 
             if (count($tercero) > 0) {
                 $networks = $tercero['networks'];
-                $father = $networks[0]['pivot']['padre_id'];
-
+                $father = count($networks) > 0 ? $networks[0]['pivot']['padre_id'] : NULL;
                 $tipo_cliente = \App\Entities\Tipo::find($tercero->tipo_cliente_id)->nombre;
                 $data['tercero'] = ['id' => $tercero->id,
                     'nombre' => "$tercero->nombres $tercero->apellidos",
@@ -283,7 +282,8 @@ class TercerosController extends Controller {
             $model = Tercero::find($_POST['id']);
             $email_old = $model->email;
             $model->identificacion = $_POST['identificacion'];
-            $model->email = $_POST['email'];
+            $model->email = strtolower($_POST['email']);
+            $model->usuario = strtolower($_POST['email']);
             $model->direccion = $_POST['direccion'];
             $model->telefono = $_POST['telefono'];
             $model->tipo_cliente_id = $_POST['tipo_cliente_id'];
@@ -482,6 +482,9 @@ class TercerosController extends Controller {
         $usuario->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->birthday);
 
         if ($request->file('banco')) {
+
+            $path = public_path()."/".$$request['rut_old'];
+            @unlink($path);
             $cuenta        = $request->file('banco');
             $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
             $path          = public_path() . "/uploads";
@@ -490,6 +493,9 @@ class TercerosController extends Controller {
         }
 
         if ($request->file('cedula')) {
+
+            $path = public_path()."/".$$request['cedula_old'];
+            @unlink($path);
 
             $cuenta        = $request->file('cedula');
             $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
@@ -501,6 +507,8 @@ class TercerosController extends Controller {
 
         if ($request->file('rut')) {
 
+            $path = public_path()."/".$$request['rut_old'];
+            @unlink($path);
             $cuenta        = $request->file('rut');
             $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
             $path          = public_path() . "/uploads";
@@ -511,6 +519,8 @@ class TercerosController extends Controller {
 
         if ($request->file('foto')) {
 
+            $path = public_path()."/".$request['foto_old'];
+            @unlink($path);
             $cuenta        = $request->file('foto');
             $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
             $path          = public_path() . "/uploads";
@@ -528,10 +538,12 @@ class TercerosController extends Controller {
         }
 
         $tercero = Tercero::with('networks')->find(currentUser()->id);
+ 
         $fecha_nacimiento = $tercero['fecha_nacimiento'];
         $fecha_nacimiento = date("d/m/Y", strtotime($fecha_nacimiento));
 
         return view('admin.terceros.actualizar_datos', compact('tercero','fecha_nacimiento'));
+   
     }
 
 }
