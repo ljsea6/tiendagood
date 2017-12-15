@@ -26,7 +26,7 @@
       </div>
       <div class="card-content">
          <p class="category">Estos son tus puntos</p>
-         <h3 class="title">{{ number_format($send->mispuntos) }}
+         <h3 class="title">{{ number_format($my_points) }}
             <small>Pts</small>
          </h3>
       </div>

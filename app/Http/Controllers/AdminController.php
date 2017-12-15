@@ -293,6 +293,7 @@ class AdminController extends Controller {
         $points_level_1 = 0;
         $points_level_2 = 0;
         $points_level_3 = 0;
+        $my_points = 0;
 
         $uno = DB::table('terceros as t')
                 ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
@@ -303,6 +304,11 @@ class AdminController extends Controller {
 
         $results = array();
 
+                $uno_orders = DB::table('orders')->where('tercero_id', currentUser()->id)->where('financial_status', 'paid')->select('points')->get();
+                foreach ($uno_orders as $value) {
+                    $my_points += $value->points;
+                }
+                
         if (count($uno) > 0) {
 
             $level_uno = $level_uno + count($uno);
@@ -366,7 +372,8 @@ class AdminController extends Controller {
 
         $send = Tercero::with('cliente', 'levels')->find(currentUser()->id);
         return view('admin.index')->with(['send' => $send, 'uno' => $level_uno, 'dos' => $level_dos, 'tres' => $level_tres,
-                    'points_level_1' => $points_level_1, 'points_level_2' => $points_level_2, 'points_level_3' => $points_level_3]);
+                    'points_level_1' => $points_level_1, 'points_level_2' => $points_level_2, 'points_level_3' => $points_level_3,
+                     'my_points' => $my_points]);
     }
 
     public function carga() {
