@@ -503,6 +503,8 @@ class UsuariosController extends Controller {
 
                 $err = json_decode(($e->getResponse()->getBody()), true);
 
+                return redirect()->back()->with(['err' => $err]);
+
                 foreach ($err['errors'] as $key => $value) {
 
                     echo $key . ' ' . $value[0] . "\n";
@@ -553,7 +555,7 @@ class UsuariosController extends Controller {
 
                 $err = json_decode(($e->getResponse()->getBody()), true);
 
-                //return redirect()->back()->with(['err' => $err]);
+                return redirect()->back()->with(['err' => $err]);
 
                 foreach ($err['errors'] as $key => $value) {
 
