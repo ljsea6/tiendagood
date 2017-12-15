@@ -3696,6 +3696,57 @@ class OrdersController extends Controller
 
     public function contador()
     {
+        $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $client = new \GuzzleHttp\Client();
+        $email = 'lgrestrepogutierrez@gmail.com';
+        try {
+            $good = $client->request('GET', $api_url_good . '/admin/customers/search.json?query=email:' .  $email);
+            $headers = $good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+            $x = explode('/', $headers[0]);
+            $diferencia = $x[1] - $x[0];
+            if ($diferencia < 20) {
+                usleep(10000000);
+            }
+
+            $results = json_decode($good->getBody(), true);
+
+            if(count($results['customers']) > 0) {
+
+                try {
+                    $res = $client->request('put', $api_url_good . '/admin/customers/'. $results['customers'][0]['id'] .'.json', array(
+                            'form_params' => array(
+                                'customer' => array(
+                                    "password" => 'luigi1973',
+                                    "password_confirmation" => 'luigi1973',
+                                )
+                            )
+                        )
+                    );
+
+                    $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+                    if ($diferencia < 20) {
+                        usleep(10000000);
+                    }
+
+                } catch (ClientException $e) {
+
+                    if ($e->hasResponse()) {
+
+                        return $e->hasResponse();
+                    }
+                }
+            }
+
+
+        } catch (ClientException $e) {
+
+            if ($e->hasResponse()) {
+
+                return $e->hasResponse();
+            }
+        }
         /*$api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
         $client = new \GuzzleHttp\Client();
