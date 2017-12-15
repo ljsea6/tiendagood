@@ -89,7 +89,7 @@ class PasswordController extends Controller {
             if($usuario) {
 
               echo strtolower($email);
-              $this->api_cambio_password($api_url_good, strtolower($email), $request->password, $remember_token);
+              return $this->api_cambio_password($api_url_good, strtolower($email), $request->password, $remember_token);
               $this->api_cambio_password($api_url_mercando, strtolower($email), $request->password, $remember_token);
 
             }
@@ -119,6 +119,8 @@ class PasswordController extends Controller {
                     }
 
                     $results = json_decode($good->getBody(), true);
+
+                    return $results;
 
                     if(count($results['customers']) > 0) {
 
