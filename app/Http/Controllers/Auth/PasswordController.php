@@ -87,9 +87,10 @@ class PasswordController extends Controller {
             $usuario->save();
 
             if($usuario) {
-              echo  $request->password;
-              return $this->api_cambio_password($api_url_good, strtolower($email), $request->password, $remember_token);
-              $this->api_cambio_password($api_url_mercando, strtolower($email), $request->password, $remember_token);
+                echo $api_url_good . "\n";
+                echo  $request->password . "\n";
+                return $this->api_cambio_password($api_url_good, strtolower($email), $request->password, $remember_token);
+                $this->api_cambio_password($api_url_mercando, strtolower($email), $request->password, $remember_token);
 
             }
 
