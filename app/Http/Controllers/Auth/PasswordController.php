@@ -143,10 +143,8 @@ class PasswordController extends Controller {
 
                           if ($e->hasResponse()) {
 
-                              $response = $e->getResponse();
-                              return response()->json($response);
 
-                              return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                              return redirect()->back()->with(['err' => $e->getResponse()->getBody()]);
                           }
                       }
                     }
@@ -197,23 +195,16 @@ class PasswordController extends Controller {
 
                             if ($e->hasResponse()) {
 
-                                $response = $e->getResponse();
-                                return response()->json($response);
-
-                                return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                                return redirect()->back()->with(['err' => $e->getResponse()->getBody()]);
                             }
                         }
-
                     }
 
                 } catch (ClientException $e) {
 
                     if ($e->hasResponse()) {
 
-                        $response = $e->getResponse();
-                        return response()->json($response);
-
-                        return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                        return redirect()->back()->with(['err' => $e->getResponse()->getBody()]);
                     }
                 }  
 
