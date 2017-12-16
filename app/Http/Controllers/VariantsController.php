@@ -22,11 +22,11 @@ class VariantsController extends Controller
     {
         $variants = DB::table('variants')
             ->join('products', 'variants.product_id', '=', 'products.id')
+            ->distinct()
             ->select('products.tipo_producto as tipo', 'variants.id as id', 'products.vendor as vendor', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
             ->where('products.shop', 'good')
             ->where('products.id', $request->id)
             ->where('products.handle', '!=', 'example-t-shirt')
-            ->orderBy('products.created_at', 'asc')
             ->get();
         $send = collect($variants);
         return Datatables::of($send)
@@ -61,12 +61,13 @@ class VariantsController extends Controller
     {
         $variants = DB::table('variants')
             ->join('products', 'variants.product_id', '=', 'products.id')
+            ->distinct()
             ->select('products.tipo_producto as tipo', 'variants.id as id', 'products.vendor as vendor', 'variants.title as title', 'variants.price as price', 'variants.sold_units as sold_units', 'variants.percentage as percentage', 'products.title as product')
             ->where('products.tipo_producto', 'nacional')
             ->where('products.id', $request->id)
             ->where('products.handle', '!=', 'example-t-shirt')
             ->where('products.shop', 'mercando')
-            ->get();
+            ->get(['products.id']);
         $send = collect($variants);
         return Datatables::of($send)
             ->addColumn('id', function ($send) {
