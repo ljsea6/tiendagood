@@ -115,7 +115,11 @@ input[type="file"] {display: none;}
                                 <div class="col-sm-6">
                                     <div class="form-check">
                                        <label class="form-check-label">
-                                          <input type="checkbox" disabled="disabled" class="form-check-input">
+                                        @if (date("Y-m-d") >= $fecha_inicio  && date("Y-m-d") <= $fecha_final )  
+                                          <input type="checkbox"  checked disabled  class="form-check-input campo" checked /> 
+                                        @else
+                                          <input type="checkbox"   class="form-check-input"> 
+                                        @endif 
                                           activar plan prime  <a href="{{route('terms_prime')}}" target="_blank">terminos y condiciones</a>
                                         </label>
                                     </div>
@@ -123,7 +127,7 @@ input[type="file"] {display: none;}
                                 <div class="col-sm-6">
                                     <div class="form-check">
                                        <label class="form-check-label">
-                                          <input class="form-check-input campo"  type="checkbox" id="terms" name="terms" required />
+                                          <input class="form-check-input campo"  @if ($tercero['contrato'] == true)  checked disabled  @endif   type="checkbox" />
                                           Contrato <a href="{{route('terms')}}" target="_blank">terminos</a>
                                         </label>
                                     </div>
