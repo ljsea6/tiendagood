@@ -120,7 +120,7 @@ input[type="file"] {display: none;}
                                         @else
                                           <input type="checkbox"   class="form-check-input"> 
                                         @endif 
-                                          activar plan prime  <a href="{{route('terms_prime')}}" target="_blank">terminos y condiciones</a>
+                                          Activar plan prime  <a href="{{route('terms_prime')}}" target="_blank">Terminos y condiciones</a>
                                         </label>
                                     </div>
                                 </div>  
@@ -128,7 +128,7 @@ input[type="file"] {display: none;}
                                     <div class="form-check">
                                        <label class="form-check-label">
                                           <input class="form-check-input campo"  @if ($tercero['contrato'] == true)  checked disabled  @endif   type="checkbox" />
-                                          Contrato <a href="{{route('terms')}}" target="_blank">terminos</a>
+                                          Contrato <a href="{{route('terms')}}" target="_blank">Terminos</a>
                                         </label>
                                     </div>
                                 </div>    
