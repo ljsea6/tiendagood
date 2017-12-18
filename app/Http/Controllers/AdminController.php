@@ -372,15 +372,17 @@ class AdminController extends Controller {
         }
 
         $send = Tercero::with('cliente', 'levels', 'networks')->find(currentUser()->id);
-        $patrocinador = '';
+        $patrocinador = '';  $email = '';   $telefono = '';
         if (count($send->networks) > 0) {
            $patrocinador = Tercero::with('cliente', 'levels')->find($send->networks['0']['pivot']['padre_id']);
-           $patrocinador = $patrocinador['nombres'].' '.$patrocinador['apellidos'];
+           $nombre_completo = $patrocinador['nombres'].' '.$patrocinador['apellidos']; 
+           $email = $patrocinador['email'];
+           $telefono = $patrocinador['telefono'];
         }
  
         return view('admin.index')->with(['send' => $send, 'uno' => $level_uno, 'dos' => $level_dos, 'tres' => $level_tres,
                     'points_level_1' => $points_level_1, 'points_level_2' => $points_level_2, 'points_level_3' => $points_level_3,
-                     'my_points' => $my_points, 'patrocinador' => $patrocinador]);
+                     'my_points' => $my_points, 'nombre_completo' => $nombre_completo, 'email' => $email, 'telefono' => $telefono]);
 
     }
 

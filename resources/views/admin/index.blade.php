@@ -25,7 +25,7 @@
          <i class="fa fa-money" aria-hidden="true"></i>
       </div>
       <div class="card-content">
-         <p class="category">Estos son tus puntos</p>
+         <p class="category">Estos son sus puntos</p>
          <h3 class="title">{{ number_format($my_points) }}
             <small>Pts</small>
          </h3>
@@ -44,7 +44,7 @@
          <i class="fa fa-money" aria-hidden="true"></i>
       </div>
       <div class="card-content">
-         <p class="category">Estos son tus puntos Vendidos</p>
+         <p class="category">Estos son sus puntos Vendidos</p>
          <h3 class="title">{{ number_format($points_level_1 + $points_level_2 + $points_level_3) }}
             <small>Pts</small>
          </h3>
@@ -61,7 +61,8 @@
    <div class="card card-stats">
       <div class="card-content">
          <p class="category">Su patrocinador es</p> <!--<h1 class="hidden-xs" style="text-transform: uppercase; color: gray; padding: 20px; font-size: 1.8em;">  <br>-->
-         <h3 class="title">{{ ucwords($patrocinador) }}</h3>
+         <h3 class="title">{{ ucwords($nombre_completo) }}</h3>
+         <p class="category">Email: {{$email}} - Teléfono: {{$telefono}}</p>
       </div>
       <div class="card-footer" style="display: block;">
          <div class="stats">
