@@ -371,18 +371,31 @@ class AdminController extends Controller {
             }
         }
 
-        $send = Tercero::with('cliente', 'levels', 'networks')->find(currentUser()->id);
-        $patrocinador = '';  $nombre_completo = '';  $email = '';   $telefono = '';
+        $send = Tercero::with('cliente', 'levels', 'networks', 'primes', 'tipo')->find(currentUser()->id);
+        $patrocinador = '';  $nombre_completo = '';  $email = '';   $telefono = '';   $tipo_nombre = '';
         if (count($send->networks) > 0) {
            $patrocinador = Tercero::with('cliente', 'levels')->find($send->networks['0']['pivot']['padre_id']);
            $nombre_completo = $patrocinador['nombres'].' '.$patrocinador['apellidos']; 
            $email = $patrocinador['email'];
-           $telefono = $patrocinador['telefono'].' '.$patrocinador['celular'];
+           $telefono = $patrocinador['telefono'];
+        }          
+ 
+        $fecha_inicio =  '';   $fecha_final = ''; 
+
+        foreach ($send->primes as $value) {
+            if($value->estado == true){
+                $fecha_inicio = $value->fecha_inicio;
+                $fecha_final = $value->fecha_final;
+            }
         }
+
+        $fecha_inicio = $fecha_inicio;  $fecha_inicio = strtotime($fecha_inicio);  $fecha_inicio =  date("Y-m-d", $fecha_inicio);  
+        $fecha_final = $fecha_final;    $fecha_final = strtotime($fecha_final);    $fecha_final =  date("Y-m-d", $fecha_final); 
  
         return view('admin.index')->with(['send' => $send, 'uno' => $level_uno, 'dos' => $level_dos, 'tres' => $level_tres,
                     'points_level_1' => $points_level_1, 'points_level_2' => $points_level_2, 'points_level_3' => $points_level_3,
-                     'my_points' => $my_points, 'nombre_completo' => $nombre_completo, 'email' => $email, 'telefono' => $telefono]);
+                     'my_points' => $my_points, 'nombre_completo' => $nombre_completo, 'email' => $email, 'telefono' => $telefono,
+                    'fecha_inicio' => $fecha_inicio, 'fecha_final' => $fecha_final, 'tipo_nombre' => $send->tipo['nombre']]);
 
     }
 

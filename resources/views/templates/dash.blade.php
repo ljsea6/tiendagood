@@ -20,6 +20,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.0.2/css/responsive.bootstrap.min.css">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.0.0/sweetalert2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.0.0/sweetalert2.min.js"></script>  
+    
     {!! Html::style('js/Jit/Examples/css/base.css') !!}
     {!! Html::style('js/Jit/Examples/css/Spacetree.css') !!}
 
@@ -78,7 +81,7 @@
     {!! Html::script('js/validaciones.js') !!}
 
     {!! Html::script('js/dataTables.bootstrap.min.js') !!}
-    
+  
     <script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
  
     {!! Html::script('js/Jit/Extras/excanvas.js') !!}

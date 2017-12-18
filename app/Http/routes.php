@@ -116,6 +116,7 @@ Route::post('recuperar-contraseña', ['as' => 'recuperar', 'uses' => 'Auth\Passw
 Route::get('registro/payu', ['as' => 'PayuController@paybefore', 'as' => 'admin.payu.payu']);
 
 Route::any('terceros/actualizar-datos', ['uses' => 'TercerosController@actualizar_mis_datos', 'as' => 'terceros.actualizar_mis_datos']);
+Route::any('terceros/activarplanprime', ['uses' => 'TercerosController@activar_plan_prime', 'as' => 'terceros.activar_plan_prime']);
 //Route::post('terceros/actualizar-datos/cambio', ['uses' => 'TercerosController@post_actualizar_mis_datos', 'as' => 'terceros.actualizar_mis_datos']);
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {

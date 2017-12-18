@@ -71,8 +71,29 @@
          </div>
       </div>
    </div>
-
 </div>
+
+ <div class="col-sm-12">
+<div class="card card-stats" style="margin: 5px 0;">
+      <div class="row">
+         <div class="col-sm-3">
+            <div class="card-content">
+             <h3 class="title" style="padding-top: 11px;">Tipo de cliente: {{$tipo_nombre}}</h3>
+            </div>
+         </div>
+         <div class="col-sm-3">
+             <div class="card-content">
+               @if (date("Y-m-d") >= $fecha_inicio  && date("Y-m-d") <= $fecha_final)                   
+               <h3 class="title" style="padding-top: 11px;">Plan prime activado</h3>
+               @else
+                 <span class="plan_prime_texto"> <button class="btn btn-primary" type="button"  id="actualizar_plan_prime" onclick="plan()">Activar plan prmie</button> </span>
+               @endif  
+          </div>
+         </div>
+      </div>
+   </div>
+</div>
+
 
 <div class="col-lg-12 col-md-12">
    <div class="card">
@@ -118,8 +139,40 @@
       </div>
    </div>
 </div>
+ 
+<script type="text/javascript"> function link(nivel){ location.href = "/nivel/"+nivel; } 
+function plan(){
+swal({
+  title: '¿Seguro que desea activar el plan prime?',
+  text: "",
+  type: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  cancelButtonText: 'No',
+  confirmButtonText: 'Si'
+}).then((result) => {
+  if (result.value) {
 
-<script type="text/javascript"> function link(nivel){ location.href = "/nivel/"+nivel; } </script>
+               $.ajax({
+                    url: '../terceros/activarplanprime',
+                    type: 'post',
+                    data: { cambio: '' },
+                    dataType: 'json',
+                    async:false
+               });
+
+    swal(
+      'Su plan prime fue activado',
+      ''
+    );
+
+   $('.plan_prime_texto').html('<h3 class="title" style="padding-top: 11px;">Plan prime activado</h3>');
+
+  }
+});
+}
+</script>
 
 </section> 
 
