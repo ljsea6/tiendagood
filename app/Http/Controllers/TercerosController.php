@@ -467,7 +467,7 @@ class TercerosController extends Controller {
         $fecha_inicio = $fecha_inicio;  $fecha_inicio = strtotime($fecha_inicio);  $fecha_inicio =  date("Y-m-d", $fecha_inicio);  
         $fecha_final = $fecha_final;  $fecha_final = strtotime($fecha_final);  $fecha_final =  date("Y-m-d", $fecha_final); 
 
-       if (date("Y-m-d") >= $fecha_inicio  && date("Y-m-d") <= $fecha_final){  }
+        if(date("Y-m-d") >= $fecha_inicio  && date("Y-m-d") <= $fecha_final){  }
         else{
             $usuario = Tercero::find(currentUser()->id); 
             $usuario->primes()->create([
@@ -477,9 +477,8 @@ class TercerosController extends Controller {
                     'id' => $request->getClientIp(),
                     'browser' => $request->header('User-Agent')
                 ]
-            ]);
-      
-       } 
+            ]);      
+        } 
   //echo  $fecha_inicio;
     }
 
