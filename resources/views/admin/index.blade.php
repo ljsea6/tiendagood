@@ -76,12 +76,12 @@
  <div class="col-sm-12">
 <div class="card card-stats" style="margin: 5px 0;">
       <div class="row">
-         <div class="col-sm-4">
+         <div class="col-sm-3">
             <div class="card-content" style="text-align: left;">
-            <div style="padding-top: 16px;"><span class="category"> Tipo de cliente:  </span>  <span class="title" style="padding-top: 11px; font-size: 20px">{{ucwords($tipo_nombre)}}</span></div>
+            <div style="padding-top: 16px;"><span class="category"> Tipo de cliente:  </span><br>  <span class="title" style="padding-top: 11px; font-size: 20px">{{ucwords($tipo_nombre)}}</span></div>
             </div>
          </div>
-         <div class="col-sm-4">
+         <div class="col-sm-6">
              <div class="card-content" style="text-align: center;">
                @if (date("Y-m-d") >= $fecha_inicio  && date("Y-m-d") <= $fecha_final)                   
                <h3 class="title" style="padding-top: 11px;">Plan prime activado</h3>
@@ -90,9 +90,9 @@
                @endif  
           </div>
          </div>
-         <div class="col-sm-4">
-             <div class="card-content" style="text-align: center; margin-top: 20px">
-              <span class="category">Fecha del proximo corte</span> <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> 21 de diciembre</span> 
+         <div class="col-sm-3">
+             <div class="card-content" style="text-align: center; margin-top: 20px; text-align: left">
+              <span class="category">Fecha del proximo corte:</span><br> <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> 21 de diciembre</span> 
           </div>
          </div>
       </div>
