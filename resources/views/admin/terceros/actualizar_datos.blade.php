@@ -118,7 +118,7 @@ input[type="file"] {display: none;}
                                         @if (date("Y-m-d") >= $fecha_inicio  && date("Y-m-d") <= $fecha_final )  
                                           <input type="checkbox"  checked disabled  class="form-check-input campo" checked /> 
                                         @else
-                                          <input type="checkbox"   class="form-check-input"> 
+                                          <input type="checkbox" name="prime"  class="form-check-input"> 
                                         @endif 
                                           Activar plan prime  <a href="{{route('terms_prime')}}" target="_blank">Terminos y condiciones</a>
                                         </label>

@@ -483,7 +483,7 @@ class TercerosController extends Controller {
 
         if ($request->file('banco')) {
 
-            $path = public_path()."/".$request['rut_old'];
+            $path = public_path()."/".$request['cuenta_old'];
             @unlink($path);
             $cuenta        = $request->file('banco');
             $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
@@ -531,7 +531,17 @@ class TercerosController extends Controller {
 
         // Usuario creado
         $usuario->save();
- 
+
+        if ($request->has('prime')) {
+            $usuario->primes()->create([
+                'fecha_inicio' => Carbon::now(),
+                'fecha_final' => Carbon::now()->addMonth(),
+                'log' => [
+                    'id' => $request->getClientIp(),
+                    'browser' => $request->header('User-Agent')
+                ]
+            ]);
+        } 
 
             Session::flash('flash_msg', 'la actualizaci\u00F3n de sus datos se realizaron correctamente');
             return redirect()->action('TercerosController@actualizar_mis_datos');
