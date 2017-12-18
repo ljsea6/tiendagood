@@ -255,7 +255,7 @@ input[type="file"] {display: none;}
 
 
  function archivo(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { 
-  if (!f.type.match('image.*')) { 
+  if (!f.type.match('image.*') && f.size > '7000000') { 
                 swal({ 
                   html: $('<div>').text('Este archivo no puede pesar mas de 7 mb y solo se admite formato jpg.'),
                   animation: false,
@@ -268,7 +268,7 @@ input[type="file"] {display: none;}
 /* Funcion rut span*/
 
  function rut(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) {  
-   if(f.size <= '4000000'){
+   if(f.size <= '7000000'){
     if (f.type.match('image.*') || f.type.match('application/pdf')) {
         var reader = new FileReader(); 
         reader.onload = (function(theFile) { 
@@ -292,7 +292,7 @@ input[type="file"] {display: none;}
 document.getElementById('rut').addEventListener('change', rut, false);
 
 function doc(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { 
-   if(f.size <= '4000000'){
+   if(f.size <= '7000000'){
     if (f.type.match('image.*') || f.type.match('application/pdf')) {
     var reader = new FileReader(); 
     reader.onload = (function(theFile) { 
@@ -316,7 +316,7 @@ function doc(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i
 document.getElementById('cedula').addEventListener('change', doc, false);
  
 function cer(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { 
-   if(f.size <= '4000000'){
+   if(f.size <= '7000000'){
     if (f.type.match('image.*') || f.type.match('application/pdf')) {
     var reader = new FileReader(); 
     reader.onload = (function(theFile) { 
