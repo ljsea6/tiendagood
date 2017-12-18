@@ -184,7 +184,14 @@ class GetUsers extends Command
 
                         if ($e->hasResponse()) {
 
-                            $this->info('Problemas al crear el usuario en mercando');
+                            $err = json_decode(($e->getResponse()->getBody()), true);
+                            
+                            foreach ($err['errors'] as $key => $value) {
+
+                                $this->info('Problemas al crear el usuario en mercando' .  $key . ' ' . $value[0]);
+
+                            }
+
                         }
                     }
                 }
