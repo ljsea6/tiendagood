@@ -543,7 +543,7 @@ class TercerosController extends Controller {
             ]);
         } 
 
-            Session::flash('flash_msg', 'la actualizaci\u00F3n de sus datos se realizaron correctamente');
+            Session::flash('flash_msg', 'La actualizaci\u00F3n de sus datos se realizaron correctamente');
             return redirect()->action('TercerosController@actualizar_mis_datos');
         }
 
