@@ -16,7 +16,7 @@
     
 
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-        <img src="https://cdn.shopify.com/s/files/1/2256/3751/files/logo-good.png?3282421516940970096" alt="" style="width: 300px; padding: 20px 0">
+        <img src="https://cdn.shopify.com/s/files/1/2256/3751/files/logo-good2.png?4867312163605074192" alt="" style="width: 300px; padding: 20px 0">
     </div>
 </div>
 <div class="col-lg-4 col-md-6 col-sm-6">
@@ -58,9 +58,22 @@
    </div>
 </div>
 <div class="col-lg-4 col-md-6 col-sm-6">
-    <h1 class="hidden-xs" style="text-transform: uppercase; color: gray; padding: 20px; font-size: 1.8em;">Bienvenidos a my good <br> <br> <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> Fecha del proximo corte 21 de diciembre</span></h1>
+   <div class="card card-stats">
+      <div class="card-content">
+         <p class="category">Tu patrocinador es</p> <!--<h1 class="hidden-xs" style="text-transform: uppercase; color: gray; padding: 20px; font-size: 1.8em;">  <br>-->
+         <h3 class="title">{{ ucwords($nombre_completo) }}</h3>
+         <p class="category">{{$email}} - {{$telefono}}</p>
+      </div>
+      <div class="card-footer" style="display: block;">
+         <div class="stats">
+            <i class="material-icons text-danger"></i>
+            <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> Fecha del proximo corte 21 de diciembre</span>
+         </div>
+      </div>
+   </div>
 
 </div>
+
 <div class="col-lg-12 col-md-12">
    <div class="card">
       <div class="card-content table-responsive">
@@ -76,7 +89,7 @@
                   </td>
 
                   <td>#{{$uno}} <span class="fa fa-user" aria-hidden="true"></span></td> 
-                  <td>{{ number_format($points_level_1) }} Puntos</td> 
+                  <td>{{ number_format($points_level_1) }}  Pts</td> 
                   <td>$ 0</td>
                   </a>
                </tr>
@@ -87,7 +100,7 @@
                      </div>
                   </td>
                   <td>#{{$dos}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>{{ number_format($points_level_2) }} Puntos</td> 
+                  <td>{{ number_format($points_level_2) }}  Pts</td> 
                   <td>$ 0</td>
                </tr>
                <tr onclick="link(3)">
@@ -97,7 +110,7 @@
                      </div>
                   </td>
                   <td>#{{$tres}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>{{ number_format($points_level_3) }} Puntos</td> 
+                  <td>{{ number_format($points_level_3) }}  Pts</td> 
                   <td>$ 0</td>
                </tr>
             </tbody>

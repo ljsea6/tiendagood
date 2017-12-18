@@ -41,6 +41,12 @@ class UsuariosController extends Controller {
     {
         return view('admin.terms.terms');
     }
+    
+    public function termsprime()
+    {
+        return view('admin.terms.termsprime');
+    }
+
     public function verified_email(Request $request)
     {
         if ($request->has('email')) {
@@ -454,50 +460,6 @@ class UsuariosController extends Controller {
         // Usuario creado
         $usuario->save();
 
-        $padre = Tercero::with('networks')->where('identificacion', '=', '' .$request->code. '')->first();
-
-        if (count($padre) > 0 ) {
-
-            if ($padre->tipo_cliente_id == 83 && $padre->state == true) {
-
-                $result = DB::table('terceros_networks')
-                    ->where('customer_id', $usuario->id)
-                    ->where('network_id', 1)
-                    ->where('padre_id', $padre->id)
-                    ->get();
-
-                if (count($result) == 0) {
-
-                    $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
-                }
-
-            } else {
-
-                $result = DB::table('terceros_networks')
-                    ->where('customer_id', $usuario->id)
-                    ->where('network_id', 1)
-                    ->where('padre_id', 1)
-                    ->get();
-
-                if (count($result) == 0) {
-                    $usuario->networks()->attach(1, ['padre_id' => 1]);
-                }
-            }
-
-        } else {
-
-            $result = DB::table('terceros_networks')
-                ->where('customer_id', $usuario->id)
-                ->where('network_id', 1)
-                ->where('padre_id', 1)
-                ->get();
-
-            if (count($result) == 0) {
-
-                $usuario->networks()->attach(1, ['padre_id' => 1]);
-            }
-        }
-
         if ($request->has('prime')) {
             $usuario->primes()->create([
                 'fecha_inicio' => Carbon::now(),
@@ -611,6 +573,50 @@ class UsuariosController extends Controller {
                 'customer_id_mercando' =>  $mercando_id,
             ]
         );
+
+        $padre = Tercero::with('networks')->where('identificacion', '=', '' .$request->code. '')->first();
+
+        if (count($padre) > 0 ) {
+
+            if ($padre->tipo_cliente_id == 83 && $padre->state == true) {
+
+                $result = DB::table('terceros_networks')
+                    ->where('customer_id', $usuario->id)
+                    ->where('network_id', 1)
+                    ->where('padre_id', $padre->id)
+                    ->get();
+
+                if (count($result) == 0) {
+
+                    $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
+                }
+
+            } else {
+
+                $result = DB::table('terceros_networks')
+                    ->where('customer_id', $usuario->id)
+                    ->where('network_id', 1)
+                    ->where('padre_id', 1)
+                    ->get();
+
+                if (count($result) == 0) {
+                    $usuario->networks()->attach(1, ['padre_id' => 1]);
+                }
+            }
+
+        } else {
+
+            $result = DB::table('terceros_networks')
+                ->where('customer_id', $usuario->id)
+                ->where('network_id', 1)
+                ->where('padre_id', 1)
+                ->get();
+
+            if (count($result) == 0) {
+
+                $usuario->networks()->attach(1, ['padre_id' => 1]);
+            }
+        }
 
         $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
         $this->envio_registro($request->code, $data);

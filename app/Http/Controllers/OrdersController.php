@@ -1838,7 +1838,6 @@ class OrdersController extends Controller
         $calculated_hmac = base64_encode(hash_hmac('sha256', $data, 'afc86df7e11dcbe0ab414fa158ac1767', true));
         return hash_equals($hmac_header, $calculated_hmac);
     }
-
     public function create()
     {
 
@@ -1917,7 +1916,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -1996,7 +1995,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2050,12 +2049,7 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
 
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
 
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
@@ -2063,7 +2057,6 @@ class OrdersController extends Controller
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -2071,12 +2064,7 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
 
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
 
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
@@ -2084,7 +2072,6 @@ class OrdersController extends Controller
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'The resource is created successfully'], 200);
@@ -2092,12 +2079,7 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
 
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
 
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
@@ -2105,7 +2087,6 @@ class OrdersController extends Controller
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -2172,7 +2153,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2199,12 +2180,7 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
 
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
 
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
@@ -2212,7 +2188,6 @@ class OrdersController extends Controller
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -2220,12 +2195,6 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
 
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
@@ -2233,7 +2202,6 @@ class OrdersController extends Controller
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'The resource is created successfully'], 200);
@@ -2241,20 +2209,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -2321,7 +2281,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2343,20 +2303,13 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
+
                         $update->save();
 
                         $this->OrderPaid($order, $update, $update->points);
@@ -2367,20 +2320,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         if ($update->cargue_puntos == null ) {
@@ -2393,20 +2338,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         $this->OrderPaid($order, $update, $update->points);
@@ -2416,12 +2353,7 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
 
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
 
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
@@ -2429,7 +2361,6 @@ class OrdersController extends Controller
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         $this->OrderPaid($order, $update, $update->points);
@@ -2499,7 +2430,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2523,12 +2454,7 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
 
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
 
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
@@ -2536,7 +2462,6 @@ class OrdersController extends Controller
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         $this->OrderCancelled($result, $order);
@@ -2546,20 +2471,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -2567,20 +2484,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'The resource is created successfully'], 200);
@@ -2588,20 +2497,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -2668,7 +2569,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2705,12 +2606,6 @@ class OrdersController extends Controller
 
                 if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
-                    $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
-
-                    if (count($tercero) > 0) {
-                        $id = $tercero->id;
-                    }
 
                     $update = Order::find($result->id);
                     $update->closed_at = $order['closed_at'];
@@ -2718,7 +2613,6 @@ class OrdersController extends Controller
                     $update->cancel_reason = $order['cancel_reason'];
                     $update->financial_status = $order['financial_status'];
                     $update->updated_at = Carbon::parse($order['updated_at']);
-                    $update->tercero_id = $id;
                     $update->save();
 
                     $this->OrderCancelled($result, $order);
@@ -2729,12 +2623,7 @@ class OrdersController extends Controller
 
                 if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-                    $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
 
-                    if (count($tercero) > 0) {
-                        $id = $tercero->id;
-                    }
 
                     $update = Order::find($result->id);
                     $update->closed_at = $order['closed_at'];
@@ -2742,19 +2631,12 @@ class OrdersController extends Controller
                     $update->cancel_reason = $order['cancel_reason'];
                     $update->financial_status = $order['financial_status'];
                     $update->updated_at = Carbon::parse($order['updated_at']);
-                    $update->tercero_id = $id;
                     $update->save();
                     return response()->json(['status' => 'order processed'], 200);
                 }
 
                 if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                    $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
-
-                    if (count($tercero) > 0) {
-                        $id = $tercero->id;
-                    }
 
                     $update = Order::find($result->id);
                     $update->closed_at = $order['closed_at'];
@@ -2762,7 +2644,6 @@ class OrdersController extends Controller
                     $update->cancel_reason = $order['cancel_reason'];
                     $update->financial_status = $order['financial_status'];
                     $update->updated_at = Carbon::parse($order['updated_at']);
-                    $update->tercero_id = $id;
                     $update->save();
 
                     return response()->json(['status' => 'The resource is created successfully'], 200);
@@ -2770,20 +2651,12 @@ class OrdersController extends Controller
 
                 if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                    $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
-
-                    if (count($tercero) > 0) {
-                        $id = $tercero->id;
-                    }
-
                     $update = Order::find($result->id);
                     $update->closed_at = $order['closed_at'];
                     $update->cancelled_at = $order['cancelled_at'];
                     $update->cancel_reason = $order['cancel_reason'];
                     $update->financial_status = $order['financial_status'];
                     $update->updated_at = Carbon::parse($order['updated_at']);
-                    $update->tercero_id = $id;
                     $update->save();
 
                     return response()->json(['status' => 'order processed'], 200);
@@ -2850,7 +2723,7 @@ class OrdersController extends Controller
                 }
 
                 $id = null;
-                $tercero = Tercero::where('email', $order['email'])->first();
+                $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
                 if (count($tercero) > 0) {
                     $id = $tercero->id;
@@ -2865,7 +2738,6 @@ class OrdersController extends Controller
 
         }
     }
-
     public function create_mercando()
     {
 
@@ -2916,7 +2788,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2965,7 +2837,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3006,6 +2878,7 @@ class OrdersController extends Controller
                 ->where('shop', 'mercando')
                 ->first();
 
+
             if ($order['cancelled_at'] != null && $order['financial_status'] != 'paid') {
 
                 if (count($result) > 0) {
@@ -3016,12 +2889,6 @@ class OrdersController extends Controller
                     }
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
 
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
@@ -3029,7 +2896,6 @@ class OrdersController extends Controller
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -3037,20 +2903,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'The resource is created successfully'], 200);
@@ -3058,20 +2916,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -3112,7 +2962,9 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $p = explode('+57', $order['phone']);
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3137,19 +2989,6 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
 
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
@@ -3157,7 +2996,6 @@ class OrdersController extends Controller
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -3165,20 +3003,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'The resource is created successfully'], 200);
@@ -3186,20 +3016,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -3239,7 +3061,9 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $p = explode('+57', $order['phone']);
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3259,20 +3083,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         $this->OrderPaidMercando($order, $update, $update->points);
@@ -3283,20 +3099,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         if ($update->cargue_puntos == null ) {
@@ -3309,20 +3117,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         $this->OrderPaidMercando($order, $update, $update->points);
@@ -3332,20 +3132,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         $this->OrderPaidMercando($order, $update, $update->points);
@@ -3387,7 +3179,9 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $p = explode('+57', $order['phone']);
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3409,20 +3203,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         $this->OrderCancelledMercando($result, $order);
@@ -3432,20 +3218,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -3453,20 +3231,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'The resource is created successfully'], 200);
@@ -3474,20 +3244,12 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                        $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
-
-                        if (count($tercero) > 0) {
-                            $id = $tercero->id;
-                        }
-
                         $update = Order::find($result->id);
                         $update->closed_at = $order['closed_at'];
                         $update->cancelled_at = $order['cancelled_at'];
                         $update->cancel_reason = $order['cancel_reason'];
                         $update->financial_status = $order['financial_status'];
                         $update->updated_at = Carbon::parse($order['updated_at']);
-                        $update->tercero_id = $id;
                         $update->save();
 
                         return response()->json(['status' => 'order processed'], 200);
@@ -3527,7 +3289,8 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $p = explode('+57', $order['phone']);
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3562,20 +3325,12 @@ class OrdersController extends Controller
 
                 if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
-                    $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
-
-                    if (count($tercero) > 0) {
-                        $id = $tercero->id;
-                    }
-
                     $update = Order::find($result->id);
                     $update->closed_at = $order['closed_at'];
                     $update->cancelled_at = $order['cancelled_at'];
                     $update->cancel_reason = $order['cancel_reason'];
                     $update->financial_status = $order['financial_status'];
                     $update->updated_at = Carbon::parse($order['updated_at']);
-                    $update->tercero_id = $id;
                     $update->save();
 
                     $this->OrderCancelledMercando($result, $order);
@@ -3585,12 +3340,6 @@ class OrdersController extends Controller
 
                 if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
-                    $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
-
-                    if (count($tercero) > 0) {
-                        $id = $tercero->id;
-                    }
 
                     $update = Order::find($result->id);
                     $update->closed_at = $order['closed_at'];
@@ -3598,7 +3347,6 @@ class OrdersController extends Controller
                     $update->cancel_reason = $order['cancel_reason'];
                     $update->financial_status = $order['financial_status'];
                     $update->updated_at = Carbon::parse($order['updated_at']);
-                    $update->tercero_id = $id;
                     $update->save();
 
                     return response()->json(['status' => 'order processed'], 200);
@@ -3606,20 +3354,12 @@ class OrdersController extends Controller
 
                 if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
-                    $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
-
-                    if (count($tercero) > 0) {
-                        $id = $tercero->id;
-                    }
-
                     $update = Order::find($result->id);
                     $update->closed_at = $order['closed_at'];
                     $update->cancelled_at = $order['cancelled_at'];
                     $update->cancel_reason = $order['cancel_reason'];
                     $update->financial_status = $order['financial_status'];
                     $update->updated_at = Carbon::parse($order['updated_at']);
-                    $update->tercero_id = $id;
                     $update->save();
 
                     return response()->json(['status' => 'The resource is created successfully'], 200);
@@ -3627,20 +3367,12 @@ class OrdersController extends Controller
 
                 if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
-                    $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
-
-                    if (count($tercero) > 0) {
-                        $id = $tercero->id;
-                    }
-
                     $update = Order::find($result->id);
                     $update->closed_at = $order['closed_at'];
                     $update->cancelled_at = $order['cancelled_at'];
                     $update->cancel_reason = $order['cancel_reason'];
                     $update->financial_status = $order['financial_status'];
                     $update->updated_at = Carbon::parse($order['updated_at']);
-                    $update->tercero_id = $id;
                     $update->save();
 
                     return response()->json(['status' => 'order processed'], 200);
@@ -3680,7 +3412,7 @@ class OrdersController extends Controller
                 }
 
                 $id = null;
-                $tercero = Tercero::where('email', $order['email'])->first();
+                $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
                 if (count($tercero) > 0) {
                     $id = $tercero->id;
@@ -3696,7 +3428,29 @@ class OrdersController extends Controller
 
     public function contador()
     {
-        $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+
+        $input = file_get_contents('php://input');
+        $order = json_decode($input, true);
+        $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
+        $verified = $this->verify_webhook(collect($order), $hmac_header);
+        $resultapi = error_log('Webhook verified: ' . var_export($verified, true));
+
+        if ($resultapi == 'true') {
+
+            $response = Order::where('network_id', 1)
+                ->where('name', $order['name'])
+                ->where('order_id', $order['id'])
+                ->where('shop', 'good')
+                ->first();
+
+            $p = explode('+57', $order['phone']);
+
+            $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+
+            return response()->json($p[1], 200);
+
+        }
+        /*$api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $client = new \GuzzleHttp\Client();
         $email = 'lgrestrepogutierrez@gmail.com';
         try {
@@ -3746,7 +3500,7 @@ class OrdersController extends Controller
 
                 return $e->hasResponse();
             }
-        }
+        }*/
         /*$api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
         $client = new \GuzzleHttp\Client();
@@ -3897,11 +3651,11 @@ class OrdersController extends Controller
             }
         }*/
 
-        $orders = Order::all();
+        /*$orders = Order::all();
 
         foreach ($orders as $order) {
 
-            $tercero = Tercero::where('email', strtolower($order->email))->first();
+            $tercero = Tercero::where('email', strtolower($order['email']))->first();
 
             if (count($tercero) > 0) {
 
@@ -3916,6 +3670,6 @@ class OrdersController extends Controller
 
         }
 
-        return response()->json(['msg' => 'Hecho']);
+        return response()->json(['msg' => 'Hecho']);*/
     }
 }

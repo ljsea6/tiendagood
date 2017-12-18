@@ -104,7 +104,16 @@ class GetOrdersMercando extends Command
                             }
                         }
 
-                        $order = Order::createOrder($order, 'mercando', $puntos, 'nacional');
+                        $id = null;
+                        $p = explode('+57', $order['phone']);
+
+                        $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+
+                        if (count($tercero) > 0) {
+                            $id = $tercero->id;
+                        }
+
+                        $order = Order::createOrder($order, 'mercando', $puntos, 'nacional', $id);
                     }
                 }
 
@@ -142,7 +151,16 @@ class GetOrdersMercando extends Command
                             }
                         }
 
-                        $order_create = Order::createOrder($order, 'mercando', $puntos, 'nacional');
+                        $id = null;
+                        $p = explode('+57', $order['phone']);
+
+                        $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+
+                        if (count($tercero) > 0) {
+                            $id = $tercero->id;
+                        }
+
+                        $order_create = Order::createOrder($order, 'mercando', $puntos, 'nacional', $id);
 
                         $this->OrderPaidMercando($order, $order_create, $puntos);
                     }

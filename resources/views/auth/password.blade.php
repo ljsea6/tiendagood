@@ -265,6 +265,8 @@
 
 <script type="text/javascript">
 $('.submit').on('submit',function(event){
+        
+         $('#enviar').prop('disabled', true);   
         //
                  result_email = JSON.parse( $.ajax({
                     url: 'validate/email',
@@ -282,6 +284,8 @@ $('.submit').on('submit',function(event){
                   customClass: 'animated tada'
                   });
 
+                  $('#enviar').prop('disabled', false);    
+
                     event.preventDefault() ;
                 }   
                 if (result_email.msg == 'email valido') {
@@ -292,11 +296,11 @@ $('.submit').on('submit',function(event){
                   customClass: 'animated tada'
                   });
 
+                  $('#enviar').prop('disabled', false);    
+
                     event.preventDefault() ;
                 }
-
- 
-         $('#enviar').prop('disabled', true);        
+     
 });
 
 @if(Session::has('flash_msg'))

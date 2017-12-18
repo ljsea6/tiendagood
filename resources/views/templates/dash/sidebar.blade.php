@@ -11,13 +11,6 @@
                 </a>
             </li>
             <li class="has-submenu">
-                <a href="{{ route('admin.search') }}" class="animsition-link text-left">
-                    <i class="fa fa-search">
-                    </i>
-                    <span class="nav-text">Buscar Referidos</span>
-                </a>
-            </li>
-            <li class="has-submenu">
                 <a href="{{ route('terceros.actualizar_mis_datos') }}" class="animsition-link text-left">
                     <i class="glyphicon glyphicon-pencil">
                     </i>
@@ -26,7 +19,14 @@
             </li>
             
             
-            @role('dirsac|administrador')
+            @role('dirsac|administrador')            
+            <li class="has-submenu">
+                <a href="{{ route('admin.search') }}" class="animsition-link text-left">
+                    <i class="fa fa-search">
+                    </i>
+                    <span class="nav-text">Buscar Referidos</span>
+                </a>
+            </li>
             <li class="has-submenu">
                 <a href="#terceros" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-user">
@@ -42,7 +42,7 @@
                                 Editar Datos
                             </a>
                         </li> @endrole
-                        @role('administrador')
+                        @role('dirsac')
                         <li>
                             <a href="{{ route('admin.terceros.cambiarpadre') }}" class="text-left">
                                 <i class="fa fa-edit">
@@ -231,14 +231,6 @@
                             </a>
                         </li>
 
-
-                        <li>
-                            <a href="{{route('admin.products.index')}}" class="text-left">
-                                <i class="fa fa-bookmark">
-                                </i>
-                                Productos
-                            </a>
-                        </li>
                         <li>
                             <a href="{{ route('admin.proveedores.index') }}" class="text-left">
                                 <i class="fa fa-user">
@@ -318,10 +310,10 @@
                 <div class="sub-menu collapse secondary list-style-circle" id="submenu10">
                     <ul>
                         <li>
-                            <a href="{{ route('admin.variants.index') }}" class="text-left">
-                                <i class="fa fa-list">
+                            <a href="{{route('admin.products.index.good')}}" class="text-left">
+                                <i class="fa fa-bookmark">
                                 </i>
-                                Variantes Good
+                                Productos Good
                             </a>
                         </li>
 
@@ -341,11 +333,12 @@
                 </a>
                 <div class="sub-menu collapse secondary list-style-circle" id="submenu11">
                     <ul>
+
                         <li>
-                            <a href="{{ route('admin.variants.mercando') }}" class="text-left">
-                                <i class="fa fa-list">
+                            <a href="{{route('admin.products.index.mercando')}}" class="text-left">
+                                <i class="fa fa-bookmark">
                                 </i>
-                                Variantes Mercando
+                                Productos Mercando
                             </a>
                         </li>
 

@@ -402,7 +402,7 @@ class TercerosController extends Controller {
         if ($request->has('no_orden')) {
             $data = ['error' => false];
             $orden = DB::table('orders')
-                    ->where('name', '' . $request['no_orden'] . '')
+                    ->where('name', strtoupper($request['no_orden']))
                     ->first();
             if ($orden != NULL) {
                 $data = ['id' => $orden->id, 'tienda' => $orden->shop, 'estado' => $orden->financial_status];
@@ -416,11 +416,18 @@ class TercerosController extends Controller {
 
     public function setOrden(Request $request) {
         if ($request->has('tercero_id') && $request->has('orden_id')) {
-            $update = DB::table('orders')->where('id', $request['orden_id'])->update(['tercero_id' => $request['tercero_id']]);
-            if ($update) {
-                echo true;
+            $tercero = DB::table('terceros')
+                    ->where('id', $request['tercero_id'])
+                    ->first();
+            if ($tercero != NULL) {
+                $update = DB::table('orders')->where('id', $request['orden_id'])->update(['tercero_id' => $tercero->id]);
+                if ($update) {
+                    echo true;
+                } else {
+                    echo 'Hubo un error al actualizar los datos';
+                }
             } else {
-                echo 'Hubo un error al actualizar los datos';
+                echo 'Hubo un error al encontrar el tercero';
             }
         }
     }
@@ -429,19 +436,12 @@ class TercerosController extends Controller {
         return view('admin.terceros.lista_documentos');
     }
 
-    public function descargar_documentos($id = 0, $tipo = '') {
+    public function descargar_documentos($id=0, $tipo='') {
         $tercero = Tercero::with('networks')->where('id', '=', $id)->first();
-
         $nombre = '';
-        if ($tipo == 'rut') {
-            $nombre = $tercero->rut;
-        }
-        if ($tipo == 'cedula') {
-            $nombre = $tercero->cedula;
-        }
-        if ($tipo == 'cuenta') {
-            $nombre = $tercero->cuenta;
-        }
+        if($tipo == 'rut'){  $nombre = $tercero->rut; }
+            if($tipo == 'cedula'){  $nombre = $tercero->cedula; }
+                if($tipo == 'cuenta'){  $nombre = $tercero->cuenta; } 
 
         if ($nombre != '0') {
             $download = public_path($nombre);
@@ -452,84 +452,127 @@ class TercerosController extends Controller {
     }
 
     public function post_actualizar_mis_datos(Request $request) {
-        
+
     }
 
     public function actualizar_mis_datos(Request $request) {
 
-        if ($request->has('first-name')) {
+        if ($request->has('first-name')) { 
 
-            $api_url_good = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-            $api_url_mercando = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+        $api_url_good = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $api_url_mercando = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO'); 
 
-            $this->api_set_email($api_url_good, $request['email_old'], $request->email);
-            $this->api_set_email($api_url_mercando, $request['email_old'], $request->email);
+        $this->api_set_email($api_url_good, $request['email_old'], $request->email);
+        $this->api_set_email($api_url_mercando, $request['email_old'], $request->email);           
 
-            $p = '';
-            if (strlen($request->phone) == 13) {
-                $p .= ltrim($request->phone, '+57');
-            } else {
-                $p .= $request->phone;
-            }
+        $p = '';
+        if (strlen($request->phone) == 13) {
+            $p .= ltrim( $request->phone , '+57' );
+        }else {
+            $p .= $request->phone;
+        }
 
-            $usuario = Tercero::find(currentUser()->id);
-            $usuario->nombres = strtolower($request['first-name']);
-            $usuario->apellidos = strtolower($request['last-name']);
-            $usuario->direccion = strtolower($request->address);
-            $usuario->telefono = strtolower($p);
-            $usuario->email = strtolower($request->email);
-            $usuario->usuario = strtolower($request->email);
-            $usuario->celular = strtolower($p);
-            $usuario->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->birthday);
+        $usuario = Tercero::find(currentUser()->id); 
+        $usuario->nombres = strtolower($request['first-name']);
+        $usuario->apellidos = strtolower($request['last-name']);
+        $usuario->direccion = strtolower($request->address);
+        $usuario->telefono = strtolower($p);
+        $usuario->email = strtolower($request->email);
+        $usuario->usuario = strtolower($request->email);   
+        $usuario->celular = strtolower($p);     
+        $usuario->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->birthday);
 
-            if ($request->file('banco')) {
-                $cuenta = $request->file('banco');
-                $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
-                $path = public_path() . "/uploads";
-                $cuenta->move($path, $cuenta_nombre);
-                $usuario->cuenta = "uploads/" . $cuenta_nombre;
-            }
+        if ($request->file('banco')) {
 
-            if ($request->file('cedula')) {
+            $path = public_path()."/".$request['cuenta_old'];
+            @unlink($path);
+            $cuenta        = $request->file('banco');
+            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+            $path          = public_path() . "/uploads";
+            $cuenta->move($path, $cuenta_nombre);
+            $usuario->cuenta = "uploads/" . $cuenta_nombre;
+        }
 
-                $cuenta = $request->file('cedula');
-                $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
-                $path = public_path() . "/uploads";
-                $cuenta->move($path, $cuenta_nombre);
-                $usuario->cedula = "uploads/" . $cuenta_nombre;
-            }
+        if ($request->file('cedula')) {
 
-            if ($request->file('rut')) {
+            $path = public_path()."/".$request['cedula_old'];
+            @unlink($path);
 
-                $cuenta = $request->file('rut');
-                $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
-                $path = public_path() . "/uploads";
-                $cuenta->move($path, $cuenta_nombre);
-                $usuario->rut = "uploads/" . $cuenta_nombre;
-            }
+            $cuenta        = $request->file('cedula');
+            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+            $path          = public_path() . "/uploads";
+            $cuenta->move($path, $cuenta_nombre);
+            $usuario->cedula = "uploads/" . $cuenta_nombre;
 
-            if ($request->file('foto')) {
+        }
 
-                $cuenta = $request->file('foto');
-                $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
-                $path = public_path() . "/uploads";
-                $cuenta->move($path, $cuenta_nombre);
-                $usuario->avatar = "uploads/" . $cuenta_nombre;
-            }
+        if ($request->file('rut')) {
 
-            // Usuario creado
-            $usuario->save();
+            $path = public_path()."/".$request['rut_old'];
+            @unlink($path);
+            $cuenta        = $request->file('rut');
+            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+            $path          = public_path() . "/uploads";
+            $cuenta->move($path, $cuenta_nombre);
+            $usuario->rut = "uploads/" . $cuenta_nombre;
 
+        }
 
-            Session::flash('flash_msg', 'la actualizaci\u00F3n de sus datos se realizaron correctamente');
+        if ($request->file('foto')) {
+
+            $path = public_path()."/".$request['foto_old'];
+            @unlink($path);
+            $cuenta        = $request->file('foto');
+            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+            $path          = public_path() . "/uploads";
+            $cuenta->move($path, $cuenta_nombre);
+            $usuario->avatar = "uploads/" . $cuenta_nombre;
+
+        }
+
+        // Usuario creado
+        $usuario->save();
+
+        if ($request->has('prime')) {
+            $usuario->primes()->create([
+                'fecha_inicio' => Carbon::now(),
+                'fecha_final' => Carbon::now()->addMonth(),
+                'log' => [
+                    'id' => $request->getClientIp(),
+                    'browser' => $request->header('User-Agent')
+                ]
+            ]);
+        } 
+
+            Session::flash('flash_msg', 'La actualizaci\u00F3n de sus datos se realizaron correctamente');
             return redirect()->action('TercerosController@actualizar_mis_datos');
         }
 
-        $tercero = Tercero::with('networks')->find(currentUser()->id);
+        $tercero = Tercero::with('networks', 'primes')->find(currentUser()->id);
+ 
+            $fecha_inicio =  '';
+            $fecha_final = ''; 
+
+        foreach ($tercero->primes as $value) {
+            if($value->estado == true){
+            $fecha_inicio =  $value->fecha_inicio;
+            $fecha_final =  $value->fecha_final;
+            }
+        }
+
+        $fecha_inicio = $fecha_inicio; 
+        $fecha_inicio = strtotime($fecha_inicio); 
+        $fecha_inicio =  date("Y-m-d", $fecha_inicio); 
+ 
+        $fecha_final = $fecha_final; 
+        $fecha_final = strtotime($fecha_final); 
+        $fecha_final =  date("Y-m-d", $fecha_final); 
+
         $fecha_nacimiento = $tercero['fecha_nacimiento'];
         $fecha_nacimiento = date("d/m/Y", strtotime($fecha_nacimiento));
 
-        return view('admin.terceros.actualizar_datos', compact('tercero', 'fecha_nacimiento'));
+        return view('admin.terceros.actualizar_datos', compact('tercero','fecha_nacimiento','fecha_inicio', 'fecha_final'));
+   
     }
 
 }
