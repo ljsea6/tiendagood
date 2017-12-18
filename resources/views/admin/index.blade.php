@@ -91,7 +91,7 @@
           </div>
          </div>
          <div class="col-sm-3">
-             <div class="card-content" style="text-align: center; margin-top: 20px; text-align: left">
+             <div class="card-content" style="text-align: center; margin-top: 20px; text-align: right;">
               <span class="category">Fecha del proximo corte:</span><br> <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> 21 de diciembre</span> 
           </div>
          </div>
