@@ -401,7 +401,7 @@ class TercerosController extends Controller {
         if ($request->has('no_orden')) {
             $data = ['error' => false];
             $orden = DB::table('orders')
-                    ->where('order_number', $request['no_orden'])
+                    ->where('name', $request['no_orden'])
                     ->first();
             if ($orden != NULL) {
                 $data = ['id' => $orden->id, 'tienda' => $orden->shop, 'estado' => $orden->financial_status];
