@@ -78,7 +78,7 @@
       <div class="row">
          <div class="col-sm-3">
             <div class="card-content">
-             <h3 class="title" style="padding-top: 11px;">Tipo de cliente: {{$tipo_nombre}}</h3>
+             <h3 class="title" style="padding-top: 11px;">Tipo de cliente: {{ucwords($tipo_nombre)}}</h3>
             </div>
          </div>
          <div class="col-sm-3">
@@ -86,7 +86,7 @@
                @if (date("Y-m-d") >= $fecha_inicio  && date("Y-m-d") <= $fecha_final)                   
                <h3 class="title" style="padding-top: 11px;">Plan prime activado</h3>
                @else
-                 <span class="plan_prime_texto"> <button class="btn btn-primary" type="button"  id="actualizar_plan_prime" onclick="plan()">Activar plan prmie</button> </span>
+                 <span class="plan_prime_texto"> <button class="btn btn-primary" data-background-color="orange" type="button"  id="actualizar_plan_prime" onclick="plan()">Activar plan prime</button> </span>
                @endif  
           </div>
          </div>
@@ -143,14 +143,18 @@
 <script type="text/javascript"> function link(nivel){ location.href = "/nivel/"+nivel; } 
 function plan(){
 swal({
-  title: '¿Seguro que desea activar el plan prime?',
-  text: "",
-  type: 'warning',
+  title: '¿Deseas activar prime?',
+  html:
+    'Bonificación 10% adicional mensual. <br>' +
+    'Canal preferencial de servicio al cliente. <br>' +
+    'Garantía extendida de productos (6 meses) y más. <br> <br>' +
+    'Al dar click en “Aceptar”, confirmas estos <a href="{{route('terms_prime')}}" target="_blank" style="color: #ed7d01;"> términos y condiciones.</a> <br>',
+  type: 'question',
   showCancelButton: true,
   confirmButtonColor: '#3085d6',
   cancelButtonColor: '#d33',
   cancelButtonText: 'No',
-  confirmButtonText: 'Si'
+  confirmButtonText: 'Aceptar'
 }).then((result) => {
   if (result.value) {
 
