@@ -60,8 +60,9 @@
 <div class="col-lg-4 col-md-6 col-sm-6">
    <div class="card card-stats">
       <div class="card-content">
-         <p class="category">Su patrocinador es</p> <!--<h1 class="hidden-xs" style="text-transform: uppercase; color: gray; padding: 20px; font-size: 1.8em;">  <br>-->
-         <h3 class="title">{{ ucwords($patrocinador) }}</h3>
+         <p class="category">Tu patrocinador es</p> <!--<h1 class="hidden-xs" style="text-transform: uppercase; color: gray; padding: 20px; font-size: 1.8em;">  <br>-->
+         <h3 class="title">{{ ucwords($nombre_completo) }}</h3>
+         <p class="category">{{$email}} - {{$telefono}}</p>
       </div>
       <div class="card-footer" style="display: block;">
          <div class="stats">
@@ -88,7 +89,7 @@
                   </td>
 
                   <td>#{{$uno}} <span class="fa fa-user" aria-hidden="true"></span></td> 
-                  <td>{{ number_format($points_level_1) }} Puntos</td> 
+                  <td>{{ number_format($points_level_1) }}  Pts</td> 
                   <td>$ 0</td>
                   </a>
                </tr>
@@ -99,7 +100,7 @@
                      </div>
                   </td>
                   <td>#{{$dos}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>{{ number_format($points_level_2) }} Puntos</td> 
+                  <td>{{ number_format($points_level_2) }}  Pts</td> 
                   <td>$ 0</td>
                </tr>
                <tr onclick="link(3)">
@@ -109,7 +110,7 @@
                      </div>
                   </td>
                   <td>#{{$tres}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>{{ number_format($points_level_3) }} Puntos</td> 
+                  <td>{{ number_format($points_level_3) }}  Pts</td> 
                   <td>$ 0</td>
                </tr>
             </tbody>
