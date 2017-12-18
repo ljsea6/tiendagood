@@ -143,7 +143,7 @@ input[type="file"] {display: none;}
                                     <div class="col-xs-12">
                                       @if ($tercero['rut'] != '')  
                                         <a href="{{route('admin.terceros.descargar_documentos', ['id' => currentUser()->id, 'tipo' => 'rut'])}}"> 
-                                          <input class="btn btn-default boton-descargar" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar"> 
+                                          <input class="btn btn-default boton-descargar" style="background: #3783F9; color: white" type="button" id="d" name="d" value="Descargar"> 
                                         </a>
                                       @endif 
                                          <label for="rut" class="boton-upload">
@@ -163,7 +163,7 @@ input[type="file"] {display: none;}
                                     <div class="col-xs-10 col-xs-offset-1">
                                       @if ($tercero['cedula'] != '')  
                                         <a href="{{route('admin.terceros.descargar_documentos', ['id' => currentUser()->id, 'tipo' => 'cedula'])}}">
-                                          <input class="btn btn-default boton-descargar" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar"> 
+                                          <input class="btn btn-default boton-descargar" style="background: #3783F9; color: white" type="button" id="d" name="d" value="Descargar"> 
                                         </a>
                                       @endif 
                                         <label for="cedula" class="boton-upload"> 
@@ -183,7 +183,7 @@ input[type="file"] {display: none;}
                                     <div class=" col-xs-10 col-xs-offset-1">
                                       @if ($tercero['cuenta'] != '')   
                                        <a href="{{route('admin.terceros.descargar_documentos', ['id' => currentUser()->id, 'tipo' => 'cuenta'])}}">
-                                          <input class="btn btn-default boton-descargar" style="background: #3783F9; color: white" type="button" id="d" name="d" value="descargar"> 
+                                          <input class="btn btn-default boton-descargar" style="background: #3783F9; color: white" type="button" id="d" name="d" value="Descargar"> 
                                         </a>
                                       @endif 
                                          <label for="banco" class="boton-upload">

@@ -11,13 +11,6 @@
                 </a>
             </li>
             <li class="has-submenu">
-                <a href="{{ route('admin.search') }}" class="animsition-link text-left">
-                    <i class="fa fa-search">
-                    </i>
-                    <span class="nav-text">Buscar Referidos</span>
-                </a>
-            </li>
-            <li class="has-submenu">
                 <a href="{{ route('terceros.actualizar_mis_datos') }}" class="animsition-link text-left">
                     <i class="glyphicon glyphicon-pencil">
                     </i>
@@ -26,7 +19,14 @@
             </li>
             
             
-            @role('dirsac|administrador')
+            @role('dirsac|administrador')            
+            <li class="has-submenu">
+                <a href="{{ route('admin.search') }}" class="animsition-link text-left">
+                    <i class="fa fa-search">
+                    </i>
+                    <span class="nav-text">Buscar Referidos</span>
+                </a>
+            </li>
             <li class="has-submenu">
                 <a href="#terceros" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-user">
