@@ -89,7 +89,7 @@
                   </td>
 
                   <td>#{{$uno}} <span class="fa fa-user" aria-hidden="true"></span></td> 
-                  <td>{{ number_format($points_level_1) }} Puntos</td> 
+                  <td>{{ number_format($points_level_1) }}  Pts</td> 
                   <td>$ 0</td>
                   </a>
                </tr>
@@ -100,7 +100,7 @@
                      </div>
                   </td>
                   <td>#{{$dos}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>{{ number_format($points_level_2) }} Puntos</td> 
+                  <td>{{ number_format($points_level_2) }}  Pts</td> 
                   <td>$ 0</td>
                </tr>
                <tr onclick="link(3)">
@@ -110,7 +110,7 @@
                      </div>
                   </td>
                   <td>#{{$tres}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>{{ number_format($points_level_3) }} Puntos</td> 
+                  <td>{{ number_format($points_level_3) }}  Pts</td> 
                   <td>$ 0</td>
                </tr>
             </tbody>
