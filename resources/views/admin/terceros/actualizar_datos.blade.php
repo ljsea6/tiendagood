@@ -77,9 +77,9 @@ input[type="file"] {display: none;}
                              <hr>
                             <div class="row">
                             @if ($tercero['tipo_cliente_id'] == 83)
-                              <a href="https://cdn.shopify.com/s/files/1/2256/3751/files/Terminos_y_condiciones_Good_prime.docx?3575541982139248614">
+                            <!--  <a href="https://cdn.shopify.com/s/files/1/2256/3751/files/Terminos_y_condiciones_Good_prime.docx?3575541982139248614">
                                           <input class="btn btn-default" style="background: #3783F9; color: white" type="button" id="d" name="d" value="Descargar contrato">
-                            </a> 
+                            </a>  -->
                             @endif
                             
                             </div>                        
@@ -118,7 +118,7 @@ input[type="file"] {display: none;}
                                         @if (date("Y-m-d") >= $fecha_inicio  && date("Y-m-d") <= $fecha_final )  
                                           <input type="checkbox"  checked disabled  class="form-check-input campo" checked /> 
                                         @else
-                                          <input type="checkbox"   class="form-check-input"> 
+                                          <input type="checkbox" name="prime"  class="form-check-input"> 
                                         @endif 
                                           Activar plan prime  <a href="{{route('terms_prime')}}" target="_blank">Terminos y condiciones</a>
                                         </label>
