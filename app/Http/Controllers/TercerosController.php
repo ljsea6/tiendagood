@@ -220,6 +220,7 @@ class TercerosController extends Controller {
             if (count($tercero) > 0) {
                 $networks = $tercero['networks'];
                 $father = count($networks) > 0 ? $networks[0]['pivot']['padre_id'] : NULL;
+
                 $tipo_cliente = \App\Entities\Tipo::find($tercero->tipo_cliente_id)->nombre;
                 $data['tercero'] = ['id' => $tercero->id,
                     'nombre' => "$tercero->nombres $tercero->apellidos",
@@ -401,7 +402,7 @@ class TercerosController extends Controller {
         if ($request->has('no_orden')) {
             $data = ['error' => false];
             $orden = DB::table('orders')
-                    ->where('order_number', $request['no_orden'])
+                    ->where('name', strtoupper($request['no_orden']))
                     ->first();
             if ($orden != NULL) {
                 $data = ['id' => $orden->id, 'tienda' => $orden->shop, 'estado' => $orden->financial_status];
@@ -419,7 +420,7 @@ class TercerosController extends Controller {
                     ->where('id', $request['tercero_id'])
                     ->first();
             if ($tercero != NULL) {
-                $update = DB::table('orders')->where('id', $request['orden_id'])->update(['email' => $tercero->email]);
+                $update = DB::table('orders')->where('id', $request['orden_id'])->update(['tercero_id' => $tercero->id]);
                 if ($update) {
                     echo true;
                 } else {

@@ -2962,7 +2962,9 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                    $p = explode('+57', $order['phone']);
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3059,7 +3061,9 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                    $p = explode('+57', $order['phone']);
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3175,7 +3179,9 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                    $p = explode('+57', $order['phone']);
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3283,7 +3289,8 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                    $p = explode('+57', $order['phone']);
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3422,6 +3429,27 @@ class OrdersController extends Controller
     public function contador()
     {
 
+        $input = file_get_contents('php://input');
+        $order = json_decode($input, true);
+        $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
+        $verified = $this->verify_webhook(collect($order), $hmac_header);
+        $resultapi = error_log('Webhook verified: ' . var_export($verified, true));
+
+        if ($resultapi == 'true') {
+
+            $response = Order::where('network_id', 1)
+                ->where('name', $order['name'])
+                ->where('order_id', $order['id'])
+                ->where('shop', 'good')
+                ->first();
+
+            $p = explode('+57', $order['phone']);
+
+            $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+
+            return response()->json($p[1], 200);
+
+        }
         /*$api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $client = new \GuzzleHttp\Client();
         $email = 'lgrestrepogutierrez@gmail.com';
@@ -3623,7 +3651,7 @@ class OrdersController extends Controller
             }
         }*/
 
-        $orders = Order::all();
+        /*$orders = Order::all();
 
         foreach ($orders as $order) {
 
@@ -3642,6 +3670,6 @@ class OrdersController extends Controller
 
         }
 
-        return response()->json(['msg' => 'Hecho']);
+        return response()->json(['msg' => 'Hecho']);*/
     }
 }
