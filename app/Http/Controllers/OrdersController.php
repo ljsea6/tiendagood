@@ -2962,7 +2962,9 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                    $p = explode('+57', $order['phone']);
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3059,7 +3061,9 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                    $p = explode('+57', $order['phone']);
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3175,7 +3179,9 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                    $p = explode('+57', $order['phone']);
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3283,7 +3289,8 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                    $p = explode('+57', $order['phone']);
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
