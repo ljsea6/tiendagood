@@ -483,7 +483,7 @@ class TercerosController extends Controller {
 
         if ($request->file('banco')) {
 
-            $path = public_path()."/".$$request['rut_old'];
+            $path = public_path()."/".$request['rut_old'];
             @unlink($path);
             $cuenta        = $request->file('banco');
             $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
@@ -494,7 +494,7 @@ class TercerosController extends Controller {
 
         if ($request->file('cedula')) {
 
-            $path = public_path()."/".$$request['cedula_old'];
+            $path = public_path()."/".$request['cedula_old'];
             @unlink($path);
 
             $cuenta        = $request->file('cedula');
@@ -507,7 +507,7 @@ class TercerosController extends Controller {
 
         if ($request->file('rut')) {
 
-            $path = public_path()."/".$$request['rut_old'];
+            $path = public_path()."/".$request['rut_old'];
             @unlink($path);
             $cuenta        = $request->file('rut');
             $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
