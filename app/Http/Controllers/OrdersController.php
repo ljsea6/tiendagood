@@ -1838,7 +1838,6 @@ class OrdersController extends Controller
         $calculated_hmac = base64_encode(hash_hmac('sha256', $data, 'afc86df7e11dcbe0ab414fa158ac1767', true));
         return hash_equals($hmac_header, $calculated_hmac);
     }
-
     public function create()
     {
 
@@ -1917,7 +1916,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -1996,7 +1995,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2051,7 +2050,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2072,7 +2071,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2093,7 +2092,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2172,7 +2171,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2200,7 +2199,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2221,7 +2220,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2242,7 +2241,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2321,7 +2320,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2344,7 +2343,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2368,7 +2367,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2394,7 +2393,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2417,7 +2416,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2499,7 +2498,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2524,7 +2523,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2547,7 +2546,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2568,7 +2567,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2589,7 +2588,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -2668,7 +2667,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2706,7 +2705,7 @@ class OrdersController extends Controller
                 if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2730,7 +2729,7 @@ class OrdersController extends Controller
                 if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2750,7 +2749,7 @@ class OrdersController extends Controller
                 if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2771,7 +2770,7 @@ class OrdersController extends Controller
                 if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2850,7 +2849,7 @@ class OrdersController extends Controller
                 }
 
                 $id = null;
-                $tercero = Tercero::where('email', $order['email'])->first();
+                $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                 if (count($tercero) > 0) {
                     $id = $tercero->id;
@@ -2865,7 +2864,6 @@ class OrdersController extends Controller
 
         }
     }
-
     public function create_mercando()
     {
 
@@ -2916,7 +2914,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2965,7 +2963,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3006,6 +3004,7 @@ class OrdersController extends Controller
                 ->where('shop', 'mercando')
                 ->first();
 
+
             if ($order['cancelled_at'] != null && $order['financial_status'] != 'paid') {
 
                 if (count($result) > 0) {
@@ -3017,7 +3016,7 @@ class OrdersController extends Controller
 
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3038,7 +3037,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3059,7 +3058,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3112,7 +3111,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3138,14 +3137,14 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
                         }
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3166,7 +3165,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3187,7 +3186,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3239,7 +3238,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3260,7 +3259,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3284,7 +3283,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3310,7 +3309,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3333,7 +3332,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3387,7 +3386,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3410,7 +3409,7 @@ class OrdersController extends Controller
                     if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3475,7 +3474,7 @@ class OrdersController extends Controller
                     if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
                         $id = null;
-                        $tercero = Tercero::where('email', $order['email'])->first();
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -3527,7 +3526,7 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3563,7 +3562,7 @@ class OrdersController extends Controller
                 if ($result->financial_status == "paid" && $result->cancelled_at == null) {
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3586,7 +3585,7 @@ class OrdersController extends Controller
                 if ($result->financial_status != "paid" && $result->cancelled_at == null) {
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3607,7 +3606,7 @@ class OrdersController extends Controller
                 if ($result->financial_status == "paid" && $result->cancelled_at != null) {
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3628,7 +3627,7 @@ class OrdersController extends Controller
                 if ($result->financial_status != "paid" && $result->cancelled_at != null) {
 
                     $id = null;
-                    $tercero = Tercero::where('email', $order['email'])->first();
+                    $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3680,7 +3679,7 @@ class OrdersController extends Controller
                 }
 
                 $id = null;
-                $tercero = Tercero::where('email', $order['email'])->first();
+                $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
 
                 if (count($tercero) > 0) {
                     $id = $tercero->id;
@@ -3696,7 +3695,8 @@ class OrdersController extends Controller
 
     public function contador()
     {
-        $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+
+        /*$api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $client = new \GuzzleHttp\Client();
         $email = 'lgrestrepogutierrez@gmail.com';
         try {
@@ -3746,7 +3746,7 @@ class OrdersController extends Controller
 
                 return $e->hasResponse();
             }
-        }
+        }*/
         /*$api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
         $client = new \GuzzleHttp\Client();
@@ -3901,7 +3901,7 @@ class OrdersController extends Controller
 
         foreach ($orders as $order) {
 
-            $tercero = Tercero::where('email', strtolower($order->email))->first();
+            $tercero = Tercero::where('email', $order->email)->orWhere('telefono', 'like', '%' . $order->phone . '%')->first();
 
             if (count($tercero) > 0) {
 
