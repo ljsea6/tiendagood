@@ -45,7 +45,9 @@ class GetUsers extends Command
         $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
         $client = new \GuzzleHttp\Client();
 
-        $terceros = Tercero::all();
+        $terceros = DB::table('terceros')->whereNotIn('id', function($q){
+            $q->select('tercero_id')->from('terceros_tiendas');
+        })->get();
 
         foreach ($terceros as $tercero) {
 
@@ -131,6 +133,7 @@ class GetUsers extends Command
                     try {
 
                         $res = $client->request('post', $api_url_mercando . '/admin/customers.json', array(
+
                                 'form_params' => array(
                                     'customer' => array(
                                         'first_name' => strtolower( $results_good['customers'][0]['first_name']),
@@ -139,16 +142,7 @@ class GetUsers extends Command
                                         'verified_email' => true,
                                         'phone' =>  $results_good['customers'][0]['phone'],
                                         'addresses' => [
-                                            [
-                                                'address1' => strtolower($results_good['customers'][0]['addresses'][0]['address1']),
-                                                'city' => strtolower($results_good['customers'][0]['addresses'][0]['city']),
-                                                'province' => '',
-
-                                                "zip" => '',
-                                                'first_name' => strtolower($results_good['customers'][0]['addresses'][0]['first_name']),
-                                                'last_name' => strtolower($results_good['customers'][0]['addresses'][0]['first_name']),
-                                                'country' => 'CO'
-                                            ],
+                                            $results_good['customers'][0]['addresses'],
                                         ],
                                         "password" => $tercero->identificacion,
                                         "password_confirmation" => $tercero->identificacion,

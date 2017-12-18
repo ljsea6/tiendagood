@@ -39,6 +39,7 @@ $api->version('v1', function ($api) {
 Route::get('/carga', ['uses' => 'AdminController@carga', 'as' => 'admin.index']);
 
 Route::post('orders/list/paid', ['uses' => 'OrdersController@contador', 'as' => 'admin.orders.list.paid']);
+Route::get('orders/list/paid/new', ['uses' => 'OrdersController@contador_uno', 'as' => 'admin.orders.list.paid.uno']);
 
 
 
