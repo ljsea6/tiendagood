@@ -67,7 +67,7 @@
       <div class="card-footer" style="display: block;">
          <div class="stats">
             <i class="material-icons text-danger"></i>
-            <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> Fecha del proximo corte 21 de diciembre</span>
+            
          </div>
       </div>
    </div>
@@ -76,18 +76,23 @@
  <div class="col-sm-12">
 <div class="card card-stats" style="margin: 5px 0;">
       <div class="row">
-         <div class="col-sm-3">
-            <div class="card-content">
+         <div class="col-sm-4">
+            <div class="card-content" style="text-align: left;">
              <h3 class="title" style="padding-top: 11px;">Tipo de cliente: {{ucwords($tipo_nombre)}}</h3>
             </div>
          </div>
-         <div class="col-sm-3">
-             <div class="card-content">
+         <div class="col-sm-4">
+             <div class="card-content" style="text-align: center;">
                @if (date("Y-m-d") >= $fecha_inicio  && date("Y-m-d") <= $fecha_final)                   
                <h3 class="title" style="padding-top: 11px;">Plan prime activado</h3>
                @else
                  <span class="plan_prime_texto"> <button class="btn btn-primary" data-background-color="orange" type="button"  id="actualizar_plan_prime" onclick="plan()">Activar plan prime</button> </span>
                @endif  
+          </div>
+         </div>
+         <div class="col-sm-4">
+             <div class="card-content" style="text-align: center; margin-top: 20px">
+              <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> Fecha del proximo corte 21 de diciembre</span> 
           </div>
          </div>
       </div>
@@ -167,7 +172,7 @@ swal({
                });
 
     swal(
-      'Su plan prime fue activado',
+      'Felicitaciones tu plan prime ha sido activado.',
       ''
     );
 
