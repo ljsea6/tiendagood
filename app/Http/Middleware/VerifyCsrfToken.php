@@ -50,7 +50,8 @@ class VerifyCsrfToken extends BaseVerifier {
         'admin/terceros/setpadre',
         'admin/terceros/getorden',
         'admin/terceros/setorden',
-        'terceros/actualizar-datos'
+        'terceros/actualizar-datos',
+        'terceros/activarplanprime'
     ];
 
 }

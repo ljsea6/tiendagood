@@ -49,8 +49,7 @@ input[type="file"] {display: none;}
 }
 
 </style>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.0.0/sweetalert2.min.css">
+ 
     <link rel="stylesheet" href="http://cdn.jtsage.com/jtsage-datebox/4.2.3/jtsage-datebox-4.2.3.bootstrap.min.css" />
     <link rel="stylesheet" href="http://dev.jtsage.com/DateBox/css/syntax.css" />
 
@@ -230,8 +229,7 @@ input[type="file"] {display: none;}
 <script src="http://backoffice.tiendagood.com/assets/js/jquery-1.11.1.min.js"></script> 
 <script src="http://backoffice.tiendagood.com/assets/js/jquery.backstretch.min.js"></script>
 <script src="http://backoffice.tiendagood.com/assets/js/retina-1.1.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.0.0/sweetalert2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script> 
 <script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <script type="text/javascript" src="http://cdn.jtsage.com/external/jquery.mousewheel.min.js"></script>
 <script type="text/javascript" src="http://dev.jtsage.com/DateBox/js/doc.js"></script>
