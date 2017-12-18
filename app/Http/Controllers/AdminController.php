@@ -377,7 +377,7 @@ class AdminController extends Controller {
            $patrocinador = Tercero::with('cliente', 'levels')->find($send->networks['0']['pivot']['padre_id']);
            $nombre_completo = $patrocinador['nombres'].' '.$patrocinador['apellidos']; 
            $email = $patrocinador['email'];
-           $telefono = $patrocinador['telefono'];
+           $telefono = $patrocinador['telefono'].' '.$patrocinador['celular'];
         }
  
         return view('admin.index')->with(['send' => $send, 'uno' => $level_uno, 'dos' => $level_dos, 'tres' => $level_tres,
