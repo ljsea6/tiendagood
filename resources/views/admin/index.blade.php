@@ -148,7 +148,7 @@ swal({
     'Bonificación 10% adicional mensual. <br>' +
     'Canal preferencial de servicio al cliente. <br>' +
     'Garantía extendida de productos (6 meses) y más. <br> <br>' +
-    'Al dar click en “Aceptar”, confirmas estos <a href="{{route('terms_prime')}}" target="_blank" style="color: #ed7d01;"> términos y condiciones.</a> <br>',
+    '<span style="font-size: 14px">Al dar click en “Aceptar”, confirmas estos <a href="{{route('terms_prime')}}" target="_blank" style="color: #ed7d01;"> términos y condiciones.</a></span> <br>',
   type: 'question',
   showCancelButton: true,
   confirmButtonColor: '#3085d6',
