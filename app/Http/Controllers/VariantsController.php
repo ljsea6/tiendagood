@@ -225,7 +225,7 @@ class VariantsController extends Controller
                                             } catch (ClientException $e) {
 
                                                 if ($e->getResponse()) {
-                                                    continue;
+                                                    return response()->json(['data' => $e->getResponse()->getBody()]);
                                                 }
                                             }
                                         }
@@ -257,7 +257,7 @@ class VariantsController extends Controller
                                     } catch (ClientException $e) {
 
                                         if ($e->getResponse()) {
-                                            continue;
+                                            return response()->json(['data' => $e->getResponse()->getBody()]);
                                         }
                                     }
                                 }
@@ -265,7 +265,7 @@ class VariantsController extends Controller
                             } catch (ClientException $e) {
 
                                 if ($e->getResponse()) {
-                                    continue;
+                                    return response()->json(['data' => $e->getResponse()->getBody()]);
                                 }
                             }
                         }
