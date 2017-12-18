@@ -538,15 +538,29 @@ class TercerosController extends Controller {
         }
 
         $tercero = Tercero::with('networks', 'primes')->find(currentUser()->id);
-       
-foreach ($tercero->primes as $value) {
-  echo  $value->fecha_inicio;
-}
-exit();
+ 
+            $fecha_inicio =  '';
+            $fecha_final = ''; 
+
+        foreach ($tercero->primes as $value) {
+            if($value->estado == true){
+            $fecha_inicio =  $value->fecha_inicio;
+            $fecha_final =  $value->fecha_final;
+            }
+        }
+
+        $fecha_inicio = $fecha_inicio; 
+        $fecha_inicio = strtotime($fecha_inicio); 
+        $fecha_inicio =  date("Y-m-d", $fecha_inicio); 
+ 
+        $fecha_final = $fecha_final; 
+        $fecha_final = strtotime($fecha_final); 
+        $fecha_final =  date("Y-m-d", $fecha_final); 
+
         $fecha_nacimiento = $tercero['fecha_nacimiento'];
         $fecha_nacimiento = date("d/m/Y", strtotime($fecha_nacimiento));
 
-        return view('admin.terceros.actualizar_datos', compact('tercero','fecha_nacimiento'));
+        return view('admin.terceros.actualizar_datos', compact('tercero','fecha_nacimiento','fecha_inicio', 'fecha_final'));
    
     }
 
