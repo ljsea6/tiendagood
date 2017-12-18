@@ -136,7 +136,14 @@ class GetOrders extends Command
                             $n = 0;
                         }
 
-                        $order = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+                        $id = null;
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
+
+                        if (count($tercero) > 0) {
+                            $id = $tercero->id;
+                        }
+
+                        $order = Order::createOrder($order, 'good', $puntos, $tipo_orden, $id);
 
                         $tipo_orden = '';
 
@@ -206,7 +213,14 @@ class GetOrders extends Command
                             $n = 0;
                         }
 
-                        $order_create = Order::createOrder($order, 'good', $puntos, $tipo_orden);
+                        $id = null;
+                        $tercero = Tercero::where('email', $order['email'])->orWhere('telefono', 'like', '%' . $order['phone'] . '%')->first();
+
+                        if (count($tercero) > 0) {
+                            $id = $tercero->id;
+                        }
+
+                        $order_create = Order::createOrder($order, 'good', $puntos, $tipo_orden, $id);
 
                         $tipo_orden = '';
 
