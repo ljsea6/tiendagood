@@ -120,7 +120,7 @@ class GetUsers extends Command
 
                         if ($e->hasResponse()) {
 
-                            //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                            $this->info('Problemas al actualizar el email del usuario en good');
                         }
                     }
 
@@ -190,7 +190,7 @@ class GetUsers extends Command
 
                         if ($e->hasResponse()) {
 
-                            //return redirect()->back()->with(['err' => 'Se actualizó su contraseña en el backoffice pero el usuario no existe en tiendagood']);
+                            $this->info('Problemas al crear el usuario en mercando');
                         }
                     }
                 }
