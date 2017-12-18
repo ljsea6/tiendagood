@@ -78,7 +78,7 @@
       <div class="row">
          <div class="col-sm-4">
             <div class="card-content" style="text-align: left;">
-             <h3 class="title" style="padding-top: 11px;">Tipo de cliente: {{ucwords($tipo_nombre)}}</h3>
+            <div style="padding-top: 16px;"><span class="category"> Tipo de cliente:  </span>  <span class="title" style="padding-top: 11px; font-size: 20px">{{ucwords($tipo_nombre)}}</span></div>
             </div>
          </div>
          <div class="col-sm-4">
@@ -92,7 +92,7 @@
          </div>
          <div class="col-sm-4">
              <div class="card-content" style="text-align: center; margin-top: 20px">
-              <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> Fecha del proximo corte 21 de diciembre</span> 
+              <span class="category">Fecha del proximo corte</span> <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> 21 de diciembre</span> 
           </div>
          </div>
       </div>
