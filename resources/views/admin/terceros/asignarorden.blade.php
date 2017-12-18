@@ -72,7 +72,7 @@
                                                 body_orden += '<tr><th class="text-left">Nombres:</th><td class="text-left">' + data.tienda + '</td></tr>';
                                                 body_orden += '<tr><th class="text-left">Estado:</th><td class="text-left">' + data.estado + '</td></tr>';
                                                 $(".tbody_orden").html(body_orden);
-                                                $("#orden_id").val(data.order_id);
+                                                $("#orden_id").val(data.id);
                                                 $(".div_orden").show();
                                             } else {
                                                 $("#btnCambiarPadre").hide();

@@ -419,7 +419,7 @@ class TercerosController extends Controller {
                     ->where('id', $request['tercero_id'])
                     ->first();
             if ($tercero != NULL) {
-                $update = DB::table('orders')->where('id', $request['orden_id'])->update(['tercero_id' => $tercero->email]);
+                $update = DB::table('orders')->where('id', $request['orden_id'])->update(['tercero_id' => $tercero->id]);
                 if ($update) {
                     echo true;
                 } else {
