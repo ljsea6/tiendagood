@@ -80,7 +80,7 @@ class GetUsers extends Command
 
                 $results_mercando = json_decode($res_mercando->getBody(), true);
 
-                if (count($results_mercando['customers']) > 0) {
+                if (count($results_mercando['customers']) == 1) {
 
                     $this->info('El usuario existe en mercando');
 
@@ -126,7 +126,9 @@ class GetUsers extends Command
                         }
                     }
 
-                } else {
+                }
+
+                if (count($results_mercando['customers']) == 0) {
 
                     $this->info('El usuario no existe en mercando, se creará.');
 
@@ -185,7 +187,7 @@ class GetUsers extends Command
                         if ($e->hasResponse()) {
 
                             $err = json_decode(($e->getResponse()->getBody()), true);
-                            
+
                             foreach ($err['errors'] as $key => $value) {
 
                                 $this->info('Problemas al crear el usuario en mercando' .  $key . ' ' . $value[0]);
