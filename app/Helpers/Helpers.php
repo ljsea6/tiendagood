@@ -3,21 +3,19 @@
  * Created by PhpStorm.
  * User: desarrollo
  * Date: 19/12/17
- * Time: 09:51 AM
+ * Time: 11:09 AM
  */
 
-namespace App\Traits;
+namespace App\Helpers;
 
 use Mail;
 
+class Helpers {
 
-trait Mailing
-{
-
-    public function mail($user, $msg)
+    public static function send_mails($user, $msg)
     {
 
-        Mail::send('send.notifications', [
+        Mail::send('admin.send.notifications', [
             'user' => $user,
             'msg' => $msg,
         ], function ($m)  use ($user, $msg) {
@@ -26,3 +24,5 @@ trait Mailing
         });
     }
 }
+
+

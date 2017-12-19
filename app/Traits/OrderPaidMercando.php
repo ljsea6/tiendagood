@@ -12,12 +12,12 @@ use DB;
 use App\Order;
 use App\Variant;
 use Carbon\Carbon;
-use App\Traits\Mailing;
+use App\Helpers\Helpers;
 use App\Entities\Tercero;
 
 trait OrderPaidMercando
 {
-    use Mailing;
+
 
     public function OrderPaidMercando($order, $order_create, $puntos)
     {
@@ -38,6 +38,8 @@ trait OrderPaidMercando
                     }
                 }
             }
+            
+            
 
             $p = '';
             $s = '';
@@ -66,8 +68,10 @@ trait OrderPaidMercando
                                 $padre_uno->mispuntos = $padre_uno->mispuntos + $order_create->points;
                                 $padre_uno->save();
 
-                                $msg = '¡En hora buena! ' . ucwords($update->nombres) . ' ' .  ucwords($update->apellidos) . ' ha sumado ' . $order_create->points . ' cómo tus puntos propios';
-                                $this->mail($padre_uno, $msg);
+
+
+                                $msg = '¡En hora buena! ' . ucwords($update->nombres) . ' ' .  ucwords($update->apellidos) . ' ha sumado ' . $order_create->points . ' cómo tus consumos propios';
+                                Helpers::send_mails($padre_uno, $msg);
 
                                 if (count($padre_uno->networks) > 0) {
 
@@ -76,7 +80,7 @@ trait OrderPaidMercando
                                     if (count($padre_dos) > 0 && $padre_dos->state == true) {
 
                                         $msg = '¡En hora buena! ' . ucwords($padre_uno->nombres) . ' ' .  ucwords($padre_uno->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 1.';
-                                        $this->mail($padre_dos, $msg);
+                                        Helpers::send_mails($padre_dos, $msg);
 
                                         if (count($padre_dos->levels) == 0) {
 
@@ -121,7 +125,7 @@ trait OrderPaidMercando
                                             if (count($padre_tres) > 0 && $padre_tres->state == true) {
 
                                                 $msg = '¡En hora buena! ' . ucwords($padre_uno->nombres) . ' ' .  ucwords($padre_uno->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 2.';
-                                                $this->mail($padre_tres, $msg);
+                                                Helpers::send_mails($padre_tres, $msg);
 
                                                 if (count($padre_tres->levels) == 0) {
 
@@ -159,7 +163,7 @@ trait OrderPaidMercando
                                                     if (count($padre_cuatro) > 0 && $padre_cuatro->state == true) {
 
                                                         $msg = '¡En hora buena! ' . ucwords($padre_uno->nombres) . ' ' .  ucwords($padre_uno->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 3.';
-                                                        $this->mail($padre_cuatro, $msg);
+                                                        Helpers::send_mails($padre_cuatro, $msg);
 
                                                         if (count($padre_cuatro->levels) == 0) {
 
@@ -210,8 +214,8 @@ trait OrderPaidMercando
                         $update->mispuntos = $update->mispuntos + $order_create->points;
                         $update->save();
 
-                        $msg = '¡En hora buena! has sumado ' . $order_create->points . ' puntos a tus puntos propios.';
-                        $this->mail($update, $msg);
+                        $msg = '¡En hora buena! has sumado ' . $order_create->points . ' puntos a tus consumos propios.';
+                        Helpers::send_mails($update, $msg);
 
                         if (count($update->networks) > 0) {
 
@@ -220,7 +224,7 @@ trait OrderPaidMercando
                             if (count($padre_uno) > 0 && $padre_uno->state == true) {
 
                                 $msg = '¡En hora buena! ' . ucwords($update->nombres) . ' ' .  ucwords($update->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 1.';
-                                $this->mail($padre_uno, $msg);
+                                Helpers::send_mails($padre_uno, $msg);
 
                                 if (count($padre_uno->levels) == 0) {
 
@@ -259,7 +263,7 @@ trait OrderPaidMercando
                                     if (count($padre_dos) > 0 && $padre_dos->state == true) {
 
                                         $msg = '¡En hora buena! ' . ucwords($update->nombres) . ' ' .  ucwords($update->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 2.';
-                                        $this->mail($padre_dos, $msg);
+                                        Helpers::send_mails($padre_dos, $msg);
 
                                         if (count($padre_dos->levels) == 0) {
 
@@ -303,7 +307,7 @@ trait OrderPaidMercando
                                             if (count($padre_tres) > 0 && $padre_tres->state == true) {
 
                                                 $msg = '¡En hora buena! ' . ucwords($update->nombres) . ' ' .  ucwords($update->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 3.';
-                                                $this->mail($padre_tres, $msg);
+                                                Helpers::send_mails($padre_tres, $msg);
 
 
                                                 if (count($padre_tres->levels) == 0) {
