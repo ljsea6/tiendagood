@@ -491,6 +491,19 @@ class UsuariosController extends Controller {
                                 'email' => strtolower($request->email),
                                 'verified_email' => true,
                                 'phone' => $p,
+                                'addresses' => [
+
+                                    [
+                                        'address1' => strtolower($request->address),
+                                        'city' => strtolower($city->nombre),
+                                        'province' => '',
+                                        "zip" => '',
+                                        'first_name' => strtolower($request['first-name']),
+                                        'last_name' => strtolower($request['last-name']),
+                                        'country' => 'CO'
+                                    ],
+
+                                ],
                                 "password" => $request->password,
                                 "password_confirmation" => $request->password_confirmation,
                                 'send_email_invite' => false,
