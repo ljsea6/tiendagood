@@ -12,10 +12,13 @@ use DB;
 use App\Order;
 use App\Variant;
 use Carbon\Carbon;
+use App\Traits\Mailing;
 use App\Entities\Tercero;
 
 trait OrderPaidMercando
 {
+    use Mailing;
+
     public function OrderPaidMercando($order, $order_create, $puntos)
     {
         if ($order['financial_status'] == "paid") {
@@ -36,25 +39,47 @@ trait OrderPaidMercando
                 }
             }
 
-            $tercero = Tercero::where('email', strtolower($order['email']))
-                ->where('state', true)
-                ->first();
+            $p = '';
+            $s = '';
+
+            if (isset($order['phone']) && !empty($order['phone'])) {
+                $p =  explode('+57', $order['phone']);
+                $s = '' . $p[1];
+            }
+
+            $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
 
             if (count($tercero) > 0) {
 
                 $update = Tercero::with('networks', 'levels', 'cliente')->find($tercero->id);
 
                 if (isset($update->cliente)) {
+
                     if ($update->cliente->id == 85) {
+
                         if (count($update->networks) > 0) {
+
                             $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
+
                             if (count($padre_uno) > 0 && $padre_uno->state == true) {
+
                                 $padre_uno->mispuntos = $padre_uno->mispuntos + $order_create->points;
                                 $padre_uno->save();
+
+                                $msg = '¡En hora buena! ' . ucwords($update->nombres) . ' ' .  ucwords($update->apellidos) . ' ha sumado ' . $order_create->points . ' cómo tus puntos propios';
+                                $this->mail($padre_uno, $msg);
+
                                 if (count($padre_uno->networks) > 0) {
+
                                     $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
+
                                     if (count($padre_dos) > 0 && $padre_dos->state == true) {
+
+                                        $msg = '¡En hora buena! ' . ucwords($padre_uno->nombres) . ' ' .  ucwords($padre_uno->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 1.';
+                                        $this->mail($padre_dos, $msg);
+
                                         if (count($padre_dos->levels) == 0) {
+
                                             DB::table('terceros_niveles')->insertGetId(
                                                 [
                                                     'tercero_id' => $padre_dos->id,
@@ -62,17 +87,23 @@ trait OrderPaidMercando
                                                     'puntos' => $order_create->points,
                                                 ]
                                             );
+
                                         } else {
+
                                             $result = DB::table('terceros_niveles')
                                                 ->where('tercero_id', $padre_dos->id)
                                                 ->where('nivel', 1)
                                                 ->first();
+
                                             if (count($result) > 0) {
+
                                                 DB::table('terceros_niveles')
                                                     ->where('tercero_id', $padre_dos->id)
                                                     ->where('nivel', 1)
                                                     ->update(['puntos' => (int)$result->puntos + (int)$order_create->points]);
+
                                             } else {
+
                                                 DB::table('terceros_niveles')->insertGetId(
                                                     [
                                                         'tercero_id' => $padre_dos->id,
@@ -82,10 +113,18 @@ trait OrderPaidMercando
                                                 );
                                             }
                                         }
+
                                         if (count($padre_dos->networks) > 0) {
+
                                             $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
+
                                             if (count($padre_tres) > 0 && $padre_tres->state == true) {
+
+                                                $msg = '¡En hora buena! ' . ucwords($padre_uno->nombres) . ' ' .  ucwords($padre_uno->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 2.';
+                                                $this->mail($padre_tres, $msg);
+
                                                 if (count($padre_tres->levels) == 0) {
+
                                                     DB::table('terceros_niveles')->insertGetId(
                                                         [
                                                             'tercero_id' => $padre_tres->id,
@@ -114,9 +153,16 @@ trait OrderPaidMercando
                                                     }
                                                 }
                                                 if (count($padre_tres->networks) > 0) {
+
                                                     $padre_cuatro = Tercero::with('networks', 'levels')->find($padre_tres->networks[0]['pivot']['padre_id']);
+
                                                     if (count($padre_cuatro) > 0 && $padre_cuatro->state == true) {
+
+                                                        $msg = '¡En hora buena! ' . ucwords($padre_uno->nombres) . ' ' .  ucwords($padre_uno->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 3.';
+                                                        $this->mail($padre_cuatro, $msg);
+
                                                         if (count($padre_cuatro->levels) == 0) {
+
                                                             DB::table('terceros_niveles')->insertGetId(
                                                                 [
                                                                     'tercero_id' => $padre_cuatro->id,
@@ -124,17 +170,23 @@ trait OrderPaidMercando
                                                                     'puntos' => $order_create->points,
                                                                 ]
                                                             );
+
                                                         } else {
+
                                                             $result = DB::table('terceros_niveles')
                                                                 ->where('tercero_id', $padre_cuatro->id)
                                                                 ->where('nivel', 3)
                                                                 ->first();
+
                                                             if (count($result) > 0) {
+
                                                                 DB::table('terceros_niveles')
                                                                     ->where('tercero_id', $padre_cuatro->id)
                                                                     ->where('nivel', 3)
                                                                     ->update(['puntos' => (int)$result->puntos + (int)$order_create->points]);
+
                                                             } else {
+
                                                                 DB::table('terceros_niveles')->insertGetId(
                                                                     [
                                                                         'tercero_id' => $padre_cuatro->id,
@@ -158,11 +210,17 @@ trait OrderPaidMercando
                         $update->mispuntos = $update->mispuntos + $order_create->points;
                         $update->save();
 
+                        $msg = '¡En hora buena! has sumado ' . $order_create->points . ' puntos a tus puntos propios.';
+                        $this->mail($update, $msg);
+
                         if (count($update->networks) > 0) {
 
                             $padre_uno = Tercero::with('networks', 'levels')->find($update->networks[0]['pivot']['padre_id']);
 
                             if (count($padre_uno) > 0 && $padre_uno->state == true) {
+
+                                $msg = '¡En hora buena! ' . ucwords($update->nombres) . ' ' .  ucwords($update->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 1.';
+                                $this->mail($padre_uno, $msg);
 
                                 if (count($padre_uno->levels) == 0) {
 
@@ -173,20 +231,18 @@ trait OrderPaidMercando
                                             'puntos' => $order_create->points,
                                         ]
                                     );
+
                                 } else {
                                     $result = DB::table('terceros_niveles')
                                         ->where('tercero_id', $padre_uno->id)
                                         ->where('nivel', 1)
                                         ->first();
-
                                     if (count($result) > 0) {
-
                                         DB::table('terceros_niveles')
                                             ->where('tercero_id', $padre_uno->id)
                                             ->where('nivel', 1)
                                             ->update(['puntos' => (int)$result->puntos + (int)$order_create->points]);
                                     } else {
-
                                         DB::table('terceros_niveles')->insertGetId(
                                             [
                                                 'tercero_id' => $padre_uno->id,
@@ -196,12 +252,14 @@ trait OrderPaidMercando
                                         );
                                     }
                                 }
-
                                 if (count($padre_uno->networks) > 0) {
 
                                     $padre_dos = Tercero::with('networks', 'levels')->find($padre_uno->networks[0]['pivot']['padre_id']);
 
                                     if (count($padre_dos) > 0 && $padre_dos->state == true) {
+
+                                        $msg = '¡En hora buena! ' . ucwords($update->nombres) . ' ' .  ucwords($update->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 2.';
+                                        $this->mail($padre_dos, $msg);
 
                                         if (count($padre_dos->levels) == 0) {
 
@@ -221,11 +279,14 @@ trait OrderPaidMercando
                                                 ->first();
 
                                             if (count($result) > 0) {
+
                                                 DB::table('terceros_niveles')
                                                     ->where('tercero_id', $padre_dos->id)
                                                     ->where('nivel', 2)
                                                     ->update(['puntos' => (int)$result->puntos + (int)$order_create->points]);
+
                                             } else {
+
                                                 DB::table('terceros_niveles')->insertGetId(
                                                     [
                                                         'tercero_id' => $padre_dos->id,
@@ -235,12 +296,15 @@ trait OrderPaidMercando
                                                 );
                                             }
                                         }
-
                                         if (count($padre_dos->networks) > 0) {
 
                                             $padre_tres = Tercero::with('networks', 'levels')->find($padre_dos->networks[0]['pivot']['padre_id']);
 
                                             if (count($padre_tres) > 0 && $padre_tres->state == true) {
+
+                                                $msg = '¡En hora buena! ' . ucwords($update->nombres) . ' ' .  ucwords($update->apellidos) . ' ha sumado ' . $order_create->points . ' puntos en tu nivel 3.';
+                                                $this->mail($padre_tres, $msg);
+
 
                                                 if (count($padre_tres->levels) == 0) {
 
@@ -251,6 +315,7 @@ trait OrderPaidMercando
                                                             'puntos' => $order_create->points,
                                                         ]
                                                     );
+
                                                 } else {
 
                                                     $result = DB::table('terceros_niveles')
@@ -259,12 +324,14 @@ trait OrderPaidMercando
                                                         ->first();
 
                                                     if (count($result) > 0) {
+
                                                         DB::table('terceros_niveles')
                                                             ->where('tercero_id', $padre_tres->id)
                                                             ->where('nivel', 3)
                                                             ->update(['puntos' => (int)$result->puntos + (int)$order_create->points]);
 
                                                     } else {
+
                                                         DB::table('terceros_niveles')->insertGetId(
                                                             [
                                                                 'tercero_id' => $padre_tres->id,
@@ -282,10 +349,11 @@ trait OrderPaidMercando
                         }
                     }
                 }
+
+                $update = Order::find($order_create->id);
+                $update->cargue_puntos = Carbon::now();
+                $update->save();
             }
-            $update = Order::find($order_create->id);
-            $update->cargue_puntos = Carbon::now();
-            $update->save();
         }
     }
 }
