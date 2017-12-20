@@ -18,7 +18,7 @@ class LiquidacionesController extends Controller {
     
     public function get_liquidar() {
 
-        return view('admin.liquidaciones.index');
+        return view('admin.liquidaciones.liquidar');
     }
 
     public function post_liquidar(request $request) {
