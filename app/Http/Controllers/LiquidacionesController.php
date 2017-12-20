@@ -361,7 +361,7 @@ class LiquidacionesController extends Controller {
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                     ]);
- *//
+ */
                     DB::table('orders')
                     ->where('id', $t->orden_id)
                     ->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
