@@ -15,6 +15,7 @@ class Helpers {
     public static function send_mails($user, $msg)
     {
 
+
         Mail::send('admin.send.notifications', [
             'user' => $user,
             'msg' => $msg,

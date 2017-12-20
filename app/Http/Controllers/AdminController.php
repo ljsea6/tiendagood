@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\LiquidacionDetalle;
+use Carbon\Carbon;
 use DB;
 use Mail;
 use App\Order;
+use App\Liquidacion;
 use App\Entities\Network;
 use App\Entities\Tercero;
 use Illuminate\Http\Request;
@@ -13,7 +16,8 @@ use App\Http\Controllers\Controller;
 
 class AdminController extends Controller {
 
-    public function email() {
+    public function email()
+    {
         return view('admin.send.mail');
     }
 
@@ -286,6 +290,7 @@ class AdminController extends Controller {
     }
 
     public function index() {
+
         $level_uno = 0;
         $level_dos = 0;
         $level_tres = 0;
@@ -657,8 +662,73 @@ class AdminController extends Controller {
         }
     }
 
-    public function indexproveedores() {
+    public function indexproveedores()
+    {
         return view('admin.proveedores.index');
     }
+
+    public function liquidaciones()
+    {
+        return view('admin.liquidaciones.index');
+    }
+
+    public function data_liquidaciones()
+    {
+
+        $tercero = Tercero::with('liquidacion_tercero')->find(currentUser()->id);
+
+        $send = collect($tercero->liquidacion_tercero);
+
+        return Datatables::of($send)
+
+            ->addColumn('id', function ($send) {
+                return '<div align=left>' . $send->liquidacion_id . '</div>';
+            })
+            ->addColumn('nombres', function ($send) {
+
+                $t = Tercero::find($send->tercero_id);
+
+                return '<div align=left>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . '</div>';
+            })
+            ->addColumn('good', function ($send) {
+                return '<div align=left>' . number_format($send->bono_good) . '</div>';
+            })
+            ->addColumn('mercando', function ($send) {
+                return '<div align=left>' . number_format($send->bono_mercando). '</div>';
+            })
+
+            ->addColumn('total', function ($send) {
+
+                $total = 0;
+                $liquidacion = Liquidacion::with('detalles')->find($send->liquidacion_id);
+                foreach ($liquidacion->detalles as $detalle) {
+                    $total = $total + $detalle->valor_comision;
+                }
+
+                return '<div align=left>' . number_format($total) . '</div>';
+            })
+            ->addColumn('edit', function ($send) {
+                return '<div align=left><a href="' . route('admin.liquidaciones.edit', $send->liquidacion_id) . '"  class="btn btn-warning btn-xs">
+                        Ver
+                </a></div>';
+            })
+            ->make(true);
+    }
+
+    public function editar_liquidaciones($id)
+    {
+        $total = 0;
+        $liquidacion = Liquidacion::with('detalles')->find($id);
+        foreach ($liquidacion->detalles as $detalle) {
+            $total = $total + $detalle->valor_comision;
+        }
+
+        $consignacion  = $total * 0.7;
+
+        $bono = $total * 0.3;
+
+        return view('admin.liquidaciones.edit')->with(['total' => $total, 'id' => $liquidacion->id, 'consignacion' => $consignacion, 'bono' => $bono]);
+    }
+
 
 }
