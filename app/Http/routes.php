@@ -329,7 +329,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::any('variants/good/search', ['uses' => 'VariantsController@variants', 'as' => 'admin.variants.search']);
     Route::any('variants/mercando/search', ['uses' => 'VariantsController@variants_mercando', 'as' => 'admin.variants.search_mercando']);
 
-
-    Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@liquidar', 'as' => 'liquidacion.liquidar']);
+    //liquidaciones
+    Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@get_liquidar', 'as' => 'liquidacion.liquidar']);
+    Route::post('liquidacion/liquidar', ['uses' => 'LiquidacionesController@post_liquidar', 'as' => 'liquidacion.liquidar.envio']);
  
 });
