@@ -482,16 +482,25 @@ class AdminController extends Controller {
             if ($request->level == 1) {
 
                 $total_referidos = DB::raw('(SELECT COUNT(1) FROM terceros_networks tn WHERE tn.padre_id = t.id) as referidos');
+                $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid') + 
+                (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
+		JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
+		JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
+		WHERE oa.financial_status = 'paid') AS puntos");
 
                 $results = DB::table('terceros as t')
                         ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                         ->where('tk.padre_id', $request->id)
                         ->where('t.state', true)
+                        ->where('t.tipo_cliente_id','!=', 85)
                         ->select('t.id', 't.nombres', 't.apellidos', 't.mispuntos', $total_referidos)
                         ->get();
 
-
+                
                 $send = collect($results);
+                
+                /*print_r($send);
+                exit(0);*/
 
                 return Datatables::of($send)
                                 ->addColumn('id', function ($send) {
