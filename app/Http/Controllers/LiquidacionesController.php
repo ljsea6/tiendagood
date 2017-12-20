@@ -18,7 +18,7 @@ class LiquidacionesController extends Controller {
     
     public function get_liquidar() {
 
-        return view('admin.liquidaciones.index');
+        return view('admin.liquidaciones.liquidar');
     }
 
     public function post_liquidar(request $request) {
@@ -49,7 +49,7 @@ class LiquidacionesController extends Controller {
         $vendedores_liquidados = array(); 
 
 
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->select('t.id', 't.tipo_id')->limit(100)->orderByRaw('id ASC')->get();
+        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->select('t.id', 't.tipo_id')->limit(10)->orderByRaw('id ASC')->get();
                     
         foreach ($vendedores as $value_vendedor) { 
 
