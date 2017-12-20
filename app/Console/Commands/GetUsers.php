@@ -368,7 +368,7 @@ class GetUsers extends Command
                         }
                     }
 
-                    
+
                 } catch (ClientException $e) {
 
                     $err = json_decode(($e->getResponse()->getBody()), true);
