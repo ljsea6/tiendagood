@@ -49,7 +49,7 @@ class LiquidacionesController extends Controller {
         $vendedores_liquidados = array(); 
 
 
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
+        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->limit(10)->orderByRaw('id ASC')->get();
                     
         foreach ($vendedores as $value_vendedor) { 
 
@@ -160,7 +160,7 @@ class LiquidacionesController extends Controller {
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel uno con sus amparados    fin                                          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
-
+/*
                     DB::table('liquidaciones_detalles')->insert([
                     'liquidacion_id' => $liquidacion_id,
                     'tercero_id' => $value_vendedor->id,
@@ -174,7 +174,7 @@ class LiquidacionesController extends Controller {
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                     ]);
-
+*/
                     DB::table('orders')
                     ->where('id', $n->orden_id)
                     ->update([
@@ -256,7 +256,7 @@ class LiquidacionesController extends Controller {
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel dos con sus amparados    fin                                          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
- 
+ /*
                     DB::table('liquidaciones_detalles')->insert([
                     'liquidacion_id' => $liquidacion_id,
                     'tercero_id' => $value_vendedor->id,
@@ -270,7 +270,7 @@ class LiquidacionesController extends Controller {
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                     ]);
-
+*/
                     DB::table('orders')
                     ->where('id', $d->orden_id)
                     ->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
@@ -347,7 +347,7 @@ class LiquidacionesController extends Controller {
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel tres con sus amparados    fin                                         */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
-
+/*
                     DB::table('liquidaciones_detalles')->insert([
                     'liquidacion_id' => $liquidacion_id,
                     'tercero_id' => $value_vendedor->id,
@@ -361,7 +361,7 @@ class LiquidacionesController extends Controller {
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                     ]);
- 
+ *//
                     DB::table('orders')
                     ->where('id', $t->orden_id)
                     ->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
