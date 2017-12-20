@@ -1,3 +1,5 @@
+@extends('templates.dash')
+
 @section('titulo','Good')
 
 @section('content')
