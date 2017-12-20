@@ -2788,7 +2788,15 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                    $p = '';
+                    $s = '';
+
+                    if (isset($order['phone']) && !empty($order['phone'])) {
+                        $p =  explode('+57', $order['phone']);
+                        $s = '' . $p[1];
+                    }
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2837,7 +2845,15 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                    $p = '';
+                    $s = '';
+
+                    if (isset($order['phone']) && !empty($order['phone'])) {
+                        $p =  explode('+57', $order['phone']);
+                        $s = '' . $p[1];
+                    }
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -2962,9 +2978,15 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $p = explode('+57', $order['phone']);
+                    $p = '';
+                    $s = '';
 
-                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+                    if (isset($order['phone']) && !empty($order['phone'])) {
+                        $p =  explode('+57', $order['phone']);
+                        $s = '' . $p[1];
+                    }
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3061,9 +3083,15 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $p = explode('+57', $order['phone']);
+                    $p = '';
+                    $s = '';
 
-                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+                    if (isset($order['phone']) && !empty($order['phone'])) {
+                        $p =  explode('+57', $order['phone']);
+                        $s = '' . $p[1];
+                    }
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3179,9 +3207,15 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $p = explode('+57', $order['phone']);
+                    $p = '';
+                    $s = '';
 
-                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+                    if (isset($order['phone']) && !empty($order['phone'])) {
+                        $p =  explode('+57', $order['phone']);
+                        $s = '' . $p[1];
+                    }
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3289,8 +3323,16 @@ class OrdersController extends Controller
                     }
 
                     $id = null;
-                    $p = explode('+57', $order['phone']);
-                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+
+                    $p = '';
+                    $s = '';
+
+                    if (isset($order['phone']) && !empty($order['phone'])) {
+                        $p =  explode('+57', $order['phone']);
+                        $s = '' . $p[1];
+                    }
+
+                    $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
 
                     if (count($tercero) > 0) {
                         $id = $tercero->id;
@@ -3412,7 +3454,15 @@ class OrdersController extends Controller
                 }
 
                 $id = null;
-                $tercero = Tercero::where('email', strtolower($order['email']))->first();
+                $p = '';
+                $s = '';
+
+                if (isset($order['phone']) && !empty($order['phone'])) {
+                    $p =  explode('+57', $order['phone']);
+                    $s = '' . $p[1];
+                }
+
+                $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
 
                 if (count($tercero) > 0) {
                     $id = $tercero->id;
@@ -3443,11 +3493,17 @@ class OrdersController extends Controller
                 ->where('shop', 'good')
                 ->first();
 
-            $p = explode('+57', $order['phone']);
+            $p = '';
+            $s = '';
 
-            $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+            if (isset($order['phone']) && !empty($order['phone'])) {
+                $p =  explode('+57', $order['phone']);
+                $s = '' . $p[1];
+            }
 
-            return response()->json($p[1], 200);
+            $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
+
+            return response()->json($tercero, 200);
 
         }
         /*$api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
@@ -3671,5 +3727,158 @@ class OrdersController extends Controller
         }
 
         return response()->json(['msg' => 'Hecho']);*/
+    }
+
+    public function contador_uno()
+    {
+        $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+        $client = new \GuzzleHttp\Client();
+
+        //$terceros = Tercero::all();
+
+        $terceros = DB::table('terceros')->whereNotIn('id', function($q){
+            $q->select('tercero_id')->from('terceros_tiendas');
+        })->get();
+
+        foreach ($terceros as $tercero) {
+
+            $res_good = $client->request('GET',  $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
+            $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+            $x = explode('/', $headers[0]);
+            $diferencia = $x[1] - $x[0];
+
+            if ($diferencia < 20) {
+
+                usleep(20000000);
+            }
+
+            $results_good = json_decode($res_good->getBody(), true);
+
+            if (count($results_good['customers']) > 0) {
+
+
+                $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
+
+                $headers =  $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                $x = explode('/', $headers[0]);
+                $diferencia = $x[1] - $x[0];
+
+                if ($diferencia < 20) {
+
+                    usleep(20000000);
+                }
+
+                $results_mercando = json_decode($res_mercando->getBody(), true);
+
+                if (count($results_mercando['customers']) > 0) {
+
+                    /*$a = DB::table('terceros_tiendas')
+                        ->where('tercero_id', $tercero->id)
+                        ->where('customer_id_good', $results_good['customers'][0]['id'])
+                        ->where('customer_id_mercando', $results_mercando['customers'][0]['id'])
+                        ->first();
+
+                    if (count($a) == 0) {
+
+                        DB::table('terceros_tiendas')->insertGetId(
+                            [
+                                'tercero_id' => $tercero->id,
+                                'customer_id_good' =>  $results_good['customers'][0]['id'],
+                                'customer_id_mercando' => $results_mercando['customers'][0]['id'],
+                            ]
+                        );
+                    }
+
+                    try {
+                        $res = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] .'.json', array(
+                                'form_params' => array(
+                                    'customer' => array(
+                                        "email" => $tercero->email,
+                                    )
+                                )
+                            )
+                        );
+
+                        $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                        $x = explode('/', $headers[0]);
+                        $diferencia = $x[1] - $x[0];
+                        if ($diferencia < 20) {
+                            usleep(10000000);
+                        }
+
+                    } catch (ClientException $e) {
+
+                        if ($e->hasResponse()) {
+
+
+                        }
+                    }*/
+
+                    continue;
+
+                } else {
+
+                    try {
+
+                        $res = $client->request('post', $api_url_mercando . '/admin/customers.json', array(
+
+                                'form_params' => array(
+                                    'customer' => array(
+                                        'first_name' => strtolower( $results_good['customers'][0]['first_name']),
+                                        'last_name' => strtolower( $results_good['customers'][0]['last_name']),
+                                        'email' => strtolower($results_good['customers'][0]['email']),
+                                        'verified_email' => true,
+                                        'phone' =>  $results_good['customers'][0]['phone'],
+                                        'addresses' => [
+                                            $results_good['customers'][0]['addresses'],
+                                        ],
+                                        "password" => $tercero->identificacion,
+                                        "password_confirmation" => $tercero->identificacion,
+                                        'send_email_invite' => false,
+                                        'send_email_welcome' => false
+                                    )
+                                )
+                            )
+                        );
+
+                        $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                        $x = explode('/', $headers[0]);
+                        $diferencia = $x[1] - $x[0];
+
+                        if ($diferencia < 20) {
+
+                            usleep(20000000);
+                        }
+
+                        $customer = json_decode($res->getBody(), true);
+
+                        $b = DB::table('terceros_tiendas')
+                            ->where('tercero_id', $tercero->id)
+                            ->where('customer_id_good', $results_good['customers'][0]['id'])
+                            ->where('customer_id_mercando', $customer['customer']['id'])
+                            ->first();
+
+                        if (count($b) == 0) {
+                            DB::table('terceros_tiendas')->insertGetId(
+                                [
+                                    'tercero_id' => $tercero->id,
+                                    'customer_id_good' =>  $results_good['customers'][0]['id'],
+                                    'customer_id_mercando' =>  $customer['customer']['id'],
+                                ]
+                            );
+                        }
+
+                    } catch (ClientException $e) {
+
+                        if ($e->hasResponse()) {
+
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 }

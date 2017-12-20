@@ -38,7 +38,8 @@ $api->version('v1', function ($api) {
 
 Route::get('/carga', ['uses' => 'AdminController@carga', 'as' => 'admin.index']);
 
-Route::post('orders/list/paid', ['uses' => 'OrdersController@contador', 'as' => 'admin.orders.list.paid']);
+Route::get('orders/list/paid', ['uses' => 'OrdersController@contador', 'as' => 'admin.orders.list.paid']);
+Route::get('orders/list/paid/new', ['uses' => 'OrdersController@contador_uno', 'as' => 'admin.orders.list.paid.uno']);
 
 
 
@@ -116,6 +117,7 @@ Route::post('recuperar-contraseña', ['as' => 'recuperar', 'uses' => 'Auth\Passw
 Route::get('registro/payu', ['as' => 'PayuController@paybefore', 'as' => 'admin.payu.payu']);
 
 Route::any('terceros/actualizar-datos', ['uses' => 'TercerosController@actualizar_mis_datos', 'as' => 'terceros.actualizar_mis_datos']);
+Route::any('terceros/activarplanprime', ['uses' => 'TercerosController@activar_plan_prime', 'as' => 'terceros.activar_plan_prime']);
 //Route::post('terceros/actualizar-datos/cambio', ['uses' => 'TercerosController@post_actualizar_mis_datos', 'as' => 'terceros.actualizar_mis_datos']);
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
@@ -326,4 +328,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     Route::any('variants/good/search', ['uses' => 'VariantsController@variants', 'as' => 'admin.variants.search']);
     Route::any('variants/mercando/search', ['uses' => 'VariantsController@variants_mercando', 'as' => 'admin.variants.search_mercando']);
+
+
+    Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@liquidar', 'as' => 'liquidacion.liquidar']);
+ 
 });

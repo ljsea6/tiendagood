@@ -9,10 +9,18 @@
 
 <link href="https://fonts.googleapis.com/css?family=Bungee|Roboto+Slab:100,300,400,700" rel="stylesheet">
 
-
-
             <section class="invoice">
                 <div class="col-lg-12">
+
+<table>
+@foreach ($users as $user)
+  <tr><td>nivel 1</td><td>personas 1</td></tr>
+  <tr><td>nivel 2</td><td>personas 1</td></tr>
+  <tr><td>nivel 3</td><td>personas 1</td></tr>
+ @endforeach 
+</table>
+
+
     
 
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
@@ -25,7 +33,7 @@
          <i class="fa fa-money" aria-hidden="true"></i>
       </div>
       <div class="card-content">
-         <p class="category">Estos son tus puntos</p>
+         <p class="category">Estos son tus puntosf</p>
          <h3 class="title">{{ number_format($my_points) }}
             <small>Pts</small>
          </h3>

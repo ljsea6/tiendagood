@@ -105,9 +105,15 @@ class GetOrdersMercando extends Command
                         }
 
                         $id = null;
-                        $p = explode('+57', $order['phone']);
+                        $p = '';
+                        $s = '';
 
-                        $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+                        if (isset($order['phone']) && !empty($order['phone'])) {
+                            $p =  explode('+57', $order['phone']);
+                            $s = '' . $p[1];
+                        }
+
+                        $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;
@@ -152,9 +158,15 @@ class GetOrdersMercando extends Command
                         }
 
                         $id = null;
-                        $p = explode('+57', $order['phone']);
+                        $p = '';
+                        $s = '';
 
-                        $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $p[1])->first();
+                        if (isset($order['phone']) && !empty($order['phone'])) {
+                            $p =  explode('+57', $order['phone']);
+                            $s = '' . $p[1];
+                        }
+
+                        $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
 
                         if (count($tercero) > 0) {
                             $id = $tercero->id;

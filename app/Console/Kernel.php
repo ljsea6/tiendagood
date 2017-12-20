@@ -28,6 +28,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\UpdatePoints::class,
         \App\Console\Commands\UpdatePointsMercando::class,
         \App\Console\Commands\UpdateEmail::class,
+        \App\Console\Commands\SendMails::class,
     ];
 
     /**

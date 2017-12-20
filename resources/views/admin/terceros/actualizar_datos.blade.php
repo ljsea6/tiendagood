@@ -49,8 +49,7 @@ input[type="file"] {display: none;}
 }
 
 </style>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.0.0/sweetalert2.min.css">
+ 
     <link rel="stylesheet" href="http://cdn.jtsage.com/jtsage-datebox/4.2.3/jtsage-datebox-4.2.3.bootstrap.min.css" />
     <link rel="stylesheet" href="http://dev.jtsage.com/DateBox/css/syntax.css" />
 
@@ -230,8 +229,7 @@ input[type="file"] {display: none;}
 <script src="http://backoffice.tiendagood.com/assets/js/jquery-1.11.1.min.js"></script> 
 <script src="http://backoffice.tiendagood.com/assets/js/jquery.backstretch.min.js"></script>
 <script src="http://backoffice.tiendagood.com/assets/js/retina-1.1.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.0.0/sweetalert2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script> 
 <script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <script type="text/javascript" src="http://cdn.jtsage.com/external/jquery.mousewheel.min.js"></script>
 <script type="text/javascript" src="http://dev.jtsage.com/DateBox/js/doc.js"></script>
@@ -256,27 +254,45 @@ input[type="file"] {display: none;}
     var exp_email = /^[a-zA-Z0-9\._-]+@[a-zA-Z0-9\.]+$/; 
 
 
- function archivo(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { if (!f.type.match('image.*')) { continue; } var reader = new FileReader(); reader.onload = (function(theFile) { return function(e) { document.getElementById("list").innerHTML = ['<img  width="70%"  class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join(''); }; })(f); reader.readAsDataURL(f); } } 
+ function archivo(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { 
+  if (!f.type.match('image.*') && f.size > '7000000') { 
+                swal({ 
+                  html: $('<div>').text('Este archivo no puede pesar mas de 7 mb y solo se admite formato jpg.'),
+                  animation: false,
+                  customClass: 'animated tada'
+                  });   
+  }else{ var reader = new FileReader(); reader.onload = (function(theFile) { return function(e) { document.getElementById("list").innerHTML = ['<img  width="70%"  class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join(''); }; })(f); reader.readAsDataURL(f); }  }
+  } 
  document.getElementById('foto').addEventListener('change', archivo, false);
 
 /* Funcion rut span*/
 
- function rut(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { 
+ function rut(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) {  
+   if(f.size <= '7000000'){
     if (f.type.match('image.*') || f.type.match('application/pdf')) {
-    var reader = new FileReader(); 
-    reader.onload = (function(theFile) { 
+        var reader = new FileReader(); 
+        reader.onload = (function(theFile) { 
         return function(e) { 
             document.getElementById("texto").innerHTML = [ escape(theFile.name) ].join(''); 
         }; 
-    })(f); 
-    reader.readAsDataURL(f); 
+        })(f); 
+        reader.readAsDataURL(f); 
+      }
     }
+    else{
+                swal({ 
+                  html: $('<div>').text('Este archivo no puede pesar mas de 7 mb y solo se admite formato pdf y jpg.'),
+                  animation: false,
+                  customClass: 'animated tada'
+                  });   
     }
+  }
 } 
 
 document.getElementById('rut').addEventListener('change', rut, false);
 
 function doc(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { 
+   if(f.size <= '7000000'){
     if (f.type.match('image.*') || f.type.match('application/pdf')) {
     var reader = new FileReader(); 
     reader.onload = (function(theFile) { 
@@ -287,11 +303,20 @@ function doc(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i
     reader.readAsDataURL(f); 
     } 
     }
+    else{
+                swal({ 
+                  html: $('<div>').text('Este archivo no puede pesar mas de 7 mb y solo se admite formato pdf y jpg.'),
+                  animation: false,
+                  customClass: 'animated tada'
+                  });   
+    }
+  }
 } 
 
 document.getElementById('cedula').addEventListener('change', doc, false);
  
 function cer(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i]; i++) { 
+   if(f.size <= '7000000'){
     if (f.type.match('image.*') || f.type.match('application/pdf')) {
     var reader = new FileReader(); 
     reader.onload = (function(theFile) { 
@@ -302,6 +327,14 @@ function cer(evt) { var files = evt.target.files; for (var i = 0, f; f = files[i
     reader.readAsDataURL(f); 
     }
     } 
+    else{
+                swal({ 
+                  html: $('<div>').text('Este archivo no puede pesar mas de 7 mb y solo se admite formato pdf y jpg.'),
+                  animation: false,
+                  customClass: 'animated tada'
+                  });   
+    }
+  }
 } 
 
 document.getElementById('banco').addEventListener('change', cer, false);
@@ -313,6 +346,7 @@ $('.submit').on('submit',function(event){
             var first_name = $('#first-name').val();
             var last_name = $('#last-name').val();
             var phone = $('#phone').val();
+            var address = $('#address').val();
             var address = $('#address').val();
 
             if (first_name.length < 2) {
@@ -335,6 +369,15 @@ $('.submit').on('submit',function(event){
             else if (phone.length != 10 ) {
                 swal({ 
                   html: $('<div>').text('El Teléfono demasiado corto (se usa 10 dígitos).'),
+                  animation: false,
+                  customClass: 'animated tada'
+                  });    
+                event.preventDefault() ;
+            } 
+
+            else if (!exp_address.test(address)) {
+                swal({ 
+                  html: $('<div>').text('La dirección no puede estar en blanco y no se puede usar caracteres especiales.'),
                   animation: false,
                   customClass: 'animated tada'
                   });    
