@@ -49,7 +49,7 @@ class LiquidacionesController extends Controller {
         $vendedores_liquidados = array(); 
 
 
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->limit(10)->orderByRaw('id ASC')->get();
+        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
                     
         foreach ($vendedores as $value_vendedor) { 
 
