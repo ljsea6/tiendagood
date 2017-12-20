@@ -1,5 +1,6 @@
 @extends('templates.dash')
 
+<<<<<<< HEAD
 @section('titulo', 'Listado de productos')
 
 @section('content')
@@ -60,3 +61,4 @@
 
     </script>
 @endpush
+
