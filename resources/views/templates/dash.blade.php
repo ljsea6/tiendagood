@@ -31,6 +31,7 @@
 
     <script src="http://backoffice.tiendagood.com/assets/js/jquery-1.11.1.min.js"></script>
 
+
      @yield('styles')
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>

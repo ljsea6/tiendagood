@@ -123,6 +123,14 @@ Route::any('terceros/activarplanprime', ['uses' => 'TercerosController@activar_p
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     /*
+     * Liquidaciones
+     */
+
+    Route::get('/liquidaciones', ['uses' => 'AdminController@liquidaciones', 'as' => 'admin.liquidaciones.index']);
+    Route::get('/liquidaciones/data', ['uses' => 'AdminController@data_liquidaciones', 'as' => 'admin.liquidaciones.data']);
+    Route::get('/liquidaciones/{id}/edit', ['uses' => 'AdminController@editar_liquidaciones', 'as' => 'admin.liquidaciones.edit']);
+
+    /*
      * Rules
      */
     Route::get('/rules', ['uses' => 'RulesController@index', 'as' => 'admin.rules.index']);
