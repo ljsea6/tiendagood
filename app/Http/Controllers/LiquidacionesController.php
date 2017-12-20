@@ -6,7 +6,7 @@ use DB;
 use Mail;
 use Session;
 use Carbon\Carbon;
-use App\Entities\Tercero;
+use App\Entities\Liquidaciones;
 use App\Order;
 use App\Entities\LiquidacionDetalle;
 use Illuminate\Http\Request;
@@ -25,6 +25,17 @@ class LiquidacionesController extends Controller {
         
         if ($request->has('liquidar')) {
 
+            $liquidar = new Liquidaciones();
+            $liquidar->usuario_id = currentUser()->id;
+            $liquidar->fecha_inicio = Carbon::now();
+            $liquidar->fecha_final = Carbon::now();
+            $liquidar->fecha_liquidacion = Carbon::now();
+            $liquidar->created_at = Carbon::now();
+            $liquidar->updated_at = Carbon::now();
+            $liquidar->save();
+
+            $liquidacion_id = $liquidar->id;
+
         $level_uno = 0;
         $level_dos = 0;
         $level_tres = 0;
@@ -36,7 +47,7 @@ class LiquidacionesController extends Controller {
         $vendedores_liquidados = array(); 
 
 
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
+        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->select('t.id', 't.tipo_id')->limit(11)->orderByRaw('id ASC')->get();
                     
         foreach ($vendedores as $value_vendedor) { 
 
@@ -125,7 +136,7 @@ class LiquidacionesController extends Controller {
                                 $points_level_vendedor_1 += $uno_amparados_orders_value->points;
 
                                 DB::table('liquidaciones_detalles')->insert([
-                                'liquidacion_id' => '1',
+                                'liquidacion_id' => $liquidacion_id,
                                 'tercero_id' => $value_vendedor->id,
                                 'hijo_id' => $uno_amparados_value->id,
                                 'nivel' => 1,
@@ -143,7 +154,7 @@ class LiquidacionesController extends Controller {
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
 
                     DB::table('liquidaciones_detalles')->insert([
-                    'liquidacion_id' => '1',
+                    'liquidacion_id' => $liquidacion_id,
                     'tercero_id' => $value_vendedor->id,
                     'hijo_id' => $n->id,
                     'nivel' => 1,
@@ -206,7 +217,7 @@ class LiquidacionesController extends Controller {
                                 $points_level_vendedor_2 += $dos_amparados_orders_value->points;
 
                                 DB::table('liquidaciones_detalles')->insert([
-                                'liquidacion_id' => '1',
+                                'liquidacion_id' => $liquidacion_id,
                                 'tercero_id' => $value_vendedor->id,
                                 'hijo_id' => $dos_amparados_value->id,
                                 'nivel' => 2,
@@ -224,7 +235,7 @@ class LiquidacionesController extends Controller {
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
  
                     DB::table('liquidaciones_detalles')->insert([
-                    'liquidacion_id' => '1',
+                    'liquidacion_id' => $liquidacion_id,
                     'tercero_id' => $value_vendedor->id,
                     'hijo_id' => $d->id,
                     'nivel' => 2,
@@ -284,7 +295,7 @@ class LiquidacionesController extends Controller {
                                 $points_level_vendedor_3 += $tres_amparados_orders_value->points;
 
                                 DB::table('liquidaciones_detalles')->insert([
-                                'liquidacion_id' => '1',
+                                'liquidacion_id' => $liquidacion_id,
                                 'tercero_id' => $value_vendedor->id,
                                 'hijo_id' => $tres_amparados_value->id,
                                 'nivel' => 3,
@@ -303,7 +314,7 @@ class LiquidacionesController extends Controller {
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
 
                     DB::table('liquidaciones_detalles')->insert([
-                    'liquidacion_id' => '1',
+                    'liquidacion_id' => $liquidacion_id,
                     'tercero_id' => $value_vendedor->id,
                     'hijo_id' => $t->id,
                     'nivel' => 3,
