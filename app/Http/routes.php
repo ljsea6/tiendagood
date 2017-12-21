@@ -43,8 +43,8 @@ Route::get('orders/list/paid/new', ['uses' => 'OrdersController@contador_uno', '
 
 
     //liquidaciones
-    Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@get_liquidar', 'as' => 'liquidacion.liquidar']);
-    Route::post('liquidacion/liquidar', ['uses' => 'LiquidacionesController@post_liquidar', 'as' => 'liquidacion.liquidar.envio']);
+    //Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@get_liquidar', 'as' => 'liquidacion.liquidar']);
+    Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@post_liquidar', 'as' => 'liquidacion.liquidar.envio']);
  
 
 //Pdfs

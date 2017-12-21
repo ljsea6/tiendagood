@@ -21,11 +21,9 @@ class LiquidacionesController extends Controller {
         return view('admin.liquidaciones.liquidar');
     }
 
-    public function post_liquidar(request $request) {
-
-        ini_set("memory_limit", "2048M");
+    public function post_liquidar() {
+       ini_set("memory_limit", "2048M");
         
-        if ($request->has('liquidar')) {
 
             $liquidar = new Liquidaciones();
             $liquidar->usuario_id = currentUser()->id;
@@ -49,7 +47,7 @@ class LiquidacionesController extends Controller {
         $vendedores_liquidados = array(); 
 
 
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
+        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->limit(100)->orderByRaw('id ASC')->get();
                     
         foreach ($vendedores as $value_vendedor) { 
 
@@ -378,7 +376,4 @@ class LiquidacionesController extends Controller {
         }
     }
 
-     Session::flash('flash_msg', 'bien');
-      return redirect()->action('LiquidacionesController@get_liquidar');
-    }
 }

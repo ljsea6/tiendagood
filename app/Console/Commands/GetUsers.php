@@ -7,16 +7,11 @@ use DB;
 use Auth;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Console\Command;
- 
-use Mail;
-use Session;
+
 use Carbon\Carbon;
 use App\Entities\Liquidaciones;
 use App\Order;
 use App\Entities\LiquidacionDetalle;
-use Illuminate\Http\Request;
-use Yajra\Datatables\Datatables;
-use App\Http\Controllers\Controller;
 
 class GetUsers extends Command
 {
@@ -78,7 +73,7 @@ class GetUsers extends Command
         $vendedores_liquidados = array(); 
 
 
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
+        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->limit(100)->orderByRaw('id ASC')->get();
                     
         foreach ($vendedores as $value_vendedor) { 
 
@@ -405,7 +400,6 @@ class GetUsers extends Command
 
           //echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos: '.$points_level_3.' - comision: '.$comision_valor_3.'<br>'; 
         }
-   
 
 
   /*  	
