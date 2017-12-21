@@ -138,7 +138,7 @@ class LiquidacionesController extends Controller {
                                 'tercero_id' => $n->id,
                                 'hijo_id' => $uno_amparados_value->id,
                                 'nivel' => 1,
-                                'order_id' => $uno_amparados_orders->orden_id,
+                                'order_id' => $uno_amparados_orders_value->orden_id,
                                 'regla_detalle_id' => $id_detalle_1,
                                 'valor_comision' => ($comision_valor_1 * $uno_amparados_orders_value->points),
                                 'puntos' => ($uno_amparados_orders_value->points),
