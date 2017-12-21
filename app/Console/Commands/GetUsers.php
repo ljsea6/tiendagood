@@ -55,7 +55,6 @@ class GetUsers extends Command
 
         ini_set("memory_limit", "2048M");
         
-        if ($request->has('liquidar')) {
 
             $liquidar = new Liquidaciones();
             $liquidar->usuario_id = currentUser()->id;
@@ -406,8 +405,7 @@ class GetUsers extends Command
 
           //echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos: '.$points_level_3.' - comision: '.$comision_valor_3.'<br>'; 
         }
-    }
-
+   
 
 
   /*  	
