@@ -42,6 +42,10 @@ Route::get('orders/list/paid', ['uses' => 'OrdersController@contador', 'as' => '
 Route::get('orders/list/paid/new', ['uses' => 'OrdersController@contador_uno', 'as' => 'admin.orders.list.paid.uno']);
 
 
+    //liquidaciones
+    //Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@get_liquidar', 'as' => 'liquidacion.liquidar']);
+    Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@post_liquidar', 'as' => 'liquidacion.liquidar.envio']);
+ 
 
 //Pdfs
 Route::any('reportes/datos/products', ['uses' => 'ReportesController@products', 'as' => 'admin.reportes.datos.products']);
@@ -338,8 +342,4 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::any('variants/good/search', ['uses' => 'VariantsController@variants', 'as' => 'admin.variants.search']);
     Route::any('variants/mercando/search', ['uses' => 'VariantsController@variants_mercando', 'as' => 'admin.variants.search_mercando']);
 
-    //liquidaciones
-    Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@get_liquidar', 'as' => 'liquidacion.liquidar']);
-    Route::post('liquidacion/liquidar', ['uses' => 'LiquidacionesController@post_liquidar', 'as' => 'liquidacion.liquidar.envio']);
- 
 });
