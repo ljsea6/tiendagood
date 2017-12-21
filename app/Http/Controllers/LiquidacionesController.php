@@ -23,7 +23,7 @@ class LiquidacionesController extends Controller {
 
     public function post_liquidar(request $request) {
 
-        ini_set("memory_limit", "2224MB");
+        ini_set("memory_limit", "2048M");
         
         if ($request->has('liquidar')) {
 
