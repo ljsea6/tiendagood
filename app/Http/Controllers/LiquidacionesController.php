@@ -45,8 +45,8 @@ class LiquidacionesController extends Controller {
         $gente_nivel_1 = array();
         $count_add=0; 
         $vendedores_liquidados = array(); 
-
-
+//->where('t.id', 41)
+//->limit(41)
         $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
                     
         foreach ($vendedores as $value_vendedor) { 
@@ -101,7 +101,7 @@ class LiquidacionesController extends Controller {
         $uno = DB::table('terceros as t')
         ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
         ->join('terceros as t2', 't2.id', '=', 'tk.customer_id')
-        ->leftjoin('orders', 'orders.tercero_id', '=', 't.id')
+        ->leftjoin('orders', 'orders.tercero_id', '=', 't2.id')
         ->where('tk.padre_id', $value_vendedor->id)->where('t.state', true)->where('t2.state', true)->where('t2.tipo_cliente_id', '<>', 85)
         ->select('t2.id', 't2.email', 't2.nombres', 't2.apellidos', 't2.tipo_cliente_id','points', 'orders.id as orden_id',
                 'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
@@ -109,7 +109,7 @@ class LiquidacionesController extends Controller {
         if (count($uno) > 0) {
             $level_uno = $level_uno + count($uno); 
             foreach ($uno as $n) { 
- 
+
                 $id_primer_nivel[] = array($n->id); 
              
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
@@ -147,7 +147,7 @@ class LiquidacionesController extends Controller {
                                 'updated_at' => Carbon::now()
                                 ]);
 
-                          DB::table('orders')->where('id', $uno_amparados_orders->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                         DB::table('orders')->where('id', $uno_amparados_orders->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
            
                             }                            
                         }
@@ -192,7 +192,7 @@ class LiquidacionesController extends Controller {
         ->join('terceros as t2', 't2.id', '=', 'tk.customer_id')
         ->join('terceros_networks as tk2', 'tk2.padre_id', '=', 't2.id')
         ->join('terceros as t3', 't3.id', '=', 'tk2.customer_id')
-        ->leftjoin('orders', 'orders.tercero_id', '=', 'tk2.customer_id')
+        ->leftjoin('orders', 'orders.tercero_id', '=', 't3.id')
         ->where('t.id', $value_vendedor->id)->where('t.state', true)->where('t3.state', true)->where('t3.tipo_cliente_id', '<>', 85)
         ->select('t3.id', 't3.email', 't3.nombres', 't3.apellidos', 't3.tipo_cliente_id','points', 'orders.id as orden_id',
                 'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
@@ -240,7 +240,7 @@ class LiquidacionesController extends Controller {
                                 'updated_at' => Carbon::now()
                                 ]);
 
-                                DB::table('orders')->where('id', $dos_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                              //  DB::table('orders')->where('id', $dos_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
            
                             }                            
                         }
@@ -267,7 +267,7 @@ class LiquidacionesController extends Controller {
                     'updated_at' => Carbon::now()
                     ]);
 
-                     DB::table('orders')->where('id', $d->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                    // DB::table('orders')->where('id', $d->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
                 }
                           //  $gente_nivel_2[] = array('nombre' => $d->id.'-'.$d->nombres.'-'.$d->apellidos.'-'.$d->email.'-'.$d->tipo_cliente_id.' amparados: '.$count_add.' puntos: '.$points_level_vendedor_2.'<br>sd');
                 }
@@ -334,7 +334,7 @@ class LiquidacionesController extends Controller {
                                 'updated_at' => Carbon::now()
                                 ]);
 
-                                DB::table('orders')->where('id', $tres_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                             //   DB::table('orders')->where('id', $tres_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
                                                                         
                             }                            
                         }
@@ -362,7 +362,7 @@ class LiquidacionesController extends Controller {
                     'updated_at' => Carbon::now()
                     ]);
 
-                   DB::table('orders')->where('id', $t->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                  // DB::table('orders')->where('id', $t->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
                 }             
                           //  $gente_nivel_3[] = array('nombre' => $t->id.'-'.$t->nombres.'-'.$t->apellidos.'-'.$t->email.'-'.$t->tipo_cliente_id.' amparados: '.$tres_amparados_total.' puntos: '.$points_level_vendedor_3.'<br>');
                 }
@@ -372,7 +372,7 @@ class LiquidacionesController extends Controller {
 /*                                                     terceros y ordenes del nivel tres con sus amparados    fin                                         */
 /*   ----------------------------------------------------------------------------------------------------------------------------------------------------------  */
 
-          //echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos: '.$points_level_3.' - comision: '.$comision_valor_3.'<br>'; 
+          echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos: '.$points_level_3.' - comision: '.$comision_valor_3.'<br>'; 
         }
     }
 
