@@ -18,16 +18,16 @@
                 </a>
             </li>
 
-            <li class="has-submenu">
+            {{--<li class="has-submenu">
                 <a href="{{ route('admin.liquidaciones.index') }}" class="animsition-link text-left">
                     <i class="fa fa-money">
                     </i>
                     <span class="nav-text">Mis Liquidaciones</span>
                 </a>
-            </li>
+            </li>--}}
             
             
-            @role('dirsac|administrador|servicio.al.cliente')
+            @role('dirsac|administrador|servicio.al.cliente|asistente.administrativa')
             <li class="has-submenu">
                 <a href="{{ route('admin.search') }}" class="animsition-link text-left">
                     <i class="fa fa-search">
@@ -65,13 +65,14 @@
                                 Asignar Orden de Venta
                             </a>
                         </li>
+                        @role('dirsac|servicio.al.cliente|asistente.administrativa')
                         <li>
                             <a href="{{ route('admin.terceros.lista_documentos') }}" class="text-left">
                                 <i class="fa fa-edit">
                                 </i>
                                 Documentación
                             </a>
-                        </li>
+                        </li>@endrole
 
                     </ul>
                 </div>
