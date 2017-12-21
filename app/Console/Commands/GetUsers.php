@@ -48,7 +48,7 @@ class GetUsers extends Command
     {
 
 
-        ini_set("memory_limit", "2048M");
+       ini_set("memory_limit", "-1");
         
 
             $liquidar = new Liquidaciones();
@@ -71,9 +71,9 @@ class GetUsers extends Command
         $gente_nivel_1 = array();
         $count_add=0; 
         $vendedores_liquidados = array(); 
-
-
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->limit(100)->orderByRaw('id ASC')->get();
+//->where('t.id', 41)
+//->limit(41)
+        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
                     
         foreach ($vendedores as $value_vendedor) { 
 
@@ -127,7 +127,7 @@ class GetUsers extends Command
         $uno = DB::table('terceros as t')
         ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
         ->join('terceros as t2', 't2.id', '=', 'tk.customer_id')
-        ->leftjoin('orders', 'orders.tercero_id', '=', 't.id')
+        ->leftjoin('orders', 'orders.tercero_id', '=', 't2.id')
         ->where('tk.padre_id', $value_vendedor->id)->where('t.state', true)->where('t2.state', true)->where('t2.tipo_cliente_id', '<>', 85)
         ->select('t2.id', 't2.email', 't2.nombres', 't2.apellidos', 't2.tipo_cliente_id','points', 'orders.id as orden_id',
                 'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
@@ -135,7 +135,7 @@ class GetUsers extends Command
         if (count($uno) > 0) {
             $level_uno = $level_uno + count($uno); 
             foreach ($uno as $n) { 
- 
+
                 $id_primer_nivel[] = array($n->id); 
              
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
@@ -164,7 +164,7 @@ class GetUsers extends Command
                                 'tercero_id' => $n->id,
                                 'hijo_id' => $uno_amparados_value->id,
                                 'nivel' => 1,
-                                'order_id' => $uno_amparados_orders->orden_id,
+                                'order_id' => $uno_amparados_orders_value->orden_id,
                                 'regla_detalle_id' => $id_detalle_1,
                                 'valor_comision' => ($comision_valor_1 * $uno_amparados_orders_value->points),
                                 'puntos' => ($uno_amparados_orders_value->points),
@@ -173,7 +173,7 @@ class GetUsers extends Command
                                 'updated_at' => Carbon::now()
                                 ]);
 
-                          DB::table('orders')->where('id', $uno_amparados_orders->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                         DB::table('orders')->where('id', $uno_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
            
                             }                            
                         }
@@ -218,7 +218,7 @@ class GetUsers extends Command
         ->join('terceros as t2', 't2.id', '=', 'tk.customer_id')
         ->join('terceros_networks as tk2', 'tk2.padre_id', '=', 't2.id')
         ->join('terceros as t3', 't3.id', '=', 'tk2.customer_id')
-        ->leftjoin('orders', 'orders.tercero_id', '=', 'tk2.customer_id')
+        ->leftjoin('orders', 'orders.tercero_id', '=', 't3.id')
         ->where('t.id', $value_vendedor->id)->where('t.state', true)->where('t3.state', true)->where('t3.tipo_cliente_id', '<>', 85)
         ->select('t3.id', 't3.email', 't3.nombres', 't3.apellidos', 't3.tipo_cliente_id','points', 'orders.id as orden_id',
                 'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
@@ -398,8 +398,9 @@ class GetUsers extends Command
 /*                                                     terceros y ordenes del nivel tres con sus amparados    fin                                         */
 /*   ----------------------------------------------------------------------------------------------------------------------------------------------------------  */
 
-          //echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos: '.$points_level_3.' - comision: '.$comision_valor_3.'<br>'; 
+          echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos: '.$points_level_3.' - comision: '.$comision_valor_3.'<br>'; 
         }
+
 
 
   /*  	
