@@ -13,12 +13,11 @@
                     <table data-order='[[ 0, "asc" ]]' id="tabla_liquidaciones" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
                         <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Nombre</th>
-                            <th>Bono Good</th>
-                            <th>Bono Mercando</th>
-                            <th>Total</th>
-                            <th>Acción</th>
+                            <th style="text-align: center">Fecha</th>
+                            <th style="text-align: center">Comisión</th>
+                            <th style="text-align: center">Transferencia/Cheque</th>
+                            <th style="text-align: center">Bono</th>
+                            <th style="text-align: center">Acción</th>
                         </tr>
                         </thead>
                     </table>
@@ -44,11 +43,11 @@
                 pagingType: "full_numbers",
                 ajax: '{{route('admin.liquidaciones.data')}}',
                 columns: [
-                    { data: 'id', name: 'id', orderable: true, searchable: true },
-                    { data: 'nombres', name: 'nombres', orderable: true, searchable: true },
-                    { data: 'good', name: 'good', orderable: true, searchable: true },
-                    { data: 'mercando', name: 'mercando', orderable: true, searchable: true },
+                    { data: 'date', name: 'date', orderable: true, searchable: true },
                     { data: 'total', name: 'total', orderable: true, searchable: true },
+                    { data: 'consignacion', name: 'consignacion', orderable: true, searchable: true },
+                    { data: 'bono', name: 'bono', orderable: true, searchable: true },
+
                     { data: 'edit', name: 'edit', orderable: true, searchable: false}
                 ],
                 language: {

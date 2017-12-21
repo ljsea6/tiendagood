@@ -133,6 +133,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/liquidaciones', ['uses' => 'AdminController@liquidaciones', 'as' => 'admin.liquidaciones.index']);
     Route::get('/liquidaciones/data', ['uses' => 'AdminController@data_liquidaciones', 'as' => 'admin.liquidaciones.data']);
     Route::get('/liquidaciones/{id}/edit', ['uses' => 'AdminController@editar_liquidaciones', 'as' => 'admin.liquidaciones.edit']);
+    Route::post('/liquidaciones/create/gift_card', ['uses' => 'AdminController@gift_card', 'as' => 'admin.liquidaciones.gift_card']);
 
     /*
      * Rules

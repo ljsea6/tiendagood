@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\LiquidacionDetalle;
+use App\LiquidacionTercero;
 use Carbon\Carbon;
 use DB;
 use Mail;
@@ -733,41 +734,65 @@ class AdminController extends Controller {
 
     public function data_liquidaciones()
     {
+        $id = currentUser()->id;
 
-        $tercero = Tercero::with('liquidacion_tercero')->find(currentUser()->id);
+        $liquidacion = DB::select(
+            DB::raw(
+            "
+                SELECT DISTINCT t.id as tercero, l.*
+                FROM terceros t
+                INNER JOIN liquidaciones_detalles ld ON ld.tercero_id = t.id
+                INNER JOIN liquidaciones l ON l.id = ld.liquidacion_id
+                WHERE t.id = '$id';
+            "
+            )
+        );
 
-        $send = collect($tercero->liquidacion_tercero);
+        $send = collect($liquidacion);
 
         return Datatables::of($send)
 
-            ->addColumn('id', function ($send) {
-                return '<div align=left>' . $send->liquidacion_id . '</div>';
+            ->addColumn('date', function ($send) {
+                return '<div align=center>' . Carbon::parse($send->fecha_liquidacion)->diffForHumans() . '</div>';
             })
             ->addColumn('nombres', function ($send) {
 
-                $t = Tercero::find($send->tercero_id);
+                $t = Tercero::find($send->tercero);
 
-                return '<div align=left>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . '</div>';
+                return '<div align=center>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . '</div>';
             })
-            ->addColumn('good', function ($send) {
-                return '<div align=left>' . number_format($send->bono_good) . '</div>';
-            })
-            ->addColumn('mercando', function ($send) {
-                return '<div align=left>' . number_format($send->bono_mercando). '</div>';
-            })
-
-            ->addColumn('total', function ($send) {
+            ->addColumn('consignacion', function ($send) {
 
                 $total = 0;
-                $liquidacion = Liquidacion::with('detalles')->find($send->liquidacion_id);
+                $liquidacion = Liquidacion::with('detalles')->find($send->id);
                 foreach ($liquidacion->detalles as $detalle) {
                     $total = $total + $detalle->valor_comision;
                 }
 
-                return '<div align=left>' . number_format($total) . '</div>';
+                return '<div align=center>' . number_format($total*0.7) . '</div>';
+            })
+            ->addColumn('bono', function ($send) {
+
+                $total = 0;
+                $liquidacion = Liquidacion::with('detalles')->find($send->id);
+                foreach ($liquidacion->detalles as $detalle) {
+                    $total = $total + $detalle->valor_comision;
+                }
+
+                return '<div align=center>' . number_format($total*0.3) . '</div>';
+            })
+            ->addColumn('total', function ($send) {
+
+                $total = 0;
+                $liquidacion = Liquidacion::with('detalles')->find($send->id);
+                foreach ($liquidacion->detalles as $detalle) {
+                    $total = $total + $detalle->valor_comision;
+                }
+
+                return '<div align=center>' . number_format($total) . '</div>';
             })
             ->addColumn('edit', function ($send) {
-                return '<div align=left><a href="' . route('admin.liquidaciones.edit', $send->liquidacion_id) . '"  class="btn btn-warning btn-xs">
+                return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
                         Ver
                 </a></div>';
             })
@@ -787,6 +812,340 @@ class AdminController extends Controller {
         $bono = $total * 0.3;
 
         return view('admin.liquidaciones.edit')->with(['total' => $total, 'id' => $liquidacion->id, 'consignacion' => $consignacion, 'bono' => $bono]);
+    }
+
+    public function gift_card(Request $request)
+    {
+        $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+        $client = new \GuzzleHttp\Client();
+
+        if ($request->has('good') && $request->has('mercando') && $request->has('bono') && $request->has('liquidacion')) {
+
+            $liquidacion = $request->liquidacion;
+            $good = (float)$request->good;
+            $mercando = (float)$request->mercando;
+            $bono = (float)$request->bono;
+
+            $suma = (float)($good + $mercando);
+
+            if ($suma > $bono) {
+
+                return redirect()->back()->withErrors(['errors' => '¡Por favor, verifique que la suma de los bonos para Tienda Good y Mercando no superen el total del Bono!']);
+
+            } else {
+
+                $tercero = Tercero::where('id', currentUser()->id)
+                    ->where('state', true)
+                    ->first();
+
+                if (count($tercero) > 0) {
+
+                    $liquidacion_tercero = LiquidacionTercero::where('liquidacion_id', $liquidacion)
+                        ->where('tercero_id', $tercero->id)
+                        ->first();
+
+                    if (count($liquidacion_tercero) == 0) {
+
+                        $liquidacion_tercero_id = DB::table('liquidaciones_terceros')->insertGetId(
+                            [
+                                'tercero_id' => $tercero->id,
+                                'liquidacion_id' =>  $liquidacion,
+                                'created_at' =>  Carbon::now(),
+                                'updated_at' =>  Carbon::now(),
+                            ]
+                        );
+
+
+                        $res_good = $client->request('GET',  $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
+                        $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                        $x = explode('/', $headers[0]);
+                        $diferencia = $x[1] - $x[0];
+
+                        if ($diferencia < 20) {
+
+                            usleep(20000000);
+                        }
+
+                        $results_good = json_decode($res_good->getBody(), true);
+
+                        if (count($results_good['customers']) == 1) {
+
+
+
+                            $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
+
+                            $headers =  $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                            $x = explode('/', $headers[0]);
+                            $diferencia = $x[1] - $x[0];
+
+                            if ($diferencia < 20) {
+
+                                usleep(20000000);
+                            }
+
+                            $results_mercando = json_decode($res_mercando->getBody(), true);
+
+                            if (count($results_mercando['customers']) == 1) {
+
+                            }
+
+                            if (count($results_mercando['customers']) == 0) {
+
+                                try {
+
+                                    $res = $client->request('post', $api_url_mercando . '/admin/customers.json', array(
+
+                                            'form_params' => array(
+                                                'customer' => array(
+                                                    'first_name' => strtolower( $results_good['customers'][0]['first_name']),
+                                                    'last_name' => strtolower( $results_good['customers'][0]['last_name']),
+                                                    'email' => strtolower($results_good['customers'][0]['email']),
+                                                    'verified_email' => true,
+                                                    'phone' =>  $results_good['customers'][0]['phone'],
+                                                    'addresses' => [
+                                                        $results_good['customers'][0]['addresses'],
+                                                    ],
+                                                    "password" => $tercero->identificacion,
+                                                    "password_confirmation" => $tercero->identificacion,
+                                                    'send_email_invite' => false,
+                                                    'send_email_welcome' => false
+                                                )
+                                            )
+                                        )
+                                    );
+
+                                    $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                    $x = explode('/', $headers[0]);
+                                    $diferencia = $x[1] - $x[0];
+
+                                    if ($diferencia < 20) {
+
+                                        usleep(20000000);
+                                    }
+
+                                } catch (ClientException $e) {
+
+                                    if ($e->hasResponse()) {
+
+                                        $err = json_decode(($e->getResponse()->getBody()), true);
+
+                                        foreach ($err['errors'] as $key => $value) {
+
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (count($results_good['customers']) == 0) {
+
+                            $this->info('El usuario no existe en good');
+
+                            $find = Tercero::with('ciudad')->find($tercero->id);
+
+                            try {
+
+                                $resa = $client->request('post', $api_url_good . '/admin/customers.json', array(
+                                        'form_params' => array(
+                                            'customer' => array(
+                                                'first_name' => strtolower($find->nombres),
+                                                'last_name' => strtolower($find->apellidos),
+                                                'email' => strtolower($find->email),
+                                                'verified_email' => true,
+                                                'phone' => $find->telefono,
+                                                'addresses' => [
+
+                                                    [
+                                                        'address1' => strtolower($find->direccion),
+                                                        'city' => strtolower($find->ciudad->nombre),
+                                                        'province' => '',
+                                                        "zip" => '',
+                                                        'first_name' => strtolower($find->nombres),
+                                                        'last_name' => strtolower($find->apellidos),
+                                                        'country' => 'CO'
+                                                    ],
+
+                                                ],
+                                                "password" => $find->identificacion,
+                                                "password_confirmation" =>  $find->identificacion,
+                                                'send_email_invite' => false,
+                                                'send_email_welcome' => false
+                                            )
+                                        )
+                                    )
+                                );
+
+                                $results_good = json_decode($resa->getBody(), true);
+
+                                $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
+
+                                $headers =  $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                $x = explode('/', $headers[0]);
+                                $diferencia = $x[1] - $x[0];
+
+                                if ($diferencia < 20) {
+
+                                    usleep(20000000);
+                                }
+
+                                $results_mercando = json_decode($res_mercando->getBody(), true);
+
+                                if (count($results_mercando['customers']) == 1) {
+
+                                    $this->info('El usuario existe en mercando');
+
+                                    $a = DB::table('terceros_tiendas')
+                                        ->where('tercero_id', $tercero->id)
+                                        ->where('customer_id_good', $results_good['customers'][0]['id'])
+                                        ->where('customer_id_mercando', $results_mercando['customers'][0]['id'])
+                                        ->first();
+
+                                    if (count($a) == 0) {
+
+                                        DB::table('terceros_tiendas')->insertGetId(
+                                            [
+                                                'tercero_id' => $tercero->id,
+                                                'customer_id_good' =>  $results_good['customers'][0]['id'],
+                                                'customer_id_mercando' => $results_mercando['customers'][0]['id'],
+                                            ]
+                                        );
+                                    }
+
+                                    try {
+                                        $res = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] .'.json', array(
+                                                'form_params' => array(
+                                                    'customer' => array(
+                                                        "email" => $tercero->email,
+                                                    )
+                                                )
+                                            )
+                                        );
+
+                                        $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                        $x = explode('/', $headers[0]);
+                                        $diferencia = $x[1] - $x[0];
+                                        if ($diferencia < 20) {
+                                            usleep(10000000);
+                                        }
+
+                                    } catch (ClientException $e) {
+
+                                        if ($e->hasResponse()) {
+
+                                            $this->info('Problemas al actualizar el email del usuario en good');
+                                        }
+                                    }
+
+                                }
+
+                                if (count($results_mercando['customers']) == 0) {
+
+                                    $this->info('El usuario no existe en mercando, se creará.');
+
+                                    try {
+
+                                        $res = $client->request('post', $api_url_mercando . '/admin/customers.json', array(
+
+                                                'form_params' => array(
+                                                    'customer' => array(
+                                                        'first_name' => strtolower( $results_good['customers'][0]['first_name']),
+                                                        'last_name' => strtolower( $results_good['customers'][0]['last_name']),
+                                                        'email' => strtolower($results_good['customers'][0]['email']),
+                                                        'verified_email' => true,
+                                                        'phone' =>  $results_good['customers'][0]['phone'],
+                                                        'addresses' => [
+                                                            $results_good['customers'][0]['addresses'],
+                                                        ],
+                                                        "password" => $tercero->identificacion,
+                                                        "password_confirmation" => $tercero->identificacion,
+                                                        'send_email_invite' => false,
+                                                        'send_email_welcome' => false
+                                                    )
+                                                )
+                                            )
+                                        );
+
+                                        $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                        $x = explode('/', $headers[0]);
+                                        $diferencia = $x[1] - $x[0];
+
+                                        if ($diferencia < 20) {
+
+                                            usleep(20000000);
+                                        }
+
+                                        $customer = json_decode($res->getBody(), true);
+
+                                        $b = DB::table('terceros_tiendas')
+                                            ->where('tercero_id', $tercero->id)
+                                            ->where('customer_id_good', $results_good['customers'][0]['id'])
+                                            ->where('customer_id_mercando', $customer['customer']['id'])
+                                            ->first();
+
+                                        if (count($b) == 0) {
+                                            DB::table('terceros_tiendas')->insertGetId(
+                                                [
+                                                    'tercero_id' => $tercero->id,
+                                                    'customer_id_good' =>  $results_good['customers'][0]['id'],
+                                                    'customer_id_mercando' =>  $customer['customer']['id'],
+                                                ]
+                                            );
+                                        }
+
+                                    } catch (ClientException $e) {
+
+                                        if ($e->hasResponse()) {
+
+                                            $err = json_decode(($e->getResponse()->getBody()), true);
+
+                                            foreach ($err['errors'] as $key => $value) {
+
+                                                $this->info('Problemas al crear el usuario en mercando' .  $key . ' ' . $value[0]);
+
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                            } catch (ClientException $e) {
+
+                                $err = json_decode(($e->getResponse()->getBody()), true);
+
+                                foreach ($err['errors'] as $key => $value) {
+
+                                    echo $key . ' ' . $value[0] . "\n";
+                                }
+                            }
+                        }
+                        return response()->json([
+                            'good' =>$good,
+                            'mercando' =>$mercando,
+                            'bono' => $bono
+                        ]);
+
+                    } else {
+
+                        return redirect()->back()->withErrors(['errors' => '¡La liquidación ya existe en la tabla liquidaciones_terceros!']);
+                    }
+
+
+
+
+
+                } else {
+
+                    return redirect()->back()->withErrors(['errors' => '¡El usuario no está activo o no existe en nuestros registros!']);
+                }
+
+            }
+
+        } else {
+
+            return redirect()->back()->withErrors(['errors' => '¡No se encontró la variable para good o mercando!']);
+        }
     }
 
 
