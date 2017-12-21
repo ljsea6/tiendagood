@@ -22,7 +22,7 @@ class LiquidacionesController extends Controller {
     }
 
     public function post_liquidar() {
-       ini_set("memory_limit", "2048M");
+       ini_set("memory_limit", "-1");
         
 
             $liquidar = new Liquidaciones();
