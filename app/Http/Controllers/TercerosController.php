@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Entities\Tercero;
+use App\Transactions;
 use Yajra\Datatables\Datatables;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -348,6 +349,52 @@ class TercerosController extends Controller {
         }
     }
 
+    public function setTransactions() {
+        $ordenes = DB::table('orders')
+                ->selectRaw('order_id,shop')
+                ->whereRaw("financial_status = 'paid'")
+                ->get();
+
+        $client = new \GuzzleHttp\Client();
+
+        foreach ($ordenes as $orden) {
+            if ($orden->shop != NULL) {
+
+                if ($orden->shop == 'good') {
+                    $api = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+                } elseif ($orden->shop == 'mercando') {
+                    $api = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+                }
+
+                try {
+
+                    $shop = $client->request('GET', $api . "/admin/orders/$orden->order_id/transactions.json");
+                    $headers = $shop->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+                    if ($diferencia < 20) {
+                        usleep(20000000);
+                    }
+
+                    $results = json_decode($shop->getBody(), true);
+                    if (count($results['transactions']) > 0) {
+                        foreach ($results['transactions'] as $transaction) {
+                            
+                            $save = Transactions::createTransaction($transaction, $orden->shop);
+                            return response()->json($save);
+                        }
+                    }
+                } catch (ClientException $e) {
+
+                    if ($e->hasResponse()) {
+
+                        return redirect()->back()->with(['err' => 'no se encuentra la order' + $orden->order_id]);
+                    }
+                }
+            }
+        }
+    }
+
     public function setPadre(Request $request) {
         if ($request->has('tercero_id') && $request->has('padre_id')) {
 
@@ -436,12 +483,18 @@ class TercerosController extends Controller {
         return view('admin.terceros.lista_documentos');
     }
 
-    public function descargar_documentos($id=0, $tipo='') {
+    public function descargar_documentos($id = 0, $tipo = '') {
         $tercero = Tercero::with('networks')->where('id', '=', $id)->first();
         $nombre = '';
-        if($tipo == 'rut'){  $nombre = $tercero->rut; }
-            if($tipo == 'cedula'){  $nombre = $tercero->cedula; }
-                if($tipo == 'cuenta'){  $nombre = $tercero->cuenta; } 
+        if ($tipo == 'rut') {
+            $nombre = $tercero->rut;
+        }
+        if ($tipo == 'cedula') {
+            $nombre = $tercero->cedula;
+        }
+        if ($tipo == 'cuenta') {
+            $nombre = $tercero->cuenta;
+        }
 
         if ($nombre != '0') {
             $download = public_path($nombre);
@@ -454,113 +507,28 @@ class TercerosController extends Controller {
     public function activar_plan_prime(Request $request) {
 
         $tercero = Tercero::with('primes')->find(currentUser()->id);
- 
-            $fecha_inicio =  '';  $fecha_final = ''; 
+
+        $fecha_inicio = '';
+        $fecha_final = '';
 
         foreach ($tercero->primes as $value) {
-            if($value->estado == true){
-                $fecha_inicio =  $value->fecha_inicio;
-                $fecha_final =  $value->fecha_final;
+            if ($value->estado == true) {
+                $fecha_inicio = $value->fecha_inicio;
+                $fecha_final = $value->fecha_final;
             }
         }
 
-        $fecha_inicio = $fecha_inicio;  $fecha_inicio = strtotime($fecha_inicio);  $fecha_inicio =  date("Y-m-d", $fecha_inicio);  
-        $fecha_final = $fecha_final;  $fecha_final = strtotime($fecha_final);  $fecha_final =  date("Y-m-d", $fecha_final); 
+        $fecha_inicio = $fecha_inicio;
+        $fecha_inicio = strtotime($fecha_inicio);
+        $fecha_inicio = date("Y-m-d", $fecha_inicio);
+        $fecha_final = $fecha_final;
+        $fecha_final = strtotime($fecha_final);
+        $fecha_final = date("Y-m-d", $fecha_final);
 
-        if(date("Y-m-d") >= $fecha_inicio  && date("Y-m-d") <= $fecha_final){  }
-        else{
-            $usuario = Tercero::find(currentUser()->id); 
-            $usuario->primes()->create([
-                'fecha_inicio' => Carbon::now(),
-                'fecha_final' => Carbon::now()->addMonth(),
-                'log' => [
-                    'id' => $request->getClientIp(),
-                    'browser' => $request->header('User-Agent')
-                ]
-            ]);      
-        } 
-  //echo  $fecha_inicio;
-    }
-
-    public function actualizar_mis_datos(Request $request) {
-
-        if ($request->has('first-name')) { 
-
-        $api_url_good = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-        $api_url_mercando = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO'); 
-
-        $this->api_set_email($api_url_good, $request['email_old'], $request->email);
-        $this->api_set_email($api_url_mercando, $request['email_old'], $request->email);           
-
-        $p = '';
-        if (strlen($request->phone) == 13) {
-            $p .= ltrim( $request->phone , '+57' );
-        }else {
-            $p .= $request->phone;
-        }
-
-        $usuario = Tercero::find(currentUser()->id); 
-        $usuario->nombres = strtolower($request['first-name']);
-        $usuario->apellidos = strtolower($request['last-name']);
-        $usuario->direccion = strtolower($request->address);
-        $usuario->telefono = strtolower($p);
-        $usuario->email = strtolower($request->email);
-        $usuario->usuario = strtolower($request->email);   
-        $usuario->celular = strtolower($p);     
-        $usuario->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->birthday);
-
-        if ($request->file('banco')) {
-
-            $path = public_path()."/".$request['cuenta_old'];
-            @unlink($path);
-            $cuenta        = $request->file('banco');
-            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
-            $path          = public_path() . "/uploads";
-            $cuenta->move($path, $cuenta_nombre);
-            $usuario->cuenta = "uploads/" . $cuenta_nombre;
-        }
-
-        if ($request->file('cedula')) {
-
-            $path = public_path()."/".$request['cedula_old'];
-            @unlink($path);
-
-            $cuenta        = $request->file('cedula');
-            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
-            $path          = public_path() . "/uploads";
-            $cuenta->move($path, $cuenta_nombre);
-            $usuario->cedula = "uploads/" . $cuenta_nombre;
-
-        }
-
-        if ($request->file('rut')) {
-
-            $path = public_path()."/".$request['rut_old'];
-            @unlink($path);
-            $cuenta        = $request->file('rut');
-            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
-            $path          = public_path() . "/uploads";
-            $cuenta->move($path, $cuenta_nombre);
-            $usuario->rut = "uploads/" . $cuenta_nombre;
-
-        }
-
-        if ($request->file('foto')) {
-
-            $path = public_path()."/".$request['foto_old'];
-            @unlink($path);
-            $cuenta        = $request->file('foto');
-            $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
-            $path          = public_path() . "/uploads";
-            $cuenta->move($path, $cuenta_nombre);
-            $usuario->avatar = "uploads/" . $cuenta_nombre;
-
-        }
-
-        // Usuario creado
-        $usuario->save();
-
-        if ($request->has('prime')) {
+        if (date("Y-m-d") >= $fecha_inicio && date("Y-m-d") <= $fecha_final) {
+            
+        } else {
+            $usuario = Tercero::find(currentUser()->id);
             $usuario->primes()->create([
                 'fecha_inicio' => Carbon::now(),
                 'fecha_final' => Carbon::now()->addMonth(),
@@ -569,37 +537,124 @@ class TercerosController extends Controller {
                     'browser' => $request->header('User-Agent')
                 ]
             ]);
-        } 
+        }
+        //echo  $fecha_inicio;
+    }
+
+    public function actualizar_mis_datos(Request $request) {
+
+        if ($request->has('first-name')) {
+
+            $api_url_good = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+            $api_url_mercando = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+
+            $this->api_set_email($api_url_good, $request['email_old'], $request->email);
+            $this->api_set_email($api_url_mercando, $request['email_old'], $request->email);
+
+            $p = '';
+            if (strlen($request->phone) == 13) {
+                $p .= ltrim($request->phone, '+57');
+            } else {
+                $p .= $request->phone;
+            }
+
+            $usuario = Tercero::find(currentUser()->id);
+            $usuario->nombres = strtolower($request['first-name']);
+            $usuario->apellidos = strtolower($request['last-name']);
+            $usuario->direccion = strtolower($request->address);
+            $usuario->telefono = strtolower($p);
+            $usuario->email = strtolower($request->email);
+            $usuario->usuario = strtolower($request->email);
+            $usuario->celular = strtolower($p);
+            $usuario->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->birthday);
+
+            if ($request->file('banco')) {
+
+                $path = public_path() . "/" . $request['cuenta_old'];
+                @unlink($path);
+                $cuenta = $request->file('banco');
+                $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+                $path = public_path() . "/uploads";
+                $cuenta->move($path, $cuenta_nombre);
+                $usuario->cuenta = "uploads/" . $cuenta_nombre;
+            }
+
+            if ($request->file('cedula')) {
+
+                $path = public_path() . "/" . $request['cedula_old'];
+                @unlink($path);
+
+                $cuenta = $request->file('cedula');
+                $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+                $path = public_path() . "/uploads";
+                $cuenta->move($path, $cuenta_nombre);
+                $usuario->cedula = "uploads/" . $cuenta_nombre;
+            }
+
+            if ($request->file('rut')) {
+
+                $path = public_path() . "/" . $request['rut_old'];
+                @unlink($path);
+                $cuenta = $request->file('rut');
+                $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+                $path = public_path() . "/uploads";
+                $cuenta->move($path, $cuenta_nombre);
+                $usuario->rut = "uploads/" . $cuenta_nombre;
+            }
+
+            if ($request->file('foto')) {
+
+                $path = public_path() . "/" . $request['foto_old'];
+                @unlink($path);
+                $cuenta = $request->file('foto');
+                $cuenta_nombre = str_random(30) . "." . $cuenta->getClientOriginalExtension();
+                $path = public_path() . "/uploads";
+                $cuenta->move($path, $cuenta_nombre);
+                $usuario->avatar = "uploads/" . $cuenta_nombre;
+            }
+
+            // Usuario creado
+            $usuario->save();
+
+            if ($request->has('prime')) {
+                $usuario->primes()->create([
+                    'fecha_inicio' => Carbon::now(),
+                    'fecha_final' => Carbon::now()->addMonth(),
+                    'log' => [
+                        'id' => $request->getClientIp(),
+                        'browser' => $request->header('User-Agent')
+                    ]
+                ]);
+            }
 
             Session::flash('flash_msg', 'La actualizaci\u00F3n de sus datos se realizaron correctamente');
             return redirect()->action('TercerosController@actualizar_mis_datos');
         }
 
         $tercero = Tercero::with('networks', 'primes')->find(currentUser()->id);
- 
-            $fecha_inicio =  '';
-            $fecha_final = ''; 
+
+        $fecha_inicio = '';
+        $fecha_final = '';
 
         foreach ($tercero->primes as $value) {
-            if($value->estado == true){
-            $fecha_inicio =  $value->fecha_inicio;
-            $fecha_final =  $value->fecha_final;
+            if ($value->estado == true) {
+                $fecha_inicio = $value->fecha_inicio;
+                $fecha_final = $value->fecha_final;
             }
         }
 
-        $fecha_inicio = $fecha_inicio; 
-        $fecha_inicio = strtotime($fecha_inicio); 
-        $fecha_inicio =  date("Y-m-d", $fecha_inicio); 
- 
-        $fecha_final = $fecha_final; 
-        $fecha_final = strtotime($fecha_final); 
-        $fecha_final =  date("Y-m-d", $fecha_final); 
+        $fecha_inicio = $fecha_inicio;
+        $fecha_inicio = strtotime($fecha_inicio);
+        $fecha_inicio = date("Y-m-d", $fecha_inicio);
+
+        $fecha_final = $fecha_final;
+        $fecha_final = strtotime($fecha_final);
+        $fecha_final = date("Y-m-d", $fecha_final);
 
         $fecha_nacimiento = $tercero['fecha_nacimiento'];
         $fecha_nacimiento = date("d/m/Y", strtotime($fecha_nacimiento));
 
-        return view('admin.terceros.actualizar_datos', compact('tercero','fecha_nacimiento','fecha_inicio', 'fecha_final'));
-   
+        return view('admin.terceros.actualizar_datos', compact('tercero', 'fecha_nacimiento', 'fecha_inicio', 'fecha_final'));
     }
 
 }
