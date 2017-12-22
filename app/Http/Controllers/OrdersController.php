@@ -31,6 +31,7 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ClientException;
 use App\Traits\Liquidar;
+use App\Transactions;
 
 
 class OrdersController extends Controller
@@ -3479,16 +3480,113 @@ class OrdersController extends Controller
 
     public function contador()
     {
-        $orders = Order::where('cancelled_at', null)
-            ->where('financial_status', 'paid')
-            ->where('comisionada', null)
-            ->where('tercero_id', '!=' , null)
-            ->where('liquidacion_id', null)
+
+        $totalguardadas = 0;
+        $noguardadas = array();
+
+        $api_g = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+
+        $api_m = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+
+        $client = new \GuzzleHttp\Client();
+
+        $ordenes = Order::select('order_id', 'shop', 'name')
+            ->where("financial_status", "paid")
             ->get();
 
-        foreach ($orders as $order) {
-            return $this->Liquidar($order);
+
+        foreach ($ordenes as $orden) {
+            if ($orden->shop != NULL) {
+
+                if ($orden->shop == 'good') {
+
+                    try {
+
+                        $shop = $client->request('GET', $api_g . "/admin/orders/' .  $orden->order_id . '/transactions.json");
+                        $headers = $shop->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                        $x = explode('/', $headers[0]);
+                        $diferencia = $x[1] - $x[0];
+                        if ($diferencia < 20) {
+                            usleep(20000000);
+                        }
+
+                        $results = json_decode($shop->getBody(), true);
+                        if (count($results['transactions']) > 0) {
+                            foreach ($results['transactions'] as $transaction) {
+                                $save = Transactions::saveTransaction($transaction, $orden->shop);
+                                if ($save) {
+                                    $totalguardadas++;
+                                } else {
+                                    $noguardadas[] = $transaction['id'];
+                                }
+                            }
+                        } else {
+                            return 'no existe dos';
+                        }
+                    } catch (ClientException $e) {
+
+                        if ($e->hasResponse()) {
+                            $err = json_decode(($e->getResponse()->getBody()), true);
+
+
+                            return response()->json($err);
+
+
+                        }
+                    }
+                }
+
+                if ($orden->shop == 'mercando') {
+
+                    try {
+
+                        $shop = $client->request('GET', $api_m . "/admin/orders/' . $orden->order_id .'/transactions.json");
+                        $headers = $shop->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                        $x = explode('/', $headers[0]);
+                        $diferencia = $x[1] - $x[0];
+                        if ($diferencia < 20) {
+                            usleep(20000000);
+                        }
+
+                        $results = json_decode($shop->getBody(), true);
+                        if (count($results['transactions']) > 0) {
+                            foreach ($results['transactions'] as $transaction) {
+                                $save = Transactions::saveTransaction($transaction, $orden->shop);
+                                if ($save) {
+                                    $totalguardadas++;
+                                } else {
+                                    $noguardadas[] = $transaction['id'];
+                                }
+                            }
+                        } else {
+                            return 'no existe dos';
+                        }
+                    } catch (ClientException $e) {
+
+                        if ($e->hasResponse()) {
+                            $err = json_decode(($e->getResponse()->getBody()), true);
+
+
+                            return response()->json($err);
+
+
+                        }
+                    }
+                }
+
+
+            }
         }
+
+
+        if (count($noguardadas) > 0) {
+            return 'todo bien';
+        } else {
+            return 'no se guarda';
+
+        }
+
+
 
 
 
