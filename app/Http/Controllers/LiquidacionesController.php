@@ -57,11 +57,15 @@ class LiquidacionesController extends Controller {
         $gente_nivel_1 = array();
         $count_add=0;  
         $vendedores_liquidados = array(); 
+
+
+
+
 //->where('t.id', 41)
 //->limit(41)
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
+        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->where('t.id', 522)->orderByRaw('id ASC')->get();
                     
-                    
+
         foreach ($vendedores as $value_vendedor) { 
 
         $points_level_1 = 0;
@@ -124,9 +128,10 @@ class LiquidacionesController extends Controller {
              
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel uno con sus amparados   inicio     ------------------------           */
-                    /*   ----------------------------------------------------------------------------------------------------------------------------------------  */  
+                    /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
+                    
                         $points_level_vendedor_1 = 0; 
-
+                     /* 
                         $uno_amparados_total = 0;
                         $uno_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $n->id)
                         ->where('t.state', true)->where('t.tipo_cliente_id', 85)
@@ -158,11 +163,10 @@ class LiquidacionesController extends Controller {
                                 ]);
 
                                 $id_primer_nivel_amparado[] = array($n->orden_id); 
-
-                    //  DB::table('orders')->where('id', $uno_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
            
                             }                            
                         }
+                        */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel uno con sus amparados    fin                                          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
@@ -221,8 +225,9 @@ class LiquidacionesController extends Controller {
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel dos con sus amparados   inicio     ------------------------           */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */  
+                   
                         $points_level_vendedor_2 = 0; 
-
+                    /* 
                         $dos_amparados_total = 0;
                         $dos_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $d->id)
                         ->where('t.state', true)->where('t.tipo_cliente_id', 85)->select('t.id', 't.email', 't.nombres', 't.apellidos', 't.tipo_cliente_id')->get();
@@ -253,11 +258,10 @@ class LiquidacionesController extends Controller {
                                 ]);
 
                                 $id_dos_nivel_amparado[] = array($n->orden_id); 
-
-                               // DB::table('orders')->where('id', $dos_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
            
                             }                            
                         }
+                         */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel dos con sus amparados    fin                                          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
@@ -281,7 +285,6 @@ class LiquidacionesController extends Controller {
                     'updated_at' => Carbon::now()
                     ]);
 
-                  //   DB::table('orders')->where('id', $d->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
                 }
                           //  $gente_nivel_2[] = array('nombre' => $d->id.'-'.$d->nombres.'-'.$d->apellidos.'-'.$d->email.'-'.$d->tipo_cliente_id.' amparados: '.$count_add.' puntos: '.$points_level_vendedor_2.'<br>sd');
                 }
@@ -319,8 +322,9 @@ class LiquidacionesController extends Controller {
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel tres con sus amparados   inicio     ------------------------          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */  
+                    
                         $points_level_vendedor_3 = 0; 
-
+                    /* 
                         $tres_amparados_total = 0;
                         $tres_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $t->id)
                         ->where('t.state', true)->where('t.tipo_cliente_id', 85)->select('t.id', 't.email', 't.nombres', 't.apellidos', 't.tipo_cliente_id')->get();
@@ -351,12 +355,10 @@ class LiquidacionesController extends Controller {
                                 ]);
 
                                 $id_tres_nivel_amparado[] = array($n->orden_id); 
-
-                             //   DB::table('orders')->where('id', $tres_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
                                                                         
                             }                            
                         }
-
+                    */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel tres con sus amparados    fin                                         */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
@@ -380,7 +382,6 @@ class LiquidacionesController extends Controller {
                     'updated_at' => Carbon::now()
                     ]);
 
-                //   DB::table('orders')->where('id', $t->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
                 }             
                           //  $gente_nivel_3[] = array('nombre' => $t->id.'-'.$t->nombres.'-'.$t->apellidos.'-'.$t->email.'-'.$t->tipo_cliente_id.' amparados: '.$tres_amparados_total.' puntos: '.$points_level_vendedor_3.'<br>');
                 }
