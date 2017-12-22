@@ -57,8 +57,8 @@ class SetTransactions extends Command {
                 }
 
                 try {
+                    $shop = $client->request("GET", $api . "/admin/orders/" .$orden->order_id ."/transactions.json");
 
-                    $shop = $client->request('GET', $api . '/admin/orders' . $orden->order_id . '/transactions.json');
                     $headers = $shop->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
                     $x = explode('/', $headers[0]);
                     $diferencia = $x[1] - $x[0];

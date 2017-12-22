@@ -3438,7 +3438,11 @@ class OrdersController extends Controller {
         }
     }
 
-    public function contador() {
+
+
+    public function contador()
+    {
+
 
         $totalguardadas = 0;
         $noguardadas = array();
@@ -3548,6 +3552,7 @@ class OrdersController extends Controller {
           } catch (ClientException $e) {
 
           if ($e->hasResponse()) {
+>>>>>>> e18cef41539095a01ec5e60dde0ee8370b776cb8
 
           return $e->hasResponse();
           }
