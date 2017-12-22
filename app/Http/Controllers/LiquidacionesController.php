@@ -55,11 +55,12 @@ class LiquidacionesController extends Controller {
         $my_points = 0;
 
         $gente_nivel_1 = array();
-        $count_add=0; 
+        $count_add=0;  
         $vendedores_liquidados = array(); 
 //->where('t.id', 41)
 //->limit(41)
         $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
+                    
                     
         foreach ($vendedores as $value_vendedor) { 
 
