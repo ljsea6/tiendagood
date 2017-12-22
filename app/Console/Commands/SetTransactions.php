@@ -40,22 +40,16 @@ class SetTransactions extends Command {
      */
     public function handle() {
 
-        ini_set('memory_limit', '-1');
-
-        $this->info('Inio del proceso');
-
         $totalguardadas = 0;
         $noguardadas = array();
 
         $client = new \GuzzleHttp\Client();
-        $this->info('hola');
         $ordenes = Order::select('order_id', 'shop')
-                ->where("financial_status", "paid")
+                ->where('financial_status', 'paid')
                 ->get();
 
         foreach ($ordenes as $orden) {
             if ($orden->shop != NULL) {
-
                 if ($orden->shop == 'good') {
                     $api = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
                 } elseif ($orden->shop == 'mercando') {
@@ -88,7 +82,8 @@ class SetTransactions extends Command {
                 } catch (ClientException $e) {
 
                     if ($e->hasResponse()) {
-                        return redirect()->back()->with(['err' => ' No se encuentra la order' + $orden->order_id]);
+                        $err = json_decode(($e->getResponse()->getBody()), true);
+                        $this->info('error mas grande');
                     }
                 }
             }
