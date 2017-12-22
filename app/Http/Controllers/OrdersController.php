@@ -30,11 +30,12 @@ use App\Tipo;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ClientException;
+use App\Traits\Liquidar;
 
 
 class OrdersController extends Controller
 {
-    use OrderPaid, OrderCancelled, OrderPaidMercando, OrderCancelledMercando;
+    use OrderPaid, OrderCancelled, OrderPaidMercando, OrderCancelledMercando, Liquidar;
 
     public function listpaid()
     {
@@ -3478,34 +3479,19 @@ class OrdersController extends Controller
 
     public function contador()
     {
+        $orders = Order::where('cancelled_at', null)
+            ->where('financial_status', 'paid')
+            ->where('comisionada', null)
+            ->where('tercero_id', '!=' , null)
+            ->where('liquidacion_id', null)
+            ->get();
 
-        $input = file_get_contents('php://input');
-        $order = json_decode($input, true);
-        $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
-        $verified = $this->verify_webhook(collect($order), $hmac_header);
-        $resultapi = error_log('Webhook verified: ' . var_export($verified, true));
-
-        if ($resultapi == 'true') {
-
-            $response = Order::where('network_id', 1)
-                ->where('name', $order['name'])
-                ->where('order_id', $order['id'])
-                ->where('shop', 'good')
-                ->first();
-
-            $p = '';
-            $s = '';
-
-            if (isset($order['phone']) && !empty($order['phone'])) {
-                $p =  explode('+57', $order['phone']);
-                $s = '' . $p[1];
-            }
-
-            $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
-
-            return response()->json($tercero, 200);
-
+        foreach ($orders as $order) {
+            return $this->Liquidar($order);
         }
+
+
+
         /*$api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $client = new \GuzzleHttp\Client();
         $email = 'lgrestrepogutierrez@gmail.com';

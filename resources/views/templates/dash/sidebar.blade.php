@@ -17,9 +17,18 @@
                     <span class="nav-text">Actualizar mis datos</span>
                 </a>
             </li>
+
+           {{--<li class="has-submenu">
+                <a href="{{ route('admin.liquidaciones.index') }}" class="animsition-link text-left">
+                    <i class="fa fa-money">
+                    </i>
+                    <span class="nav-text">Mis Liquidaciones</span>
+                </a>
+            </li>--}}
             
             
-            @role('dirsac|administrador')            
+            @role('dirsac|administrador|servicio.al.cliente')
+
             <li class="has-submenu">
                 <a href="{{ route('admin.search') }}" class="animsition-link text-left">
                     <i class="fa fa-search">
@@ -27,6 +36,11 @@
                     <span class="nav-text">Buscar Referidos</span>
                 </a>
             </li>
+
+            @endrole
+
+            @role('dirsac|administrador|servicio.al.cliente|asistente.administrativa')
+
             <li class="has-submenu">
                 <a href="#terceros" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-user">
@@ -35,7 +49,7 @@
                 </a>
                 <div class="sub-menu collapse secondary list-style-circle" id="terceros">
                     <ul>
-                        <li>@role('dirsac')
+                        <li>@role('dirsac|servicio.al.cliente')
                             <a href="{{ route('admin.terceros.editardatos') }}" class="text-left">
                                 <i class="fa fa-edit">
                                 </i>
@@ -50,26 +64,28 @@
                                 Cambiar Padre
                             </a>
                         </li>@endrole
+                        <li>@role('dirsac|servicio.al.cliente')
                         <li>
                             <a href="{{ route('admin.terceros.asignarorden') }}" class="text-left">
                                 <i class="fa fa-edit">
                                 </i>
                                 Asignar Orden de Venta
                             </a>
-                        </li>
+                        </li>@endrole
+                        @role('dirsac|servicio.al.cliente|asistente.administrativa')
                         <li>
                             <a href="{{ route('admin.terceros.lista_documentos') }}" class="text-left">
                                 <i class="fa fa-edit">
                                 </i>
                                 Documentación
                             </a>
-                        </li>
+                        </li>@endrole
 
                     </ul>
                 </div>
             </li>
+
             @endrole
-            
             
             <li class="has-submenu">
                 <a href="#send" data-toggle="collapse" aria-expanded="false" class="text-left">

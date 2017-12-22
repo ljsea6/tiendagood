@@ -9,6 +9,8 @@ use App\Level;
 use Carbon\Carbon;
 use App\TipoCliente;
 use App\Liquidacion;
+use App\LiquidacionTercero;
+use App\LiquidacionDetalle;
 use Bican\Roles\Traits\HasRoleAndPermission;
 use Bican\Roles\Contracts\HasRoleAndPermission as HasRoleAndPermissionContract;
 use Illuminate\Auth\Authenticatable;
@@ -149,7 +151,7 @@ class Tercero extends Model implements AuthenticatableContract, CanResetPassword
 
     public function liquidaciones()
     {
-        return $this->hasMany(Liquidacion::class, 'tercero_id');
+        return $this->hasMany(Liquidacion::class, 'usuario_id');
     }
 
     public function primes()
@@ -165,5 +167,15 @@ class Tercero extends Model implements AuthenticatableContract, CanResetPassword
     public function shop()
     {
         return $this->hasOne(Shop::class, 'tercero_id');
+    }
+
+    public function liquidacion_tercero()
+    {
+        return $this->hasMany(LiquidacionTercero::class, 'tercero_id');
+    }
+
+    public function liquidacion_detalle()
+    {
+        return $this->hasMany(LiquidacionDetalle::class, 'tercero_id');
     }
 }

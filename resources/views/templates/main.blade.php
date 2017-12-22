@@ -14,9 +14,10 @@
     {!! Html::style('css/app.min.css?act=1') !!}
     {!! Html::style('js/Jit/Examples/css/base.css') !!}
     {!! Html::style('js/Jit/Examples/css/Spacetree.css') !!}
-
-
     {!! Html::style('css/material-dashboard.css?act=1') !!}
+
+
+
     @yield('styles')
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -30,7 +31,8 @@
     {!! Html::script('js/modernizr.min.js') !!}
     {!! Html::script('js/jquery.slimscroll.min.js') !!}
     {!! Html::script('js/jquery.animsition.min.js') !!}
-    
+
+
     {!! Html::script('js/validaciones.js') !!}
     {!! Html::script('js/Jit/Examples/Extras/excanvas.js') !!}
     {!! Html::script('js/Jit/jit.js') !!}
@@ -38,6 +40,7 @@
 
     {!! Html::script('css/material.min.js') !!}
     {!! Html::script('css/material-dashboard.js') !!}
+
     @yield('scripts')
 </body>
 </html>

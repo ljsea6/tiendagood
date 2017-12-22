@@ -29,6 +29,8 @@
     {!! Html::style('css/app.min.css?act=1') !!}
 
 
+    <script src="http://backoffice.tiendagood.com/assets/js/jquery-1.11.1.min.js"></script>
+
 
      @yield('styles')
     <!--[if lt IE 9]>

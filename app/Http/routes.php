@@ -42,6 +42,10 @@ Route::get('orders/list/paid', ['uses' => 'OrdersController@contador', 'as' => '
 Route::get('orders/list/paid/new', ['uses' => 'OrdersController@contador_uno', 'as' => 'admin.orders.list.paid.uno']);
 
 
+    //liquidaciones
+    //Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@get_liquidar', 'as' => 'liquidacion.liquidar']);
+    Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@post_liquidar', 'as' => 'liquidacion.liquidar.envio']);
+ 
 
 //Pdfs
 Route::any('reportes/datos/products', ['uses' => 'ReportesController@products', 'as' => 'admin.reportes.datos.products']);
@@ -121,6 +125,15 @@ Route::any('terceros/activarplanprime', ['uses' => 'TercerosController@activar_p
 //Route::post('terceros/actualizar-datos/cambio', ['uses' => 'TercerosController@post_actualizar_mis_datos', 'as' => 'terceros.actualizar_mis_datos']);
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
+
+    /*
+     * Liquidaciones
+     */
+
+    Route::get('/liquidaciones', ['uses' => 'AdminController@liquidaciones', 'as' => 'admin.liquidaciones.index']);
+    Route::get('/liquidaciones/data', ['uses' => 'AdminController@data_liquidaciones', 'as' => 'admin.liquidaciones.data']);
+    Route::get('/liquidaciones/{id}/edit', ['uses' => 'AdminController@editar_liquidaciones', 'as' => 'admin.liquidaciones.edit']);
+    Route::post('/liquidaciones/create/gift_card', ['uses' => 'AdminController@gift_card', 'as' => 'admin.liquidaciones.gift_card']);
 
     /*
      * Rules
@@ -330,7 +343,4 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::any('variants/good/search', ['uses' => 'VariantsController@variants', 'as' => 'admin.variants.search']);
     Route::any('variants/mercando/search', ['uses' => 'VariantsController@variants_mercando', 'as' => 'admin.variants.search_mercando']);
 
-
-    Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@liquidar', 'as' => 'liquidacion.liquidar']);
- 
 });
