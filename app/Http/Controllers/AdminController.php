@@ -789,7 +789,7 @@ class AdminController extends Controller {
         return view('admin.liquidaciones.edit')->with(['total' => $total, 'id' => $liquidacion->id, 'consignacion' => $consignacion, 'bono' => $bono]);
     }
 
-<<<<<<< HEAD
+
     public function gift_card(Request $request)
     {
         $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
