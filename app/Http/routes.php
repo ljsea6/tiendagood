@@ -42,11 +42,6 @@ Route::get('orders/list/paid', ['uses' => 'OrdersController@contador', 'as' => '
 Route::get('orders/list/paid/new', ['uses' => 'OrdersController@contador_uno', 'as' => 'admin.orders.list.paid.uno']);
 
 
-    //liquidaciones
-    //Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@get_liquidar', 'as' => 'liquidacion.liquidar']);
-    Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@post_liquidar', 'as' => 'liquidacion.liquidar.envio']);
- 
-
 //Pdfs
 Route::any('reportes/datos/products', ['uses' => 'ReportesController@products', 'as' => 'admin.reportes.datos.products']);
 Route::get('pdf', 'PdfController@invoice');
@@ -288,6 +283,14 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::any('orders/list/pending', ['uses' => 'OrdersController@pending', 'as' => 'admin.orders.list.pending']);
     });
 
+    Route::group(['middleware' => 'role:administridador'], function () {
+    //liquidaciones
+        Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@get_liquidar', 'as' => 'liquidacion.liquidar']);
+        Route::post('liquidacion/liquidar', ['uses' => 'LiquidacionesController@post_liquidar', 'as' => 'liquidacion.liquidar.envio']);
+        Route::get('liquidacion/liquidaciones_general', ['uses' => 'LiquidacionesController@liquidaciones_general', 'as' => 'liquidacion.liquidaciones_general']);
+        Route::get('liquidacion/liquidaciones_general_datos', ['uses' => 'LiquidacionesController@liquidaciones_datos', 'as' => 'liquidacion.liquidaciones_general_datos']);
+    });
+
     Route::group(['middleware' => 'role:logistica'], function () {
         Route::get('orders', ['uses' => 'OrdersController@home', 'as' => 'admin.orders.home']);
         Route::post('orders/{id}', ['uses' => 'OrdersController@up', 'as' => 'admin.orders.up']);
@@ -341,5 +344,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     Route::any('variants/good/search', ['uses' => 'VariantsController@variants', 'as' => 'admin.variants.search']);
     Route::any('variants/mercando/search', ['uses' => 'VariantsController@variants_mercando', 'as' => 'admin.variants.search_mercando']);
+
 
 });

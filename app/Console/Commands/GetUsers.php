@@ -385,6 +385,11 @@ class GetUsers extends Command
                     'puntos' => ($t->points),
                     'comision_puntos' => ($comision_valor_3),
                     'created_at' => Carbon::now(),
+
+
+                    ++
+
+                    
                     'updated_at' => Carbon::now()
                     ]);
 
@@ -400,8 +405,6 @@ class GetUsers extends Command
 
           echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos: '.$points_level_3.' - comision: '.$comision_valor_3.'<br>'; 
         }
-
-        $this->info('Liquidaciones listas.');
 
 
 

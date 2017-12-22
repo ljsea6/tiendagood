@@ -15,9 +15,7 @@ use App\Http\Controllers\Controller;
 
 class LiquidacionesController extends Controller {
 
-
     public function get_liquidar() {
-
         return view('admin.liquidaciones.liquidar');
     }
 
@@ -404,5 +402,44 @@ class LiquidacionesController extends Controller {
         DB::table('orders')->whereIn('id', $id_tres_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
 
     }
+
+    public function liquidaciones_general() {
+        return view('admin.liquidaciones.liquidaciones_general');
+    }
+
+    public function liquidaciones_datos() {
+
+        $liquidaciones = DB::table('liquidaciones')
+                ->select('liquidaciones.id as liqui_id','nombres','fecha_inicio','fecha_final','fecha_liquidacion')
+                ->join('terceros', 'terceros.id', '=', 'liquidaciones.id')
+                ->orderByRaw('liquidaciones.id DESC')
+                ->get();
+
+        $send = collect($liquidaciones);
+
+        return Datatables::of($send)
+                        ->addColumn('id', function ($send) {
+                            return '<div align=left>' . $send->liqui_id . '</div>';
+                        })
+                        ->addColumn('identificacion', function ($send) {
+                            return '<div align=left>' . $send->nombres . '</div>';
+                        })
+                        ->addColumn('nombres', function ($send) {
+                            return '<div align=left>' . $send->fecha_inicio . '</div>';
+                        })
+                        ->addColumn('apellidos', function ($send) {
+                            return '<div align=left>' . $send->fecha_final . '</div>';
+                        })
+                        ->addColumn('email', function ($send) {
+                            return '<div align=left>' . $send->fecha_liquidacion . '</div>';
+                        })
+                        ->addColumn('excel', function ($send) {
+                            return '<div align=center><a href="' . route('admin.terceros.edit', $send->liqui_id) . '"  class="btn btn-warning btn-xs">
+                        Excel
+                </a></div>';
+                        })
+                        ->make(true);
+    }
+
 
 }
