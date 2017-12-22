@@ -36,6 +36,18 @@ class LiquidacionesController extends Controller {
 
             $liquidacion_id = $liquidar->id;
 
+
+        $id_primer_nivel = array(); 
+        $id_dos_nivel = array(); 
+        $id_tres_nivel = array(); 
+
+
+        $id_primer_nivel_amparado = array(); 
+        $id_dos_nivel_amparado = array(); 
+        $id_tres_nivel_amparado = array(); 
+
+
+
         $level_uno = 0;
         $level_dos = 0;
         $level_tres = 0;
@@ -63,9 +75,6 @@ class LiquidacionesController extends Controller {
         $id_detalle_2 = 0;
         $id_detalle_3 = 0;
 
-        $id_primer_nivel = array(); 
-        $id_dos_nivel = array(); 
-        $id_tres_nivel = array(); 
        
                 /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                 /*                                                    reglas   inicio     ------------------------                                             */
@@ -110,7 +119,7 @@ class LiquidacionesController extends Controller {
             $level_uno = $level_uno + count($uno); 
             foreach ($uno as $n) { 
 
-                $id_primer_nivel[] = array($n->id); 
+                $id_primer_nivel[] = array($n->orden_id); 
              
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel uno con sus amparados   inicio     ------------------------           */
@@ -147,14 +156,16 @@ class LiquidacionesController extends Controller {
                                 'updated_at' => Carbon::now()
                                 ]);
 
-                         DB::table('orders')->where('id', $uno_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                                $id_primer_nivel_amparado[] = array($n->orden_id); 
+
+                    //  DB::table('orders')->where('id', $uno_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
            
                             }                            
                         }
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel uno con sus amparados    fin                                          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
-                if($n->financial_status == 'paid' && $n->cancelled_at == null && $n->comisionada == null && $n->liquidacion_id == null){
+                if($n->financial_status == 'paid' && $n->cancelled_at == '' && $n->comisionada == '' && $n->liquidacion_id == ''){
 
                             $points_level_1 +=  $n->points; 
                             $points_level_vendedor_1 += $n->points; 
@@ -173,7 +184,7 @@ class LiquidacionesController extends Controller {
                     'updated_at' => Carbon::now()
                     ]);
 
-                   DB::table('orders')->where('id', $n->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                   
                 }  
                   //  $gente_nivel_1[] = array('id' => $n->id);
             }
@@ -204,7 +215,7 @@ class LiquidacionesController extends Controller {
                     $count_add=0; 
                     foreach ($dos as $d) {  $count_add++; 
 
-                    $id_dos_nivel[] = array($d->id); 
+                    $id_dos_nivel[] = array($d->orden_id); 
        
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel dos con sus amparados   inicio     ------------------------           */
@@ -240,7 +251,9 @@ class LiquidacionesController extends Controller {
                                 'updated_at' => Carbon::now()
                                 ]);
 
-                                DB::table('orders')->where('id', $dos_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                                $id_dos_nivel_amparado[] = array($n->orden_id); 
+
+                               // DB::table('orders')->where('id', $dos_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
            
                             }                            
                         }
@@ -248,7 +261,7 @@ class LiquidacionesController extends Controller {
                     /*                                                     ordenes del nivel dos con sus amparados    fin                                          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
 
-                if($d->financial_status == 'paid' && $d->cancelled_at == null && $d->comisionada == null && $d->liquidacion_id == null){
+                if($d->financial_status == 'paid' && $d->cancelled_at == '' && $d->comisionada == '' && $d->liquidacion_id == ''){
 
                             $points_level_2 += $d->points;
                             $points_level_vendedor_2 += $d->points; 
@@ -267,7 +280,7 @@ class LiquidacionesController extends Controller {
                     'updated_at' => Carbon::now()
                     ]);
 
-                     DB::table('orders')->where('id', $d->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                  //   DB::table('orders')->where('id', $d->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
                 }
                           //  $gente_nivel_2[] = array('nombre' => $d->id.'-'.$d->nombres.'-'.$d->apellidos.'-'.$d->email.'-'.$d->tipo_cliente_id.' amparados: '.$count_add.' puntos: '.$points_level_vendedor_2.'<br>sd');
                 }
@@ -299,6 +312,8 @@ class LiquidacionesController extends Controller {
                 $gente_nivel_3 = array();
 
                 foreach ($tres as $t) {
+       
+                    $id_tres_nivel[] = array($t->orden_id); 
        
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */ 
                     /*                                                     ordenes del nivel tres con sus amparados   inicio     ------------------------          */
@@ -334,7 +349,9 @@ class LiquidacionesController extends Controller {
                                 'updated_at' => Carbon::now()
                                 ]);
 
-                                DB::table('orders')->where('id', $tres_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                                $id_tres_nivel_amparado[] = array($n->orden_id); 
+
+                             //   DB::table('orders')->where('id', $tres_amparados_orders_value->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
                                                                         
                             }                            
                         }
@@ -343,7 +360,7 @@ class LiquidacionesController extends Controller {
                     /*                                                     ordenes del nivel tres con sus amparados    fin                                         */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
 
-                if($t->financial_status == 'paid' && $t->cancelled_at == null && $t->comisionada == null && $t->liquidacion_id == null){
+                if($t->financial_status == 'paid' && $t->cancelled_at == '' && $t->comisionada == '' && $t->liquidacion_id == ''){
 
                             $points_level_3 += $t->points;
                             $points_level_vendedor_3 += $t->points; 
@@ -362,11 +379,12 @@ class LiquidacionesController extends Controller {
                     'updated_at' => Carbon::now()
                     ]);
 
-                   DB::table('orders')->where('id', $t->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                //   DB::table('orders')->where('id', $t->orden_id)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
                 }             
                           //  $gente_nivel_3[] = array('nombre' => $t->id.'-'.$t->nombres.'-'.$t->apellidos.'-'.$t->email.'-'.$t->tipo_cliente_id.' amparados: '.$tres_amparados_total.' puntos: '.$points_level_vendedor_3.'<br>');
                 }
             }
+
 
 /*   ----------------------------------------------------------------------------------------------------------------------------------------------------------  */ 
 /*                                                     terceros y ordenes del nivel tres con sus amparados    fin                                         */
@@ -374,6 +392,15 @@ class LiquidacionesController extends Controller {
 
           echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos: '.$points_level_3.' - comision: '.$comision_valor_3.'<br>'; 
         }
+
+        DB::table('orders')->whereIn('id', $id_primer_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+        DB::table('orders')->whereIn('id', $id_dos_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+        DB::table('orders')->whereIn('id', $id_tres_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+
+        DB::table('orders')->whereIn('id', $id_primer_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+        DB::table('orders')->whereIn('id', $id_dos_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+        DB::table('orders')->whereIn('id', $id_tres_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+
     }
 
 }
