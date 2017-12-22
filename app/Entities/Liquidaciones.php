@@ -2,7 +2,7 @@
 namespace App\Entities;
 
 use Illuminate\Database\Eloquent\Model;
-use App/Entities/Tercero;
+use Appe\DEntitiese\DTercero;
 
 class Liquidaciones extends Model {
 

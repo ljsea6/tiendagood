@@ -57,14 +57,18 @@ class LiquidacionesController extends Controller {
         $vendedores_liquidados = array();
 
 
-
+                $puntos = DB::raw("(select fpl_dir(t.id::integer,0)) as puntos_propios");
 
 //->where('t.id', 41)
 //->limit(41)
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
-
+        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)
+       // ->innerjoin('orders', 'orders.tercero_id', '=', 't.id')
+        ->select('t.id', 't.tipo_id', $puntos)->orderByRaw('id ASC')->get();
 
         foreach ($vendedores as $value_vendedor) {
+        
+         if($value_vendedor->puntos_propios >= 1){
+            
 
             $points_level_1 = 0;
             $points_level_2 = 0;
@@ -168,6 +172,7 @@ class LiquidacionesController extends Controller {
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel uno con sus amparados    fin                                          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
+
                     if($n->financial_status == 'paid' && $n->cancelled_at == '' && $n->comisionada == '' && $n->liquidacion_id == ''){
 
                         $points_level_1 +=  $n->points;
@@ -187,8 +192,9 @@ class LiquidacionesController extends Controller {
                             'updated_at' => Carbon::now()
                         ]);
 
-
                     }
+
+
                     //  $gente_nivel_1[] = array('id' => $n->id);
                 }
             }
@@ -390,7 +396,9 @@ class LiquidacionesController extends Controller {
             /*                                                     terceros y ordenes del nivel tres con sus amparados    fin                                         */
             /*   ----------------------------------------------------------------------------------------------------------------------------------------------------------  */
 
-            //echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos: '.$points_level_3.' - comision: '.$comision_valor_3.'<br>';
+            //echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos:  '.$points_level_3.' - comision: '.$comision_valor_3.'<br>';
+
+           }
         }
 
         DB::table('orders')->whereIn('id', $id_primer_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
