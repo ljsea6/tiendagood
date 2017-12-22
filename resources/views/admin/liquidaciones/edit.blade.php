@@ -148,7 +148,7 @@
             $(".good").val('' + G + '');
             $(".mercando").val('' + M + '');
 
-            return "G " + G + " % " + " " + M + " M";
+            return "G " + " % " + " M";
         }
 
         $("form").submit(function(e){

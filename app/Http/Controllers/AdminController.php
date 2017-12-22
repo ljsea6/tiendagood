@@ -766,30 +766,37 @@ class AdminController extends Controller {
                 $total = 0;
                 $liquidacion = Liquidacion::with('detalles')->find($send->id);
                 foreach ($liquidacion->detalles as $detalle) {
-                    $total = $total + $detalle->valor_comision;
+                    if ($detalle->tercero_id == $send->tercero) {
+                        $total = $total + (float)$detalle->valor_comision;
+                    }
+
                 }
 
-                return '<div align=center>' . number_format($total*0.7) . '</div>';
+                return '<div align=center>' . number_format((float)$total*0.7) . '</div>';
             })
             ->addColumn('bono', function ($send) {
 
                 $total = 0;
                 $liquidacion = Liquidacion::with('detalles')->find($send->id);
                 foreach ($liquidacion->detalles as $detalle) {
-                    $total = $total + $detalle->valor_comision;
+                    if ($detalle->tercero_id == $send->tercero) {
+                        $total = $total + (float)$detalle->valor_comision;
+                    }
                 }
 
-                return '<div align=center>' . number_format($total*0.3) . '</div>';
+                return '<div align=center>' . number_format((float)$total*0.3) . '</div>';
             })
             ->addColumn('total', function ($send) {
 
                 $total = 0;
                 $liquidacion = Liquidacion::with('detalles')->find($send->id);
                 foreach ($liquidacion->detalles as $detalle) {
-                    $total = $total + $detalle->valor_comision;
+                    if ($detalle->tercero_id == $send->tercero) {
+                        $total = $total + (float)$detalle->valor_comision;
+                    }
                 }
 
-                return '<div align=center>' . number_format($total) . '</div>';
+                return '<div align=center>' . number_format((float)$total) . '</div>';
             })
             ->addColumn('edit', function ($send) {
                 return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
@@ -801,10 +808,13 @@ class AdminController extends Controller {
 
     public function editar_liquidaciones($id)
     {
+        $tercero = currentUser()->id;
         $total = 0;
         $liquidacion = Liquidacion::with('detalles')->find($id);
         foreach ($liquidacion->detalles as $detalle) {
-            $total = $total + $detalle->valor_comision;
+            if ($detalle->tercero_id == $tercero) {
+                $total = $total + (float)$detalle->valor_comision;
+            }
         }
 
         $consignacion  = $total * 0.7;
@@ -847,15 +857,14 @@ class AdminController extends Controller {
 
                     if (count($liquidacion_tercero) == 0) {
 
-                        $liquidacion_tercero_id = DB::table('liquidaciones_terceros')->insertGetId(
+                       /* $liquidacion_tercero_id = DB::table('liquidaciones_terceros')->insertGetId(
                             [
                                 'tercero_id' => $tercero->id,
                                 'liquidacion_id' =>  $liquidacion,
                                 'created_at' =>  Carbon::now(),
                                 'updated_at' =>  Carbon::now(),
                             ]
-                        );
-
+                        );*/
 
                         $res_good = $client->request('GET',  $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
                         $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
@@ -872,6 +881,43 @@ class AdminController extends Controller {
                         if (count($results_good['customers']) == 1) {
 
 
+                            try {
+
+                                $send = [
+                                    'form_params' => [
+                                        'gift_card' => [
+                                            "note" => "This is a note",
+                                            "initial_value" => $good,
+                                            "template_suffix" => "gift_cards.birthday.liquid",
+                                            "currency" => "COP",
+                                            "customer_id" => $results_good['customers'][0]['id'],
+                                        ]
+                                    ]
+                                ];
+
+                               /* if ($good > 0) {
+                                    $res = $client->request('post', $api_url_good . '/admin/gift_cards.json', $send);
+
+                                   $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                   $x = explode('/', $headers[0]);
+                                   $diferencia = $x[1] - $x[0];
+
+                                   if ($diferencia < 10) {
+                                       usleep(500000);
+                                   }
+
+                                   $result = json_decode($res->getBody(), true);
+                                }*/
+
+
+
+                            } catch (ClientException $e) {
+
+                                if ($e->hasResponse()) {
+
+                                    return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Tienda Good, pongase en contacto con servicio al cliente.!']);
+                                }
+                            }
 
                             $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
 
@@ -887,6 +933,44 @@ class AdminController extends Controller {
                             $results_mercando = json_decode($res_mercando->getBody(), true);
 
                             if (count($results_mercando['customers']) == 1) {
+
+                                try {
+
+                                    $send = [
+                                        'form_params' => [
+                                            'gift_card' => [
+                                                "note" => "This is a note",
+                                                "initial_value" => $mercando,
+                                                "template_suffix" => "gift_cards.birthday.liquid",
+                                                "currency" => "COP",
+                                                "customer_id" => $results_mercando['customers'][0]['id'],
+                                            ]
+                                        ]
+                                    ];
+
+                                    /*if ($mercando > 0) {
+                                        $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
+
+                                         $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                         $x = explode('/', $headers[0]);
+                                         $diferencia = $x[1] - $x[0];
+
+                                         if ($diferencia < 10) {
+                                             usleep(500000);
+                                         }
+
+                                         $result = json_decode($res->getBody(), true);
+                                    }*/
+
+
+
+                                } catch (ClientException $e) {
+
+                                    if ($e->hasResponse()) {
+
+                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando, pongase en contacto con servicio al cliente.!']);
+                                    }
+                                }
 
                             }
 
@@ -924,24 +1008,57 @@ class AdminController extends Controller {
                                         usleep(20000000);
                                     }
 
+                                    $r = json_decode($res->getBody(), true);
+
+                                    try {
+
+                                        $send = [
+                                            'form_params' => [
+                                                'gift_card' => [
+                                                    "note" => "This is a note",
+                                                    "initial_value" => $mercando,
+                                                    "template_suffix" => "gift_cards.birthday.liquid",
+                                                    "currency" => "COP",
+                                                    "customer_id" => $r['customer']['id'],
+                                                ]
+                                            ]
+                                        ];
+
+                                        /*if ($mercando > 0) {
+                                            $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
+
+                                             $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                             $x = explode('/', $headers[0]);
+                                             $diferencia = $x[1] - $x[0];
+
+                                             if ($diferencia < 10) {
+                                                 usleep(500000);
+                                             }
+
+                                             $result = json_decode($res->getBody(), true);
+                                        }*/
+
+                                    } catch (ClientException $e) {
+
+                                        if ($e->hasResponse()) {
+
+                                            return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando porque aparece sin usuario en esta plataforma, pongase en contacto con servicio al cliente.!']);
+                                        }
+                                    }
+
                                 } catch (ClientException $e) {
 
                                     if ($e->hasResponse()) {
 
                                         $err = json_decode(($e->getResponse()->getBody()), true);
 
-                                        foreach ($err['errors'] as $key => $value) {
-
-
-                                        }
+                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando porque aparece sin usuario en esta plataforma, pongase en contacto con servicio al cliente.!']);
                                     }
                                 }
                             }
                         }
 
                         if (count($results_good['customers']) == 0) {
-
-                            $this->info('El usuario no existe en good');
 
                             $find = Tercero::with('ciudad')->find($tercero->id);
 
@@ -979,6 +1096,42 @@ class AdminController extends Controller {
 
                                 $results_good = json_decode($resa->getBody(), true);
 
+                                try {
+
+                                    $send = [
+                                        'form_params' => [
+                                            'gift_card' => [
+                                                "note" => "This is a note",
+                                                "initial_value" => $good,
+                                                "template_suffix" => "gift_cards.birthday.liquid",
+                                                "currency" => "COP",
+                                                "customer_id" =>   $results_good['customer']['id'],
+                                            ]
+                                        ]
+                                    ];
+
+                                    /*if ($good > 0) {
+                                        $res = $client->request('post', $api_url_good . '/admin/gift_cards.json', $send);
+
+                                         $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                         $x = explode('/', $headers[0]);
+                                         $diferencia = $x[1] - $x[0];
+
+                                         if ($diferencia < 10) {
+                                             usleep(500000);
+                                         }
+
+                                         $result = json_decode($res->getBody(), true);
+                                    }*/
+
+                                } catch (ClientException $e) {
+
+                                    if ($e->hasResponse()) {
+
+                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Tienda Good porque aparece sin usuario en esta plataforma, pongase en contacto con servicio al cliente.!']);
+                                    }
+                                }
+
                                 $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
 
                                 $headers =  $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
@@ -992,57 +1145,49 @@ class AdminController extends Controller {
 
                                 $results_mercando = json_decode($res_mercando->getBody(), true);
 
-                                if (count($results_mercando['customers']) == 1) {
-
-                                    $this->info('El usuario existe en mercando');
-
-                                    $a = DB::table('terceros_tiendas')
-                                        ->where('tercero_id', $tercero->id)
-                                        ->where('customer_id_good', $results_good['customers'][0]['id'])
-                                        ->where('customer_id_mercando', $results_mercando['customers'][0]['id'])
-                                        ->first();
-
-                                    if (count($a) == 0) {
-
-                                        DB::table('terceros_tiendas')->insertGetId(
-                                            [
-                                                'tercero_id' => $tercero->id,
-                                                'customer_id_good' =>  $results_good['customers'][0]['id'],
-                                                'customer_id_mercando' => $results_mercando['customers'][0]['id'],
-                                            ]
-                                        );
-                                    }
+                                if (count($res_mercando['customers']) == 1) {
 
                                     try {
-                                        $res = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] .'.json', array(
-                                                'form_params' => array(
-                                                    'customer' => array(
-                                                        "email" => $tercero->email,
-                                                    )
-                                                )
-                                            )
-                                        );
 
-                                        $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                        $x = explode('/', $headers[0]);
-                                        $diferencia = $x[1] - $x[0];
-                                        if ($diferencia < 20) {
-                                            usleep(10000000);
-                                        }
+                                        $send = [
+                                            'form_params' => [
+                                                'gift_card' => [
+                                                    "note" => "This is a note",
+                                                    "initial_value" => $mercando,
+                                                    "template_suffix" => "gift_cards.birthday.liquid",
+                                                    "currency" => "COP",
+                                                    "customer_id" => $results_mercando['customers'][0]['id'],
+                                                ]
+                                            ]
+                                        ];
+
+                                        /*if ($mercando > 0) {
+                                            $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
+
+                                             $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                             $x = explode('/', $headers[0]);
+                                             $diferencia = $x[1] - $x[0];
+
+                                             if ($diferencia < 10) {
+                                                 usleep(500000);
+                                             }
+
+                                             $result = json_decode($res->getBody(), true);
+                                        }*/
+
+
 
                                     } catch (ClientException $e) {
 
                                         if ($e->hasResponse()) {
 
-                                            $this->info('Problemas al actualizar el email del usuario en good');
+                                            return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando, pongase en contacto con servicio al cliente.!']);
                                         }
                                     }
 
                                 }
 
-                                if (count($results_mercando['customers']) == 0) {
-
-                                    $this->info('El usuario no existe en mercando, se creará.');
+                                if (count($res_mercando['customers']) == 0) {
 
                                     try {
 
@@ -1076,22 +1221,42 @@ class AdminController extends Controller {
                                             usleep(20000000);
                                         }
 
-                                        $customer = json_decode($res->getBody(), true);
+                                        $r = json_decode($res->getBody(), true);
 
-                                        $b = DB::table('terceros_tiendas')
-                                            ->where('tercero_id', $tercero->id)
-                                            ->where('customer_id_good', $results_good['customers'][0]['id'])
-                                            ->where('customer_id_mercando', $customer['customer']['id'])
-                                            ->first();
+                                        try {
 
-                                        if (count($b) == 0) {
-                                            DB::table('terceros_tiendas')->insertGetId(
-                                                [
-                                                    'tercero_id' => $tercero->id,
-                                                    'customer_id_good' =>  $results_good['customers'][0]['id'],
-                                                    'customer_id_mercando' =>  $customer['customer']['id'],
+                                            $send = [
+                                                'form_params' => [
+                                                    'gift_card' => [
+                                                        "note" => "This is a note",
+                                                        "initial_value" => $mercando,
+                                                        "template_suffix" => "gift_cards.birthday.liquid",
+                                                        "currency" => "COP",
+                                                        "customer_id" => $r['customer']['id'],
+                                                    ]
                                                 ]
-                                            );
+                                            ];
+
+                                            /*if ($mercando > 0) {
+                                                $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
+
+                                                 $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                                 $x = explode('/', $headers[0]);
+                                                 $diferencia = $x[1] - $x[0];
+
+                                                 if ($diferencia < 10) {
+                                                     usleep(500000);
+                                                 }
+
+                                                 $result = json_decode($res->getBody(), true);
+                                            }*/
+
+                                        } catch (ClientException $e) {
+
+                                            if ($e->hasResponse()) {
+
+                                                return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando porque aparece sin usuario en esta plataforma, pongase en contacto con servicio al cliente.!']);
+                                            }
                                         }
 
                                     } catch (ClientException $e) {
@@ -1100,11 +1265,7 @@ class AdminController extends Controller {
 
                                             $err = json_decode(($e->getResponse()->getBody()), true);
 
-                                            foreach ($err['errors'] as $key => $value) {
-
-                                                $this->info('Problemas al crear el usuario en mercando' .  $key . ' ' . $value[0]);
-
-                                            }
+                                            return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando porque aparece sin usuario en esta plataforma, pongase en contacto con servicio al cliente.!']);
                                         }
                                     }
                                 }
@@ -1114,32 +1275,20 @@ class AdminController extends Controller {
 
                                 $err = json_decode(($e->getResponse()->getBody()), true);
 
-                                foreach ($err['errors'] as $key => $value) {
-
-                                    echo $key . ' ' . $value[0] . "\n";
-                                }
+                                return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, acaba de suceder un error al tratar de generar sus bonos, comuniquese con atención al cliente, por favor!']);
                             }
                         }
-                        return response()->json([
-                            'good' =>$good,
-                            'mercando' =>$mercando,
-                            'bono' => $bono
-                        ]);
+                       
 
                     } else {
 
                         return redirect()->back()->withErrors(['errors' => '¡La liquidación ya existe en la tabla liquidaciones_terceros!']);
                     }
 
-
-
-
-
                 } else {
 
                     return redirect()->back()->withErrors(['errors' => '¡El usuario no está activo o no existe en nuestros registros!']);
                 }
-
             }
 
         } else {
