@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\LiquidacionTercero;
 use App\Traits\OrderCancelled;
 use App\Traits\OrderCancelledMercando;
 use App\Traits\OrderPaid;
@@ -31,7 +32,7 @@ use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ClientException;
 use App\Traits\Liquidar;
-use App\Transactions;
+use App\LiquidacionDetalle;
 
 class OrdersController extends Controller {
 
@@ -3443,6 +3444,73 @@ class OrdersController extends Controller {
     public function contador()
     {
 
+         $detalles = DB::table('liquidaciones_detalles as ld')
+             ->join('terceros as t', 't.id', '=', 'ld.tercero_id')
+             ->select(DB::raw('ld.tercero_id, ld.liquidacion_id, sum(ld.valor_comision) as comision'))
+             ->groupBy('ld.tercero_id', 'ld.liquidacion_id')
+             ->get();
+
+         foreach ($detalles as $detalle) {
+
+             $tercero = Tercero::with('tipo')->find($detalle->tercero_id);
+             $comision_inicial = (float)$detalle->comision;
+             $comision_maxima = (float)$tercero->tipo->comision_maxima;
+
+
+             $search = LiquidacionTercero::where('liquidacion_id', $detalle->liquidacion_id)
+                 ->where('tercero_id', $tercero->id)
+                 ->first();
+
+             if (count($search) == 0) {
+
+                 if ($comision_maxima == 0) {
+
+                     DB::table('liquidaciones_terceros')->insert([
+                         'liquidacion_id' => $detalle->liquidacion_id,
+                         'tercero_id' => $tercero->id,
+                         'valor_comision' => $comision_inicial,
+                         'valor_comision_paga' => $comision_inicial,
+                         'created_at' => Carbon::now(),
+                         'updated_at' => Carbon::now()
+                     ]);
+
+
+                 } else {
+
+                     if ($comision_inicial > $comision_maxima ) {
+
+                         $diferencia = (float)$comision_inicial - (float)$comision_maxima;
+
+                         $total = (float)$comision_inicial - (float)$diferencia;
+
+                         DB::table('liquidaciones_terceros')->insert([
+                             'liquidacion_id' => $detalle->liquidacion_id,
+                             'tercero_id' => $tercero->id,
+                             'valor_comision' => $comision_inicial,
+                             'valor_comision_paga' => $total,
+                             'created_at' => Carbon::now(),
+                             'updated_at' => Carbon::now()
+                         ]);
+
+                     } else {
+
+                         DB::table('liquidaciones_terceros')->insert([
+                             'liquidacion_id' => $detalle->liquidacion_id,
+                             'tercero_id' => $tercero->id,
+                             'valor_comision' => $comision_inicial,
+                             'valor_comision_paga' => $comision_inicial,
+                             'created_at' => Carbon::now(),
+                             'updated_at' => Carbon::now()
+                         ]);
+
+                     }
+                 }
+
+             }
+
+         }
+
+        return response()->json('Terminado.');
 
         /* $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
           $client = new \GuzzleHttp\Client();

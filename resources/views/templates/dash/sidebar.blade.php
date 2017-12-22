@@ -17,7 +17,6 @@
                     <span class="nav-text">Actualizar mis datos</span>
                 </a>
             </li>
-{{--
 
            <li class="has-submenu">
                 <a href="{{ route('admin.liquidaciones.index') }}" class="animsition-link text-left">
@@ -26,7 +25,7 @@
                     <span class="nav-text">Mis Liquidaciones</span>
                 </a>
             </li>
---}}
+
 
             
             @role('dirsac|administrador|servicio.al.cliente')
