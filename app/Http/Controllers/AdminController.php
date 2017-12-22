@@ -715,7 +715,7 @@ class AdminController extends Controller {
                                     return '<div align=left>' . number_format($send->puntos) . '</div>';
                                 })
                                 ->addColumn('referidos', function ($send) {
-                                    return '<div align=left>' . number_format($send->puntos) . '</div>';
+                                    return '<div align=left>' . number_format($send->referidos) . '</div>';
                                 })
                                 ->make(true);
             }
@@ -895,7 +895,7 @@ class AdminController extends Controller {
                                     ]
                                 ];
 
-                               /* if ($good > 0) {
+                                if ($good > 0) {
                                     $res = $client->request('post', $api_url_good . '/admin/gift_cards.json', $send);
 
                                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
@@ -907,7 +907,7 @@ class AdminController extends Controller {
                                    }
 
                                    $result = json_decode($res->getBody(), true);
-                                }*/
+                                }
 
 
 
@@ -1278,7 +1278,6 @@ class AdminController extends Controller {
                                 return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, acaba de suceder un error al tratar de generar sus bonos, comuniquese con atención al cliente, por favor!']);
                             }
                         }
-                       
 
                     } else {
 
