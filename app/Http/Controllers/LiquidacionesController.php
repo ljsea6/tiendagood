@@ -15,9 +15,7 @@ use App\Http\Controllers\Controller;
 
 class LiquidacionesController extends Controller {
 
-
     public function get_liquidar() {
-
         return view('admin.liquidaciones.liquidar');
     }
 
@@ -59,14 +57,18 @@ class LiquidacionesController extends Controller {
         $vendedores_liquidados = array();
 
 
-
+                $puntos = DB::raw("(select fpl_dir(t.id::integer,0)) as puntos_propios");
 
 //->where('t.id', 41)
 //->limit(41)
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
-
+        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)
+       // ->innerjoin('orders', 'orders.tercero_id', '=', 't.id')
+        ->select('t.id', 't.tipo_id', $puntos)->orderByRaw('id ASC')->get();
 
         foreach ($vendedores as $value_vendedor) {
+        
+         if($value_vendedor->puntos_propios >= 1){
+            
 
             $points_level_1 = 0;
             $points_level_2 = 0;
@@ -170,6 +172,7 @@ class LiquidacionesController extends Controller {
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel uno con sus amparados    fin                                          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
+
                     if($n->financial_status == 'paid' && $n->cancelled_at == '' && $n->comisionada == '' && $n->liquidacion_id == ''){
 
                         $points_level_1 +=  $n->points;
@@ -189,8 +192,9 @@ class LiquidacionesController extends Controller {
                             'updated_at' => Carbon::now()
                         ]);
 
-
                     }
+
+
                     //  $gente_nivel_1[] = array('id' => $n->id);
                 }
             }
@@ -392,7 +396,9 @@ class LiquidacionesController extends Controller {
             /*                                                     terceros y ordenes del nivel tres con sus amparados    fin                                         */
             /*   ----------------------------------------------------------------------------------------------------------------------------------------------------------  */
 
-            //echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos: '.$points_level_3.' - comision: '.$comision_valor_3.'<br>';
+            //echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos:  '.$points_level_3.' - comision: '.$comision_valor_3.'<br>';
+
+           }
         }
 
         DB::table('orders')->whereIn('id', $id_primer_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
@@ -404,5 +410,44 @@ class LiquidacionesController extends Controller {
         DB::table('orders')->whereIn('id', $id_tres_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
 
     }
+
+    public function liquidaciones_general() {
+        return view('admin.liquidaciones.liquidaciones_general');
+    }
+
+    public function liquidaciones_datos() {
+
+        $liquidaciones = DB::table('liquidaciones')
+                ->select('liquidaciones.id as liqui_id','nombres','fecha_inicio','fecha_final','fecha_liquidacion')
+                ->join('terceros', 'terceros.id', '=', 'liquidaciones.id')
+                ->orderByRaw('liquidaciones.id DESC')
+                ->get();
+
+        $send = collect($liquidaciones);
+
+        return Datatables::of($send)
+                        ->addColumn('id', function ($send) {
+                            return '<div align=left>' . $send->liqui_id . '</div>';
+                        })
+                        ->addColumn('identificacion', function ($send) {
+                            return '<div align=left>' . $send->nombres . '</div>';
+                        })
+                        ->addColumn('nombres', function ($send) {
+                            return '<div align=left>' . $send->fecha_inicio . '</div>';
+                        })
+                        ->addColumn('apellidos', function ($send) {
+                            return '<div align=left>' . $send->fecha_final . '</div>';
+                        })
+                        ->addColumn('email', function ($send) {
+                            return '<div align=left>' . $send->fecha_liquidacion . '</div>';
+                        })
+                        ->addColumn('excel', function ($send) {
+                            return '<div align=center><a href="' . route('admin.terceros.edit', $send->liqui_id) . '"  class="btn btn-warning btn-xs">
+                        Excel
+                </a></div>';
+                        })
+                        ->make(true);
+    }
+
 
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\LiquidacionDetalle;
-use App\LiquidacionTercero;
 use Carbon\Carbon;
 use DB;
 use Mail;
@@ -715,7 +714,7 @@ class AdminController extends Controller {
                                     return '<div align=left>' . number_format($send->puntos) . '</div>';
                                 })
                                 ->addColumn('referidos', function ($send) {
-                                    return '<div align=left>' . number_format($send->referidos) . '</div>';
+                                    return '<div align=left>' . number_format($send->puntos) . '</div>';
                                 })
                                 ->make(true);
             }
@@ -738,7 +737,7 @@ class AdminController extends Controller {
 
         $liquidacion = DB::select(
             DB::raw(
-            "
+                "
                 SELECT DISTINCT t.id as tercero, l.*
                 FROM terceros t
                 INNER JOIN liquidaciones_detalles ld ON ld.tercero_id = t.id
@@ -857,7 +856,7 @@ class AdminController extends Controller {
 
                     if (count($liquidacion_tercero) == 0) {
 
-                       /* $liquidacion_tercero_id = DB::table('liquidaciones_terceros')->insertGetId(
+                        /* $liquidacion_tercero_id = DB::table('liquidaciones_terceros')->insertGetId(
                             [
                                 'tercero_id' => $tercero->id,
                                 'liquidacion_id' =>  $liquidacion,
@@ -866,62 +865,64 @@ class AdminController extends Controller {
                             ]
                         );*/
 
-                        $res_good = $client->request('GET',  $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
-                        $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                        $x = explode('/', $headers[0]);
-                        $diferencia = $x[1] - $x[0];
+                        if ($good != 0 && $mercando == 0) {
 
-                        if ($diferencia < 20) {
+                            $res_good = $client->request('GET',  $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
+                            $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                            $x = explode('/', $headers[0]);
+                            $diferencia = $x[1] - $x[0];
 
-                            usleep(20000000);
-                        }
+                            if ($diferencia < 20) {
 
-                        $results_good = json_decode($res_good->getBody(), true);
+                                usleep(20000000);
+                            }
 
-                        if (count($results_good['customers']) == 1) {
+                            $results_good = json_decode($res_good->getBody(), true);
 
+                            if (count($results_good['customers']) == 1) {
 
-                            try {
+                                try {
 
-                                $send = [
-                                    'form_params' => [
-                                        'gift_card' => [
-                                            "note" => "This is a note",
-                                            "initial_value" => $good,
-                                            "template_suffix" => "gift_cards.birthday.liquid",
-                                            "currency" => "COP",
-                                            "customer_id" => $results_good['customers'][0]['id'],
+                                    $send = [
+                                        'form_params' => [
+                                            'gift_card' => [
+                                                "note" => "This is a note",
+                                                "initial_value" => $good,
+                                                "template_suffix" => "gift_cards.birthday.liquid",
+                                                "currency" => "COP",
+                                                "customer_id" => $results_good['customers'][0]['id'],
+                                            ]
                                         ]
-                                    ]
-                                ];
+                                    ];
 
-                                if ($good > 0) {
                                     $res = $client->request('post', $api_url_good . '/admin/gift_cards.json', $send);
 
-                                   $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                   $x = explode('/', $headers[0]);
-                                   $diferencia = $x[1] - $x[0];
+                                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                    $x = explode('/', $headers[0]);
+                                    $diferencia = $x[1] - $x[0];
 
-                                   if ($diferencia < 10) {
-                                       usleep(500000);
-                                   }
+                                    if ($diferencia < 10) {
+                                        usleep(500000);
+                                    }
 
-                                   $result = json_decode($res->getBody(), true);
-                                }
-
+                                    $result = json_decode($res->getBody(), true);
 
 
-                            } catch (ClientException $e) {
+                                } catch (ClientException $e) {
 
-                                if ($e->hasResponse()) {
+                                    if ($e->hasResponse()) {
 
-                                    return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Tienda Good, pongase en contacto con servicio al cliente.!']);
+                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Tienda Good, pongase en contacto con servicio al cliente.!']);
+                                    }
                                 }
                             }
 
-                            $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
+                        }
 
-                            $headers =  $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                        if($good == 0 && $mercando != 0){
+
+                            $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
+                            $headers = $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
                             $x = explode('/', $headers[0]);
                             $diferencia = $x[1] - $x[0];
 
@@ -940,7 +941,7 @@ class AdminController extends Controller {
                                         'form_params' => [
                                             'gift_card' => [
                                                 "note" => "This is a note",
-                                                "initial_value" => $mercando,
+                                                "initial_value" => $good,
                                                 "template_suffix" => "gift_cards.birthday.liquid",
                                                 "currency" => "COP",
                                                 "customer_id" => $results_mercando['customers'][0]['id'],
@@ -948,19 +949,19 @@ class AdminController extends Controller {
                                         ]
                                     ];
 
-                                    /*if ($mercando > 0) {
-                                        $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
 
-                                         $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                         $x = explode('/', $headers[0]);
-                                         $diferencia = $x[1] - $x[0];
+                                    $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
 
-                                         if ($diferencia < 10) {
-                                             usleep(500000);
-                                         }
+                                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                    $x = explode('/', $headers[0]);
+                                    $diferencia = $x[1] - $x[0];
 
-                                         $result = json_decode($res->getBody(), true);
-                                    }*/
+                                    if ($diferencia < 10) {
+                                        usleep(500000);
+                                    }
+
+                                    $result = json_decode($res->getBody(), true);
+
 
 
 
@@ -974,127 +975,27 @@ class AdminController extends Controller {
 
                             }
 
-                            if (count($results_mercando['customers']) == 0) {
-
-                                try {
-
-                                    $res = $client->request('post', $api_url_mercando . '/admin/customers.json', array(
-
-                                            'form_params' => array(
-                                                'customer' => array(
-                                                    'first_name' => strtolower( $results_good['customers'][0]['first_name']),
-                                                    'last_name' => strtolower( $results_good['customers'][0]['last_name']),
-                                                    'email' => strtolower($results_good['customers'][0]['email']),
-                                                    'verified_email' => true,
-                                                    'phone' =>  $results_good['customers'][0]['phone'],
-                                                    'addresses' => [
-                                                        $results_good['customers'][0]['addresses'],
-                                                    ],
-                                                    "password" => $tercero->identificacion,
-                                                    "password_confirmation" => $tercero->identificacion,
-                                                    'send_email_invite' => false,
-                                                    'send_email_welcome' => false
-                                                )
-                                            )
-                                        )
-                                    );
-
-                                    $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                    $x = explode('/', $headers[0]);
-                                    $diferencia = $x[1] - $x[0];
-
-                                    if ($diferencia < 20) {
-
-                                        usleep(20000000);
-                                    }
-
-                                    $r = json_decode($res->getBody(), true);
-
-                                    try {
-
-                                        $send = [
-                                            'form_params' => [
-                                                'gift_card' => [
-                                                    "note" => "This is a note",
-                                                    "initial_value" => $mercando,
-                                                    "template_suffix" => "gift_cards.birthday.liquid",
-                                                    "currency" => "COP",
-                                                    "customer_id" => $r['customer']['id'],
-                                                ]
-                                            ]
-                                        ];
-
-                                        /*if ($mercando > 0) {
-                                            $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
-
-                                             $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                             $x = explode('/', $headers[0]);
-                                             $diferencia = $x[1] - $x[0];
-
-                                             if ($diferencia < 10) {
-                                                 usleep(500000);
-                                             }
-
-                                             $result = json_decode($res->getBody(), true);
-                                        }*/
-
-                                    } catch (ClientException $e) {
-
-                                        if ($e->hasResponse()) {
-
-                                            return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando porque aparece sin usuario en esta plataforma, pongase en contacto con servicio al cliente.!']);
-                                        }
-                                    }
-
-                                } catch (ClientException $e) {
-
-                                    if ($e->hasResponse()) {
-
-                                        $err = json_decode(($e->getResponse()->getBody()), true);
-
-                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando porque aparece sin usuario en esta plataforma, pongase en contacto con servicio al cliente.!']);
-                                    }
-                                }
-                            }
                         }
 
-                        if (count($results_good['customers']) == 0) {
+                        if($good != 0 && $mercando != 0) {
 
-                            $find = Tercero::with('ciudad')->find($tercero->id);
+                            $g = true;
+                            $m = true;
 
-                            try {
+                            $res_good = $client->request('GET',  $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
+                            $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                            $x = explode('/', $headers[0]);
+                            $diferencia = $x[1] - $x[0];
 
-                                $resa = $client->request('post', $api_url_good . '/admin/customers.json', array(
-                                        'form_params' => array(
-                                            'customer' => array(
-                                                'first_name' => strtolower($find->nombres),
-                                                'last_name' => strtolower($find->apellidos),
-                                                'email' => strtolower($find->email),
-                                                'verified_email' => true,
-                                                'phone' => $find->telefono,
-                                                'addresses' => [
+                            if ($diferencia < 20) {
 
-                                                    [
-                                                        'address1' => strtolower($find->direccion),
-                                                        'city' => strtolower($find->ciudad->nombre),
-                                                        'province' => '',
-                                                        "zip" => '',
-                                                        'first_name' => strtolower($find->nombres),
-                                                        'last_name' => strtolower($find->apellidos),
-                                                        'country' => 'CO'
-                                                    ],
+                                usleep(20000000);
+                            }
 
-                                                ],
-                                                "password" => $find->identificacion,
-                                                "password_confirmation" =>  $find->identificacion,
-                                                'send_email_invite' => false,
-                                                'send_email_welcome' => false
-                                            )
-                                        )
-                                    )
-                                );
+                            $results_good = json_decode($res_good->getBody(), true);
 
-                                $results_good = json_decode($resa->getBody(), true);
+                            if (count($results_good['customers']) == 1) {
+
 
                                 try {
 
@@ -1105,188 +1006,96 @@ class AdminController extends Controller {
                                                 "initial_value" => $good,
                                                 "template_suffix" => "gift_cards.birthday.liquid",
                                                 "currency" => "COP",
-                                                "customer_id" =>   $results_good['customer']['id'],
+                                                "customer_id" => $results_good['customers'][0]['id'],
                                             ]
                                         ]
                                     ];
 
-                                    /*if ($good > 0) {
-                                        $res = $client->request('post', $api_url_good . '/admin/gift_cards.json', $send);
+                                    $res = $client->request('post', $api_url_good . '/admin/gift_cards.json', $send);
 
-                                         $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                         $x = explode('/', $headers[0]);
-                                         $diferencia = $x[1] - $x[0];
+                                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                    $x = explode('/', $headers[0]);
+                                    $diferencia = $x[1] - $x[0];
 
-                                         if ($diferencia < 10) {
-                                             usleep(500000);
-                                         }
+                                    if ($diferencia < 10) {
+                                        usleep(500000);
+                                    }
 
-                                         $result = json_decode($res->getBody(), true);
-                                    }*/
+                                    $result = json_decode($res->getBody(), true);
 
                                 } catch (ClientException $e) {
 
                                     if ($e->hasResponse()) {
 
-                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Tienda Good porque aparece sin usuario en esta plataforma, pongase en contacto con servicio al cliente.!']);
+                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Tienda Good, pongase en contacto con servicio al cliente.!']);
                                     }
                                 }
 
-                                $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
+                            } else {
+                                $g = false;
+                            }
 
-                                $headers =  $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                $x = explode('/', $headers[0]);
-                                $diferencia = $x[1] - $x[0];
+                            $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
+                            $headers = $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                            $x = explode('/', $headers[0]);
+                            $diferencia = $x[1] - $x[0];
 
-                                if ($diferencia < 20) {
+                            if ($diferencia < 20) {
 
-                                    usleep(20000000);
-                                }
+                                usleep(20000000);
+                            }
 
-                                $results_mercando = json_decode($res_mercando->getBody(), true);
+                            $results_mercando = json_decode($res_mercando->getBody(), true);
 
-                                if (count($res_mercando['customers']) == 1) {
+                            if (count($results_mercando['customers']) == 1) {
 
-                                    try {
 
-                                        $send = [
-                                            'form_params' => [
-                                                'gift_card' => [
-                                                    "note" => "This is a note",
-                                                    "initial_value" => $mercando,
-                                                    "template_suffix" => "gift_cards.birthday.liquid",
-                                                    "currency" => "COP",
-                                                    "customer_id" => $results_mercando['customers'][0]['id'],
-                                                ]
+                                try {
+
+                                    $send = [
+                                        'form_params' => [
+                                            'gift_card' => [
+                                                "note" => "This is a note",
+                                                "initial_value" => $good,
+                                                "template_suffix" => "gift_cards.birthday.liquid",
+                                                "currency" => "COP",
+                                                "customer_id" => $results_mercando['customers'][0]['id'],
                                             ]
-                                        ];
-
-                                        /*if ($mercando > 0) {
-                                            $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
-
-                                             $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                             $x = explode('/', $headers[0]);
-                                             $diferencia = $x[1] - $x[0];
-
-                                             if ($diferencia < 10) {
-                                                 usleep(500000);
-                                             }
-
-                                             $result = json_decode($res->getBody(), true);
-                                        }*/
+                                        ]
+                                    ];
 
 
+                                    $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
 
-                                    } catch (ClientException $e) {
+                                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                                    $x = explode('/', $headers[0]);
+                                    $diferencia = $x[1] - $x[0];
 
-                                        if ($e->hasResponse()) {
-
-                                            return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando, pongase en contacto con servicio al cliente.!']);
-                                        }
+                                    if ($diferencia < 10) {
+                                        usleep(500000);
                                     }
 
-                                }
+                                    $result = json_decode($res->getBody(), true);
 
-                                if (count($res_mercando['customers']) == 0) {
 
-                                    try {
+                                } catch (ClientException $e) {
 
-                                        $res = $client->request('post', $api_url_mercando . '/admin/customers.json', array(
+                                    if ($e->hasResponse()) {
 
-                                                'form_params' => array(
-                                                    'customer' => array(
-                                                        'first_name' => strtolower( $results_good['customers'][0]['first_name']),
-                                                        'last_name' => strtolower( $results_good['customers'][0]['last_name']),
-                                                        'email' => strtolower($results_good['customers'][0]['email']),
-                                                        'verified_email' => true,
-                                                        'phone' =>  $results_good['customers'][0]['phone'],
-                                                        'addresses' => [
-                                                            $results_good['customers'][0]['addresses'],
-                                                        ],
-                                                        "password" => $tercero->identificacion,
-                                                        "password_confirmation" => $tercero->identificacion,
-                                                        'send_email_invite' => false,
-                                                        'send_email_welcome' => false
-                                                    )
-                                                )
-                                            )
-                                        );
-
-                                        $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                        $x = explode('/', $headers[0]);
-                                        $diferencia = $x[1] - $x[0];
-
-                                        if ($diferencia < 20) {
-
-                                            usleep(20000000);
-                                        }
-
-                                        $r = json_decode($res->getBody(), true);
-
-                                        try {
-
-                                            $send = [
-                                                'form_params' => [
-                                                    'gift_card' => [
-                                                        "note" => "This is a note",
-                                                        "initial_value" => $mercando,
-                                                        "template_suffix" => "gift_cards.birthday.liquid",
-                                                        "currency" => "COP",
-                                                        "customer_id" => $r['customer']['id'],
-                                                    ]
-                                                ]
-                                            ];
-
-                                            /*if ($mercando > 0) {
-                                                $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
-
-                                                 $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                                 $x = explode('/', $headers[0]);
-                                                 $diferencia = $x[1] - $x[0];
-
-                                                 if ($diferencia < 10) {
-                                                     usleep(500000);
-                                                 }
-
-                                                 $result = json_decode($res->getBody(), true);
-                                            }*/
-
-                                        } catch (ClientException $e) {
-
-                                            if ($e->hasResponse()) {
-
-                                                return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando porque aparece sin usuario en esta plataforma, pongase en contacto con servicio al cliente.!']);
-                                            }
-                                        }
-
-                                    } catch (ClientException $e) {
-
-                                        if ($e->hasResponse()) {
-
-                                            $err = json_decode(($e->getResponse()->getBody()), true);
-
-                                            return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando porque aparece sin usuario en esta plataforma, pongase en contacto con servicio al cliente.!']);
-                                        }
+                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando, pongase en contacto con servicio al cliente.!']);
                                     }
                                 }
 
-
-                            } catch (ClientException $e) {
-
-                                $err = json_decode(($e->getResponse()->getBody()), true);
-
-                                return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, acaba de suceder un error al tratar de generar sus bonos, comuniquese con atención al cliente, por favor!']);
+                            } else {
+                                $m = false;
                             }
                         }
-
-                    } else {
-
-                        return redirect()->back()->withErrors(['errors' => '¡La liquidación ya existe en la tabla liquidaciones_terceros!']);
                     }
 
-                } else {
+                    else {
 
-                    return redirect()->back()->withErrors(['errors' => '¡El usuario no está activo o no existe en nuestros registros!']);
+                        return redirect()->back()->withErrors(['errors' => '¡Liquidación existe!']);
+                    }
                 }
             }
 
@@ -1295,6 +1104,5 @@ class AdminController extends Controller {
             return redirect()->back()->withErrors(['errors' => '¡No se encontró la variable para good o mercando!']);
         }
     }
-
 
 }

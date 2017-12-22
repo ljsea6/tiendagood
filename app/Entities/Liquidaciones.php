@@ -2,6 +2,7 @@
 namespace App\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Appe\DEntitiese\DTercero;
 
 class Liquidaciones extends Model {
 
@@ -16,5 +17,10 @@ class Liquidaciones extends Model {
             'created_at',
             'updated_at'
 	]; 
+
+    public function usuario()
+    {
+        return $this->belongsTo(Tercero::class, 'usuario_id');
+    }
 
 }
