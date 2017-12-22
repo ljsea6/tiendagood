@@ -3440,6 +3440,67 @@ class OrdersController extends Controller {
 
     public function contador() {
 
+        $totalguardadas = 0;
+        $noguardadas = array();
+
+        $client = new \GuzzleHttp\Client();
+        $ordenes = Order::select('order_id', 'shop')
+                ->where('financial_status', 'paid')
+                ->get();
+
+        foreach ($ordenes as $orden) {
+            if ($orden->shop != NULL) {
+                if ($orden->shop == 'good') {
+                    $api = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+                } elseif ($orden->shop == 'mercando') {
+                    $api = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+                }
+
+                try {
+
+                    $shop = $client->request('GET', $api . "/admin/orders/$orden->order_id/transactions.json");
+                    $headers = $shop->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+                    if ($diferencia < 20) {
+                        usleep(20000000);
+                    }
+
+                    $results = json_decode($shop->getBody(), true);
+                    if (count($results['transactions']) > 0) {
+                        foreach ($results['transactions'] as $transaction) {
+                            $save = Transactions::saveTransaction($transaction, $orden->shop);
+                            if ($save) {
+                                $totalguardadas++;
+                            } else {
+                                $noguardadas[] = $transaction['id'];
+                            }
+                        }
+                    } else {
+                        return response()->json('No se encuentran transacciones por la orden con id ' + $orden->order_id);
+                    }
+                } catch (ClientException $e) {
+
+                    if ($e->hasResponse()) {
+                        $err = json_decode(($e->getResponse()->getBody()), true);
+                        return response()->json($err);
+                    }
+                }
+            }
+        }
+
+        $this->info("Se guardaron $totalguardadas transacciones en total");
+        if (count($noguardadas) > 0) {
+            return response()->json(count($noguardadas) . " transacciones no se guardaron:");
+            return response()->json("(" . implode(",", $noguardadas) . ")");
+        } else {
+            return response()->json('Proceso se ha realizado con exito');
+        }
+
+
+
+
+
         /* $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
           $client = new \GuzzleHttp\Client();
           $email = 'lgrestrepogutierrez@gmail.com';
