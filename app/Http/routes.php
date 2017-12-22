@@ -289,6 +289,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('liquidacion/liquidar', ['uses' => 'LiquidacionesController@post_liquidar', 'as' => 'liquidacion.liquidar.envio']);
         Route::get('liquidacion/liquidaciones_general', ['uses' => 'LiquidacionesController@liquidaciones_general', 'as' => 'liquidacion.liquidaciones_general']);
         Route::get('liquidacion/liquidaciones_general_datos', ['uses' => 'LiquidacionesController@liquidaciones_datos', 'as' => 'liquidacion.liquidaciones_general_datos']);
+        Route::get('liquidacion/liquidaciones_detalles_excel', ['uses' => 'LiquidacionesController@liquidaciones_detalles_excel', 'as' => 'liquidacion.detalles_excel']);
     });
 
     Route::group(['middleware' => 'role:logistica'], function () {
