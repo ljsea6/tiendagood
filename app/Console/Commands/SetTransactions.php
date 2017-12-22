@@ -57,8 +57,8 @@ class SetTransactions extends Command {
                 }
 
                 try {
+                    $shop = $client->request("GET", $api . "/admin/orders/" .$orden->order_id ."/transactions.json");
 
-                    $shop = $client->request('GET', $api . "/admin/orders/" .$orden->order_id ."/transactions.json");
                     $headers = $shop->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
                     $x = explode('/', $headers[0]);
                     $diferencia = $x[1] - $x[0];
@@ -69,11 +69,13 @@ class SetTransactions extends Command {
                     $results = json_decode($shop->getBody(), true);
                     if (count($results['transactions']) > 0) {
                         foreach ($results['transactions'] as $transaction) {
-                            $save = Transactions::saveTransaction($transaction, $orden->shop);
-                            if ($save) {
-                                $totalguardadas++;
-                            } else {
-                                $noguardadas[] = $transaction['id'];
+                            if ($transaction['amount'] != $orden->total_price) {
+                                $save = Transactions::saveTransaction($transaction, $orden->shop);
+                                if ($save) {
+                                    $totalguardadas++;
+                                } else {
+                                    $noguardadas[] = $transaction['id'];
+                                }
                             }
                         }
                     } else {
@@ -89,10 +91,10 @@ class SetTransactions extends Command {
             }
         }
 
-        $this->info("Se guardaron $totalguardadas transacciones en total");
+        $this->info('Se guardaron ' . $totalguardadas . ' transacciones en total');
         if (count($noguardadas) > 0) {
-            $this->info(count($noguardadas) . " transacciones no se guardaron:");
-            $this->info("(" . implode(",", $noguardadas) . ")");
+            $this->info(count($noguardadas) . ' transacciones no se guardaron correctamente:');
+            $this->info('(' . implode(',', $noguardadas) . ')');
         } else {
             $this->info('Proceso se ha realizado con exito');
         }

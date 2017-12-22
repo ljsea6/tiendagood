@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
 
+
+use Excel;
+
 class LiquidacionesController extends Controller {
 
     public function get_liquidar() {
@@ -409,6 +412,49 @@ class LiquidacionesController extends Controller {
         DB::table('orders')->whereIn('id', $id_dos_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
         DB::table('orders')->whereIn('id', $id_tres_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
 
+
+/*
+select ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.telefono, sum(ld.valor_comision), t2.nombre from liquidaciones_detalles ld
+  INNER JOIN terceros t ON t.id = ld.tercero_id
+  INNER JOIN tipos t2 ON t2.id = t.tipo_id
+group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.telefono, t2.nombre
+      ORDER BY t2.nombre, sum(ld.valor_comision)
+      */
+        $liquidaciones_detalles = DB::table('liquidaciones_detalles as ld')
+        ->join('terceros as t', 't.id', '=', 'ld.tercero_id')
+        ->join('tipos as t2', 't2.id', '=', 't.tipo_id')
+        ->where('ld.liquidacion_id', $liquidacion_id)
+        ->select('ld.tercero_id', DB::raw('sum(ld.valor_comision) as valor_comision'), 't2.nombre', 't2.id', 't2.comision_maxima','ld.liquidacion_id')
+        ->groupBy('ld.tercero_id', 't.identificacion', 't.nombres', 't.apellidos', 't.email', 't.telefono', 't2.nombre', 't2.id', 'ld.liquidacion_id')
+        ->get();
+
+        foreach ($liquidaciones_detalles as $value) {
+             
+             $valor_comision = 0;
+
+                    if($value->valor_comision > $value->comision_maxima){ 
+                        if($value->comision_maxima != 0){
+                            $valor_comision = $value->comision_maxima; 
+                        }
+                        else{
+                            $valor_comision = $value->valor_comision; 
+                        }
+                    }
+                    else{   $valor_comision = $value->valor_comision;    }
+
+                           DB::table('liquidaciones_terceros')->insert([
+                            'liquidacion_id' => $value->liquidacion_id,
+                            'tercero_id' => $value->tercero_id,
+                            'valor_comision' => $value->valor_comision,
+                            'valor_comision_paga' => $valor_comision,
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now()
+                        ]);   
+
+        }
+
+            Session::flash('flash_msg', 'La liquidación se realizo correctamente');
+            return redirect()->action('LiquidacionesController@get_liquidar');
     }
 
     public function liquidaciones_general() {
@@ -429,16 +475,16 @@ class LiquidacionesController extends Controller {
                         ->addColumn('id', function ($send) {
                             return '<div align=left>' . $send->liqui_id . '</div>';
                         })
-                        ->addColumn('identificacion', function ($send) {
+                        ->addColumn('nombres', function ($send) {
                             return '<div align=left>' . $send->nombres . '</div>';
                         })
-                        ->addColumn('nombres', function ($send) {
+                        ->addColumn('fecha_inicio', function ($send) {
                             return '<div align=left>' . $send->fecha_inicio . '</div>';
                         })
-                        ->addColumn('apellidos', function ($send) {
+                        ->addColumn('fecha_final', function ($send) {
                             return '<div align=left>' . $send->fecha_final . '</div>';
                         })
-                        ->addColumn('email', function ($send) {
+                        ->addColumn('fecha_liquidacion', function ($send) {
                             return '<div align=left>' . $send->fecha_liquidacion . '</div>';
                         })
                         ->addColumn('excel', function ($send) {
@@ -448,6 +494,25 @@ class LiquidacionesController extends Controller {
                         })
                         ->make(true);
     }
+
+    public function liquidaciones_detalles_excel() {  
+
+    ini_set('memory_limit', '-1'); 
+
+    $envios =  DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->limit(10)->where('t.state', true)
+       // ->innerjoin('orders', 'orders.tercero_id', '=', 't.id')
+        ->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
+
+    //dd($envios);
+  
+    Excel::create('envios', function($excel) use($envios) {
+        $excel->sheet('Sheet 1', function($sheet) use($envios) {
+            $sheet->fromArray($envios);
+        });
+    })->export('csv');
+
+    }
+
 
 
 }

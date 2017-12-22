@@ -352,22 +352,16 @@ class TercerosController extends Controller {
 
     public function setTransactions() {
 
-        ini_set('memory_limit', '-1');
-
-        echo 'Inio del proceso <br/>';
-
-        $ordenes = Order::select('order_id', 'shop')
-                ->where("financial_status", "paid")
-                ->get();
-
-        $client = new \GuzzleHttp\Client();
-
         $totalguardadas = 0;
         $noguardadas = array();
 
+        $client = new \GuzzleHttp\Client();
+        $ordenes = Order::select('order_id', 'shop', 'total_price')
+                ->where('financial_status', 'paid')
+                ->get();
+
         foreach ($ordenes as $orden) {
             if ($orden->shop != NULL) {
-
                 if ($orden->shop == 'good') {
                     $api = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
                 } elseif ($orden->shop == 'mercando') {
@@ -376,7 +370,7 @@ class TercerosController extends Controller {
 
                 try {
 
-                    $shop = $client->request('GET', $api . "/admin/orders/$orden->order_id/transactions.json");
+                    $shop = $client->request('GET', $api . '/admin/orders/' . $orden->order_id . '/transactions.json');
                     $headers = $shop->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
                     $x = explode('/', $headers[0]);
                     $diferencia = $x[1] - $x[0];
@@ -387,32 +381,38 @@ class TercerosController extends Controller {
                     $results = json_decode($shop->getBody(), true);
                     if (count($results['transactions']) > 0) {
                         foreach ($results['transactions'] as $transaction) {
-                            $save = Transactions::saveTransaction($transaction, $orden->shop);
-                            if ($save) {
-                                $totalguardadas++;
-                            } else {
-                                $noguardadas[] = $transaction['id'];
+                            if ($transaction['amount'] != $orden->total_price) {
+                                $save = Transactions::saveTransaction($transaction, $orden->shop);
+                                if ($save) {
+                                    $totalguardadas++;
+                                } else {
+                                    $noguardadas[] = $transaction['id'];
+                                }
                             }
                         }
                     } else {
-                        echo 'no se encuentran transacciones por la orden con id ' + $orden->order_id;
+                        response()->json('No se encuentran transacciones por la orden con id ' + $orden->order_id);
                     }
                 } catch (ClientException $e) {
 
                     if ($e->hasResponse()) {
-
-                        return redirect()->back()->with(['err' => 'nevel 1: no se encuentran transacciones por la orden con id ' + $orden->order_id]);
+                        $err = json_decode(($e->getResponse()->getBody()), true);
+                        return response()->json($err);
                     }
                 }
             }
         }
-        echo "<br/>Se guardaron $totalguardadas transacciones en total";
-        if (count($noguardadas) > 0) {
-            echo "<br/>" . count($noguardadas) . " transacciones no se guardaron:";
-            echo "<br/>(" . implode(",", $noguardadas) . ")";
-        } else {
-            echo '<br/>Proceso se ha realizado con exito';
-        }
+
+        response()->json('Proceso se ha realizado con exito');
+        /*
+          response()->json('Se guardaron ' . $totalguardadas . ' transacciones en total');
+          if (count($noguardadas) > 0) {
+          response()->json(count($noguardadas) . ' transacciones no se guardaron correctamente:');
+          response()->json('(' . implode(',', $noguardadas) . ')');
+          } else {
+          response()->json('Proceso se ha realizado con exito');
+          }
+         */
     }
 
     public function setPadre(Request $request) {
