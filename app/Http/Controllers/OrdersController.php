@@ -3440,7 +3440,9 @@ class OrdersController extends Controller {
 
 
 
-    public function contador() {
+    public function contador()
+    {
+
 
         /* $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
           $client = new \GuzzleHttp\Client();
