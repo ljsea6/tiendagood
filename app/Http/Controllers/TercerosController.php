@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Entities\Tercero;
 use App\Transactions;
+use App\Order;
 use Yajra\Datatables\Datatables;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -350,12 +351,19 @@ class TercerosController extends Controller {
     }
 
     public function setTransactions() {
-        $ordenes = DB::table('orders')
-                ->selectRaw('order_id,shop')
-                ->whereRaw("financial_status = 'paid'")
+
+        ini_set('memory_limit', '-1');
+
+        echo 'Inio del proceso <br/>';
+
+        $ordenes = Order::select('order_id', 'shop')
+                ->where("financial_status", "paid")
                 ->get();
 
         $client = new \GuzzleHttp\Client();
+
+        $totalguardadas = 0;
+        $noguardadas = array();
 
         foreach ($ordenes as $orden) {
             if ($orden->shop != NULL) {
@@ -379,19 +387,31 @@ class TercerosController extends Controller {
                     $results = json_decode($shop->getBody(), true);
                     if (count($results['transactions']) > 0) {
                         foreach ($results['transactions'] as $transaction) {
-                            
-                            $save = Transactions::createTransaction($transaction, $orden->shop);
-                            return response()->json($save);
+                            $save = Transactions::saveTransaction($transaction, $orden->shop);
+                            if ($save) {
+                                $totalguardadas++;
+                            } else {
+                                $noguardadas[] = $transaction['id'];
+                            }
                         }
+                    } else {
+                        echo 'no se encuentran transacciones por la orden con id ' + $orden->order_id;
                     }
                 } catch (ClientException $e) {
 
                     if ($e->hasResponse()) {
 
-                        return redirect()->back()->with(['err' => 'no se encuentra la order' + $orden->order_id]);
+                        return redirect()->back()->with(['err' => 'nevel 1: no se encuentran transacciones por la orden con id ' + $orden->order_id]);
                     }
                 }
             }
+        }
+        echo "<br/>Se guardaron $totalguardadas transacciones en total";
+        if (count($noguardadas) > 0) {
+            echo "<br/>" . count($noguardadas) . " transacciones no se guardaron:";
+            echo "<br/>(" . implode(",", $noguardadas) . ")";
+        } else {
+            echo '<br/>Proceso se ha realizado con exito';
         }
     }
 
