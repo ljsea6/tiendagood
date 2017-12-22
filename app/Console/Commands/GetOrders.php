@@ -2,18 +2,18 @@
 
 namespace App\Console\Commands;
 
-use App\Traits\OrderPaid;
-use Illuminate\Console\Command;
-use App\Order;
-use Carbon\Carbon;
-use App\Entities\Network;
-use DB;
 use App\Customer;
+use App\Entities\Network;
 use App\Entities\Tercero;
-use App\Product;
-use App\Logorder;
 use App\LineItems;
+use App\Logorder;
+use App\Order;
+use App\Product;
+use App\Traits\OrderPaid;
 use App\Variant;
+use Carbon\Carbon;
+use DB;
+use Illuminate\Console\Command;
 
 class GetOrders extends Command
 {

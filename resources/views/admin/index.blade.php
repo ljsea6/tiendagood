@@ -87,12 +87,13 @@
                <h3 class="title" style="padding-top: 11px;">Plan prime activado</h3>
                @else
                  <span class="plan_prime_texto"> <button class="btn btn-primary" data-background-color="orange" type="button"  id="actualizar_plan_prime" onclick="plan()">Activar plan prime</button> </span>
-               @endif  
+               @endif  <br><br>
+               <span style="font-weight: bold; font-size: 20px">Estamos preparando tu liquidación </span>
           </div>
          </div>
          <div class="col-sm-3">
              <div class="card-content" style="text-align: center; margin-top: 20px; text-align: right;">
-              <span class="category">Fecha del proximo corte:</span><br> <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> 21 de diciembre</span> 
+              <span class="category">Fecha del proximo corte:</span><br> <span style="font-family: 'Bungee', cursive; color: black;font-size: 16px;"> 15 de Enero 2018</span> 
           </div>
          </div>
       </div>

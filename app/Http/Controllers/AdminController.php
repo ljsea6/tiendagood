@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\LiquidacionDetalle;
-use App\LiquidacionTercero;
 use Carbon\Carbon;
 use DB;
 use Mail;
@@ -715,7 +714,7 @@ class AdminController extends Controller {
                                     return '<div align=left>' . number_format($send->puntos) . '</div>';
                                 })
                                 ->addColumn('referidos', function ($send) {
-                                    return '<div align=left>' . number_format($send->referidos) . '</div>';
+                                    return '<div align=left>' . number_format($send->puntos) . '</div>';
                                 })
                                 ->make(true);
             }
@@ -734,72 +733,41 @@ class AdminController extends Controller {
 
     public function data_liquidaciones()
     {
-        $id = currentUser()->id;
 
-        $liquidacion = DB::select(
-            DB::raw(
-            "
-                SELECT DISTINCT t.id as tercero, l.*
-                FROM terceros t
-                INNER JOIN liquidaciones_detalles ld ON ld.tercero_id = t.id
-                INNER JOIN liquidaciones l ON l.id = ld.liquidacion_id
-                WHERE t.id = '$id';
-            "
-            )
-        );
+        $tercero = Tercero::with('liquidacion_tercero')->find(currentUser()->id);
 
-        $send = collect($liquidacion);
+        $send = collect($tercero->liquidacion_tercero);
 
         return Datatables::of($send)
 
-            ->addColumn('date', function ($send) {
-                return '<div align=center>' . Carbon::parse($send->fecha_liquidacion)->diffForHumans() . '</div>';
+            ->addColumn('id', function ($send) {
+                return '<div align=left>' . $send->liquidacion_id . '</div>';
             })
             ->addColumn('nombres', function ($send) {
 
-                $t = Tercero::find($send->tercero);
+                $t = Tercero::find($send->tercero_id);
 
-                return '<div align=center>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . '</div>';
+                return '<div align=left>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . '</div>';
             })
-            ->addColumn('consignacion', function ($send) {
-
-                $total = 0;
-                $liquidacion = Liquidacion::with('detalles')->find($send->id);
-                foreach ($liquidacion->detalles as $detalle) {
-                    if ($detalle->tercero_id == $send->tercero) {
-                        $total = $total + (float)$detalle->valor_comision;
-                    }
-
-                }
-
-                return '<div align=center>' . number_format((float)$total*0.7) . '</div>';
+            ->addColumn('good', function ($send) {
+                return '<div align=left>' . number_format($send->bono_good) . '</div>';
             })
-            ->addColumn('bono', function ($send) {
-
-                $total = 0;
-                $liquidacion = Liquidacion::with('detalles')->find($send->id);
-                foreach ($liquidacion->detalles as $detalle) {
-                    if ($detalle->tercero_id == $send->tercero) {
-                        $total = $total + (float)$detalle->valor_comision;
-                    }
-                }
-
-                return '<div align=center>' . number_format((float)$total*0.3) . '</div>';
+            ->addColumn('mercando', function ($send) {
+                return '<div align=left>' . number_format($send->bono_mercando). '</div>';
             })
+
             ->addColumn('total', function ($send) {
 
                 $total = 0;
-                $liquidacion = Liquidacion::with('detalles')->find($send->id);
+                $liquidacion = Liquidacion::with('detalles')->find($send->liquidacion_id);
                 foreach ($liquidacion->detalles as $detalle) {
-                    if ($detalle->tercero_id == $send->tercero) {
-                        $total = $total + (float)$detalle->valor_comision;
-                    }
+                    $total = $total + $detalle->valor_comision;
                 }
 
-                return '<div align=center>' . number_format((float)$total) . '</div>';
+                return '<div align=left>' . number_format($total) . '</div>';
             })
             ->addColumn('edit', function ($send) {
-                return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
+                return '<div align=left><a href="' . route('admin.liquidaciones.edit', $send->liquidacion_id) . '"  class="btn btn-warning btn-xs">
                         Ver
                 </a></div>';
             })
@@ -808,13 +776,10 @@ class AdminController extends Controller {
 
     public function editar_liquidaciones($id)
     {
-        $tercero = currentUser()->id;
         $total = 0;
         $liquidacion = Liquidacion::with('detalles')->find($id);
         foreach ($liquidacion->detalles as $detalle) {
-            if ($detalle->tercero_id == $tercero) {
-                $total = $total + (float)$detalle->valor_comision;
-            }
+            $total = $total + $detalle->valor_comision;
         }
 
         $consignacion  = $total * 0.7;
@@ -1105,6 +1070,7 @@ class AdminController extends Controller {
             return redirect()->back()->withErrors(['errors' => '¡No se encontró la variable para good o mercando!']);
         }
     }
+
 
 
 }
