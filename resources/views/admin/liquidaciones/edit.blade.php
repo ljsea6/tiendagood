@@ -84,19 +84,21 @@
                 <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
                 <input type="hidden" id="bono" name="bono" value="{{$bono}}">
                 <input type="hidden" id="liquidacion" name="liquidacion" value="{{$id}}">
+                <input type="hidden" id="good" name="good" readonly class="good-hidden">
+                <input type="hidden" id="mercando" name="mercando" readonly class="mercando-hidden">
                 <div class="col-ms-12">
                     <div class="card card-stats" style="margin: 5px 0;">
                         <div class="row">
                             <div class="col-sm-3">
                                 <img src="https://cdn.shopify.com/s/files/1/2256/3751/files/logo-good.png?7720396070787645882" alt="Tienda Good">
-                                <input id="good" name="good" readonly class="good">
+                                <input id="good-1" name="good-1" readonly class="good">
                             </div>
                             <div class="col-sm-6">
                                 <div id="handle1"></div>
                             </div>
                             <div class="col-sm-3">
                                 <img src="//cdn.shopify.com/s/files/1/2560/2330/files/Logo-Mercando_x96.png?v=1511966864" alt="Mercando">
-                                <input id="mercando" name="mercando" readonly class="mercando">
+                                <input id="mercando-1" name="mercando-1" readonly class="mercando">
                             </div>
                         </div>
                         <br>
@@ -145,8 +147,14 @@
             var M = ((-1 * (val - 100)) * parseFloat('{{$bono}}')) / 100;
             var G = (val * parseFloat('{{$bono}}')) / 100;
 
-            $(".good").val('' + G + '');
-            $(".mercando").val('' + M + '');
+            $(".good-hidden").val('' + G + '');
+
+            $(".mercando-hidden").val('' +  M + '');
+
+            $(".good").val('$ ' + number_format(G, 2) + '');
+
+            $(".mercando").val('$ ' +  number_format(M, 2) + '');
+
 
             return "G " + " % " + " M";
         }
@@ -167,6 +175,29 @@
                 e.preventDefault();
             }
         });
+
+        function number_format(amount, decimals) {
+
+            amount += ''; // por si pasan un numero en vez de un string
+            amount = parseFloat(amount.replace(/[^0-9\.]/g, '')); // elimino cualquier cosa que no sea numero o punto
+
+            decimals = decimals || 0; // por si la variable no fue fue pasada
+
+            // si no es un numero o es igual a cero retorno el mismo cero
+            if (isNaN(amount) || amount === 0)
+                return parseFloat(0).toFixed(decimals);
+
+            // si es mayor o menor que cero retorno el valor formateado como numero
+            amount = '' + amount.toFixed(decimals);
+
+            var amount_parts = amount.split('.'),
+                regexp = /(\d+)(\d{3})/;
+
+            while (regexp.test(amount_parts[0]))
+                amount_parts[0] = amount_parts[0].replace(regexp, '$1' + ',' + '$2');
+
+            return amount_parts.join('.');
+        }
 
     </script>
 
