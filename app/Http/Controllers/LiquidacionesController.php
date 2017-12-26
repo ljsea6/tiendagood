@@ -476,7 +476,7 @@ group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.tel
 
         $liquidaciones = DB::table('liquidaciones')
                 ->select('liquidaciones.id as liqui_id','nombres','fecha_inicio','fecha_final','fecha_liquidacion')
-                ->join('terceros', 'terceros.id', '=', 'liquidaciones.id')
+                ->join('terceros', 'terceros.id', '=', 'liquidaciones.usuario_id')
                 ->orderByRaw('liquidaciones.id DESC')
                 ->get();
 
@@ -499,28 +499,30 @@ group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.tel
                             return '<div align=left>' . $send->fecha_liquidacion . '</div>';
                         })
                         ->addColumn('excel', function ($send) {
-                            return '<div align=center><a href="' . route('admin.terceros.edit', $send->liqui_id) . '"  class="btn btn-warning btn-xs">
+                            return '<div align=left><a href="' . route('liquidacion.detalles_excel', $send->liqui_id."'") . '" target="_blank" class="btn btn-primary btn-xs">
                         Excel
                 </a></div>';
                         })
                         ->make(true);
     }
 
-    public function liquidaciones_detalles_excel() {  
+    public function liquidaciones_detalles_excel($id=0) {  
 
     ini_set('memory_limit', '-1'); 
 
-    $envios =  DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->limit(10)->where('t.state', true)
-       // ->innerjoin('orders', 'orders.tercero_id', '=', 't.id')
-        ->select('t.id', 't.tipo_id')->orderByRaw('id ASC')->get();
+    $envios =  DB::table('liquidaciones_terceros')
+        ->where('liquidaciones_terceros.liquidacion_id', $id)
+        ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
+        ->select('identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga')->orderByRaw('terceros.nombres ASC')->get();
 
-    //dd($envios);
-  
-    Excel::create('envios', function($excel) use($envios) {
-        $excel->sheet('Sheet 1', function($sheet) use($envios) {
-            $sheet->fromArray($envios);
-        });
-    })->export('csv');
+        Excel::create('liquidaciones', function($excel) use ($envios) {
+            $excel->sheet('liquidaciones', function($sheet) use ($envios)  {
+            	$sheet->prependRow(1, array('Cedula', 'Nombres', 'Apellidos', 'Teléfono', 'Email', 'Valor comisión'));
+            	foreach ($envios as $value) {
+                    $sheet->prependRow(2, array($value->identificacion, $value->nombres, $value->apellidos, $value->telefono, $value->email, $value->valor_comision_paga));
+                }
+            });
+        })->export('xls');
 
     }
 
