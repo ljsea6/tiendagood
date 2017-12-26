@@ -535,6 +535,6 @@ group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.tel
 
     }
 
-
+ 
 
 }
