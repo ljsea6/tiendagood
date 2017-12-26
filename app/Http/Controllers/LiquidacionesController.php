@@ -67,7 +67,6 @@ class LiquidacionesController extends Controller {
 //->where('t.id', 41)
 //->limit(41)
     $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)
-    ->limit(41)
     ->select('t.id', 't.tipo_id', $puntos)->orderByRaw('id ASC')->get();
 
     foreach ($vendedores as $value_vendedor) {
