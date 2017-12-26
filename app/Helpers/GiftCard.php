@@ -11,6 +11,7 @@ namespace App\Helpers;
 use App\Helpers\GuzzleHttp;
 use GuzzleHttp\Exception\ClientException;
 
+
 class GiftCard
 {
     public static function gift($url, $value, $id)
@@ -49,6 +50,7 @@ class GiftCard
 
             if ($e->hasResponse()) {
 
+
                 return $e->getResponse()->getBody();
 
             }
@@ -80,6 +82,7 @@ class GiftCard
             if ($e->hasResponse()) {
 
                 return $e->getResponse()->getBody();
+
 
             }
         }
