@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\LiquidacionTercero;
+use App\Helpers\Orders;
+use App\Helpers\Commissions;
+use App\Helpers\Points;
 use App\Traits\OrderCancelled;
 use App\Traits\OrderCancelledMercando;
 use App\Traits\OrderPaid;
@@ -18,6 +21,7 @@ use App\Customer;
 use DB;
 use App\Logorder;
 use Illuminate\Support\Facades\Crypt;
+use PhpSpec\Process\ReRunner\ProcOpenReRunner;
 use Yajra\Datatables\Datatables;
 use MP;
 use MercadoPagoException;
@@ -3443,14 +3447,33 @@ class OrdersController extends Controller {
 
     public function contador()
     {
+        ini_set('memory_limit', '512M');
 
-         $detalles = DB::table('liquidaciones_detalles as ld')
-             ->join('terceros as t', 't.id', '=', 'ld.tercero_id')
-             ->select(DB::raw('ld.tercero_id, ld.liquidacion_id, sum(ld.valor_comision) as comision'))
-             ->groupBy('ld.tercero_id', 'ld.liquidacion_id')
-             ->get();
 
-         foreach ($detalles as $detalle) {
+        Commissions::assign_without_type();
+
+        $terceros = Commissions::assign_with_type();
+
+        foreach ($terceros as $tercero) {
+            Commissions::change_type($tercero->id);
+            Commissions::junior_prime($tercero->id);
+            Commissions::senior_prime($tercero->id);
+            Commissions::master_prime($tercero->id);
+
+        return response()->json(['msg' => 'hecho']);
+        //return response()->json(Points::amparado_orders(1));
+
+        /*return [
+            'Puntos propropios' => Points::count_own_points(3),
+            'Puntos de la red: ' => Points::points_red(3)
+        ];
+
+        return Points::terceros_by_level(13, 1);
+
+        return Points::own_points(41);*/
+        /*$totalguardadas = 0;
+        $noguardadas = array();
+
 
              $tercero = Tercero::with('tipo')->find($detalle->tercero_id);
              $comision_inicial = (float)$detalle->comision;
@@ -3514,6 +3537,15 @@ class OrdersController extends Controller {
 
 
 
+        $this->info("Se guardaron $totalguardadas transacciones en total");
+        if (count($noguardadas) > 0) {
+            return response()->json(count($noguardadas) . " transacciones no se guardaron:");
+            return response()->json("(" . implode(",", $noguardadas) . ")");
+        } else {
+            return response()->json('Proceso se ha realizado con exito');
+        }*/
+
+
 
 
 
@@ -3565,7 +3597,7 @@ class OrdersController extends Controller {
           } catch (ClientException $e) {
 
           if ($e->hasResponse()) {
->>>>>>> e18cef41539095a01ec5e60dde0ee8370b776cb8
+
 
           return $e->hasResponse();
           }
@@ -3740,6 +3772,7 @@ class OrdersController extends Controller {
           }
 
           return response()->json(['msg' => 'Hecho']); */
+        }
     }
 
     public function contador_uno() {
