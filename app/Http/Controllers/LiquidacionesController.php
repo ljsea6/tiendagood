@@ -499,7 +499,7 @@ group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.tel
                             return '<div align=left>' . $send->fecha_liquidacion . '</div>';
                         })
                         ->addColumn('excel', function ($send) {
-                            return '<div align=left><a href="' . route('liquidacion.detalles_excel', $send->liqui_id."'") . '" target="_blank" class="btn btn-primary btn-xs">
+                            return '<div align=left><a href="' . route('liquidacion.detalles_excel', $send->liqui_id) . '" target="_blank" class="btn btn-primary btn-xs">
                         Excel
                 </a></div>';
                         })
@@ -513,13 +513,22 @@ group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.tel
     $envios =  DB::table('liquidaciones_terceros')
         ->where('liquidaciones_terceros.liquidacion_id', $id)
         ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
-        ->select('identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga')->orderByRaw('terceros.nombres ASC')->get();
+        ->select('identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga', DB::raw("(select estado from terceros_prime where terceros.id = terceros_prime.tercero_id limit 1) as prime"))->orderByRaw('terceros.nombres ASC')->get();
 
         Excel::create('liquidaciones', function($excel) use ($envios) {
             $excel->sheet('liquidaciones', function($sheet) use ($envios)  {
-            	$sheet->prependRow(1, array('Cedula', 'Nombres', 'Apellidos', 'Teléfono', 'Email', 'Valor comisión'));
+            	$sheet->prependRow(1, array('Cedula', 'Nombres', 'Apellidos', 'Teléfono', 'Email', 'Valor comisión','Prime'));
             	foreach ($envios as $value) {
-                    $sheet->prependRow(2, array($value->identificacion, $value->nombres, $value->apellidos, $value->telefono, $value->email, $value->valor_comision_paga));
+
+            		$prime = '';
+                    if ($value->prime != '') {
+                    	 $prime = 'Si';
+                    }
+                    else{
+                        $prime = 'No';
+                    }
+
+                    $sheet->prependRow(2, array($value->identificacion, $value->nombres, $value->apellidos, $value->telefono, $value->email, $value->valor_comision_paga, $prime));
                 }
             });
         })->export('xls');
