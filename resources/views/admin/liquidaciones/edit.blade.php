@@ -63,7 +63,7 @@
                         <i class="fa fa-money" aria-hidden="true"></i>
                     </div>
                     <div class="card-content">
-                        <p class="category">Este es el total de su bono # {{ $id }}</p>
+                        <p class="category">Este es el total de su bono # {{ $fecha }}</p>
                         <h3 class="title">
                             <small>Total en bono: ${{ number_format($total * 0.3) }}</small>
                         </h3>

@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\LiquidacionDetalle;
+
 use Carbon\Carbon;
 use DB;
 use Mail;
 use App\Order;
 use App\Liquidacion;
+use App\Helpers\Good;
+use App\Helpers\Mercando;
 use App\Entities\Network;
 use App\Entities\Tercero;
+use App\Helpers\GiftCard;
+use App\Helpers\GuzzleHttp;
+use App\LiquidacionDetalle;
+use App\LiquidacionTercero;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
@@ -735,99 +741,67 @@ class AdminController extends Controller {
     {
         $id = currentUser()->id;
 
-        $liquidacion = DB::select(
-            DB::raw(
-                "
-                SELECT DISTINCT t.id as tercero, l.*
-                FROM terceros t
-                INNER JOIN liquidaciones_detalles ld ON ld.tercero_id = t.id
-                INNER JOIN liquidaciones l ON l.id = ld.liquidacion_id
-                WHERE t.id = '$id';
-            "
-            )
-        );
+        $liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
 
-        $send = collect($liquidacion);
+        $send = collect($liquidaciones->liquidacion_tercero);
 
         return Datatables::of($send)
 
             ->addColumn('date', function ($send) {
-                return '<div align=center>' . Carbon::parse($send->fecha_liquidacion)->diffForHumans() . '</div>';
+
+                $liquidacion = Liquidacion::find($send->liquidacion_id);
+
+                return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
             })
             ->addColumn('nombres', function ($send) {
 
-                $t = Tercero::find($send->tercero);
+                $t = Tercero::find($send->tercero_id);
 
                 return '<div align=center>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . '</div>';
             })
             ->addColumn('consignacion', function ($send) {
 
-                $total = 0;
-                $liquidacion = Liquidacion::with('detalles')->find($send->id);
-                foreach ($liquidacion->detalles as $detalle) {
-                    if ($detalle->tercero_id == $send->tercero) {
-                        $total = $total + (float)$detalle->valor_comision;
-                    }
-
-                }
-
-                return '<div align=center>' . number_format((float)$total*0.7) . '</div>';
+                return '<div align=center>' . number_format((float)$send->valor_comision_paga*0.7) . '</div>';
             })
             ->addColumn('bono', function ($send) {
 
-                $total = 0;
-                $liquidacion = Liquidacion::with('detalles')->find($send->id);
-                foreach ($liquidacion->detalles as $detalle) {
-                    if ($detalle->tercero_id == $send->tercero) {
-                        $total = $total + (float)$detalle->valor_comision;
-                    }
-                }
-
-                return '<div align=center>' . number_format((float)$total*0.3) . '</div>';
+                return '<div align=center>' . number_format((float)$send->valor_comision_paga*0.3) . '</div>';
             })
             ->addColumn('total', function ($send) {
 
-                $total = 0;
-                $liquidacion = Liquidacion::with('detalles')->find($send->id);
-                foreach ($liquidacion->detalles as $detalle) {
-                    if ($detalle->tercero_id == $send->tercero) {
-                        $total = $total + (float)$detalle->valor_comision;
-                    }
-                }
 
-                return '<div align=center>' . number_format((float)$total) . '</div>';
+                return '<div align=center>' . number_format((float)$send->valor_comision_paga) . '</div>';
             })
             ->addColumn('edit', function ($send) {
-                return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
+
+                $ok = LiquidacionTercero::where('id', $send->id)
+                    ->where('bono_good', null)
+                    ->where('bono_mercando', null)
+                    ->where('giftcard_good', null)
+                    ->where('giftcard_mercando', null)
+                    ->first();
+                if (count($ok) > 0) {
+                    return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
                         Ver
                 </a></div>';
+                } else {
+                    return '<div align=center>Sus bonos ya fueron generados</div>';
+                }
+
             })
             ->make(true);
     }
 
     public function editar_liquidaciones($id)
     {
-        $tercero = currentUser()->id;
-        $total = 0;
-        $liquidacion = Liquidacion::with('detalles')->find($id);
-        foreach ($liquidacion->detalles as $detalle) {
-            if ($detalle->tercero_id == $tercero) {
-                $total = $total + (float)$detalle->valor_comision;
-            }
-        }
+        $liquidacion_tercero = LiquidacionTercero::find($id);
 
-        $consignacion  = $total * 0.7;
-
-        $bono = $total * 0.3;
-
-        return view('admin.liquidaciones.edit')->with(['total' => $total, 'id' => $liquidacion->id, 'consignacion' => $consignacion, 'bono' => $bono]);
+        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->valor_comision_paga, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->valor_comision_paga * 0.7), 'bono' => ($liquidacion_tercero->valor_comision_paga * 0.3), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans()]);
     }
 
     public function gift_card(Request $request)
     {
-        $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-        $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
-        $client = new \GuzzleHttp\Client();
+
 
         if ($request->has('good') && $request->has('mercando') && $request->has('bono') && $request->has('liquidacion')) {
 
@@ -850,131 +824,67 @@ class AdminController extends Controller {
 
                 if (count($tercero) > 0) {
 
-                    $liquidacion_tercero = LiquidacionTercero::where('liquidacion_id', $liquidacion)
+                    $liquidacion_tercero = LiquidacionTercero::where('id', $liquidacion)
                         ->where('tercero_id', $tercero->id)
                         ->first();
 
-                    if (count($liquidacion_tercero) == 0) {
+                    $update = LiquidacionTercero::find($liquidacion_tercero->id);
 
-                        /* $liquidacion_tercero_id = DB::table('liquidaciones_terceros')->insertGetId(
-                            [
-                                'tercero_id' => $tercero->id,
-                                'liquidacion_id' =>  $liquidacion,
-                                'created_at' =>  Carbon::now(),
-                                'updated_at' =>  Carbon::now(),
-                            ]
-                        );*/
+                    $ID_GOOD = Good::exist($tercero->email);
+                    $ID_MERCANDO = Mercando::exist($tercero->email);
 
+
+                    if (count($liquidacion_tercero) > 0) {
+
+                        $r = GiftCard::test(GuzzleHttp::url_test(), 184657575979);
+                        return response()->json($r);
                         if ($good != 0 && $mercando == 0) {
 
-                            $res_good = $client->request('GET',  $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
-                            $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                            $x = explode('/', $headers[0]);
-                            $diferencia = $x[1] - $x[0];
+                            if ($ID_GOOD != 0) {
 
-                            if ($diferencia < 20) {
+                                $result = GiftCard::gift(GuzzleHttp::url_test(), $good, 184657575979);
 
-                                usleep(20000000);
-                            }
+                                return $result;
 
-                            $results_good = json_decode($res_good->getBody(), true);
+                                if ($result == null) {
 
-                            if (count($results_good['customers']) == 1) {
-
-                                try {
-
-                                    $send = [
-                                        'form_params' => [
-                                            'gift_card' => [
-                                                "note" => "This is a note",
-                                                "initial_value" => $good,
-                                                "template_suffix" => "gift_cards.birthday.liquid",
-                                                "currency" => "COP",
-                                                "customer_id" => $results_good['customers'][0]['id'],
-                                            ]
-                                        ]
-                                    ];
-
-                                    $res = $client->request('post', $api_url_good . '/admin/gift_cards.json', $send);
-
-                                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                    $x = explode('/', $headers[0]);
-                                    $diferencia = $x[1] - $x[0];
-
-                                    if ($diferencia < 10) {
-                                        usleep(500000);
-                                    }
-
-                                    $result = json_decode($res->getBody(), true);
-
-
-                                } catch (ClientException $e) {
-
-                                    if ($e->hasResponse()) {
-
-                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Tienda Good, pongase en contacto con servicio al cliente.!']);
-                                    }
+                                    return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Tienda Good, pongase en contacto con servicio al cliente.!']);
                                 }
+
+                                $update->bono_good = $good;
+                                $update->bono_mercando = $mercando;
+                                $update->giftcard_good = $result;
+                                $update->giftcard_mercando = null;
+                                $update->save();
+
+                                return redirect()->back()->withErrors(['errors' => '¡Felicidades, su bono en Tienda Good ha sido creado exitosamente.!']);
+
                             }
 
                         }
 
                         if($good == 0 && $mercando != 0){
 
-                            $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
-                            $headers = $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                            $x = explode('/', $headers[0]);
-                            $diferencia = $x[1] - $x[0];
+                            if ($ID_MERCANDO != 0) {
 
-                            if ($diferencia < 20) {
+                                $result = GiftCard::gift(GuzzleHttp::url_test(), $mercando, 184657575979);
 
-                                usleep(20000000);
-                            }
+                                return $result;
 
-                            $results_mercando = json_decode($res_mercando->getBody(), true);
+                                if ($result == null) {
 
-                            if (count($results_mercando['customers']) == 1) {
-
-                                try {
-
-                                    $send = [
-                                        'form_params' => [
-                                            'gift_card' => [
-                                                "note" => "This is a note",
-                                                "initial_value" => $good,
-                                                "template_suffix" => "gift_cards.birthday.liquid",
-                                                "currency" => "COP",
-                                                "customer_id" => $results_mercando['customers'][0]['id'],
-                                            ]
-                                        ]
-                                    ];
-
-
-                                    $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
-
-                                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                    $x = explode('/', $headers[0]);
-                                    $diferencia = $x[1] - $x[0];
-
-                                    if ($diferencia < 10) {
-                                        usleep(500000);
-                                    }
-
-                                    $result = json_decode($res->getBody(), true);
-
-
-
-
-                                } catch (ClientException $e) {
-
-                                    if ($e->hasResponse()) {
-
-                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando, pongase en contacto con servicio al cliente.!']);
-                                    }
+                                    return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando, pongase en contacto con servicio al cliente.!']);
                                 }
 
-                            }
+                                $update->bono_good = $good;
+                                $update->bono_mercando = $mercando;
+                                $update->giftcard_good = null;
+                                $update->giftcard_mercando = $result;
+                                $update->save();
 
+                                return redirect()->back()->withErrors(['errors' => '¡Felicidades, su bono en Mercando ha sido creado exitosamente.!']);
+
+                            }
                         }
 
                         if($good != 0 && $mercando != 0) {
@@ -982,114 +892,82 @@ class AdminController extends Controller {
                             $g = true;
                             $m = true;
 
-                            $res_good = $client->request('GET',  $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
-                            $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                            $x = explode('/', $headers[0]);
-                            $diferencia = $x[1] - $x[0];
+                            if ($ID_GOOD != 0) {
 
-                            if ($diferencia < 20) {
+                                $result_g = GiftCard::gift(GuzzleHttp::url_test(), $good, 184657575979);
 
-                                usleep(20000000);
-                            }
+                                return $result_g;
 
-                            $results_good = json_decode($res_good->getBody(), true);
-
-                            if (count($results_good['customers']) == 1) {
-
-
-                                try {
-
-                                    $send = [
-                                        'form_params' => [
-                                            'gift_card' => [
-                                                "note" => "This is a note",
-                                                "initial_value" => $good,
-                                                "template_suffix" => "gift_cards.birthday.liquid",
-                                                "currency" => "COP",
-                                                "customer_id" => $results_good['customers'][0]['id'],
-                                            ]
-                                        ]
-                                    ];
-
-                                    $res = $client->request('post', $api_url_good . '/admin/gift_cards.json', $send);
-
-                                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                    $x = explode('/', $headers[0]);
-                                    $diferencia = $x[1] - $x[0];
-
-                                    if ($diferencia < 10) {
-                                        usleep(500000);
-                                    }
-
-                                    $result = json_decode($res->getBody(), true);
-
-
-
-                                } catch (ClientException $e) {
-
-                                    if ($e->hasResponse()) {
-
-                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Tienda Good, pongase en contacto con servicio al cliente.!']);
-                                    }
+                                if ($result_g == null) {
+                                    $g = false;
                                 }
 
                             } else {
                                 $g = false;
                             }
 
-                            $res_mercando = $client->request('GET',  $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
-                            $headers = $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                            $x = explode('/', $headers[0]);
-                            $diferencia = $x[1] - $x[0];
+                            if ($ID_MERCANDO != 0) {
 
-                            if ($diferencia < 20) {
-
-                                usleep(20000000);
-                            }
-
-                            $results_mercando = json_decode($res_mercando->getBody(), true);
-
-                            if (count($results_mercando['customers']) == 1) {
+                                $result_m = GiftCard::gift(GuzzleHttp::url_test(), $mercando, 184657575979);
+                                return $result_m;
 
 
-                                try {
+                                if ($result_m == null) {
 
-                                    $send = [
-                                        'form_params' => [
-                                            'gift_card' => [
-                                                "note" => "This is a note",
-                                                "initial_value" => $good,
-                                                "template_suffix" => "gift_cards.birthday.liquid",
-                                                "currency" => "COP",
-                                                "customer_id" => $results_mercando['customers'][0]['id'],
-                                            ]
-                                        ]
-                                    ];
-
-
-                                    $res = $client->request('post', $api_url_mercando . '/admin/gift_cards.json', $send);
-
-                                    $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                                    $x = explode('/', $headers[0]);
-                                    $diferencia = $x[1] - $x[0];
-
-                                    if ($diferencia < 10) {
-                                        usleep(500000);
-                                    }
-
-                                    $result = json_decode($res->getBody(), true);
-
-
-                                } catch (ClientException $e) {
-
-                                    if ($e->hasResponse()) {
-
-                                        return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando, pongase en contacto con servicio al cliente.!']);
-                                    }
+                                    $m = false;
                                 }
 
                             } else {
+
                                 $m = false;
+                            }
+
+                            if ($g == false && $m != false) {
+
+                                $update->bono_good = $good;
+                                $update->bono_mercando = $mercando;
+                                $update->giftcard_good = null;
+                                $update->giftcard_mercando = $result_m;
+                                $update->save();
+
+                                return redirect()->back()->withErrors(['errors' => '¡Su bono en Mercando ha sido creado pero su bono para Tienga Good no se pudo crear, pongase en contacto con servicio al cliente para verificar su bono en Tienda Good.!']);
+
+                            }
+
+
+                            if ($g != false && $m == false) {
+
+                                $update->bono_good = $good;
+                                $update->bono_mercando = $mercando;
+                                $update->giftcard_good = $result_g;
+                                $update->giftcard_mercando = null;
+                                $update->save();
+
+                                return redirect()->back()->withErrors(['errors' => '¡Su bono en Tienda Good ha sido creado pero su bono para Mercando no se pudo crear, pongase en contacto con servicio al cliente para verificar su bono en Mercando.!']);
+
+                            }
+
+                            if ($g == false && $m == false) {
+
+                                $update->bono_good = $good;
+                                $update->bono_mercando = $mercando;
+                                $update->giftcard_good = null;
+                                $update->giftcard_mercando = null;
+                                $update->save();
+
+                                return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, sus bonos no pudieron ser creados, pongase en contacto de inmediato con servicio al cliente.!']);
+
+                            }
+
+                            if ($g != false && $m != false) {
+
+                                $update->bono_good = $good;
+                                $update->bono_mercando = $mercando;
+                                $update->giftcard_good = $result_g;
+                                $update->giftcard_mercando = $result_m;
+                                $update->save();
+
+                                return redirect()->back()->withErrors(['errors' => '¡Felicidades, sus bonos han sido creados correctamente.!']);
                             }
                         }
                     }

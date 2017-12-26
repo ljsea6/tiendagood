@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 class LiquidacionTercero extends Model
 {
     protected $table = 'liquidaciones_terceros';
+    protected $casts = [
+        'giftcard_good' => 'array',
+        'giftcard_mercando' => 'array'
+    ];
 
     public function liquidacion()
     {
