@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Orders;
+use App\Helpers\Commissions;
+use App\Helpers\Points;
 use App\Traits\OrderCancelled;
 use App\Traits\OrderCancelledMercando;
 use App\Traits\OrderPaid;
@@ -17,6 +20,7 @@ use App\Customer;
 use DB;
 use App\Logorder;
 use Illuminate\Support\Facades\Crypt;
+use PhpSpec\Process\ReRunner\ProcOpenReRunner;
 use Yajra\Datatables\Datatables;
 use MP;
 use MercadoPagoException;
@@ -3442,9 +3446,31 @@ class OrdersController extends Controller {
 
     public function contador()
     {
+        ini_set('memory_limit', '512M');
 
+        Commissions::assign_without_type();
 
-        $totalguardadas = 0;
+        $terceros = Commissions::assign_with_type();
+
+        foreach ($terceros as $tercero) {
+            Commissions::change_type($tercero->id);
+            Commissions::junior_prime($tercero->id);
+            Commissions::senior_prime($tercero->id);
+            Commissions::master_prime($tercero->id);
+        }
+
+        return response()->json(['msg' => 'hecho']);
+        //return response()->json(Points::amparado_orders(1));
+
+        /*return [
+            'Puntos propropios' => Points::count_own_points(3),
+            'Puntos de la red: ' => Points::points_red(3)
+        ];
+
+        return Points::terceros_by_level(13, 1);
+
+        return Points::own_points(41);*/
+        /*$totalguardadas = 0;
         $noguardadas = array();
 
         $client = new \GuzzleHttp\Client();
@@ -3499,7 +3525,7 @@ class OrdersController extends Controller {
             return response()->json("(" . implode(",", $noguardadas) . ")");
         } else {
             return response()->json('Proceso se ha realizado con exito');
-        }
+        }*/
 
 
 
