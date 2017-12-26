@@ -58,21 +58,22 @@ class LiquidacionesController extends Controller {
         $gente_nivel_1 = array();
         $count_add=0;
         $vendedores_liquidados = array();
+        $id_vendedores = array();
+        $id_vendedores_tipo = array();
 
 
-                $puntos = DB::raw("(select fpl_dir(t.id::integer,0)) as puntos_propios");
+        $puntos = DB::raw("(select fpl_dir(t.id::integer,0)) as puntos_propios");
 
 //->where('t.id', 41)
 //->limit(41)
-        $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)
-       // ->innerjoin('orders', 'orders.tercero_id', '=', 't.id')
-        ->select('t.id', 't.tipo_id', $puntos)->orderByRaw('id ASC')->get();
+    $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)
+    ->limit(41)
+    ->select('t.id', 't.tipo_id', $puntos)->orderByRaw('id ASC')->get();
 
-        foreach ($vendedores as $value_vendedor) {
+    foreach ($vendedores as $value_vendedor) {
         
-         if($value_vendedor->puntos_propios >= 1){
+        if($value_vendedor->puntos_propios >= 1){
             
-
             $points_level_1 = 0;
             $points_level_2 = 0;
             $points_level_3 = 0;
@@ -89,10 +90,9 @@ class LiquidacionesController extends Controller {
             /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
             /*                                                    reglas   inicio     ------------------------                                             */
             /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
-            $rules = DB::table('rules')->where('tipo_id', $value_vendedor->tipo_id)->select('id')->get();
-            foreach ($rules as $rules_value) {
-                $rules_details = DB::table('rules_details')->where('rule_id', $rules_value->id)->select('nivel','comision_puntos','id')->get();
-                foreach ($rules_details as $rules_details_value) {
+            $rules = DB::table('rules')->where('tipo_id', $value_vendedor->tipo_id)->join('rules_details', 'rules_details.rule_id', '=', 'rules.id')
+            ->select('nivel','comision_puntos','rules_details.id')->get();
+            foreach ($rules as $rules_details_value) { 
                     if($rules_details_value->nivel == 1){
                         $comision_valor_1 = $rules_details_value->comision_puntos;
                         $id_detalle_1 = $rules_details_value->id;
@@ -104,13 +104,18 @@ class LiquidacionesController extends Controller {
                     if($rules_details_value->nivel == 3){
                         $comision_valor_3 = $rules_details_value->comision_puntos;
                         $id_detalle_3 = $rules_details_value->id;
-                    }
-                }
+                    } 
             }
-
+            
+            $id_vendedores[] = array($value_vendedor->id);
+            $id_vendedores_tipo[$value_vendedor->id] = array('comision_valor_1' => $comision_valor_1, 'id_detalle_1' => $id_detalle_1, 
+                                                            'comision_valor_2' => $comision_valor_2, 'id_detalle_2' => $id_detalle_2, 
+                                                            'comision_valor_3' => $comision_valor_3, 'id_detalle_3' => $id_detalle_3);
             /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
             /*                                                    reglas     fin                                                                           */
-            /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
+            /*   ----------------------------------------------------------------------------------------------------------------------------------------  */       
+        }
+    }
 
 
             /*   ----------------------------------------------------------------------------------------------------------------------------------------------------------  */
@@ -121,8 +126,8 @@ class LiquidacionesController extends Controller {
                 ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
                 ->join('terceros as t2', 't2.id', '=', 'tk.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't2.id')
-                ->where('tk.padre_id', $value_vendedor->id)->where('t.state', true)->where('t2.state', true)->where('t2.tipo_cliente_id', '<>', 85)
-                ->select('t2.id', 't2.email', 't2.nombres', 't2.apellidos', 't2.tipo_cliente_id','points', 'orders.id as orden_id',
+                ->whereIn('tk.padre_id', $id_vendedores)->where('t.state', true)->where('t2.state', true)->where('t2.tipo_cliente_id', '<>', 85)
+                ->select('tk.padre_id as padre', 't2.id', 't2.email', 't2.nombres', 't2.apellidos', 't2.tipo_cliente_id','points', 'orders.id as orden_id',
                     'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
 
             if (count($uno) > 0) {
@@ -180,10 +185,13 @@ class LiquidacionesController extends Controller {
 
                         $points_level_1 +=  $n->points;
                         $points_level_vendedor_1 += $n->points;
+                        
+                        $id_detalle_1 = $id_vendedores_tipo[$n->padre]['id_detalle_1'];
+                        $comision_valor_1 = $id_vendedores_tipo[$n->padre]['comision_valor_1'];
 
                         DB::table('liquidaciones_detalles')->insert([
                             'liquidacion_id' => $liquidacion_id,
-                            'tercero_id' => $value_vendedor->id,
+                            'tercero_id' => $n->padre,
                             'hijo_id' => $n->id,
                             'nivel' => 1,
                             'order_id' => $n->orden_id,
@@ -201,7 +209,7 @@ class LiquidacionesController extends Controller {
                     //  $gente_nivel_1[] = array('id' => $n->id);
                 }
             }
-
+ 
             /*   ----------------------------------------------------------------------------------------------------------------------------------------------------------  */
             /*                                                     terceros y ordenes del nivel uno con sus amparados    fin                                                 */
             /*   ----------------------------------------------------------------------------------------------------------------------------------------------------------  */
@@ -216,8 +224,8 @@ class LiquidacionesController extends Controller {
                 ->join('terceros_networks as tk2', 'tk2.padre_id', '=', 't2.id')
                 ->join('terceros as t3', 't3.id', '=', 'tk2.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't3.id')
-                ->where('t.id', $value_vendedor->id)->where('t.state', true)->where('t3.state', true)->where('t3.tipo_cliente_id', '<>', 85)
-                ->select('t3.id', 't3.email', 't3.nombres', 't3.apellidos', 't3.tipo_cliente_id','points', 'orders.id as orden_id',
+                ->whereIn('t.id', $id_vendedores)->where('t.state', true)->where('t3.state', true)->where('t3.tipo_cliente_id', '<>', 85)
+                ->select('t.id as padre', 't3.id', 't3.email', 't3.nombres', 't3.apellidos', 't3.tipo_cliente_id','points', 'orders.id as orden_id',
                     'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
 
             if (count($dos) > 0) {
@@ -277,10 +285,13 @@ class LiquidacionesController extends Controller {
 
                         $points_level_2 += $d->points;
                         $points_level_vendedor_2 += $d->points;
+                        
+                        $id_detalle_2 = $id_vendedores_tipo[$d->padre]['id_detalle_2'];
+                        $comision_valor_2 = $id_vendedores_tipo[$d->padre]['comision_valor_2'];
 
                         DB::table('liquidaciones_detalles')->insert([
                             'liquidacion_id' => $liquidacion_id,
-                            'tercero_id' => $value_vendedor->id,
+                            'tercero_id' => $d->padre,
                             'hijo_id' => $d->id,
                             'nivel' => 2,
                             'order_id' => $d->orden_id,
@@ -313,8 +324,8 @@ class LiquidacionesController extends Controller {
                 ->join('terceros_networks as tk3', 'tk3.padre_id', '=', 't3.id')
                 ->join('terceros as t4', 't4.id', '=', 'tk3.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't4.id')
-                ->where('t.id', $value_vendedor->id)->where('t.state', true)->where('t4.state', true)->where('t4.tipo_cliente_id', '<>', 85)
-                ->select('t4.id', 't4.email', 't4.nombres', 't4.apellidos', 't4.tipo_cliente_id','points', 'orders.id as orden_id',
+                ->whereIn('t.id', $id_vendedores)->where('t.state', true)->where('t4.state', true)->where('t4.tipo_cliente_id', '<>', 85)
+                ->select('t.id as padre', 't4.id', 't4.email', 't4.nombres', 't4.apellidos', 't4.tipo_cliente_id','points', 'orders.id as orden_id',
                     'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
 
             if (count($tres) > 0) {
@@ -374,10 +385,13 @@ class LiquidacionesController extends Controller {
 
                         $points_level_3 += $t->points;
                         $points_level_vendedor_3 += $t->points;
+ 
+                        $id_detalle_3 = $id_vendedores_tipo[$t->padre]['id_detalle_3'];
+                        $comision_valor_3 = $id_vendedores_tipo[$t->padre]['comision_valor_3'];
 
                         DB::table('liquidaciones_detalles')->insert([
                             'liquidacion_id' => $liquidacion_id,
-                            'tercero_id' => $value_vendedor->id,
+                            'tercero_id' => $t->padre,
                             'hijo_id' => $t->id,
                             'nivel' => 3,
                             'order_id' => $t->orden_id,
@@ -401,8 +415,6 @@ class LiquidacionesController extends Controller {
 
             //echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos:  '.$points_level_3.' - comision: '.$comision_valor_3.'<br>';
 
-           }
-        }
 
         DB::table('orders')->whereIn('id', $id_primer_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
         DB::table('orders')->whereIn('id', $id_dos_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
