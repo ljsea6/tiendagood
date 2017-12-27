@@ -250,14 +250,16 @@
 
         $("#handle3").roundSlider({
 
-            sliderType: "min-range",
             editableTooltip: false,
             radius: 80,
             width: 10,
+            min: 0,
+            max: parseFloat('{{$bono}}'),
+            step: 1000,
             handleSize: "+16",
             handleShape: "dot",
             sliderType: "min-range",
-            value: 50,
+            value: parseFloat('{{$bono}}')/2,
             circleShape: "pie",
             startAngle: 315,
             tooltipFormat: "changeTooltip"
@@ -280,16 +282,17 @@
         function changeTooltip(e) {
 
             var val = e.value, speed;
-            var M = ((-1 * (val - 100)) * parseFloat('{{$bono}}')) / 100;
-            var G = (val * parseFloat('{{$bono}}')) / 100;
+
+            var M = -1 * (val - parseFloat('{{$bono}}'));
+            var G = val;
 
             $(".good-hidden").val('' + G + '');
 
             $(".mercando-hidden").val('' +  M + '');
 
-            $(".good").val('$ ' + number_format(G, 2) + '');
+            $(".good").val('$ ' + number_format(G, 0) + '');
 
-            $(".mercando").val('$ ' +  number_format(M, 2) + '');
+            $(".mercando").val('$ ' +  number_format(M, 0) + '');
 
 
             return "G " + " % " + " M";
