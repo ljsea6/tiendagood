@@ -844,7 +844,7 @@ class AdminController extends Controller {
 
                             if ($ID_GOOD != 0) {
 
-                                $result = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+                                return $result = GiftCard::gift(Good::url(), $good, $ID_GOOD);
 
                                 if ($result == null) {
 
@@ -867,7 +867,7 @@ class AdminController extends Controller {
 
                             if ($ID_MERCANDO != 0) {
 
-                                $result = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
+                                return $result = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
 
                                 if ($result == null) {
 
@@ -892,7 +892,7 @@ class AdminController extends Controller {
 
                             if ($ID_GOOD != 0) {
 
-                                $result_g = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+                                return $result_g = GiftCard::gift(Good::url(), $good, $ID_GOOD);
 
                                 if ($result_g == null) {
                                     $g = false;
@@ -904,7 +904,7 @@ class AdminController extends Controller {
 
                             if ($ID_MERCANDO != 0) {
 
-                               $result_m = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
+                                return $result_m = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
 
                                 if ($result_m == null) {
 
