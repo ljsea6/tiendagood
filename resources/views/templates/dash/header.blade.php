@@ -93,10 +93,10 @@
                     </li>
                 </ul>
             </li>
-            <li class="hidden-xs">
+          <!--  <li class="hidden-xs"> -->
                 <!-- Button For Toggle Right Sidebar -->
-                <a href="#" class="font-lg toggle-right-sidebar"><i class="icon-menu2 m-d-1"></i></a>
-            </li>
+             <!--     <a href="#" class="font-lg toggle-right-sidebar"><i class="icon-menu2 m-d-1"></i></a>
+            </li> -->
         </ul>
 
     </div>

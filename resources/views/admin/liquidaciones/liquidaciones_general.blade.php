@@ -45,7 +45,7 @@
                     { data: 'fecha_inicio', name: 'fecha_inicio', orderable: true, searchable: true },
                     { data: 'fecha_final', name: 'fecha_final', orderable: true, searchable: true },
                     { data: 'fecha_liquidacion', name: 'fecha_liquidacion', orderable: true, searchable: true },
-                    { data: 'excel', name: 'excel', orderable: true, searchable: true }, 
+                    { data: 'excel', name: 'excel' }, 
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"

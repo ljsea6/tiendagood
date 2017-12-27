@@ -22,14 +22,16 @@ class LiquidacionesController extends Controller {
         return view('admin.liquidaciones.liquidar');
     }
 
-    public function post_liquidar() {
-        ini_set("memory_limit", "-1");
+    public function post_liquidar(Request $request) {
 
+    if ($request->has('liquidar')){
+
+        ini_set("memory_limit", "-1");
 
         $liquidar = new Liquidaciones();
         $liquidar->usuario_id = currentUser()->id;
-        $liquidar->fecha_inicio = Carbon::now();
-        $liquidar->fecha_final = Carbon::now();
+        $liquidar->fecha_inicio = $request->fecha_inicio;
+        $liquidar->fecha_final = $request->fecha_final;
         $liquidar->fecha_liquidacion = Carbon::now();
         $liquidar->created_at = Carbon::now();
         $liquidar->updated_at = Carbon::now();
@@ -67,6 +69,7 @@ class LiquidacionesController extends Controller {
 //->where('t.id', 41)
 //->limit(41)
     $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)
+   // ->limit(41)
     ->select('t.id', 't.tipo_id', $puntos)->orderByRaw('id ASC')->get();
 
     foreach ($vendedores as $value_vendedor) {
@@ -424,13 +427,6 @@ class LiquidacionesController extends Controller {
         DB::table('orders')->whereIn('id', $id_tres_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
 
 
-/*
-select ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.telefono, sum(ld.valor_comision), t2.nombre from liquidaciones_detalles ld
-  INNER JOIN terceros t ON t.id = ld.tercero_id
-  INNER JOIN tipos t2 ON t2.id = t.tipo_id
-group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.telefono, t2.nombre
-      ORDER BY t2.nombre, sum(ld.valor_comision)
-      */
         $liquidaciones_detalles = DB::table('liquidaciones_detalles as ld')
         ->join('terceros as t', 't.id', '=', 'ld.tercero_id')
         ->join('tipos as t2', 't2.id', '=', 't.tipo_id')
@@ -460,9 +456,9 @@ group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.tel
                             'valor_comision_paga' => $valor_comision,
                             'created_at' => Carbon::now(),
                             'updated_at' => Carbon::now()
-                        ]);   
-
+                        ]);  
         }
+    } 
 
             Session::flash('flash_msg', 'La liquidación se realizo correctamente');
             return redirect()->action('LiquidacionesController@get_liquidar');
@@ -475,9 +471,8 @@ group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.tel
     public function liquidaciones_datos() {
 
         $liquidaciones = DB::table('liquidaciones')
-                ->select('liquidaciones.id as liqui_id','nombres','fecha_inicio','fecha_final','fecha_liquidacion')
+                ->select('liquidaciones.id as liqui_id','nombres', 'apellidos', DB::raw("DATE(fecha_inicio) AS fechainicio"), DB::raw("DATE(fecha_final) AS fechafinal"),'fecha_liquidacion')
                 ->join('terceros', 'terceros.id', '=', 'liquidaciones.usuario_id')
-                ->orderByRaw('liquidaciones.id DESC')
                 ->get();
 
         $send = collect($liquidaciones);
@@ -487,13 +482,13 @@ group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.tel
                             return '<div align=left>' . $send->liqui_id . '</div>';
                         })
                         ->addColumn('nombres', function ($send) {
-                            return '<div align=left>' . $send->nombres . '</div>';
+                            return '<div align=left>' . $send->nombres.' '.$send->apellidos. '</div>';
                         })
                         ->addColumn('fecha_inicio', function ($send) {
-                            return '<div align=left>' . $send->fecha_inicio . '</div>';
+                            return '<div align=left>' . $send->fechainicio . '</div>';
                         })
                         ->addColumn('fecha_final', function ($send) {
-                            return '<div align=left>' . $send->fecha_final . '</div>';
+                            return '<div align=left>' . $send->fechafinal . '</div>';
                         })
                         ->addColumn('fecha_liquidacion', function ($send) {
                             return '<div align=left>' . $send->fecha_liquidacion . '</div>';
@@ -513,8 +508,20 @@ group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.tel
     $envios =  DB::table('liquidaciones_terceros')
         ->where('liquidaciones_terceros.liquidacion_id', $id)
         ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
-        ->select('identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga', DB::raw("(select estado from terceros_prime where terceros.id = terceros_prime.tercero_id limit 1) as prime"))->orderByRaw('terceros.nombres ASC')->get();
+        ->select('identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga', DB::raw("(select estado from terceros_prime where terceros.id = terceros_prime.tercero_id limit 1) as prime"))
+        ->orderByRaw('terceros.nombres ASC')->get();
+            	foreach ($envios as $value) {
+              		$prime = '';
+                    if ($value->prime != '') {
+                    	 $prime = 'Si';
+                    }
+                    else{
+                        $prime = 'No';
+                    }          		
+                  echo $value->email.' - '.$value->valor_comision_paga.' - '.$prime.'<br>';       
+            	}
 
+exit();
         Excel::create('liquidaciones', function($excel) use ($envios) {
             $excel->sheet('liquidaciones', function($sheet) use ($envios)  {
             	$sheet->prependRow(1, array('Cedula', 'Nombres', 'Apellidos', 'Teléfono', 'Email', 'Valor comisión','Prime'));
@@ -534,7 +541,5 @@ group by ld.tercero_id, t.identificacion, t.nombres, t.apellidos, t.email, t.tel
         })->export('xls');
 
     }
-
- 
 
 }
