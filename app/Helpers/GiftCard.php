@@ -41,6 +41,7 @@ class GiftCard
 
             if ($diferencia < 10) {
                 usleep(500000);
+                
             }
 
             $result = json_decode($response->getBody(), true);
@@ -51,7 +52,9 @@ class GiftCard
 
             if ($e->hasResponse()) {
 
-                return null;
+
+                return $e->getResponse()->getBody();
+
 
             }
         }

@@ -833,6 +833,10 @@ class AdminController extends Controller {
 
                     $ID_GOOD = Good::exist($tercero->email);
                     $ID_MERCANDO = Mercando::exist($tercero->email);
+                    return [
+                        'good_id' => $ID_GOOD,
+                        'mercando_id' => $ID_MERCANDO
+                    ];
 
                     $result_g = array();
                     $result_m = array();
@@ -844,7 +848,8 @@ class AdminController extends Controller {
 
                             if ($ID_GOOD != 0) {
 
-                                $result = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+                                return $result = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+
 
                                 if ($result == null) {
 
@@ -867,7 +872,9 @@ class AdminController extends Controller {
 
                             if ($ID_MERCANDO != 0) {
 
-                                $result = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
+
+                                return $result = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
+
 
                                 if ($result == null) {
 
@@ -892,7 +899,10 @@ class AdminController extends Controller {
 
                             if ($ID_GOOD != 0) {
 
-                                $result_g = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+
+
+                                return $result_g = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+
 
                                 if ($result_g == null) {
                                     $g = false;
@@ -904,7 +914,9 @@ class AdminController extends Controller {
 
                             if ($ID_MERCANDO != 0) {
 
-                               $result_m = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
+
+                                return $result_m = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
+
 
                                 if ($result_m == null) {
 
@@ -938,6 +950,7 @@ class AdminController extends Controller {
 
                                 return redirect()->back()->with(['g' => '¡Su bono en Tienda Good ha sido creado pero su bono para Mercando no se pudo crear, pongase en contacto con servicio al cliente para verificar su bono en Mercando.!']);
 
+
                             }
 
                             if ($g == false && $m == false) {
@@ -949,6 +962,7 @@ class AdminController extends Controller {
                                 $update->save();
 
                                 return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, sus bonos no pudieron ser creados, pongase en contacto de inmediato con servicio al cliente.!']);
+
 
                             }
 
