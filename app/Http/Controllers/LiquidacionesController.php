@@ -501,6 +501,60 @@ class LiquidacionesController extends Controller {
                         ->make(true);
     }
 
+    public function liquidaciones_extracto_comisiones($id=0) {
+     //currentUser()->id
+    	$liquidaciones = DB::table('liquidaciones')->select('fecha_liquidacion')
+                ->where('liquidaciones.id', $id) 
+                ->first();
+        
+        $mes = strtotime($liquidaciones->fecha_liquidacion);
+        $mes = date("m", $mes);
+
+    	$liquidaciones_detalles = $this->liquidaciones_extracto_comisiones_datos(currentUser()->id);
+    	$mes = $this->nombremes($mes);
+        return view('admin.liquidaciones.extracto_comisiones', compact('id','liquidaciones_detalles','mes'));
+    }
+
+    public function nombremes($mes){        
+    	setlocale(LC_TIME, 'spanish');      	
+    	$nombre=strftime("%B",mktime(0, 0, 0, $mes, 1, 2000));   
+    	return $nombre;
+    } 
+
+    public function liquidaciones_extracto_comisiones_datos($id=0) {
+
+        $liquidaciones = DB::table('liquidaciones_detalles')
+                ->select('nombres','apellidos', 'name', 'puntos', 'valor_comision')
+                ->where('liquidaciones_detalles.tercero_id', $id)
+                ->join('terceros', 'terceros.id', '=', 'liquidaciones_detalles.hijo_id')
+                ->join('orders', 'orders.id', '=', 'liquidaciones_detalles.order_id')
+                ->orderByRaw('valor_comision DESC')
+                ->get();
+
+        return $liquidaciones;
+/*
+        $send = collect($liquidaciones);
+
+        return Datatables::of($send)
+                        ->addColumn('nombres', function ($send) {
+                            return '<div align=left>' . $send->nombres . '</div>';
+                        })
+                        ->addColumn('apellidos', function ($send) {
+                            return '<div align=left>' . $send->apellidos. '</div>';
+                        })
+                        ->addColumn('name', function ($send) {
+                            return '<div align=left>' . $send->name . '</div>';
+                        })
+                        ->addColumn('puntos', function ($send) {
+                            return '<div align=left>' . $send->puntos . '</div>';
+                        })
+                        ->addColumn('valor_comision', function ($send) {
+                            return '<div align=left>' . number_format($send->valor_comision) . '</div>';
+                        })
+                        ->make(true);
+ */
+    }
+
     public function liquidaciones_detalles_excel($id=0) {  
 
     ini_set('memory_limit', '-1'); 
