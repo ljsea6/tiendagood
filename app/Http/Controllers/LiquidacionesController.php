@@ -509,19 +509,8 @@ class LiquidacionesController extends Controller {
         ->where('liquidaciones_terceros.liquidacion_id', $id)
         ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
         ->select('identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga', DB::raw("(select estado from terceros_prime where terceros.id = terceros_prime.tercero_id limit 1) as prime"))
-        ->orderByRaw('terceros.nombres ASC')->get();
-            	foreach ($envios as $value) {
-              		$prime = '';
-                    if ($value->prime != '') {
-                    	 $prime = 'Si';
-                    }
-                    else{
-                        $prime = 'No';
-                    }          		
-                  echo $value->email.' - '.$value->valor_comision_paga.' - '.$prime.'<br>';       
-            	}
-
-exit();
+        ->orderByRaw('terceros.valor_comision_paga DESC')->get();
+        
         Excel::create('liquidaciones', function($excel) use ($envios) {
             $excel->sheet('liquidaciones', function($sheet) use ($envios)  {
             	$sheet->prependRow(1, array('Cedula', 'Nombres', 'Apellidos', 'Teléfono', 'Email', 'Valor comisión','Prime'));
