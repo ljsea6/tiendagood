@@ -509,7 +509,7 @@ class LiquidacionesController extends Controller {
         ->where('liquidaciones_terceros.liquidacion_id', $id)
         ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
         ->select('identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga', DB::raw("(select estado from terceros_prime where terceros.id = terceros_prime.tercero_id limit 1) as prime"))
-        ->orderByRaw('terceros.valor_comision_paga DESC')->get();
+        ->orderByRaw('liquidaciones_terceros.valor_comision_paga DESC')->get();
         
         Excel::create('liquidaciones', function($excel) use ($envios) {
             $excel->sheet('liquidaciones', function($sheet) use ($envios)  {
