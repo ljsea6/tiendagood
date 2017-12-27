@@ -129,6 +129,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/liquidaciones/data', ['uses' => 'AdminController@data_liquidaciones', 'as' => 'admin.liquidaciones.data']);
     Route::get('/liquidaciones/{id}/edit', ['uses' => 'AdminController@editar_liquidaciones', 'as' => 'admin.liquidaciones.edit']);
     Route::post('/liquidaciones/create/gift_card', ['uses' => 'AdminController@gift_card', 'as' => 'admin.liquidaciones.gift_card']);
+    Route::get('liquidacion/liquidaciones_extracto_comisiones/{id}', ['uses' => 'LiquidacionesController@liquidaciones_extracto_comisiones', 'as' => 'liquidacion.liquidaciones_extracto_comisiones']);
+    Route::get('liquidacion/liquidaciones_extracto_comisiones_datos/{id}', ['uses' => 'LiquidacionesController@liquidaciones_extracto_comisiones_datos', 'as' => 'liquidacion.liquidaciones_extracto_comisiones_datos']);
 
     /*
      * Rules
@@ -290,8 +292,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::get('liquidacion/liquidaciones_general', ['uses' => 'LiquidacionesController@liquidaciones_general', 'as' => 'liquidacion.liquidaciones_general']);
         Route::get('liquidacion/liquidaciones_general_datos', ['uses' => 'LiquidacionesController@liquidaciones_datos', 'as' => 'liquidacion.liquidaciones_general_datos']);
         Route::get('liquidacion/liquidaciones_detalles_excel/{id}', ['uses' => 'LiquidacionesController@liquidaciones_detalles_excel', 'as' => 'liquidacion.detalles_excel']);
-        Route::get('liquidacion/liquidaciones_extracto_comisiones/{id}', ['uses' => 'LiquidacionesController@liquidaciones_extracto_comisiones', 'as' => 'liquidacion.liquidaciones_extracto_comisiones']);
-        Route::get('liquidacion/liquidaciones_extracto_comisiones_datos/{id}', ['uses' => 'LiquidacionesController@liquidaciones_extracto_comisiones_datos', 'as' => 'liquidacion.liquidaciones_extracto_comisiones_datos']);
     });
 
     Route::group(['middleware' => 'role:logistica'], function () {
