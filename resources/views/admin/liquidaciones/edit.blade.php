@@ -344,11 +344,41 @@
         <script>
             swal(
                 '{{$errors->first()}}',
-                '¡Comuniquese con soporte!',
-                'error'
+                '¡Disfrutalo!',
+                'success'
             );
         </script>
     @endif
+
+    @if (session('m'))
+        <script>
+            swal(
+                '{{session('m')}}',
+                '¡Disfrutalo!',
+                'success'
+            );
+        </script>
+    @endif
+
+    @if (session('gm'))
+        <script>
+            swal(
+                '{{session('gm')}}',
+                '¡Disfrutalo!',
+                'success'
+            );
+        </script>
+    @endif
+    @if (session('g'))
+        <script>
+            swal(
+                '{{session('g')}}',
+                '¡Disfrutalo!',
+                'success'
+            );
+        </script>
+    @endif
+
 
 
 @stop

@@ -822,7 +822,7 @@ class AdminController extends Controller {
                 $tercero = Tercero::where('id', currentUser()->id)
                     ->where('state', true)
                     ->first();
-                
+
                 if (count($tercero) > 0) {
 
                     $liquidacion_tercero = LiquidacionTercero::where('id', $liquidacion)

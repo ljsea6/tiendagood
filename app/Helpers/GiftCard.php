@@ -8,6 +8,7 @@
 
 namespace App\Helpers;
 
+use Carbon\Carbon;
 use App\Helpers\GuzzleHttp;
 use GuzzleHttp\Exception\ClientException;
 
@@ -25,6 +26,7 @@ class GiftCard
                     "template_suffix" => "gift_cards.birthday.liquid",
                     "currency" => "COP",
                     "customer_id" => $id,
+                    "expires_on" => Carbon::now()->addMonth()
                 ]
             ]
         ];
