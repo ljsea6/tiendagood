@@ -834,6 +834,11 @@ class AdminController extends Controller {
                     $ID_GOOD = Good::exist($tercero->email);
                     $ID_MERCANDO = Mercando::exist($tercero->email);
 
+                    return [
+                        'good_id' => $ID_GOOD,
+                        'mercando_id' => $ID_MERCANDO
+                    ];
+
                     $result_g = array();
                     $result_m = array();
 
