@@ -1,6 +1,6 @@
 @extends('templates.dash')
 
-@section('titulo', 'Listado de productos')
+@section('titulo', 'Good')
 
 @section('content')
     <div class="box">
@@ -10,7 +10,7 @@
                 {!! Alert::render() !!}
                 {{--<input type="button" class="btn btn-danger" id="update" value="Actualizar">--}}
                 <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                    <table data-order='[[ 0, "asc" ]]' id="tabla_liquidaciones_general" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
+                    <table data-order='[[ 0, "desc" ]]' id="tabla_liquidaciones_general" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
                         <thead>
                         <tr>
                             <th style="text-align: left;">#</th>
@@ -18,7 +18,7 @@
                             <th style="text-align: left">Fecha Inicio</th>
                             <th style="text-align: left">Fecha Final</th>
                             <th style="text-align: left">Fecha liquidacion</th> 
-                            <th style="text-align: left"></th> 
+                            <th style="text-align: left">Acciones</th> 
                         </tr>
                         </thead>
                     </table>
@@ -45,7 +45,7 @@
                     { data: 'fecha_inicio', name: 'fecha_inicio', orderable: true, searchable: true },
                     { data: 'fecha_final', name: 'fecha_final', orderable: true, searchable: true },
                     { data: 'fecha_liquidacion', name: 'fecha_liquidacion', orderable: true, searchable: true },
-                    { data: 'excel', name: 'excel', orderable: true, searchable: true }, 
+                    { data: 'excel', name: 'excel' }, 
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"
