@@ -216,7 +216,7 @@
                             <div class="row">
                                 <div class="col-xs-12">
                                     <div class="card-content" style="text-align: center;">
-                                        <a href="{{redirect()->back()}}" class="btn btn-primary text-center" data-background-color="orange" type="submit" value="Crear Bonos">Atrás</a>
+                                        <a href="{{route('admin.liquidaciones.index')}}" class="btn btn-primary text-center" data-background-color="orange" type="submit" value="Crear Bonos">Atrás</a>
                                     </div>
                                 </div>
                             </div>

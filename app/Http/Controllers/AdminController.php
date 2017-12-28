@@ -751,6 +751,27 @@ class AdminController extends Controller {
 
                 $liquidacion = Liquidacion::find($send->liquidacion_id);
 
+                $prime = DB::table('terceros_prime as tp')
+                    ->join('terceros as t', 'tp.tercero_id', '=', 't.id')
+                    ->where('tp.tercero_id',  $send->tercero_id)
+                    ->where('estado', true)
+                    ->orderBy('tp.id', 'desc')
+                    ->first();
+
+                if (count($prime) > 0) {
+
+                    $now = Carbon::now();
+                    $old = Carbon::parse($prime->fecha_final);
+
+                    if ($now <= $old) {
+
+                        return '<div align=center><a href="' . route('liquidacion.liquidaciones_extracto_comisiones', $send->liquidacion_id) .'">' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</a></div>';
+                    }
+
+                    return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
+                    
+                }
+
                 return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
             })
             ->addColumn('nombres', function ($send) {
@@ -823,6 +844,55 @@ class AdminController extends Controller {
                     ->where('state', true)
                     ->first();
 
+                $url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+
+                $url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+
+                $url_hello = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';  // api hello
+                $id_m = 276171980843;
+                $id_g = 239272853541;
+                $id_h = 5960597121;
+
+                $client = GuzzleHttp::client();
+                $send = [
+                    'form_params' => [
+                        'gift_card' => [
+                            "note" => "This is a note",
+                            "initial_value" => 1000,
+                            "template_suffix" => "gift_cards.birthday.liquid",
+                            "currency" => "COP",
+                            "customer_id" => $id_h,
+                            "expires_on" => Carbon::now()->addMonth()
+                        ]
+                    ]
+                ];
+
+                try {
+
+                    $response = $client->request('post', $url_hello . '/admin/gift_cards.json', $send);
+
+                    $headers = $response->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+
+                    if ($diferencia < 10) {
+                        usleep(500000);
+
+                    }
+
+                    $result = json_decode($response->getBody(), true);
+
+                    return $result['gift_card'];
+
+                } catch (ClientException $e) {
+
+                    if ($e->hasResponse()) {
+
+                        return $e->getResponse()->getBody();
+
+                    }
+                }
+
                 if (count($tercero) > 0) {
 
                     $liquidacion_tercero = LiquidacionTercero::where('id', $liquidacion)
@@ -833,10 +903,6 @@ class AdminController extends Controller {
 
                     $ID_GOOD = Good::exist($tercero->email);
                     $ID_MERCANDO = Mercando::exist($tercero->email);
-                    return [
-                        'good_id' => $ID_GOOD,
-                        'mercando_id' => $ID_MERCANDO
-                    ];
 
                     $result_g = array();
                     $result_m = array();
@@ -899,9 +965,7 @@ class AdminController extends Controller {
 
                             if ($ID_GOOD != 0) {
 
-
-
-                                return $result_g = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+                                $result_g = GiftCard::gift(Good::url(), $good, $ID_GOOD);
 
 
                                 if ($result_g == null) {
@@ -914,9 +978,7 @@ class AdminController extends Controller {
 
                             if ($ID_MERCANDO != 0) {
 
-
-                                return $result_m = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
-
+                                $result_m = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
 
                                 if ($result_m == null) {
 
