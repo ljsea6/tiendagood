@@ -435,9 +435,11 @@ class LiquidacionesController extends Controller {
         ->groupBy('ld.tercero_id', 't.identificacion', 't.nombres', 't.apellidos', 't.email', 't.telefono', 't2.nombre', 't2.id', 'ld.liquidacion_id')
         ->get();
 
+        $parametros = DB::table('parametros')->select('rete_fuente','rete_ica','prime','prime_iva','transferencia','extracto','administrativo')->where('id', 1)->first();
+
         foreach ($liquidaciones_detalles as $value) {
              
-             $valor_comision = 0;
+             $valor_comision = 0; $valor_comision_descuento =  0;
 
                     if($value->valor_comision > $value->comision_maxima){ 
                         if($value->comision_maxima != 0){
@@ -448,6 +450,8 @@ class LiquidacionesController extends Controller {
                         }
                     }
                     else{   $valor_comision = $value->valor_comision;    }
+                        
+                         $valor_comision_descuento = $valor_comision - ($valor_comision * $parametros->rete_fuente) - ($valor_comision * $parametros->rete_ica) - ($parametros->prime) - ($parametros->prime * $parametros->prime_iva)  - ($parametros->transferencia) - $parametros->extracto - $parametros->administrativo;
 
                            DB::table('liquidaciones_terceros')->insert([
                             'liquidacion_id' => $value->liquidacion_id,
@@ -455,7 +459,17 @@ class LiquidacionesController extends Controller {
                             'valor_comision' => $value->valor_comision,
                             'valor_comision_paga' => $valor_comision,
                             'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now()
+                            'updated_at' => Carbon::now(),
+
+                            'rete_fuente' => $valor_comision * $parametros->rete_fuente,
+                            'rete_ica' => $valor_comision * $parametros->rete_ica,
+                            'prime' => $parametros->prime,
+                            'prime_iva' => $parametros->prime * $parametros->prime_iva,
+                            'transferencia' => $parametros->transferencia,
+                            'extracto' => $parametros->extracto,
+                            'administrativo' => $parametros->administrativo,
+                            'virtual' => $valor_comision_descuento * 0.30,
+                            'giro' => $valor_comision_descuento * 0.70,
                         ]);  
         }
     } 
@@ -503,28 +517,26 @@ class LiquidacionesController extends Controller {
 
     public function liquidaciones_extracto_comisiones($id=0) {
      //currentUser()->id
-    	$liquidaciones = DB::table('liquidaciones')->select('fecha_liquidacion')
-                ->where('liquidaciones.id', $id) 
-                ->first();
-        
+    	$liquidaciones = DB::table('liquidaciones')->select('fecha_liquidacion')->where('liquidaciones.id', $id)->first();
+        $parametros = DB::table('parametros')->select('rete_fuente','rete_ica','prime','prime_iva','transferencia','extracto','administrativo')->where('id', 1)->first();
+
         $mes = strtotime($liquidaciones->fecha_liquidacion);
         $mes = date("m", $mes);
 
-    	$liquidaciones_detalles = $this->liquidaciones_extracto_comisiones_datos(currentUser()->id);
+    	$liquidaciones_detalles = $this->liquidaciones_extracto_comisiones_datos(184);
     	$mes = $this->nombremes($mes);
-        return view('admin.liquidaciones.extracto_comisiones', compact('id','liquidaciones_detalles','mes'));
+        return view('admin.liquidaciones.extracto_comisiones', compact('id','liquidaciones_detalles','mes','parametros'));
     }
 
     public function nombremes($mes){        
-    	setlocale(LC_TIME, 'spanish');      	
-    	$nombre=strftime("%B",mktime(0, 0, 0, $mes, 1, 2000));   
-    	return $nombre;
+        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"); 
+    	return $meses[$mes-1];
     } 
 
     public function liquidaciones_extracto_comisiones_datos($id=0) {
 
         $liquidaciones = DB::table('liquidaciones_detalles')
-                ->select('nombres','apellidos', 'name', 'puntos', 'valor_comision')
+                ->select('nombres','apellidos', 'name', 'puntos', 'valor_comision','orders.created_at')
                 ->where('liquidaciones_detalles.tercero_id', $id)
                 ->join('terceros', 'terceros.id', '=', 'liquidaciones_detalles.hijo_id')
                 ->join('orders', 'orders.id', '=', 'liquidaciones_detalles.order_id')

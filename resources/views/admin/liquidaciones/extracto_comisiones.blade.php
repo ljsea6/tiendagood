@@ -15,9 +15,10 @@
                         <tr>
                             <th style="text-align: left">Nombres</th>
                             <th style="text-align: left">Apellidos</th>
+                            <th style="text-align: left">Fecha</th>
                             <th style="text-align: left">Orden</th>
-                            <th style="text-align: left">Puntos</th>
-                            <th style="text-align: left">Valor de comisión</th> 
+                            <th style="text-align: right">Puntos</th>
+                            <th style="text-align: right">Valor de comisión</th> 
                         </tr>
                         </thead>
                         <tbody>
@@ -28,9 +29,10 @@
                         <tr>
                             <td style="text-align: left">{{ucwords($value->nombres)}}</td>
                             <td style="text-align: left">{{ucwords($value->apellidos)}}</td>
+                            <td style="text-align: left">{{$value->created_at}}</td>
                             <td style="text-align: left">{{$value->name}}</td>
-                            <td style="text-align: left">{{$value->puntos}}</td>
-                            <td style="text-align: left">{{number_format($value->valor_comision)}}</td> 
+                            <td style="text-align: right;">{{$value->puntos}}</td>
+                            <td style="text-align: right">{{number_format($value->valor_comision)}}</td> 
                         </tr>  
 
                         {{--*/  $TOTAL_COMISION += $value->valor_comision /*--}}
@@ -41,7 +43,18 @@
                             <td style="text-align: left"></td>
                             <td style="text-align: left"></td>
                             <td style="text-align: left"></td>
-                            <td style="text-align: left; font-weight: bold;">Total: {{number_format($TOTAL_COMISION)}}</td> 
+                            <td style="text-align: left"></td>
+                            <td style="text-align: right; font-weight: bold;">
+                              Total: {{number_format($TOTAL_COMISION)}}<br>
+                              Retefuente: {{number_format($TOTAL_COMISION * $parametros->rete_fuente)}}<br>
+                              Rete ICA: {{number_format($TOTAL_COMISION * $parametros->rete_ica)}}<br>
+                              Prime: {{number_format($parametros->prime)}}<br>
+                              IVA Prime: {{number_format($parametros->prime * $parametros->prime_iva)}}<br>
+                              Transferencia: {{number_format($parametros->transferencia)}}<br>
+                              Extractos: {{number_format($parametros->extracto)}}<br>
+                              Administrativos: {{number_format($parametros->administrativo)}}<br>
+                              Comision con descuentos: {{number_format($TOTAL_COMISION - ($TOTAL_COMISION * $parametros->rete_fuente) - ($TOTAL_COMISION * $parametros->rete_ica) - ($parametros->prime) - ($parametros->prime * $parametros->prime_iva)  - ($parametros->transferencia) - $parametros->extracto - $parametros->administrativo )}}
+                            </td> 
                         </tr>
                         </tbody>
                     </table>
