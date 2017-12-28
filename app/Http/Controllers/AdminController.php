@@ -751,27 +751,6 @@ class AdminController extends Controller {
 
                 $liquidacion = Liquidacion::find($send->liquidacion_id);
 
-                $prime = DB::table('terceros_prime as tp')
-                    ->join('terceros as t', 'tp.tercero_id', '=', 't.id')
-                    ->where('tp.tercero_id',  $send->tercero_id)
-                    ->where('estado', true)
-                    ->orderBy('tp.id', 'desc')
-                    ->first();
-
-                if (count($prime) > 0) {
-
-                    $now = Carbon::now();
-                    $old = Carbon::parse($prime->fecha_final);
-
-                    if ($now <= $old) {
-
-                        return '<div align=center><a href="' . route('liquidacion.liquidaciones_extracto_comisiones', $send->liquidacion_id) .'">' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</a></div>';
-                    }
-
-                    return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
-                    
-                }
-
                 return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
             })
             ->addColumn('nombres', function ($send) {
@@ -803,12 +782,42 @@ class AdminController extends Controller {
                     ->first();
                 if (count($ok) > 0) {
                     return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
-                        Ver
+                        Crear Bonos
                 </a></div>';
                 } else {
                     return '<div align=center>Sus bonos ya fueron generados</div>';
                 }
 
+            })
+            ->addColumn('extracto', function ($send) {
+
+                $liquidacion = Liquidacion::find($send->liquidacion_id);
+
+                $prime = DB::table('terceros_prime as tp')
+                    ->join('terceros as t', 'tp.tercero_id', '=', 't.id')
+                    ->where('tp.tercero_id',  $send->tercero_id)
+                    ->where('estado', true)
+                    ->orderBy('tp.id', 'desc')
+                    ->first();
+
+                if (count($prime) > 0) {
+
+                    $now = Carbon::now();
+                    $old = Carbon::parse($prime->fecha_final);
+
+                    if ($now <= $old) {
+
+                        return '<div align=center><a href="' . route('liquidacion.liquidaciones_extracto_comisiones', $send->liquidacion_id) . '"  class="btn btn-warning btn-xs">
+                        Extracto
+                </a></div>';
+
+                    }
+
+                    return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
+
+                }
+
+                return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
             })
             ->make(true);
     }

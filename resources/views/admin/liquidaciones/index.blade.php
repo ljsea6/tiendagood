@@ -17,6 +17,7 @@
                             <th style="text-align: center">Comisión</th>
                             <th style="text-align: center">Transferencia/Cheque</th>
                             <th style="text-align: center">Bono</th>
+                            <th style="text-align: center">Extracto</th>
                             <th style="text-align: center">Acción</th>
                         </tr>
                         </thead>
@@ -47,7 +48,7 @@
                     { data: 'total', name: 'total', orderable: true, searchable: true },
                     { data: 'consignacion', name: 'consignacion', orderable: true, searchable: true },
                     { data: 'bono', name: 'bono', orderable: true, searchable: true },
-
+                    { data: 'extracto', name: 'extracto', orderable: true, searchable: true },
                     { data: 'edit', name: 'edit', orderable: true, searchable: false}
                 ],
                 language: {
