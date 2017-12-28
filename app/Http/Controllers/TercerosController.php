@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Entities\Tercero;
 use App\Transactions;
 use App\Order;
+use App\Helpers\Points;
 use Yajra\Datatables\Datatables;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -26,17 +27,17 @@ class TercerosController extends Controller {
 
     public function anyData() {
 
-        $referidos = Tercero::select('id', 'identificacion', 'nombres', 'apellidos', 'email', 'mispuntos', 'rut', 'cedula', 'cuenta')
-                ->where('state', true)
-                ->get();
+        $referidos = Tercero::selectRaw('id, identificacion, nombres, apellidos, email, (puntos_propios(id) + puntos_amparados(id)) as totalpuntos, rut, cedula, cuenta, state')->get();
 
         $send = collect($referidos);
 
         return Datatables::of($send)
                         ->addColumn('action', function ($send ) {
-                            return '<div align=center><a href="' . route('admin.terceros.show', $send['id']) . '"  class="btn btn-success btn-xs">
-                        Red
-                </a></div>';
+                            if ($send['state'] == true) {
+                                return '<div align=center><a href="' . route('admin.terceros.show', $send['id']) . '"  class="btn btn-success btn-sm"><span class="fa fa-user"><span></a></div>';
+                            } else {
+                                return '';
+                            }
                         })
                         ->addColumn('id', function ($send) {
                             return '<div align=left>' . $send['id'] . '</div>';
@@ -53,13 +54,18 @@ class TercerosController extends Controller {
                         ->addColumn('email', function ($send) {
                             return '<div align=left>' . $send['email'] . '</div>';
                         })
-                        ->addColumn('mispuntos', function ($send) {
-                            return '<div align=left>' . number_format($send['mispuntos']) . '</div>';
+                        ->addColumn('totalpuntos', function ($send) {
+                            return '<div align=left>' . number_format($send['totalpuntos']) . '</div>';
+                        })
+                        ->addColumn('state', function ($send) {
+                            if ($send['state'] == true) {
+                                return '<button class="btn btn-success btn-sm" onclick="cambiarEstado(' . $send['id'] . ',' . $send['state'] . ')">Activo</button>';
+                            } else {
+                                return '<button class="btn btn-danger btn-sm" onclick="cambiarEstado(' . $send['id'] . ',' . $send['state'] . ')">Inactivo</button>';
+                            }
                         })
                         ->addColumn('edit', function ($send) {
-                            return '<div align=center><a href="' . route('admin.terceros.edit', $send['id']) . '"  class="btn btn-warning btn-xs">
-                        Editar
-                </a></div>';
+                            return '<div align=center><a href="' . route('admin.terceros.edit', $send['id']) . '"  class="btn btn-warning btn-sm">Editar</a></div>';
                         })
                         ->addColumn('rut', function ($send) {
                             if ($send['rut'] == NULL) {
@@ -489,6 +495,22 @@ class TercerosController extends Controller {
             if ($tercero != NULL) {
                 $update = DB::table('orders')->where('id', $request['orden_id'])->update(['tercero_id' => $tercero->id]);
                 if ($update) {
+                    echo true;
+                } else {
+                    echo 'Hubo un error al actualizar los datos';
+                }
+            } else {
+                echo 'Hubo un error al encontrar el tercero';
+            }
+        }
+    }
+
+    public function setState(Request $request) {
+        if ($request->has('id')) {
+            $tercero = Tercero::where('id', $request['id'])->first();
+            if ($tercero != NULL) {
+                $tercero->state = $tercero->state == true ? false : true;
+                if ($tercero->update()) {
                     echo true;
                 } else {
                     echo 'Hubo un error al actualizar los datos';
