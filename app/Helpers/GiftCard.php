@@ -52,9 +52,7 @@ class GiftCard
 
             if ($e->hasResponse()) {
 
-
                 return $e->getResponse()->getBody();
-
 
             }
         }
