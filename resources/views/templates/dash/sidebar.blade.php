@@ -10,6 +10,7 @@
                     <span class="nav-text">Dashboard</span>
                 </a>
             </li>
+
             <li class="has-submenu">
                 <a href="{{ route('terceros.actualizar_mis_datos') }}" class="animsition-link text-left">
                     <i class="glyphicon glyphicon-pencil">
@@ -18,16 +19,14 @@
                 </a>
             </li>
 
-           {{-- <li class="has-submenu">
+            <li class="has-submenu">
                 <a href="{{ route('admin.liquidaciones.index') }}" class="animsition-link text-left">
                     <i class="fa fa-money">
                     </i>
                     <span class="nav-text">Mis Liquidaciones</span>
                 </a>
             </li>
---}}
 
-            
             @role('dirsac|administrador|servicio.al.cliente')
 
             <li class="has-submenu">
