@@ -457,7 +457,7 @@ class LiquidacionesController extends Controller {
                             'liquidacion_id' => $value->liquidacion_id,
                             'tercero_id' => $value->tercero_id,
                             'valor_comision' => $value->valor_comision,
-                            'valor_comision_paga' => $valor_comision,
+                            'valor_comision_paga' => $valor_comision_descuento,
                             'created_at' => Carbon::now(),
                             'updated_at' => Carbon::now(),
 
