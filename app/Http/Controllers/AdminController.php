@@ -751,6 +751,27 @@ class AdminController extends Controller {
 
                 $liquidacion = Liquidacion::find($send->liquidacion_id);
 
+                $prime = DB::table('terceros_prime as tp')
+                    ->join('terceros as t', 'tp.tercero_id', '=', 't.id')
+                    ->where('tp.tercero_id',  $send->tercero_id)
+                    ->where('estado', true)
+                    ->orderBy('tp.id', 'desc')
+                    ->first();
+
+                if (count($prime) > 0) {
+
+                    $now = Carbon::now();
+                    $old = Carbon::parse($prime->fecha_final);
+
+                    if ($now <= $old) {
+
+                        return '<div align=center><a href="' . route('liquidacion.liquidaciones_extracto_comisiones', $send->liquidacion_id) .'">' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</a></div>';
+                    }
+
+                    return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
+                    
+                }
+
                 return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
             })
             ->addColumn('nombres', function ($send) {
@@ -804,7 +825,6 @@ class AdminController extends Controller {
     public function gift_card(Request $request)
     {
 
-
         if ($request->has('good') && $request->has('mercando') && $request->has('bono') && $request->has('liquidacion')) {
 
             $liquidacion = $request->liquidacion;
@@ -824,6 +844,55 @@ class AdminController extends Controller {
                     ->where('state', true)
                     ->first();
 
+                $url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+
+                $url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+
+                $url_hello = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';  // api hello
+                $id_m = 276171980843;
+                $id_g = 239272853541;
+                $id_h = 5960597121;
+
+                $client = GuzzleHttp::client();
+                $send = [
+                    'form_params' => [
+                        'gift_card' => [
+                            "note" => "This is a note",
+                            "initial_value" => 1000,
+                            "template_suffix" => "gift_cards.birthday.liquid",
+                            "currency" => "COP",
+                            "customer_id" => $id_h,
+                            "expires_on" => Carbon::now()->addMonth()
+                        ]
+                    ]
+                ];
+
+                try {
+
+                    $response = $client->request('post', $url_hello . '/admin/gift_cards.json', $send);
+
+                    $headers = $response->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+
+                    if ($diferencia < 10) {
+                        usleep(500000);
+
+                    }
+
+                    $result = json_decode($response->getBody(), true);
+
+                    return $result['gift_card'];
+
+                } catch (ClientException $e) {
+
+                    if ($e->hasResponse()) {
+
+                        return $e->getResponse()->getBody();
+
+                    }
+                }
+
                 if (count($tercero) > 0) {
 
                     $liquidacion_tercero = LiquidacionTercero::where('id', $liquidacion)
@@ -835,19 +904,17 @@ class AdminController extends Controller {
                     $ID_GOOD = Good::exist($tercero->email);
                     $ID_MERCANDO = Mercando::exist($tercero->email);
 
-
+                    $result_g = array();
+                    $result_m = array();
 
                     if (count($liquidacion_tercero) > 0) {
 
-                        $r = GiftCard::test(GuzzleHttp::url_test(), 184657575979);
-                        return response()->json($r);
+
                         if ($good != 0 && $mercando == 0) {
 
                             if ($ID_GOOD != 0) {
 
-                                $result = GiftCard::gift(GuzzleHttp::url_test(), $good, 184657575979);
-
-                                return $result;
+                                return $result = GiftCard::gift(Good::url(), $good, $ID_GOOD);
 
 
                                 if ($result == null) {
@@ -861,7 +928,7 @@ class AdminController extends Controller {
                                 $update->giftcard_mercando = null;
                                 $update->save();
 
-                                return redirect()->back()->withErrors(['errors' => '¡Felicidades, su bono en Tienda Good ha sido creado exitosamente.!']);
+                                return redirect()->back()->with(['g' => '¡Felicidades, su bono en Tienda Good ha sido creado exitosamente.!']);
 
                             }
 
@@ -872,9 +939,7 @@ class AdminController extends Controller {
                             if ($ID_MERCANDO != 0) {
 
 
-                                $result = GiftCard::gift(GuzzleHttp::url_test(), $mercando, 184657575979);
-
-                                return $result;
+                                return $result = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
 
 
                                 if ($result == null) {
@@ -888,7 +953,7 @@ class AdminController extends Controller {
                                 $update->giftcard_mercando = $result;
                                 $update->save();
 
-                                return redirect()->back()->withErrors(['errors' => '¡Felicidades, su bono en Mercando ha sido creado exitosamente.!']);
+                                return redirect()->back()->with(['m' => '¡Felicidades, su bono en Mercando ha sido creado exitosamente en Mercando.!']);
 
                             }
                         }
@@ -900,81 +965,78 @@ class AdminController extends Controller {
 
                             if ($ID_GOOD != 0) {
 
-                                $result_g = GiftCard::gift(GuzzleHttp::url_test(), $good, 184657575979);
-
-                                return $result_g;
+                                $result_g = GiftCard::gift(Good::url(), $good, $ID_GOOD);
 
 
                                 if ($result_g == null) {
                                     $g = false;
-
-
-                                } else {
-                                    $g = false;
                                 }
 
-                                if ($ID_MERCANDO != 0) {
+                            } else {
+                                $g = false;
+                            }
 
-                                    $result_m = GiftCard::gift(GuzzleHttp::url_test(), $mercando, 184657575979);
-                                    return $result_m;
+                            if ($ID_MERCANDO != 0) {
 
-                                    if ($result_m == null) {
+                                $result_m = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
 
-                                        $m = false;
-                                    }
-
-                                } else {
+                                if ($result_m == null) {
 
                                     $m = false;
                                 }
 
-                                if ($g == false && $m != false) {
+                            } else {
 
-                                    $update->bono_good = $good;
-                                    $update->bono_mercando = $mercando;
-                                    $update->giftcard_good = null;
-                                    $update->giftcard_mercando = $result_m;
-                                    $update->save();
+                                $m = false;
+                            }
 
-                                    return redirect()->back()->withErrors(['errors' => '¡Su bono en Mercando ha sido creado pero su bono para Tienga Good no se pudo crear, pongase en contacto con servicio al cliente para verificar su bono en Tienda Good.!']);
+                            if ($g == false && $m != false) {
 
-                                }
+                                $update->bono_good = $good;
+                                $update->bono_mercando = $mercando;
+                                $update->giftcard_good = null;
+                                $update->giftcard_mercando = $result_m;
+                                $update->save();
+
+                                return redirect()->back()->with(['m' => '¡Su bono en Mercando ha sido creado pero su bono para Tienga Good no se pudo crear, pongase en contacto con servicio al cliente para verificar su bono en Tienda Good.!']);
+
+                            }
+
+                            if ($g != false && $m == false) {
+
+                                $update->bono_good = $good;
+                                $update->bono_mercando = $mercando;
+                                $update->giftcard_good = $result_g;
+                                $update->giftcard_mercando = null;
+                                $update->save();
+
+                                return redirect()->back()->with(['g' => '¡Su bono en Tienda Good ha sido creado pero su bono para Mercando no se pudo crear, pongase en contacto con servicio al cliente para verificar su bono en Mercando.!']);
 
 
-                                if ($g != false && $m == false) {
+                            }
 
-                                    $update->bono_good = $good;
-                                    $update->bono_mercando = $mercando;
-                                    $update->giftcard_good = $result_g;
-                                    $update->giftcard_mercando = null;
-                                    $update->save();
+                            if ($g == false && $m == false) {
 
-                                    return redirect()->back()->withErrors(['errors' => '¡Su bono en Tienda Good ha sido creado pero su bono para Mercando no se pudo crear, pongase en contacto con servicio al cliente para verificar su bono en Mercando.!']);
+                                $update->bono_good = $good;
+                                $update->bono_mercando = $mercando;
+                                $update->giftcard_good = null;
+                                $update->giftcard_mercando = null;
+                                $update->save();
 
-                                }
+                                return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, sus bonos no pudieron ser creados, pongase en contacto de inmediato con servicio al cliente.!']);
 
-                                if ($g == false && $m == false) {
 
-                                    $update->bono_good = $good;
-                                    $update->bono_mercando = $mercando;
-                                    $update->giftcard_good = null;
-                                    $update->giftcard_mercando = null;
-                                    $update->save();
+                            }
 
-                                    return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, sus bonos no pudieron ser creados, pongase en contacto de inmediato con servicio al cliente.!']);
+                            if ($g != false && $m != false) {
 
-                                }
+                                $update->bono_good = $good;
+                                $update->bono_mercando = $mercando;
+                                $update->giftcard_good = $result_g;
+                                $update->giftcard_mercando = $result_m;
+                                $update->save();
 
-                                if ($g != false && $m != false) {
-
-                                    $update->bono_good = $good;
-                                    $update->bono_mercando = $mercando;
-                                    $update->giftcard_good = $result_g;
-                                    $update->giftcard_mercando = $result_m;
-                                    $update->save();
-
-                                    return redirect()->back()->withErrors(['errors' => '¡Felicidades, sus bonos han sido creados correctamente.!']);
-                                }
+                                return redirect()->back()->with(['gm' => '¡Felicidades, sus bonos han sido creados correctamente.!']);
                             }
                         }
 
