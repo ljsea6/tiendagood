@@ -26,8 +26,8 @@
 
                         @foreach ($liquidaciones_detalles as $value)
                         <tr>
-                            <td style="text-align: left">{{$value->nombres}}</td>
-                            <td style="text-align: left">{{$value->apellidos}}</td>
+                            <td style="text-align: left">{{ucwords($value->nombres)}}</td>
+                            <td style="text-align: left">{{ucwords($value->apellidos)}}</td>
                             <td style="text-align: left">{{$value->name}}</td>
                             <td style="text-align: left">{{$value->puntos}}</td>
                             <td style="text-align: left">{{number_format($value->valor_comision)}}</td> 
