@@ -56,7 +56,7 @@
                             <td style="text-align: left"></td>
                             <td style="font-weight: bold;"><br>
                                 <table style="width: 100%;">
-                                  
+
                                     <tr>
                               <td class="tdizquierdo" style="padding: 1px 1px;">Total:</td> 
                               <td class="tdderecho" style="padding: 1px 1px;">{{number_format($TOTAL_COMISION)}}</td>
@@ -64,11 +64,11 @@
                               @if ($liquidaciones_terceros->estado_id == 87)     
                                     <tr>
                               <td class="tdizquierdo" style="padding: 1px 1px;">Retefuente:</td> 
-                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($TOTAL_COMISION * $parametros->rete_fuente)}}</td> 
+                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($parametros->rete_fuente)}}</td> 
                                    </tr>
                                     <tr>
                               <td class="tdizquierdo" style="padding: 1px 1px;">Rete ICA:</td> 
-                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($TOTAL_COMISION * $parametros->rete_ica)}}</td> 
+                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($parametros->rete_ica)}}</td> 
                                    </tr>
                                     <tr>
                               <td class="tdizquierdo" style="padding: 1px 1px;">Prime:</td> 
@@ -76,7 +76,7 @@
                                    </tr>
                                     <tr>
                               <td class="tdizquierdo" style="padding: 1px 1px;">IVA Prime:</td> 
-                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($parametros->prime * $parametros->prime_iva)}}</td> 
+                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($parametros->prime_iva)}}</td> 
                                    </tr>
                                     <tr>
                               <td class="tdizquierdo" style="padding: 1px 1px;">Transferencia:</td> 
@@ -92,7 +92,7 @@
                                    </tr>
                                     <tr>
                               <td class="tdizquierdo" style="padding: 1px 1px;">Comisión con descuentos:</td> 
-                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($TOTAL_COMISION - ($TOTAL_COMISION * $parametros->rete_fuente) - ($TOTAL_COMISION * $parametros->rete_ica) - ($parametros->prime) - ($parametros->prime * $parametros->prime_iva)  - ($parametros->transferencia) - $parametros->extracto - $parametros->administrativo )}}</td> 
+                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($parametros->valor_comision_paga)}} </td> 
                                     </tr>
                              @endif
 
