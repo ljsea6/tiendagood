@@ -517,15 +517,30 @@ class LiquidacionesController extends Controller {
 
     public function liquidaciones_extracto_comisiones($id=0) {
      //currentUser()->id
+    	$usuario = 4;
     	$liquidaciones = DB::table('liquidaciones')->select('fecha_liquidacion')->where('liquidaciones.id', $id)->first();
+    	$liquidaciones_terceros = DB::table('liquidaciones_terceros')->select('estado_id')->where('tercero_id', $usuario)->first();
         $parametros = DB::table('parametros')->select('rete_fuente','rete_ica','prime','prime_iva','transferencia','extracto','administrativo')->where('id', 1)->first();
 
         $mes = strtotime($liquidaciones->fecha_liquidacion);
         $mes = date("m", $mes);
 
-    	$liquidaciones_detalles = $this->liquidaciones_extracto_comisiones_datos(184);
+    	$liquidaciones_detalles = $this->liquidaciones_extracto_comisiones_datos($usuario);
     	$mes = $this->nombremes($mes);
-        return view('admin.liquidaciones.extracto_comisiones', compact('id','liquidaciones_detalles','mes','parametros'));
+
+         $prime = DB::table('terceros_prime as tp')->join('terceros as t', 'tp.tercero_id', '=', 't.id')->where('tp.tercero_id',  $usuario)
+                    ->where('estado', true)->orderBy('tp.id', 'desc')->first();
+
+                if (count($prime) > 0) {
+
+                    $now = Carbon::now();
+                    $old = Carbon::parse($prime->fecha_final);
+
+                    if ($now <= $old) {
+                       	
+                        return view('admin.liquidaciones.extracto_comisiones', compact('id','liquidaciones_detalles','mes','parametros','liquidaciones_terceros'));
+                    }
+                }
     }
 
     public function nombremes($mes){        
@@ -565,6 +580,68 @@ class LiquidacionesController extends Controller {
                         })
                         ->make(true);
  */
+    }
+
+    public function liquidaciones_terceros_estados($id=0) {
+     //currentUser()->id
+        $parametros = DB::table('parametros')->select('rete_fuente','rete_ica','prime','prime_iva','transferencia','extracto','administrativo')->where('id', 1)->first();
+
+        return view('admin.liquidaciones.liquidaciones_tercero_estado', compact('id','liquidaciones_detalles','mes','parametros'));
+    }
+
+    public function liquidaciones_terceros_estados_datos($id=0) {
+
+        $liquidaciones = DB::table('liquidaciones_terceros')
+        ->where('liquidaciones_terceros.liquidacion_id', 57)
+        ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
+        ->select('identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga', DB::raw("(select estado from terceros_prime where terceros.id = terceros_prime.tercero_id limit 1) as prime"))
+        ->orderByRaw('liquidaciones_terceros.valor_comision_paga ASC')->get();
+        
+        $datos[] = array();
+        foreach ($liquidaciones as $send) {
+
+            		$prime = '';
+                    if ($send->prime != '') {
+                    	 $prime = 'Sisfsdfsd';
+                    }
+                    else{
+                        $prime = 'No';
+                    }
+
+        	$datos[] = array('identificacion' => $send->identificacion, 
+                              'nombres' => $send->nombres, 
+                              'apellidos' => $send->apellidos, 
+                              'telefono' => $send->telefono, 
+                              'email' => $send->email, 
+                              'valor_comision_paga' => $send->valor_comision_paga, 
+                              'prime' => $prime); 
+        }
+
+        $send = collect($datos);
+
+        return Datatables::of($send)
+                        ->addColumn('identificacion', function ($send) {
+                            return '<div align=left>' . $send['identificacion'] . '</div>';
+                        })
+                        ->addColumn('nombres', function ($send) {
+                            return '<div align=left>' . $send['nombres']. '</div>';
+                        })
+                        ->addColumn('apellidos', function ($send) {
+                            return '<div align=left>' . $send['apellidos'] . '</div>';
+                        })
+                        ->addColumn('telefono', function ($send) {
+                            return '<div align=left>' . $send['telefono'] . '</div>';
+                        })
+                        ->addColumn('email', function ($send) {
+                            return '<div align=left>' . $send['email'] . '</div>';
+                        })
+                        ->addColumn('valor_comision_paga', function ($send) {
+                            return '<div align=left>' . $send['valor_comision_paga'] . '</div>';
+                        })
+                        ->addColumn('prime', function ($send) { 
+                            return '<div align=left>' . $send['prime']. '</div>';
+                        })
+                        ->make(true); 
     }
 
     public function liquidaciones_detalles_excel($id=0) {  

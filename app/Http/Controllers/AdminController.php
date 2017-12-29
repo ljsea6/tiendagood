@@ -734,12 +734,28 @@ class AdminController extends Controller {
 
     public function liquidaciones()
     {
-        return view('admin.liquidaciones.index');
+        
+        $usuario = 4; 
+
+         $prime = DB::table('terceros_prime as tp')->join('terceros as t', 'tp.tercero_id', '=', 't.id')->where('tp.tercero_id',  $usuario)
+                    ->where('estado', true)->orderBy('tp.id', 'desc')->first();
+            $prime_val='no';
+                if (count($prime) > 0) {
+
+                    $now = Carbon::now();
+                    $old = Carbon::parse($prime->fecha_final);
+
+                    if ($now <= $old) {
+                        $prime_val='si';
+                    }
+                } 
+
+        return view('admin.liquidaciones.index', compact('prime_val'));
     }
 
     public function data_liquidaciones()
     {
-        $id = currentUser()->id;
+        $id = 4;
 
         $liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
 
@@ -754,32 +770,48 @@ class AdminController extends Controller {
                 return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
             })
             ->addColumn('nombres', function ($send) {
-
                 $t = Tercero::find($send->tercero_id);
-
                 return '<div align=center>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . '</div>';
             })
             ->addColumn('consignacion', function ($send) {
-
-                return '<div align=center>' . number_format((float)$send->valor_comision_paga*0.7) . '</div>';
+                return '<div align=center>' . number_format((float)$send->giro) . '</div>';
             })
             ->addColumn('bono', function ($send) {
-
-                return '<div align=center>' . number_format((float)$send->valor_comision_paga*0.3) . '</div>';
+                return '<div align=center>' . number_format((float)$send->virtual) . '</div>';
             })
             ->addColumn('total', function ($send) {
-
-
+                return '<div align=center>' . number_format((float)$send->valor_comision) . '</div>';
+            })
+            ->addColumn('total_paga', function ($send) {
                 return '<div align=center>' . number_format((float)$send->valor_comision_paga) . '</div>';
             })
+            ->addColumn('rete_fuente', function ($send) {                
+                return '<div align=center>' . number_format((float)$send->rete_fuente) . '</div>';
+            })
+            ->addColumn('rete_ica', function ($send) {                
+                return '<div align=center>' . number_format((float)$send->rete_ica) . '</div>';
+            })
+            ->addColumn('prime', function ($send) {                
+                return '<div align=center>' . number_format((float)$send->prime) . '</div>';
+            })
+            ->addColumn('prime_iva', function ($send) {                
+                return '<div align=center>' . number_format((float)$send->prime_iva) . '</div>';
+            })
+            ->addColumn('transferencia', function ($send) {                
+                return '<div align=center>' . number_format((float)$send->transferencia) . '</div>';
+            })
+            ->addColumn('extracto', function ($send) {                
+                return '<div align=center>' . number_format((float)$send->extracto) . '</div>';
+            })
+            ->addColumn('administrativo', function ($send) {                
+                return '<div align=center>' . number_format((float)$send->administrativo) . '</div>';
+            })
+            ->addColumn('estado', function ($send) {  
+                $tipo = DB::table('tipos')->select('nombre')->where('id', $send->estado_id)->first();              
+                return '<div align=center>' . $tipo->nombre . '</div>';
+            })
             ->addColumn('edit', function ($send) {
-
-                $ok = LiquidacionTercero::where('id', $send->id)
-                    ->where('bono_good', null)
-                    ->where('bono_mercando', null)
-                    ->where('giftcard_good', null)
-                    ->where('giftcard_mercando', null)
-                    ->first();
+                $ok = LiquidacionTercero::where('id', $send->id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
                 if (count($ok) > 0) {
                     return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
                         Crear Bonos
@@ -789,7 +821,7 @@ class AdminController extends Controller {
                 }
 
             })
-            ->addColumn('extracto', function ($send) {
+            ->addColumn('extractos', function ($send) {
 
                 $liquidacion = Liquidacion::find($send->liquidacion_id);
 
@@ -813,11 +845,11 @@ class AdminController extends Controller {
 
                     }
 
-                    return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
+                    return '<div align=center>No es prime</div>';
 
                 }
 
-                return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
+                return '<div align=center>No es prime</div>';
             })
             ->make(true);
     }
@@ -827,7 +859,7 @@ class AdminController extends Controller {
         $liquidacion_tercero = LiquidacionTercero::find($id);
 
 
-        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->valor_comision_paga, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->valor_comision_paga * 0.7), 'bono' => ($liquidacion_tercero->valor_comision_paga * 0.3), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans()]);
+        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->valor_comision_paga, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->valor_comision_paga), 'bono' => ($liquidacion_tercero->valor_comision_paga), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans()]);
 
     }
 
