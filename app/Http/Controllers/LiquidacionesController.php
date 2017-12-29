@@ -517,7 +517,7 @@ class LiquidacionesController extends Controller {
 
     public function liquidaciones_extracto_comisiones($id=0) {
      //currentUser()->id
-    	$usuario = currentUser()->id;
+    	$usuario = 4;
     	$liquidaciones = DB::table('liquidaciones')->select('fecha_liquidacion')->where('liquidaciones.id', $id)->first();
     	$liquidaciones_terceros = DB::table('liquidaciones_terceros')->select('estado_id')->where('tercero_id', $usuario)->first();
         $parametros = DB::table('parametros')->select('rete_fuente','rete_ica','prime','prime_iva','transferencia','extracto','administrativo')->where('id', 1)->first();

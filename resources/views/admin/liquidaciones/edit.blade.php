@@ -139,7 +139,7 @@
                                     </div>
                                     <div class="card-content">
                                         <h3 class="title" style="text-align: center;">
-                                            <span style="color: orange; font-size: 2.2em; font-weight: bolder; text-transform: uppercase;">${{ number_format($total * 0.3) }}</span></small>
+                                            <span style="color: orange; font-size: 2.2em; font-weight: bolder; text-transform: uppercase;">${{ number_format($total) }}</span></small>
                                         </h3>
                                     </div>
                                     <div class="card-footer" style="display: block;">
