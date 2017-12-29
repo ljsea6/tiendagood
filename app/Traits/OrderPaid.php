@@ -15,7 +15,7 @@ use App\Entities\Tercero;
 
 trait OrderPaid
 {
-    
+
     public function OrderPaid($order, $order_create, $puntos)
     {
         if ($order['financial_status'] == "paid") {

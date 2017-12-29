@@ -3457,6 +3457,12 @@ class OrdersController extends Controller {
         $id_h = 5960597121;
 
         $client = GuzzleHttp::client();
+
+        $r = $client->request('get', $url_mercando . '/admin/customers/search.json?query=email:oscar.fonseca.castro@gmail.com');
+        $result = json_decode($r->getBody(), true);
+
+
+
         $send = [
             'form_params' => [
                 'gift_card' => [
@@ -3464,13 +3470,12 @@ class OrdersController extends Controller {
                     "initial_value" => 1000,
                     "template_suffix" => "gift_cards.birthday.liquid",
                     "currency" => "COP",
-                    "customer_id" => $id_m,
+                    "customer_id" => $result['customers'][0]['id'],
                     "expires_on" => Carbon::now()->addMonth()
                 ]
             ]
         ];
 
-        return response()->json($send);
 
         try {
 
