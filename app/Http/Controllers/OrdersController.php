@@ -10,6 +10,7 @@ use App\Traits\OrderCancelled;
 use App\Traits\OrderCancelledMercando;
 use App\Traits\OrderPaid;
 use App\Traits\OrderPaidMercando;
+use App\Helpers\GuzzleHttp;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -3445,7 +3446,58 @@ class OrdersController extends Controller {
 
     public function contador()
     {
-        ini_set('memory_limit', '512M');
+
+        $url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+
+        $url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+
+        $url_hello = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';  // api hello
+        $id_m = 276171980843;
+        $id_g = 239272853541;
+        $id_h = 5960597121;
+
+        $client = GuzzleHttp::client();
+        $send = [
+            'form_params' => [
+                'gift_card' => [
+                    "note" => "This is a note",
+                    "initial_value" => 1000,
+                    "template_suffix" => "gift_cards.birthday.liquid",
+                    "currency" => "COP",
+                    "customer_id" => $id_m,
+                    "expires_on" => Carbon::now()->addMonth()
+                ]
+            ]
+        ];
+
+        return response()->json($send);
+
+        try {
+
+            $response = $client->request('post', $url_mercando . '/admin/gift_cards.json', $send);
+
+            $headers = $response->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+            $x = explode('/', $headers[0]);
+            $diferencia = $x[1] - $x[0];
+
+            if ($diferencia < 10) {
+                usleep(500000);
+
+            }
+
+            $result = json_decode($response->getBody(), true);
+
+            return $result['gift_card'];
+
+        } catch (ClientException $e) {
+
+            if ($e->hasResponse()) {
+
+                return $e->getResponse()->getBody();
+
+            }
+        }
+        /*ini_set('memory_limit', '512M');
 
         Commissions::assign_without_type();
 
@@ -3460,7 +3512,7 @@ class OrdersController extends Controller {
 
         }
 
-        return response()->json(['msg' => 'hecho']);
+        return response()->json(['msg' => 'hecho']);*/
     }
 
     public function contador_uno() {
