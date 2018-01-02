@@ -755,7 +755,7 @@ class AdminController extends Controller {
 
     public function data_liquidaciones()
     {
-        $id = currentUser()->id;
+        $id = 526;
 
         //$liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
         $liquidaciones = DB::table('liquidaciones_terceros')
@@ -782,17 +782,14 @@ class AdminController extends Controller {
             })
             ->addColumn('bono', function ($send) {              
 
-              $ok = LiquidacionTercero::where('id', $send->id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
-                if (count($ok) > 0) {
-                    $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
-                        Crear Bonos
-                </a></div>';
+              $ok = LiquidacionTercero::where('id', $send->liquidacion_id)->where('tercero_id', $send->tercero_id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
+                if (count($ok) == 0) {
+                    $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
                 } else {
                     $boton =  '<div align=center>Sus bonos ya fueron generados</div>';
                 }
 
-
-                return '<div align=center>' . number_format((float)$send->virtual) . ' <br> '.$boton.' </div>';
+                return '<div align=center>' . number_format((float)$send->virtual) . ' <br><br> '.($boton).' </div>';
             })
             ->addColumn('total', function ($send) {
                 return '<div align=center>' . number_format((float)$send->valor_comision) . '</div>';
