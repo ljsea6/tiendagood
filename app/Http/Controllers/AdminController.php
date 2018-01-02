@@ -735,7 +735,7 @@ class AdminController extends Controller {
     public function liquidaciones()
     {
         
-        $usuario = 526; 
+        $usuario = currentUser()->id; 
 
          $prime = DB::table('terceros_prime as tp')->join('terceros as t', 'tp.tercero_id', '=', 't.id')->where('tp.tercero_id',  $usuario)
                     ->where('estado', true)->orderBy('tp.id', 'desc')->first();
@@ -755,7 +755,7 @@ class AdminController extends Controller {
 
     public function data_liquidaciones()
     {
-        $id = 526;
+        $id = currentUser()->id;
   //currentUser()->id
         //$liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
         $liquidaciones = DB::table('liquidaciones_terceros')
