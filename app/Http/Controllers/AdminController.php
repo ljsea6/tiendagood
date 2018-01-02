@@ -755,7 +755,7 @@ class AdminController extends Controller {
 
     public function data_liquidaciones()
     {
-        $id = 4;
+        $id = currentUser()->id;
 
         $liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
 

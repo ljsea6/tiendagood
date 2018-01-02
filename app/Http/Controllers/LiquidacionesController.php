@@ -519,7 +519,7 @@ class LiquidacionesController extends Controller {
      //currentUser()->id
     	$usuario = 4;
     	$liquidaciones = DB::table('liquidaciones')->select('fecha_liquidacion')->where('liquidaciones.id', $id)->first();
-    	$liquidaciones_terceros = DB::table('liquidaciones_terceros')->select('estado_id')->where('tercero_id', $usuario)->first();
+    	$liquidaciones_terceros = DB::table('liquidaciones_terceros')->select('estado_id', 'valor_comision_paga', 'rete_fuente','rete_ica','prime','prime_iva','transferencia','extracto','administrativo')->where('tercero_id', $usuario)->first();
         $parametros = DB::table('parametros')->select('rete_fuente','rete_ica','prime','prime_iva','transferencia','extracto','administrativo')->where('id', 1)->first();
 
         $mes = strtotime($liquidaciones->fecha_liquidacion);
@@ -536,8 +536,7 @@ class LiquidacionesController extends Controller {
                     $now = Carbon::now();
                     $old = Carbon::parse($prime->fecha_final);
 
-                    if ($now <= $old) {
-                       	
+                    if ($now <= $old) {                       	
                         return view('admin.liquidaciones.extracto_comisiones', compact('id','liquidaciones_detalles','mes','parametros','liquidaciones_terceros'));
                     }
                 }
