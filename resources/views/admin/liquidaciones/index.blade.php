@@ -7,7 +7,7 @@
         <div class="panel panel-default">
             <div class="panel-heading font-header">Listado de liquidaciones</div>
             <div class="panel-body"> 
-           Nota: sdfsdfdsf ds fds f sd fsd
+           <span style="color: #FF5733; font-size: 16px">Nota: sdfsdfdsf ds fds f sd fsd</span>
                 <br>
                 <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                     <table data-order='[[ 0, "asc" ]]' id="tabla_liquidaciones" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
