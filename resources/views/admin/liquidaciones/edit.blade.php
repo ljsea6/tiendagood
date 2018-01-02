@@ -233,7 +233,7 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="card-content" style="text-align: center;">
-                                    <button class="btn btn-primary text-center" data-background-color="orange" type="submit" value="Crear Bonos">Generar Bonos Digitales Ahora</button>
+                                    <button id="enviar" class="btn btn-primary text-center" data-background-color="orange" type="submit" value="Crear Bonos">Generar Bonos Digitales Ahora</button>
                                 </div>
                             </div>
                         </div>
@@ -322,6 +322,9 @@
 
         $("form").submit(function(e){
 
+            $('#enviar').prop('disabled', true);
+
+
                     @if($bono < 0)
             var total = parseFloat('{{-1 * $bono}}');
                     @else
@@ -339,7 +342,9 @@
                     'Clicked para corregir!',
                     'error'
                 );
+                $('#enviar').prop('disabled', false);
                 e.preventDefault();
+
             }
         });
 
@@ -372,7 +377,7 @@
         <script>
             swal(
                 '{{$errors->first()}}',
-                '¡Disfrutalo!',
+                '¡Error!',
                 'error'
             );
         </script>
