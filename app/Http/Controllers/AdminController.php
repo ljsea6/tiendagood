@@ -762,7 +762,7 @@ class AdminController extends Controller {
                                         ->join('tipos', 'liquidaciones_terceros.estado_id', '=', 'tipos.id')
                                         ->join('liquidaciones', 'liquidaciones.id', '=', 'liquidaciones_terceros.liquidacion_id')
                                         ->where('liquidaciones_terceros.tercero_id', $id) 
-                                        ->select(DB::raw("liquidaciones_terceros.*, tipos.nombre as tipo_nombre,  tipos.id as tipo_id, liquidaciones.*, 
+                                        ->select(DB::raw("liquidaciones_terceros.*, liquidaciones_terceros.id as liquidacion_tercero_id ,tipos.nombre as tipo_nombre,  tipos.id as tipo_id, liquidaciones.*, 
                                             (select nombre from tipos as t where t.id = tipo_pendiente_id) as  motivo"))
                                         ->get();
 
@@ -783,9 +783,10 @@ class AdminController extends Controller {
             })
             ->addColumn('bono', function ($send) {              
 
-              $ok = LiquidacionTercero::where('liquidacion_id', $send->liquidacion_id)->where('tercero_id', $send->tercero_id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
-                if (count($ok) == 0) {
-                    $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
+              $ok = LiquidacionTercero::find($send->liquidacion_tercero_id);
+
+                if (count($ok) > 0 && $ok->bono_good == null && $ok->bono_mercando == null && $ok->giftcard_good == null && $ok->giftcard_mercando == null ) {
+                    $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $ok->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
                 } else {
                     $boton =  '<div align=center>Sus bonos ya fueron generados</div>';
                 }
@@ -871,7 +872,7 @@ class AdminController extends Controller {
         $liquidacion_tercero = LiquidacionTercero::find($id);
 
 
-        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->valor_comision_paga, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->valor_comision_paga), 'bono' => ($liquidacion_tercero->valor_comision_paga), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans()]);
+        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->virtual, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->virtual), 'bono' => ($liquidacion_tercero->virtual), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans()]);
 
     }
 
