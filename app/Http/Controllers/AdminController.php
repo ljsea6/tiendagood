@@ -771,8 +771,7 @@ class AdminController extends Controller {
         return Datatables::of($send)
 
             ->addColumn('date', function ($send) {
-                $liquidacion = Liquidacion::find($send->liquidacion_id);
-                return '<div align=center>' . Carbon::parse($liquidacion->fecha_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($liquidacion->fecha_final)->format('d/m/Y')  . '</div>';
+                return '<div align=center>' . Carbon::parse($send->fecha_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($send->fecha_final)->format('d/m/Y')  . '</div>';
             })
             ->addColumn('nombres', function ($send) {
                 $t = Tercero::find($send->tercero_id);
