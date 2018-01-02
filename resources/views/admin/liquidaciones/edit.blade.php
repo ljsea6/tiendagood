@@ -120,7 +120,11 @@
 
             <form id="bono" name="bono" action="{{route('admin.liquidaciones.gift_card')}}" method="post">
                 <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
-                <input type="hidden" id="bono" name="bono" value="{{$bono}}">
+                    @if ($bono < 0)
+                    <input type="hidden" id="bono" name="bono" value="{{ - 1 * $bono}}">
+                    @else
+                    <input type="hidden" id="bono" name="bono" value="{{$bono}}">
+                    @endif
                 <input type="hidden" id="liquidacion" name="liquidacion" value="{{$id}}">
                 <input type="hidden" id="good" name="good" readonly class="good-hidden">
                 <input type="hidden" id="mercando" name="mercando" readonly class="mercando-hidden">
@@ -301,7 +305,7 @@
                     @else
             var M = -1 * (val - parseFloat('{{$bono}}'));
                     @endif
-                
+
             var G = val;
 
             $(".good-hidden").val('' + G + '');
