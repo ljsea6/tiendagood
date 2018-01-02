@@ -735,7 +735,7 @@ class AdminController extends Controller {
     public function liquidaciones()
     {
         
-        $usuario = 4; 
+        $usuario = 526; 
 
          $prime = DB::table('terceros_prime as tp')->join('terceros as t', 'tp.tercero_id', '=', 't.id')->where('tp.tercero_id',  $usuario)
                     ->where('estado', true)->orderBy('tp.id', 'desc')->first();
@@ -755,14 +755,15 @@ class AdminController extends Controller {
 
     public function data_liquidaciones()
     {
-        $id = currentUser()->id;
-
+        $id = 526;
+  //currentUser()->id
         //$liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
         $liquidaciones = DB::table('liquidaciones_terceros')
                                         ->join('tipos', 'liquidaciones_terceros.estado_id', '=', 'tipos.id')
                                         ->join('liquidaciones', 'liquidaciones.id', '=', 'liquidaciones_terceros.liquidacion_id')
                                         ->where('liquidaciones_terceros.tercero_id', $id) 
-                                        ->select(DB::raw("liquidaciones_terceros.*, tipos.nombre as tipo_nombre,  tipos.id as id, liquidaciones.*"))
+                                        ->select(DB::raw("liquidaciones_terceros.*, tipos.nombre as tipo_nombre,  tipos.id as tipo_id, liquidaciones.*, 
+                                            (select nombre from tipos as t where t.id = tipo_pendiente_id) as  motivo"))
                                         ->get();
 
         $send = collect($liquidaciones);
@@ -818,7 +819,7 @@ class AdminController extends Controller {
                 return '<div align=center>' . $send->tipo_nombre . '</div>';
               }
               else{
-                return '<div align=center>' . $send->tipo_nombre . ' <br><br> <b>Motivo: </b> ' . $send->tipo_nombre . ' </div>';
+                return '<div align=center>' . $send->tipo_nombre . ' <br><br> <b>Motivo: </b> ' . $send->motivo . ' </div>';
               }
             })
             ->addColumn('edit', function ($send) {
