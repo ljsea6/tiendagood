@@ -765,13 +765,14 @@ class AdminController extends Controller {
                                         ->select(DB::raw("liquidaciones_terceros.*, tipos.nombre as tipo_nombre,  tipos.id as tipo_id, liquidaciones.*, 
                                             (select nombre from tipos as t where t.id = tipo_pendiente_id) as  motivo"))
                                         ->get();
+
         $send = collect($liquidaciones);
 
         return Datatables::of($send)
 
             ->addColumn('date', function ($send) {
-                $liquidacion = Liquidacion::find($send->liquidacion_id);
-                return '<div align=center>' . Carbon::parse($liquidacion->fecha_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($liquidacion->fecha_final)->format('d/m/Y')  . '</div>';
+                
+                return '<div align=center>' . Carbon::parse($send->fecha_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($send->fecha_final)->format('d/m/Y')  . '</div>';
             })
             ->addColumn('nombres', function ($send) {
                 $t = Tercero::find($send->tercero_id);
@@ -824,7 +825,7 @@ class AdminController extends Controller {
             ->addColumn('edit', function ($send) {
                 $ok = LiquidacionTercero::where('id', $send->id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
                 if (count($ok) > 0) {
-                    return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->liquidacion_id) . '"  class="btn btn-warning btn-xs">
+                    return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
                         Crear Bonos
                 </a></div>';
                 } else {
@@ -867,9 +868,10 @@ class AdminController extends Controller {
 
     public function editar_liquidaciones($id)
     {
-        $liquidacion_tercero = LiquidacionTercero::where('liquidacion_id', $id)->where('tercero_id', currentUser()->id)->first();
+        $liquidacion_tercero = LiquidacionTercero::find($id);
 
-        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->virtual, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->virtual), 'bono' => ($liquidacion_tercero->virtual), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans()]);
+
+        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->valor_comision_paga, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->valor_comision_paga), 'bono' => ($liquidacion_tercero->valor_comision_paga), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans()]);
 
     }
 
@@ -895,6 +897,55 @@ class AdminController extends Controller {
                     ->where('state', true)
                     ->first();
 
+                $url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+
+                $url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
+
+                $url_hello = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';  // api hello
+                $id_m = 276171980843;
+                $id_g = 239272853541;
+                $id_h = 5960597121;
+
+                $client = GuzzleHttp::client();
+                $send = [
+                    'form_params' => [
+                        'gift_card' => [
+                            "note" => "This is a note",
+                            "initial_value" => 1000,
+                            "template_suffix" => "gift_cards.birthday.liquid",
+                            "currency" => "COP",
+                            "customer_id" => $id_h,
+                            "expires_on" => Carbon::now()->addMonth()
+                        ]
+                    ]
+                ];
+
+                try {
+
+                    $response = $client->request('post', $url_hello . '/admin/gift_cards.json', $send);
+
+                    $headers = $response->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
+                    $x = explode('/', $headers[0]);
+                    $diferencia = $x[1] - $x[0];
+
+                    if ($diferencia < 10) {
+                        usleep(500000);
+
+                    }
+
+                    $result = json_decode($response->getBody(), true);
+
+                    return $result['gift_card'];
+
+                } catch (ClientException $e) {
+
+                    if ($e->hasResponse()) {
+
+                        return $e->getResponse()->getBody();
+
+                    }
+                }
+
                 if (count($tercero) > 0) {
 
                     $liquidacion_tercero = LiquidacionTercero::where('id', $liquidacion)
@@ -916,7 +967,8 @@ class AdminController extends Controller {
 
                             if ($ID_GOOD != 0) {
 
-                                $result = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+                                return $result = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+
 
                                 if ($result == null) {
 
@@ -939,7 +991,8 @@ class AdminController extends Controller {
 
                             if ($ID_MERCANDO != 0) {
 
-                                $result = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
+
+                                return $result = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
 
 
                                 if ($result == null) {
@@ -1045,6 +1098,7 @@ class AdminController extends Controller {
                         return redirect()->back()->withErrors(['errors' => '¡Liquidación existe!']);
                     }
                 }
+
             }
 
         } else {
