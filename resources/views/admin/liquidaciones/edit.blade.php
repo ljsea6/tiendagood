@@ -373,7 +373,7 @@
             swal(
                 '{{$errors->first()}}',
                 '¡Disfrutalo!',
-                'success'
+                'error'
             );
         </script>
     @endif
