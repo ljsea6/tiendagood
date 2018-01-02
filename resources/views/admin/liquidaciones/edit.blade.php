@@ -296,7 +296,12 @@
 
             var val = e.value, speed;
 
+                    @if($bono < 0)
+            var M = -1 * (val - parseFloat('{{ -1 * $bono}}'));
+                    @else
             var M = -1 * (val - parseFloat('{{$bono}}'));
+                    @endif
+                
             var G = val;
 
             $(".good-hidden").val('' + G + '');
