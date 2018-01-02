@@ -313,7 +313,13 @@
 
         $("form").submit(function(e){
 
+                    @if($bono < 0)
+            var total = parseFloat('{{-1 * $bono}}');
+                    @else
             var total = parseFloat('{{$bono}}');
+                    @endif
+
+
             var good = parseFloat($('#good').val());
             var mercando = parseFloat($('#mercando').val());
             var suma = (good + mercando);
