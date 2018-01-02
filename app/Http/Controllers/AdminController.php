@@ -782,7 +782,7 @@ class AdminController extends Controller {
             })
             ->addColumn('bono', function ($send) {              
 
-              $ok = LiquidacionTercero::where('id', $send->liquidacion_id)->where('tercero_id', $send->tercero_id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
+              $ok = LiquidacionTercero::where('liquidacion_id', $send->liquidacion_id)->where('tercero_id', $send->tercero_id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
                 if (count($ok) == 0) {
                     $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
                 } else {
