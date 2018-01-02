@@ -755,7 +755,7 @@ class AdminController extends Controller {
 
     public function data_liquidaciones()
     {
-        $id = 526;
+        $id = currentUser()->id;
 
         //$liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
         $liquidaciones = DB::table('liquidaciones_terceros')
@@ -818,7 +818,7 @@ class AdminController extends Controller {
                 return '<div align=center>' . $send->tipo_nombre . '</div>';
               }
               else{
-                return '<div align=center>' . $send->tipo_nombre . ' <br> <b>Motivo: </b> ' . $send->tipo_nombre . ' </div>';
+                return '<div align=center>' . $send->tipo_nombre . ' <br><br> <b>Motivo: </b> ' . $send->tipo_nombre . ' </div>';
               }
             })
             ->addColumn('edit', function ($send) {
