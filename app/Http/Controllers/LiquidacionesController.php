@@ -426,12 +426,13 @@ class LiquidacionesController extends Controller {
         DB::table('orders')->whereIn('id', $id_dos_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
         DB::table('orders')->whereIn('id', $id_tres_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
 
+        $fecha_hoy = Carbon::now();
 
         $liquidaciones_detalles = DB::table('liquidaciones_detalles as ld')
         ->join('terceros as t', 't.id', '=', 'ld.tercero_id')
         ->join('tipos as t2', 't2.id', '=', 't.tipo_id')
         ->where('ld.liquidacion_id', $liquidacion_id)
-        ->select('ld.tercero_id', DB::raw('sum(ld.valor_comision) as valor_comision'), 't2.nombre', 't2.id', 't2.comision_maxima','ld.liquidacion_id')
+        ->select('ld.tercero_id', DB::raw('sum(ld.valor_comision) as valor_comision'), DB::raw("(select count(*) from terceros_prime where '".$fecha_hoy."' <= fecha_final and terceros_prime.tercero_id = ld.tercero_id ) as prime"), 't2.nombre', 't2.id', 't2.comision_maxima','ld.liquidacion_id')
         ->groupBy('ld.tercero_id', 't.identificacion', 't.nombres', 't.apellidos', 't.email', 't.telefono', 't2.nombre', 't2.id', 'ld.liquidacion_id')
         ->get();
 
@@ -451,7 +452,16 @@ class LiquidacionesController extends Controller {
                     }
                     else{   $valor_comision = $value->valor_comision;    }
                         
-                         $valor_comision_descuento = $valor_comision - ($valor_comision * $parametros->rete_fuente) - ($valor_comision * $parametros->rete_ica) - ($parametros->prime) - ($parametros->prime * $parametros->prime_iva)  - ($parametros->transferencia) - $parametros->extracto - $parametros->administrativo;
+                        if($value->prime >= 1){
+                            $prime = $parametros->prime;
+                            $prime_iva = $parametros->prime_iva;
+                        }
+                        else {
+                            $prime = 0;
+                            $prime_iva = 0;
+                        }
+
+                         $valor_comision_descuento = $valor_comision - ($valor_comision * $parametros->rete_fuente) - ($valor_comision * $parametros->rete_ica) - ($prime) - ($prime * $prime_iva)  - ($parametros->transferencia) - $parametros->extracto - $parametros->administrativo;
 
                            DB::table('liquidaciones_terceros')->insert([
                             'liquidacion_id' => $value->liquidacion_id,
@@ -463,8 +473,8 @@ class LiquidacionesController extends Controller {
 
                             'rete_fuente' => $valor_comision * $parametros->rete_fuente,
                             'rete_ica' => $valor_comision * $parametros->rete_ica,
-                            'prime' => $parametros->prime,
-                            'prime_iva' => $parametros->prime * $parametros->prime_iva,
+                            'prime' => $prime,
+                            'prime_iva' => $prime * $prime_iva,
                             'transferencia' => $parametros->transferencia,
                             'extracto' => $parametros->extracto,
                             'administrativo' => $parametros->administrativo,
@@ -517,7 +527,7 @@ class LiquidacionesController extends Controller {
 
     public function liquidaciones_extracto_comisiones($id=0) {
      //currentUser()->id
-    	$usuario = 4;
+    	$usuario = currentUser()->id;
     	$liquidaciones = DB::table('liquidaciones')->select('fecha_liquidacion')->where('liquidaciones.id', $id)->first();
     	$liquidaciones_terceros = DB::table('liquidaciones_terceros')->select('estado_id', 'valor_comision_paga', 'rete_fuente','rete_ica','prime','prime_iva','transferencia','extracto','administrativo')->where('tercero_id', $usuario)->first();
         $parametros = DB::table('parametros')->select('rete_fuente','rete_ica','prime','prime_iva','transferencia','extracto','administrativo')->where('id', 1)->first();
