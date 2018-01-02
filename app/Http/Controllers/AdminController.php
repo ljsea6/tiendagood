@@ -755,17 +755,23 @@ class AdminController extends Controller {
 
     public function data_liquidaciones()
     {
-        $id = currentUser()->id;
+        $id = 526;
 
-        $liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
+        //$liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
+        $liquidaciones = DB::table('liquidaciones_terceros')
+                                        ->join('tipos', 'liquidaciones_terceros.estado_id', '=', 'tipos.id')
+                                        ->join('liquidaciones', 'liquidaciones.id', '=', 'liquidaciones_terceros.liquidacion_id')
+                                        ->where('liquidaciones_terceros.tercero_id', $id) 
+                                        ->select(DB::raw("liquidaciones_terceros.*, tipos.nombre as tipo_nombre,  tipos.id as id, liquidaciones.*"))
+                                        ->get();
 
-        $send = collect($liquidaciones->liquidacion_tercero);
+        $send = collect($liquidaciones);
 
         return Datatables::of($send)
 
             ->addColumn('date', function ($send) {
                 $liquidacion = Liquidacion::find($send->liquidacion_id);
-                return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
+                return '<div align=center>' . Carbon::parse($liquidacion->fecha_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($liquidacion->fecha_final)->format('d/m/Y')  . '</div>';
             })
             ->addColumn('nombres', function ($send) {
                 $t = Tercero::find($send->tercero_id);
@@ -774,8 +780,19 @@ class AdminController extends Controller {
             ->addColumn('consignacion', function ($send) {
                 return '<div align=center>' . number_format((float)$send->giro) . '</div>';
             })
-            ->addColumn('bono', function ($send) {
-                return '<div align=center>' . number_format((float)$send->virtual) . '</div>';
+            ->addColumn('bono', function ($send) {              
+
+              $ok = LiquidacionTercero::where('id', $send->id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
+                if (count($ok) > 0) {
+                    $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
+                        Crear Bonos
+                </a></div>';
+                } else {
+                    $boton =  '<div align=center>Sus bonos ya fueron generados</div>';
+                }
+
+
+                return '<div align=center>' . number_format((float)$send->virtual) . ' <br> '.$boton.' </div>';
             })
             ->addColumn('total', function ($send) {
                 return '<div align=center>' . number_format((float)$send->valor_comision) . '</div>';
@@ -789,29 +806,23 @@ class AdminController extends Controller {
                 } 
             })
             ->addColumn('rete_fuente', function ($send) {   
-                return '<div align=center>' . number_format((float)$send->rete_fuente) . '</div>';
+                return '<div align=left><b>Retefuente:</b> ' . number_format((float)$send->rete_fuente) . '<br>'.
+                    '<div align=left><b>Rete ICA:</b> ' . number_format((float)$send->rete_ica) . '<br>'. 
+                    '<div align=left><b>Prime: </b>' . number_format((float)$send->prime) . '<br>'.   
+                    '<div align=left><b>IVA Prime:</b> ' . number_format((float)$send->prime_iva) . '<br>'. 
+                    '<div align=left><b>Transferencia: </b>' . number_format((float)$send->transferencia) . '<br>'.   
+                    '<div align=left><b>Extractos:</b> ' . number_format((float)$send->extracto) . '<br>'.    
+                    '<div align=left><b>Administrativos: </b>' . number_format((float)$send->administrativo) . 
+                '<br></div>';
             })
-            ->addColumn('rete_ica', function ($send) {                
-                return '<div align=center>' . number_format((float)$send->rete_ica) . '</div>';
-            })
-            ->addColumn('prime', function ($send) {                
-                return '<div align=center>' . number_format((float)$send->prime) . '</div>';
-            })
-            ->addColumn('prime_iva', function ($send) {                
-                return '<div align=center>' . number_format((float)$send->prime_iva) . '</div>';
-            })
-            ->addColumn('transferencia', function ($send) {                
-                return '<div align=center>' . number_format((float)$send->transferencia) . '</div>';
-            })
-            ->addColumn('extracto', function ($send) {                
-                return '<div align=center>' . number_format((float)$send->extracto) . '</div>';
-            })
-            ->addColumn('administrativo', function ($send) {                
-                return '<div align=center>' . number_format((float)$send->administrativo) . '</div> ';
-            })
-            ->addColumn('estado', function ($send) {  
-                $tipo = DB::table('tipos')->select('nombre')->where('id', $send->estado_id)->first();              
-                return '<div align=center>' . $tipo->nombre . '</div>';
+
+            ->addColumn('estado', function ($send) {      
+              if($send->tipo_nombre != 'Pendiente'){          
+                return '<div align=center>' . $send->tipo_nombre . '</div>';
+              }
+              else{
+                return '<div align=center>' . $send->tipo_nombre . ' <br> <b>Motivo: </b> ' . $send->tipo_nombre . ' </div>';
+              }
             })
             ->addColumn('edit', function ($send) {
                 $ok = LiquidacionTercero::where('id', $send->id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
