@@ -139,7 +139,12 @@
                                     </div>
                                     <div class="card-content">
                                         <h3 class="title" style="text-align: center;">
-                                            <span style="color: orange; font-size: 2.2em; font-weight: bolder; text-transform: uppercase;">${{ number_format($total) }}</span></small>
+                                            @if($total < 0)
+                                                <span style="color: orange; font-size: 2.2em; font-weight: bolder; text-transform: uppercase;">${{ number_format(-1 * $total) }}</span></small>
+                                            @else
+                                                <span style="color: orange; font-size: 2.2em; font-weight: bolder; text-transform: uppercase;">${{ number_format($total) }}</span></small>
+                                            @endif
+
                                         </h3>
                                     </div>
                                     <div class="card-footer" style="display: block;">
@@ -254,12 +259,20 @@
             radius: 80,
             width: 10,
             min: 0,
+            @if($bono < 0)
+            max: parseFloat('{{-1 * $bono}}'),
+            @else
             max: parseFloat('{{$bono}}'),
+            @endif
             step: 1000,
             handleSize: "+16",
             handleShape: "dot",
             sliderType: "min-range",
+            @if($bono < 0)
+            value: parseFloat('{{(-1 * $bono)}}')/2,
+            @else
             value: parseFloat('{{$bono}}')/2,
+            @endif
             circleShape: "pie",
             startAngle: 315,
             tooltipFormat: "changeTooltip"
