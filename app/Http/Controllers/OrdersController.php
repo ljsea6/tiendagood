@@ -3461,8 +3461,6 @@ class OrdersController extends Controller {
         $r = $client->request('get', $url_mercando . '/admin/customers/search.json?query=email:oscar.fonseca.castro@gmail.com');
         $result = json_decode($r->getBody(), true);
 
-
-
         $send = [
             'form_params' => [
                 'gift_card' => [
@@ -3475,7 +3473,6 @@ class OrdersController extends Controller {
                 ]
             ]
         ];
-
 
         try {
 
