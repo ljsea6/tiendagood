@@ -38,18 +38,10 @@ trait OrderPaidMercando
                     }
                 }
             }
-            
-            
 
-            $p = '';
-            $s = '';
-
-            if (isset($order['phone']) && !empty($order['phone'])) {
-                $p =  explode('+57', $order['phone']);
-                $s = '' . $p[1];
-            }
-
-            $tercero = Tercero::where('email', strtolower($order['email']))->orWhere('telefono', $s)->first();
+            $tercero = Tercero::where('email', strtolower($order['email']))
+                ->where('state', true)
+                ->first();
 
             if (count($tercero) > 0) {
 

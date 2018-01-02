@@ -120,7 +120,11 @@
 
             <form id="bono" name="bono" action="{{route('admin.liquidaciones.gift_card')}}" method="post">
                 <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
-                <input type="hidden" id="bono" name="bono" value="{{$bono}}">
+                    @if ($bono < 0)
+                    <input type="hidden" id="bono" name="bono" value="{{ - 1 * $bono}}">
+                    @else
+                    <input type="hidden" id="bono" name="bono" value="{{$bono}}">
+                    @endif
                 <input type="hidden" id="liquidacion" name="liquidacion" value="{{$id}}">
                 <input type="hidden" id="good" name="good" readonly class="good-hidden">
                 <input type="hidden" id="mercando" name="mercando" readonly class="mercando-hidden">
@@ -139,7 +143,12 @@
                                     </div>
                                     <div class="card-content">
                                         <h3 class="title" style="text-align: center;">
-                                            <span style="color: orange; font-size: 2.2em; font-weight: bolder; text-transform: uppercase;">${{ number_format($total) }}</span></small>
+                                            @if($total < 0)
+                                                <span style="color: orange; font-size: 2.2em; font-weight: bolder; text-transform: uppercase;">${{ number_format(-1 * $total) }}</span></small>
+                                            @else
+                                                <span style="color: orange; font-size: 2.2em; font-weight: bolder; text-transform: uppercase;">${{ number_format($total) }}</span></small>
+                                            @endif
+
                                         </h3>
                                     </div>
                                     <div class="card-footer" style="display: block;">
@@ -224,7 +233,7 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="card-content" style="text-align: center;">
-                                    <button class="btn btn-primary text-center" data-background-color="orange" type="submit" value="Crear Bonos">Generar Bonos Digitales Ahora</button>
+                                    <button id="enviar" class="btn btn-primary text-center" data-background-color="orange" type="submit" value="Crear Bonos">Generar Bonos Digitales Ahora</button>
                                 </div>
                             </div>
                         </div>
@@ -254,12 +263,20 @@
             radius: 80,
             width: 10,
             min: 0,
+            @if($bono < 0)
+            max: parseFloat('{{-1 * $bono}}'),
+            @else
             max: parseFloat('{{$bono}}'),
+            @endif
             step: 1000,
             handleSize: "+16",
             handleShape: "dot",
             sliderType: "min-range",
+            @if($bono < 0)
+            value: parseFloat('{{(-1 * $bono)}}')/2,
+            @else
             value: parseFloat('{{$bono}}')/2,
+            @endif
             circleShape: "pie",
             startAngle: 315,
             tooltipFormat: "changeTooltip"
@@ -283,7 +300,12 @@
 
             var val = e.value, speed;
 
+                    @if($bono < 0)
+            var M = -1 * (val - parseFloat('{{ -1 * $bono}}'));
+                    @else
             var M = -1 * (val - parseFloat('{{$bono}}'));
+                    @endif
+
             var G = val;
 
             $(".good-hidden").val('' + G + '');
@@ -300,7 +322,16 @@
 
         $("form").submit(function(e){
 
+            $('#enviar').prop('disabled', true);
+
+
+                    @if($bono < 0)
+            var total = parseFloat('{{-1 * $bono}}');
+                    @else
             var total = parseFloat('{{$bono}}');
+                    @endif
+
+
             var good = parseFloat($('#good').val());
             var mercando = parseFloat($('#mercando').val());
             var suma = (good + mercando);
@@ -311,7 +342,9 @@
                     'Clicked para corregir!',
                     'error'
                 );
+                $('#enviar').prop('disabled', false);
                 e.preventDefault();
+
             }
         });
 
@@ -344,8 +377,8 @@
         <script>
             swal(
                 '{{$errors->first()}}',
-                '¡Disfrutalo!',
-                'success'
+                '¡Error!',
+                'error'
             );
         </script>
     @endif
