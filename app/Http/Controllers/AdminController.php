@@ -764,14 +764,12 @@ class AdminController extends Controller {
         return Datatables::of($send)
 
             ->addColumn('date', function ($send) {
-
                 $liquidacion = Liquidacion::find($send->liquidacion_id);
-
                 return '<div align=center>' . Carbon::parse($liquidacion->fecha_liquidacion)->diffForHumans() . '</div>';
             })
             ->addColumn('nombres', function ($send) {
                 $t = Tercero::find($send->tercero_id);
-                return '<div align=center>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . '</div>';
+                return '<div align=center>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . ' </div>';
             })
             ->addColumn('consignacion', function ($send) {
                 return '<div align=center>' . number_format((float)$send->giro) . '</div>';
@@ -783,9 +781,14 @@ class AdminController extends Controller {
                 return '<div align=center>' . number_format((float)$send->valor_comision) . '</div>';
             })
             ->addColumn('total_paga', function ($send) {
+              if($send->valor_comision_paga >= 1){           
                 return '<div align=center>' . number_format((float)$send->valor_comision_paga) . '</div>';
+               }
+               else{
+                   return '<div align=center>0</div>';
+                } 
             })
-            ->addColumn('rete_fuente', function ($send) {                
+            ->addColumn('rete_fuente', function ($send) {   
                 return '<div align=center>' . number_format((float)$send->rete_fuente) . '</div>';
             })
             ->addColumn('rete_ica', function ($send) {                
@@ -804,7 +807,7 @@ class AdminController extends Controller {
                 return '<div align=center>' . number_format((float)$send->extracto) . '</div>';
             })
             ->addColumn('administrativo', function ($send) {                
-                return '<div align=center>' . number_format((float)$send->administrativo) . '</div>';
+                return '<div align=center>' . number_format((float)$send->administrativo) . '</div> ';
             })
             ->addColumn('estado', function ($send) {  
                 $tipo = DB::table('tipos')->select('nombre')->where('id', $send->estado_id)->first();              
