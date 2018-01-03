@@ -186,7 +186,11 @@ class VariantsController extends Controller
                                 ->where('id', $r[0])
                                 ->where('shop', 'good')
                                 ->where('product_id', $variant->product_id)
-                                ->update(['percentage' => $r[1]]);
+                                ->update([
+                                    'percentage' => $r[1],
+                                    'user_id' => currentUser()->id,
+                                    'updated_at' => Carbon::now()
+                                    ]);
 
                             try {
 
@@ -300,7 +304,11 @@ class VariantsController extends Controller
                             ->where('id', $r[0])
                             ->where('shop', 'mercando')
                             ->where('product_id', $variant->product_id)
-                            ->update(['percentage' => $r[1]]);
+                            ->update([
+                                'percentage' => $r[1],
+                                'user_id' => currentUser()->id,
+                                'updated_at' => Carbon::now()
+                            ]);
 
                         try {
 
@@ -390,7 +398,11 @@ class VariantsController extends Controller
                             ->where('id', $r[0])
                             ->where('shop', 'mercando')
                             ->where('product_id', $variant->product_id)
-                            ->update(['percentage' => 0]);
+                            ->update([
+                                'percentage' => $r[1],
+                                'user_id' => currentUser()->id,
+                                'updated_at' => Carbon::now()
+                            ]);
 
                         try {
 
