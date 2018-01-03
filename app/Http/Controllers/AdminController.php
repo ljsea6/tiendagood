@@ -550,9 +550,9 @@ class AdminController extends Controller {
 
                 $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
                 (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
-		JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
-		JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
-		WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
+      JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
+      JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
+      WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
 
                 $results = DB::table('terceros as t')
                         ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
@@ -592,9 +592,9 @@ class AdminController extends Controller {
 
                 $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
                 (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
-		JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
-		JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
-		WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
+      JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
+      JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
+      WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
 
                 $uno = DB::table('terceros as t')
                         ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
@@ -657,9 +657,9 @@ class AdminController extends Controller {
 
                 $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
                 (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
-		JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
-		JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
-		WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
+      JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
+      JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
+      WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
 
                 $uno = DB::table('terceros as t')
                         ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
@@ -736,7 +736,7 @@ class AdminController extends Controller {
     {
         
         $usuario = currentUser()->id; 
-
+/*
          $prime = DB::table('terceros_prime as tp')->join('terceros as t', 'tp.tercero_id', '=', 't.id')->where('tp.tercero_id',  $usuario)
                     ->where('estado', true)->orderBy('tp.id', 'desc')->first();
             $prime_val='no';
@@ -749,19 +749,17 @@ class AdminController extends Controller {
                         $prime_val='si';
                     }
                 } 
-
+  */
         return view('admin.liquidaciones.index', compact('prime_val'));
     }
 
     public function data_liquidaciones()
     {
-        $id = 
-
-        ;
+        $id = currentUser()->id;
   //currentUser()->id
         //$liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
         $liquidaciones = DB::table('liquidaciones_terceros')
-                                        ->join('tipos', 'liquidaciones_terceros.estado_id', '=', 'tipos.id')
+                                        ->leftjoin('tipos', 'liquidaciones_terceros.estado_id', '=', 'tipos.id')
                                         ->join('liquidaciones', 'liquidaciones.id', '=', 'liquidaciones_terceros.liquidacion_id')
                                         ->where('liquidaciones_terceros.tercero_id', $id) 
                                         ->select(DB::raw("liquidaciones_terceros.*, liquidaciones_terceros.id as liquidacion_tercero_id ,tipos.nombre as tipo_nombre,  tipos.id as tipo_id, liquidaciones.*, 
@@ -773,7 +771,7 @@ class AdminController extends Controller {
         return Datatables::of($send)
 
             ->addColumn('date', function ($send) {
-
+                
                 return '<div align=center>' . Carbon::parse($send->fecha_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($send->fecha_final)->format('d/m/Y')  . '</div>';
             })
             ->addColumn('nombres', function ($send) {
@@ -788,7 +786,12 @@ class AdminController extends Controller {
               $ok = LiquidacionTercero::find($send->liquidacion_tercero_id);
 
                 if (count($ok) > 0 && $ok->bono_good == null && $ok->bono_mercando == null && $ok->giftcard_good == null && $ok->giftcard_mercando == null ) {
-                    $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $ok->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
+
+                    if ($ok->valor_comsion_paga > 0) {
+                        $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $ok->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
+                    }
+                    $boton =  '<div align=center>Saldo insuficiente para generar bonos</div>';
+
                 } else {
                     $boton =  '<div align=center>Sus bonos ya fueron generados</div>';
                 }
@@ -799,7 +802,29 @@ class AdminController extends Controller {
                 return '<div align=center>' . number_format((float)$send->valor_comision) . '</div>';
             })
             ->addColumn('total_paga', function ($send) {
-                
+              if($send->valor_comision_paga >= 1){           
+                return '<div align=center>' . number_format((float)$send->valor_comision_paga) . '</div>';
+               }
+               else{
+                   return '<div align=center>0</div>';
+                } 
+            })
+            ->addColumn('rete_fuente', function ($send) {   
+                return '<div align=left><b>Retefuente:</b> ' . number_format((float)$send->rete_fuente) . '<br>'.
+                    '<div align=left><b>Rete ICA:</b> ' . number_format((float)$send->rete_ica) . '<br>'. 
+                    '<div align=left><b>Prime: </b>' . number_format((float)$send->prime) . '<br>'.   
+                    '<div align=left><b>IVA Prime:</b> ' . number_format((float)$send->prime_iva) . '<br>'. 
+                    '<div align=left><b>Transferencia: </b>' . number_format((float)$send->transferencia) . '<br>'.   
+                    '<div align=left><b>Extractos:</b> ' . number_format((float)$send->extracto) . '<br>'.    
+                    '<div align=left><b>Administrativos: </b>' . number_format((float)$send->administrativo) . 
+                '<br></div>';
+            })
+
+            ->addColumn('estado', function ($send) {    
+              if($send->tipo_nombre == NULL){
+                return '<div align=center>Sin estado</div>';
+              }  
+              else if($send->tipo_nombre != NULL && $send->tipo_nombre != 'Pendiente'){          
                 return '<div align=center>' . $send->tipo_nombre . '</div>';
               }
               else{
@@ -808,10 +833,15 @@ class AdminController extends Controller {
             })
             ->addColumn('edit', function ($send) {
                 $ok = LiquidacionTercero::where('id', $send->id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
-                if (count($ok) > 0) {
-                    return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
-                        Crear Bonos
-                </a></div>';
+                if (count($ok) > 0 ) {
+
+                    if ($ok->valor_comision_paga > 0) {
+                        return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
+                        Crear Bonos                                 </a></div>';
+                    }
+
+                    return '<div align=center>Fondos insuficientes para generar bonos.</div>';
+
                 } else {
                     return '<div align=center>Sus bonos ya fueron generados</div>';
                 }
@@ -854,8 +884,13 @@ class AdminController extends Controller {
     {
         $liquidacion_tercero = LiquidacionTercero::find($id);
 
+        $state = true;
 
-        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->virtual, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->virtual), 'bono' => ($liquidacion_tercero->virtual), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans()]);
+        if ($liquidacion_tercero->valor_comsion_paga <= 0 || $liquidacion_tercero->bono_good != null || $liquidacion_tercero->bono_mercando || $liquidacion_tercero->giftcard_mercando || $liquidacion_tercero->giftcard_good) {
+            $state = false;
+        }
+
+        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->virtual, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->virtual), 'bono' => ($liquidacion_tercero->virtual), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans(), 'state' => $state]);
 
     }
 
@@ -999,7 +1034,7 @@ class AdminController extends Controller {
                                 $update->save();
 
                                 return redirect()->back()->with(['g' => '¡Su bono en Tienda Good ha sido creado pero su bono para Mercando no se pudo crear, pongase en contacto con servicio al cliente para verificar su bono en Mercando.!']);
-                                
+
                             }
 
                             if ($g == false && $m == false) {
