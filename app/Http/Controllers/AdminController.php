@@ -550,9 +550,9 @@ class AdminController extends Controller {
 
                 $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
                 (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
-		JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
-		JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
-		WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
+      JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
+      JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
+      WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
 
                 $results = DB::table('terceros as t')
                         ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
@@ -592,9 +592,9 @@ class AdminController extends Controller {
 
                 $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
                 (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
-		JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
-		JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
-		WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
+      JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
+      JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
+      WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
 
                 $uno = DB::table('terceros as t')
                         ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
@@ -657,9 +657,9 @@ class AdminController extends Controller {
 
                 $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
                 (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
-		JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
-		JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
-		WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
+      JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
+      JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
+      WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
 
                 $uno = DB::table('terceros as t')
                         ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
@@ -735,7 +735,7 @@ class AdminController extends Controller {
     public function liquidaciones()
     {
         
-        $usuario = 80; 
+        $usuario = currentUser()->id; 
 
          $prime = DB::table('terceros_prime as tp')->join('terceros as t', 'tp.tercero_id', '=', 't.id')->where('tp.tercero_id',  $usuario)
                     ->where('estado', true)->orderBy('tp.id', 'desc')->first();
@@ -755,7 +755,7 @@ class AdminController extends Controller {
 
     public function data_liquidaciones()
     {
-        $id = 80;
+        $id = currentUser()->id;
   //currentUser()->id
         //$liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
         $liquidaciones = DB::table('liquidaciones_terceros')
@@ -771,7 +771,7 @@ class AdminController extends Controller {
         return Datatables::of($send)
 
             ->addColumn('date', function ($send) {
-
+                
                 return '<div align=center>' . Carbon::parse($send->fecha_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($send->fecha_final)->format('d/m/Y')  . '</div>';
             })
             ->addColumn('nombres', function ($send) {
@@ -797,8 +797,30 @@ class AdminController extends Controller {
                 return '<div align=center>' . number_format((float)$send->valor_comision) . '</div>';
             })
             ->addColumn('total_paga', function ($send) {
-                if ($send->tipo_nombre == 'pendiente') { 
+              if($send->valor_comision_paga >= 1){           
+                return '<div align=center>' . number_format((float)$send->valor_comision_paga) . '</div>';
+               }
+               else{
+                   return '<div align=center>0</div>';
+                } 
+            })
+            ->addColumn('rete_fuente', function ($send) {   
+                return '<div align=left><b>Retefuente:</b> ' . number_format((float)$send->rete_fuente) . '<br>'.
+                    '<div align=left><b>Rete ICA:</b> ' . number_format((float)$send->rete_ica) . '<br>'. 
+                    '<div align=left><b>Prime: </b>' . number_format((float)$send->prime) . '<br>'.   
+                    '<div align=left><b>IVA Prime:</b> ' . number_format((float)$send->prime_iva) . '<br>'. 
+                    '<div align=left><b>Transferencia: </b>' . number_format((float)$send->transferencia) . '<br>'.   
+                    '<div align=left><b>Extractos:</b> ' . number_format((float)$send->extracto) . '<br>'.    
+                    '<div align=left><b>Administrativos: </b>' . number_format((float)$send->administrativo) . 
+                '<br></div>';
+            })
+
+            ->addColumn('estado', function ($send) {      
+              if($send->tipo_nombre != 'Pendiente'){          
                 return '<div align=center>' . $send->tipo_nombre . '</div>';
+              }
+              else if($send->tipo_nombre == '' || $send->tipo_nombre == NULL){
+                return '<div align=center>' . $send->tipo_nombre . ' <br><br> <b>Motivo: </b> ' . $send->motivo . ' </div>';
               }
               else{
                 return '<div align=center>' . $send->tipo_nombre . ' <br><br> <b>Motivo: </b> ' . $send->motivo . ' </div>';
