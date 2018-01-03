@@ -592,41 +592,78 @@ class LiquidacionesController extends Controller {
     }
 
     public function liquidaciones_terceros_estados($id=0) {
-     //currentUser()->id
+     //currentUser()->id 
         $parametros = DB::table('parametros')->select('rete_fuente','rete_ica','prime','prime_iva','transferencia','extracto','administrativo')->where('id', 1)->first();
 
         return view('admin.liquidaciones.liquidaciones_tercero_estado', compact('id','liquidaciones_detalles','mes','parametros'));
     }
 
+    public function liquidaciones_cambiar_estado(Request $request) {
+        if ($request->has('id')){ 
+        	if($request->tipo == "estado"){
+                DB::table('liquidaciones_terceros')->where('id', $request->id)->update(['estado_id' => $request->valor]); 
+        	}
+        	else{
+                DB::table('liquidaciones_terceros')->where('id', $request->id)->update(['tipo_pendiente_id' => $request->valor]); 
+        	}
+        } 
+            return response()->json(['val' => 'bien'], 200);
+    }
+
     public function liquidaciones_terceros_estados_datos($id=0) {
 
         $liquidaciones = DB::table('liquidaciones_terceros')
-        ->where('liquidaciones_terceros.liquidacion_id', 57)
+        ->where('liquidaciones_terceros.liquidacion_id', 70)
+        ->whereIn('liquidaciones_terceros.tercero_id', array(4,80))
         ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
-        ->select('identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga', DB::raw("(select estado from terceros_prime where terceros.id = terceros_prime.tercero_id limit 1) as prime"))
+        ->select('liquidaciones_terceros.id as liquitercero_id','tercero_id','identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga','estado_id', DB::raw("(select estado from terceros_prime where terceros.id = terceros_prime.tercero_id limit 1) as prime"))
         ->orderByRaw('liquidaciones_terceros.valor_comision_paga ASC')->get();
-        
-        $datos[] = array();
-        foreach ($liquidaciones as $send) {
+     
+        $tipos_estado_comision = DB::table('tipos')->where('padre_id', 86)->select('nombre','id')->orderByRaw('id ASC')->get();     
+        $tipos_estado_pendiente = DB::table('tipos')->where('padre_id', 88)->select('nombre','id')->orderByRaw('id ASC')->get();   
 
+        $datos = array();
+        foreach ($liquidaciones as $send) {
+            $select_1 = ''; $select_2 = '';
+ 
             		$prime = '';
                     if ($send->prime != '') {
-                    	 $prime = 'Sisfsdfsd';
+                    	 $prime = 'Si';
                     }
                     else{
                         $prime = 'No';
                     }
+            
+            $select_1 = '<select class="tercero_tipo_'.$send->tercero_id.' form-control" onchange="cambio_estado('.$send->liquitercero_id.', this.options[this.selectedIndex].value,"estado")" id="'.$send->liquitercero_id.'">';
+            foreach ($tipos_estado_comision as $value) {
+             	$seleted = '';
+             	if($send->estado_id == $value->id){  $seleted = 'selected';  }
+                $select_1 .= '<option value="'.$value->id.'" '.$seleted.'>'.$value->nombre.'</option>';
+            }
+            $select_1 .= '</select>';
 
+            $select_2 = '<select class="tercero_pendiente_'.$send->liquitercero_id.' pendiente form-control" onchange="cambio_estado('.$send->liquitercero_id.', this.options[this.selectedIndex].value,"pendiente")" id="'.$send->liquitercero_id.'">';
+            foreach ($tipos_estado_pendiente as $value) {
+             	$seleted = '';
+             	if($send->estado_id == $value->id){  $seleted = 'selected';  }
+                $select_2 .= '<option value="'.$value->id.'" '.$seleted.'>'.$value->nombre.'</option>';
+            }
+            $select_2 .= '</select>';
+/*
+            array_push($datos, array('identificacion' => $send->identificacion, 
+                              'nombres' => $send->nombres, ));
+*/
         	$datos[] = array('identificacion' => $send->identificacion, 
                               'nombres' => $send->nombres, 
                               'apellidos' => $send->apellidos, 
                               'telefono' => $send->telefono, 
                               'email' => $send->email, 
                               'valor_comision_paga' => $send->valor_comision_paga, 
+                              'estado_id' => $select_1.''.$select_2, 
                               'prime' => $prime); 
         }
-
-        $send = collect($datos);
+ 
+       $send = collect($datos);
 
         return Datatables::of($send)
                         ->addColumn('identificacion', function ($send) {
@@ -649,6 +686,9 @@ class LiquidacionesController extends Controller {
                         })
                         ->addColumn('prime', function ($send) { 
                             return '<div align=left>' . $send['prime']. '</div>';
+                        })
+                        ->addColumn('estado', function ($send) { 
+                            return '<div align=left>' . $send['estado_id']. '</div>';
                         })
                         ->make(true); 
     }

@@ -779,7 +779,17 @@ class AdminController extends Controller {
                 return '<div align=center>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . ' </div>';
             })
             ->addColumn('consignacion', function ($send) {
-                return '<div align=center>' . number_format((float)$send->giro) . '</div>';
+
+                $giro = 0; 
+
+                if($send->giro >= 1){   
+                    $giro = $send->giro;
+                } 
+                else{
+                    $giro = 0; 
+                } 
+               
+                return '<div align=center>' . number_format((float)$giro) . '</div>';
             })
             ->addColumn('bono', function ($send) {              
 
@@ -796,7 +806,16 @@ class AdminController extends Controller {
                     $boton =  '<div align=center>Sus bonos ya fueron generados</div>';
                 }
 
-                return '<div align=center>' . number_format((float)$send->virtual) . ' <br><br> '.($boton).' </div>';
+                $virtual = 0; 
+
+                if($send->virtual >= 1){   
+                    $virtual = $send->virtual;
+                } 
+                else{
+                    $virtual = 0; 
+                } 
+
+                return '<div align=center>' . number_format((float)$virtual) . ' <br><br> '.($boton).' </div>';
             })
             ->addColumn('total', function ($send) {
                 return '<div align=center>' . number_format((float)$send->valor_comision) . '</div>';
@@ -814,9 +833,7 @@ class AdminController extends Controller {
                     '<div align=left><b>Rete ICA:</b> ' . number_format((float)$send->rete_ica) . '<br>'. 
                     '<div align=left><b>Prime: </b>' . number_format((float)$send->prime) . '<br>'.   
                     '<div align=left><b>IVA Prime:</b> ' . number_format((float)$send->prime_iva) . '<br>'. 
-                    '<div align=left><b>Transferencia: </b>' . number_format((float)$send->transferencia) . '<br>'.   
-                    '<div align=left><b>Extractos:</b> ' . number_format((float)$send->extracto) . '<br>'.    
-                    '<div align=left><b>Administrativos: </b>' . number_format((float)$send->administrativo) . 
+                    '<div align=left><b>Adminsitrativo y transferencia: </b>' . number_format((float)$send->transferencia + (float)$send->extracto + (float)$send->administrativo) . ''. 
                 '<br></div>';
             })
 
@@ -850,7 +867,7 @@ class AdminController extends Controller {
             ->addColumn('extractos', function ($send) {
 
                 $liquidacion = Liquidacion::find($send->liquidacion_id);
-
+/*
                 $prime = DB::table('terceros_prime as tp')
                     ->join('terceros as t', 'tp.tercero_id', '=', 't.id')
                     ->where('tp.tercero_id',  $send->tercero_id)
@@ -864,11 +881,11 @@ class AdminController extends Controller {
                     $old = Carbon::parse($prime->fecha_final);
 
                     if ($now <= $old) {
-
+*/
                         return '<div align=center><a href="' . route('liquidacion.liquidaciones_extracto_comisiones', $send->liquidacion_id) . '"  class="btn btn-warning btn-xs">
                         Extracto
                 </a></div>';
-
+ /*
                     }
 
                     return '<div align=center>No es prime</div>';
@@ -876,6 +893,7 @@ class AdminController extends Controller {
                 }
 
                 return '<div align=center>No es prime</div>';
+*/
             })
             ->make(true);
     }

@@ -295,6 +295,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::get('liquidacion/liquidaciones_terceros_estados', ['uses' => 'LiquidacionesController@liquidaciones_terceros_estados', 'as' => 'liquidacion.liquidaciones_terceros_estados']);
         Route::get('liquidacion/liquidaciones_terceros_estados_datos', ['uses' => 'LiquidacionesController@liquidaciones_terceros_estados_datos', 'as' => 'liquidacion.liquidaciones_terceros_estados_datos']);
         Route::post('liquidacion/liquidaciones_terceros_estados', ['uses' => 'LiquidacionesController@liquidaciones_terceros_estados', 'as' => 'liquidacion.liquidaciones_terceros_estado_cambio']);
+        Route::post('liquidacion/cambiar_estado', ['uses' => 'LiquidacionesController@liquidaciones_cambiar_estado', 'as' => 'liquidacion.cambiar_estado']);
     });
 
     Route::group(['middleware' => 'role:logistica'], function () {

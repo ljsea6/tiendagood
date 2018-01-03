@@ -3,9 +3,10 @@
 @section('titulo', 'Good')
 
 @section('content')
+<input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
     <div class="box">
         <div class="panel panel-default">
-            <div class="panel-heading font-header">Listado de liquidaciones</div>
+            <div class="panel-heading font-header">Cambio de estado de las liquidaciones</div>
             <div class="panel-body">
                 {!! Alert::render() !!}
                 {{--<input type="button" class="btn btn-danger" id="update" value="Actualizar">--}}
@@ -19,6 +20,7 @@
                             <th style="text-align: left">Teléfono</th>
                             <th style="text-align: left">Email</th> 
                             <th style="text-align: left">Prime</th> 
+                            <th style="text-align: left">Estado</th> 
                         </tr>
                         </thead>
                     </table>
@@ -28,9 +30,10 @@
     </div>
 @stop
 @push('scripts')
-    <script>
+<script>
 
-        $(function() {
+    $(function() {
+
             var table = $('#liquidaciones_terceros_estados_datos').DataTable({
  
                 responsive: true,
@@ -46,13 +49,34 @@
                     { data: 'telefono', name: 'telefono', orderable: true, searchable: true },
                     { data: 'email', name: 'email', orderable: true, searchable: true },
                     { data: 'prime', name: 'prime', orderable: true, searchable: true },
+                    { data: 'estado', name: 'estado', orderable: true, searchable: true },
                 ],
                 language: {
                     url: "{{ asset('css/Spanish.json') }}"
+                },
+                drawCallback: function () {
+                  $('.pendiente').hide();
                 }
-            });
+            });       
+   });
 
-        });
+      function cambio_estado(id, valor, tipo){
 
-    </script>
+       if(valor == 87){
+            $('.tercero_pendiente_'+id).hide();
+       }
+       else{
+           $('.tercero_pendiente_'+id).show();
+       }
+ 
+          $.ajax({
+                    url: '../liquidacion/cambiar_estado',
+                    type: 'post',
+                    data: { id: id, valor: valor, tipo: tipo, _token: $('#_token').val() },
+                    dataType: 'json',
+                    async:false
+                });  
+      }
+
+</script>
 @endpush

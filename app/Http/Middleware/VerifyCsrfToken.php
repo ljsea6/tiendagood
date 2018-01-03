@@ -52,7 +52,8 @@ class VerifyCsrfToken extends BaseVerifier {
         'admin/terceros/setorden',
         'admin/terceros/setstate',
         'terceros/actualizar-datos',
-        'terceros/activarplanprime'
+        'terceros/activarplanprime',
+        'liquidacion/cambiar_estado'
     ];
 
 }
