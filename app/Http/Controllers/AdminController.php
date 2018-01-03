@@ -819,8 +819,8 @@ class AdminController extends Controller {
               if($send->tipo_nombre != 'Pendiente'){          
                 return '<div align=center>' . $send->tipo_nombre . '</div>';
               }
-              else if($send->tipo_nombre == '' || $send->tipo_nombre == NULL){
-                return '<div align=center>' . $send->tipo_nombre . ' <br><br> <b>Motivo: </b> ' . $send->motivo . ' </div>';
+              else if($send->estado_id == '' || $send->estado_id == NULL){
+                return '<div align=center>Sin estado</div>';
               }
               else{
                 return '<div align=center>' . $send->tipo_nombre . ' <br><br> <b>Motivo: </b> ' . $send->motivo . ' </div>';
