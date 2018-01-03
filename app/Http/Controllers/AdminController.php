@@ -817,9 +817,9 @@ class AdminController extends Controller {
 
             ->addColumn('estado', function ($send) {      
               if($send->tipo_nombre != 'Pendiente'){          
-                return '<div align=center>' . $send->tipo_nombre . '</div>';
+                return '<div align=center>1' . $send->tipo_nombre . '</div>';
               }
-              else if($send->estado_id == NULL){
+              if($send->tipo_nombre == NULL){
                 return '<div align=center>Sin estado</div>';
               }
               if($send->tipo_nombre == 'Pendiente'){ 
