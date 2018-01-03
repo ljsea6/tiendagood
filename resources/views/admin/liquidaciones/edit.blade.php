@@ -221,7 +221,7 @@
                         <!-- Finaliza el contenedor del medidor -->
 
                         <br>
-                        @if (session('m') || session('g') || session('gm'))
+                        @if (session('m') || session('g') || session('gm') || $state == false)
                             <div class="row">
                                 <div class="col-xs-12">
                                     <div class="card-content" style="text-align: center;">
