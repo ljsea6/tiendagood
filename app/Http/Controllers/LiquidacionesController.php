@@ -538,18 +538,8 @@ class LiquidacionesController extends Controller {
     	$liquidaciones_detalles = $this->liquidaciones_extracto_comisiones_datos($usuario);
     	$mes = $this->nombremes($mes);
 
-         $prime = DB::table('terceros_prime as tp')->join('terceros as t', 'tp.tercero_id', '=', 't.id')->where('tp.tercero_id',  $usuario)
-                    ->where('estado', true)->orderBy('tp.id', 'desc')->first();
-
-                if (count($prime) > 0) {
-
-                    $now = Carbon::now();
-                    $old = Carbon::parse($prime->fecha_final);
-
-                    if ($now <= $old) {                       	
-                        return view('admin.liquidaciones.extracto_comisiones', compact('id','liquidaciones_detalles','mes','parametros','liquidaciones_terceros'));
-                    }
-                }
+        return view('admin.liquidaciones.extracto_comisiones', compact('id','liquidaciones_detalles','mes','parametros','liquidaciones_terceros'));
+        
     }
 
     public function nombremes($mes){        
