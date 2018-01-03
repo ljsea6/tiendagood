@@ -735,7 +735,7 @@ class AdminController extends Controller {
     public function liquidaciones()
     {
         
-        $usuario = currentUser()->id; 
+        $usuario = 80; 
 
          $prime = DB::table('terceros_prime as tp')->join('terceros as t', 'tp.tercero_id', '=', 't.id')->where('tp.tercero_id',  $usuario)
                     ->where('estado', true)->orderBy('tp.id', 'desc')->first();
@@ -755,9 +755,7 @@ class AdminController extends Controller {
 
     public function data_liquidaciones()
     {
-        $id = 
-
-        ;
+        $id = 80;
   //currentUser()->id
         //$liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
         $liquidaciones = DB::table('liquidaciones_terceros')
@@ -799,7 +797,7 @@ class AdminController extends Controller {
                 return '<div align=center>' . number_format((float)$send->valor_comision) . '</div>';
             })
             ->addColumn('total_paga', function ($send) {
-                
+                if ($send->tipo_nombre == 'pendiente') { 
                 return '<div align=center>' . $send->tipo_nombre . '</div>';
               }
               else{
