@@ -909,7 +909,7 @@ class AdminController extends Controller {
 
         $state = true;
 
-        if ($liquidacion_tercero->valor_comision_paga <= 0 || $liquidacion_tercero->bono_good != null || $liquidacion_tercero->bono_mercando || $liquidacion_tercero->giftcard_mercando || $liquidacion_tercero->giftcard_good) {
+        if ($liquidacion_tercero->estado_id == 88 || $liquidacion_tercero->valor_comision_paga <= 0 || $liquidacion_tercero->bono_good != null || $liquidacion_tercero->bono_mercando || $liquidacion_tercero->giftcard_mercando || $liquidacion_tercero->giftcard_good) {
             $state = false;
         }
 
