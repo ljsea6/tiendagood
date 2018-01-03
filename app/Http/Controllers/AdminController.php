@@ -787,10 +787,13 @@ class AdminController extends Controller {
 
                 if (count($ok) > 0 && $ok->bono_good == null && $ok->bono_mercando == null && $ok->giftcard_good == null && $ok->giftcard_mercando == null ) {
 
-                    if ($ok->valor_comsion_paga > 0) {
+                    if ($ok->valor_comision_paga > 0) {
+
                         $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $ok->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
+                    } else {
+                        $boton =  '<div align=center>Saldo insuficiente para generar bonos </div>';
                     }
-                    $boton =  '<div align=center>Saldo insuficiente para generar bonos</div>';
+
 
                 } else {
                     $boton =  '<div align=center>Sus bonos ya fueron generados</div>';
@@ -838,9 +841,11 @@ class AdminController extends Controller {
                     if ($ok->valor_comision_paga > 0) {
                         return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
                         Crear Bonos                                 </a></div>';
+                    }else {
+
+                        return '<div align=center>Fondos insuficientes para generar bonos. '. $ok->valor_comision_paga .'</div>';
                     }
 
-                    return '<div align=center>Fondos insuficientes para generar bonos.</div>';
 
                 } else {
                     return '<div align=center>Sus bonos ya fueron generados</div>';
@@ -886,7 +891,7 @@ class AdminController extends Controller {
 
         $state = true;
 
-        if ($liquidacion_tercero->valor_comsion_paga <= 0 || $liquidacion_tercero->bono_good != null || $liquidacion_tercero->bono_mercando || $liquidacion_tercero->giftcard_mercando || $liquidacion_tercero->giftcard_good) {
+        if ($liquidacion_tercero->valor_comision_paga <= 0 || $liquidacion_tercero->bono_good != null || $liquidacion_tercero->bono_mercando || $liquidacion_tercero->giftcard_mercando || $liquidacion_tercero->giftcard_good) {
             $state = false;
         }
 
