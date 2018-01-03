@@ -19,14 +19,14 @@
                 </a>
             </li>
 
-            {{--<li class="has-submenu">
+            <li class="has-submenu">
 
                 <a href="{{ route('admin.liquidaciones.index') }}" class="animsition-link text-left">
                     <i class="fa fa-money">
                     </i>
                     <span class="nav-text">Mis Liquidaciones</span>
                 </a>
-            </li>--}}
+            </li>
 
             @role('dirsac|administrador|servicio.al.cliente')
 
