@@ -759,7 +759,7 @@ class AdminController extends Controller {
   //currentUser()->id
         //$liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
         $liquidaciones = DB::table('liquidaciones_terceros')
-                                        ->join('tipos', 'liquidaciones_terceros.estado_id', '=', 'tipos.id')
+                                        ->leftjoin('tipos', 'liquidaciones_terceros.estado_id', '=', 'tipos.id')
                                         ->join('liquidaciones', 'liquidaciones.id', '=', 'liquidaciones_terceros.liquidacion_id')
                                         ->where('liquidaciones_terceros.tercero_id', $id) 
                                         ->select(DB::raw("liquidaciones_terceros.*, liquidaciones_terceros.id as liquidacion_tercero_id ,tipos.nombre as tipo_nombre,  tipos.id as tipo_id, liquidaciones.*, 
