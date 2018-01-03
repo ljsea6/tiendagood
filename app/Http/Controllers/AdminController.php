@@ -874,8 +874,13 @@ class AdminController extends Controller {
     {
         $liquidacion_tercero = LiquidacionTercero::find($id);
 
+        $state = true;
 
-        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->virtual, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->virtual), 'bono' => ($liquidacion_tercero->virtual), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans()]);
+        if ($liquidacion_tercero->bono_good != null || $liquidacion_tercero->bono_mercando || $liquidacion_tercero->giftcard_mercando || $liquidacion_tercero->giftcard_good) {
+            $state = false;
+        }
+
+        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->virtual, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->virtual), 'bono' => ($liquidacion_tercero->virtual), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans(), 'state' => $state]);
 
     }
 
@@ -1019,7 +1024,7 @@ class AdminController extends Controller {
                                 $update->save();
 
                                 return redirect()->back()->with(['g' => '¡Su bono en Tienda Good ha sido creado pero su bono para Mercando no se pudo crear, pongase en contacto con servicio al cliente para verificar su bono en Mercando.!']);
-                                
+
                             }
 
                             if ($g == false && $m == false) {
