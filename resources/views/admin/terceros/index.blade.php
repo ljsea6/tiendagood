@@ -36,7 +36,16 @@
 </div>
 @stop
 @push('scripts')
-<script>
+<script type="text/javascript">
+    
+ @if(Session::has('flash_msg'))
+                  swal({ 
+                  html: $('<div>').text('{{Session::get('flash_msg')}}'),
+                  animation: false,
+                  customClass: 'animated tada'
+                  });
+@endif     
+    
     $(document).ready(function () {
         $(function () {
             $('#terceros_data').DataTable({
@@ -84,7 +93,7 @@
             data: {id: id},
             success: function (response) {
                 if (response == true) {
-                    $('#terceros_data').DataTable().ajax.reload();
+                    $('#terceros_data').DataTable().ajax.reload(null,false);
                 }
             }
         });

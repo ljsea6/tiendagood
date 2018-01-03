@@ -30,6 +30,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\UpdateEmail::class,
         \App\Console\Commands\SendMails::class,
         \App\Console\Commands\SetTransactions::class,
+        \App\Console\Commands\Compresion::class,
     ];
 
     /**

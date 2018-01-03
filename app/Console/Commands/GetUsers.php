@@ -46,11 +46,6 @@ class GetUsers extends Command
      */
     public function handle()
     {
-
-
-
-
-  /*  	
         $api_url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         $api_url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
         $client = new \GuzzleHttp\Client();
@@ -391,6 +386,6 @@ class GetUsers extends Command
             }
         }
         $this->info('Los usuarios han sido migrados por completo.');
-      */
+
     }
 }

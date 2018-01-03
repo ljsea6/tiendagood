@@ -39,21 +39,6 @@
                                     <input id="email" name="email" type="email" class="form-control" value="{{$tercero->email}}" disabled>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-3 col-sm-6 text-left">
-                                    <label>Estado</label><br>
-                                   <select id="state" name="state" class="selectpicker">
-                                        @if($tercero->state == true)
-                                            <option selected value="true">Activo</option>
-                                            <option value="false">Inactivo</option>
-                                        @endif
-                                         @if($tercero->state == false)
-                                            <option value="true">Activo</option>
-                                            <option selected value="false">Inactivo</option>
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
 
                             <div class="form-group">
                                 <div class="col-sm-offset-3 col-sm-6 text-left">
