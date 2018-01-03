@@ -801,11 +801,11 @@ class AdminController extends Controller {
 
                         $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $ok->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
                     }elseif ($ok->valor_comision_paga > 0 && $ok->estado_id != 87) {
-                        $boton =  '<div align=center>Falta de papeles para generar Bonos</div>';
+                        $boton =  '<div align=center>Falta de documentos para generar Bonos</div>';
                     } else {
                         $boton =  '<div align=center>Saldo insuficiente para generar Bonos </div>';
                     }
-                    
+
                 } else {
                     $boton =  '<div align=center>Sus bonos ya fueron generados</div>';
                 }
