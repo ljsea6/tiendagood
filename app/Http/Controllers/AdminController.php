@@ -786,7 +786,12 @@ class AdminController extends Controller {
               $ok = LiquidacionTercero::find($send->liquidacion_tercero_id);
 
                 if (count($ok) > 0 && $ok->bono_good == null && $ok->bono_mercando == null && $ok->giftcard_good == null && $ok->giftcard_mercando == null ) {
-                    $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $ok->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
+
+                    if ($ok->valor_comsion_paga > 0) {
+                        $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $ok->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
+                    }
+                    $boton =  '<div align=center>Saldo insuficiente para generar bonos</div>';
+
                 } else {
                     $boton =  '<div align=center>Sus bonos ya fueron generados</div>';
                 }
@@ -828,10 +833,15 @@ class AdminController extends Controller {
             })
             ->addColumn('edit', function ($send) {
                 $ok = LiquidacionTercero::where('id', $send->id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
-                if (count($ok) > 0) {
-                    return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
-                        Crear Bonos
-                </a></div>';
+                if (count($ok) > 0 ) {
+
+                    if ($ok->valor_comision_paga > 0) {
+                        return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
+                        Crear Bonos                                 </a></div>';
+                    }
+
+                    return '<div align=center>Fondos insuficientes para generar bonos.</div>';
+
                 } else {
                     return '<div align=center>Sus bonos ya fueron generados</div>';
                 }
@@ -876,7 +886,7 @@ class AdminController extends Controller {
 
         $state = true;
 
-        if ($liquidacion_tercero->bono_good != null || $liquidacion_tercero->bono_mercando || $liquidacion_tercero->giftcard_mercando || $liquidacion_tercero->giftcard_good) {
+        if ($liquidacion_tercero->valor_comsion_paga <= 0 || $liquidacion_tercero->bono_good != null || $liquidacion_tercero->bono_mercando || $liquidacion_tercero->giftcard_mercando || $liquidacion_tercero->giftcard_good) {
             $state = false;
         }
 
