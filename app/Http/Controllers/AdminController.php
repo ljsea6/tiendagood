@@ -815,14 +815,14 @@ class AdminController extends Controller {
                 '<br></div>';
             })
 
-            ->addColumn('estado', function ($send) {      
-              if($send->tipo_nombre != 'Pendiente'){          
-                return '<div align=center>1' . $send->tipo_nombre . '</div>';
-              }
+            ->addColumn('estado', function ($send) {    
               if($send->tipo_nombre == NULL){
                 return '<div align=center>Sin estado</div>';
+              }  
+              else if($send->tipo_nombre != NULL && $send->tipo_nombre != 'Pendiente'){          
+                return '<div align=center>' . $send->tipo_nombre . '</div>';
               }
-              if($send->tipo_nombre == 'Pendiente'){ 
+              else{
                 return '<div align=center>' . $send->tipo_nombre . ' <br><br> <b>Motivo: </b> ' . $send->motivo . ' </div>';
               }
             })
