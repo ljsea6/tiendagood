@@ -736,7 +736,7 @@ class AdminController extends Controller {
     {
         
         $usuario = currentUser()->id; 
-
+/*
          $prime = DB::table('terceros_prime as tp')->join('terceros as t', 'tp.tercero_id', '=', 't.id')->where('tp.tercero_id',  $usuario)
                     ->where('estado', true)->orderBy('tp.id', 'desc')->first();
             $prime_val='no';
@@ -749,7 +749,7 @@ class AdminController extends Controller {
                         $prime_val='si';
                     }
                 } 
-
+  */
         return view('admin.liquidaciones.index', compact('prime_val'));
     }
 

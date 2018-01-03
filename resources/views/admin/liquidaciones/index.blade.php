@@ -13,16 +13,12 @@
                     <table data-order='[[ 0, "asc" ]]' id="tabla_liquidaciones" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
                         <thead>
                         <tr>
-                            <th style="text-align: center">Fecha de inicio y final de corte</th>
-                            @if ($prime_val == 'si')     
+                            <th style="text-align: center">Fecha de inicio y final de corte</th> 
                             <th style="text-align: center">Comisión antes de descuentos</th>
                             <th style="text-align: center">Descuentos</th>
-                            <th style="text-align: center">Comisión total</th>
-                            @else
-                            <th style="text-align: center">Comisión</th>
-                            @endif
-                            <th style="text-align: center">Transferencia/Cheque</th>
-                            <th style="text-align: center">Bono</th>
+                            <th style="text-align: center">Comisión total</th> 
+                            <th style="text-align: center">Transferencia</th>
+                            <th style="text-align: center">Bono 30%</th>
                             <th style="text-align: center">Estado</th>
                             <th style="text-align: center">Extractos</th>
                            <!-- <th style="text-align: center">Acción</th> -->
@@ -48,14 +44,10 @@
                 pagingType: "full_numbers",
                 ajax: '{{route('admin.liquidaciones.data')}}',
                 columns: [  
-                    { data: 'date', name: 'date', orderable: true, searchable: true },
-                    @if ($prime_val == 'si')     
+                    { data: 'date', name: 'date', orderable: true, searchable: true }, 
                     { data: 'total', name: 'total', orderable: true, searchable: true },
                     { data: 'rete_fuente', name: 'rete_fuente', orderable: true, searchable: true },
-                    { data: 'total_paga', name: 'total_paga', orderable: true, searchable: true },                    
-                    @else
-                        { data: 'total_paga', name: 'total_paga', orderable: true, searchable: true },    
-                    @endif
+                    { data: 'total_paga', name: 'total_paga', orderable: true, searchable: true },     
                     { data: 'consignacion', name: 'consignacion', orderable: true, searchable: true },
                     { data: 'bono', name: 'bono', orderable: true, searchable: true },
                     { data: 'estado', name: 'estado', orderable: true, searchable: true },
