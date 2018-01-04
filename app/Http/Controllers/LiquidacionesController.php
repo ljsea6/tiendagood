@@ -518,9 +518,8 @@ class LiquidacionesController extends Controller {
                             return '<div align=left>' . $send->fecha_liquidacion . '</div>';
                         })
                         ->addColumn('excel', function ($send) {
-                            return '<div align=left><a href="' . route('liquidacion.detalles_excel', $send->liqui_id) . '" target="_blank" class="btn btn-primary btn-xs">
-                        Excel
-                </a></div>';
+                            return '<span align=left><a href="' . route('liquidacion.detalles_excel', $send->liqui_id) . '" target="_blank" class="btn btn-primary btn-xs"> Excel </a>
+                                    <a href="' . route('liquidacion.liquidaciones_terceros_estados', $send->liqui_id) . '" class="btn btn-success btn-xs"> Cambiar estado </a></span> ';
                         })
                         ->make(true);
     }
@@ -590,7 +589,7 @@ class LiquidacionesController extends Controller {
 
     public function liquidaciones_cambiar_estado(Request $request) {
         if ($request->has('id')){ 
-        	if($request->tipo == "estado"){
+        	if($request->tipo == "87"){
                 DB::table('liquidaciones_terceros')->where('id', $request->id)->update(['estado_id' => $request->valor]); 
         	}
         	else{
@@ -603,10 +602,9 @@ class LiquidacionesController extends Controller {
     public function liquidaciones_terceros_estados_datos($id=0) {
 
         $liquidaciones = DB::table('liquidaciones_terceros')
-        ->where('liquidaciones_terceros.liquidacion_id', 70)
-        ->whereIn('liquidaciones_terceros.tercero_id', array(4,80))
+        ->where('liquidaciones_terceros.liquidacion_id', $id) 
         ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
-        ->select('liquidaciones_terceros.id as liquitercero_id','tercero_id','identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga','estado_id', DB::raw("(select estado from terceros_prime where terceros.id = terceros_prime.tercero_id limit 1) as prime"))
+        ->select('liquidaciones_terceros.id as liquitercero_id','tercero_id','identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga','estado_id', 'tipo_pendiente_id', 'prime')
         ->orderByRaw('liquidaciones_terceros.valor_comision_paga ASC')->get();
      
         $tipos_estado_comision = DB::table('tipos')->where('padre_id', 86)->select('nombre','id')->orderByRaw('id ASC')->get();     
@@ -617,14 +615,14 @@ class LiquidacionesController extends Controller {
             $select_1 = ''; $select_2 = '';
  
             		$prime = '';
-                    if ($send->prime != '') {
+                    if ($send->prime != '0') {
                     	 $prime = 'Si';
                     }
                     else{
                         $prime = 'No';
                     }
             
-            $select_1 = '<select class="tercero_tipo_'.$send->tercero_id.' form-control" onchange="cambio_estado('.$send->liquitercero_id.', this.options[this.selectedIndex].value,"estado")" id="'.$send->liquitercero_id.'">';
+            $select_1 = '<select class="tercero_tipo_'.$send->liquitercero_id.' form-control" onchange="cambio_estado('.$send->liquitercero_id.', this.options[this.selectedIndex].value, 87, this.options[this.selectedIndex].text)" id="'.$send->liquitercero_id.'">';
             foreach ($tipos_estado_comision as $value) {
              	$seleted = '';
              	if($send->estado_id == $value->id){  $seleted = 'selected';  }
@@ -632,16 +630,15 @@ class LiquidacionesController extends Controller {
             }
             $select_1 .= '</select>';
 
-            $select_2 = '<select class="tercero_pendiente_'.$send->liquitercero_id.' pendiente form-control" onchange="cambio_estado('.$send->liquitercero_id.', this.options[this.selectedIndex].value,"pendiente")" id="'.$send->liquitercero_id.'">';
+            $select_2 = '<select class="tercero_pendiente_'.$send->liquitercero_id.' pendiente form-control" onchange="cambio_estado('.$send->liquitercero_id.', this.options[this.selectedIndex].value, 88, this.options[this.selectedIndex].text)" id="'.$send->liquitercero_id.'">';
             foreach ($tipos_estado_pendiente as $value) {
              	$seleted = '';
-             	if($send->estado_id == $value->id){  $seleted = 'selected';  }
+             	if($send->tipo_pendiente_id == $value->id){  $seleted = 'selected';  }
                 $select_2 .= '<option value="'.$value->id.'" '.$seleted.'>'.$value->nombre.'</option>';
             }
             $select_2 .= '</select>';
 /*
-            array_push($datos, array('identificacion' => $send->identificacion, 
-                              'nombres' => $send->nombres, ));
+            array_push($datos, array('identificacion' => $send->identificacion,  'nombres' => $send->nombres, ));
 */
         	$datos[] = array('identificacion' => $send->identificacion, 
                               'nombres' => $send->nombres, 
@@ -649,8 +646,11 @@ class LiquidacionesController extends Controller {
                               'telefono' => $send->telefono, 
                               'email' => $send->email, 
                               'valor_comision_paga' => $send->valor_comision_paga, 
-                              'estado_id' => $select_1.''.$select_2, 
-                              'prime' => $prime); 
+                              'estado' => $select_1, 
+                              'estado_pendiente' => $select_2, 
+                              'prime' => $prime, 
+                              'estado_id' => $send->estado_id, 
+                              'liquitercero_id' => $send->liquitercero_id); 
         }
  
        $send = collect($datos);
@@ -678,7 +678,16 @@ class LiquidacionesController extends Controller {
                             return '<div align=left>' . $send['prime']. '</div>';
                         })
                         ->addColumn('estado', function ($send) { 
-                            return '<div align=left>' . $send['estado_id']. '</div>';
+                            return '<div align=left> <span>'.$send['estado'].' <input type="hidden" class="nombre_'.$send['liquitercero_id'].'" value="'.$send['nombres']." ".$send['apellidos'].'"></span>  </div>';
+                        })
+                        ->addColumn('estado_pendiente', function ($send) { 
+                            return '<div align=left> <span>'.$send['estado_pendiente'].'</span> </div>';
+                        })
+                        ->addColumn('estado_id', function ($send) { 
+                            return $send['estado_id'];
+                        })
+                        ->addColumn('liquitercero_id', function ($send) { 
+                            return $send['liquitercero_id'];
                         })
                         ->make(true); 
     }

@@ -285,15 +285,15 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::any('orders/list/pending', ['uses' => 'OrdersController@pending', 'as' => 'admin.orders.list.pending']);
     });
 
-    Route::group(['middleware' => 'role:administridador'], function () {
+    Route::group(['middleware' => 'role:administridador|contabilidad'], function () {
     //liquidaciones
         Route::get('liquidacion/liquidar', ['uses' => 'LiquidacionesController@get_liquidar', 'as' => 'liquidacion.liquidar']);
         Route::post('liquidacion/liquidar', ['uses' => 'LiquidacionesController@post_liquidar', 'as' => 'liquidacion.liquidar.envio']);
         Route::get('liquidacion/liquidaciones_general', ['uses' => 'LiquidacionesController@liquidaciones_general', 'as' => 'liquidacion.liquidaciones_general']);
         Route::get('liquidacion/liquidaciones_general_datos', ['uses' => 'LiquidacionesController@liquidaciones_datos', 'as' => 'liquidacion.liquidaciones_general_datos']);
         Route::get('liquidacion/liquidaciones_detalles_excel/{id}', ['uses' => 'LiquidacionesController@liquidaciones_detalles_excel', 'as' => 'liquidacion.detalles_excel']);
-        Route::get('liquidacion/liquidaciones_terceros_estados', ['uses' => 'LiquidacionesController@liquidaciones_terceros_estados', 'as' => 'liquidacion.liquidaciones_terceros_estados']);
-        Route::get('liquidacion/liquidaciones_terceros_estados_datos', ['uses' => 'LiquidacionesController@liquidaciones_terceros_estados_datos', 'as' => 'liquidacion.liquidaciones_terceros_estados_datos']);
+        Route::get('liquidacion/liquidaciones_terceros_estados/{id}', ['uses' => 'LiquidacionesController@liquidaciones_terceros_estados', 'as' => 'liquidacion.liquidaciones_terceros_estados']);
+        Route::get('liquidacion/liquidaciones_terceros_estados_datos/{id}', ['uses' => 'LiquidacionesController@liquidaciones_terceros_estados_datos', 'as' => 'liquidacion.liquidaciones_terceros_estados_datos']);
         Route::post('liquidacion/liquidaciones_terceros_estados', ['uses' => 'LiquidacionesController@liquidaciones_terceros_estados', 'as' => 'liquidacion.liquidaciones_terceros_estado_cambio']);
         Route::post('liquidacion/cambiar_estado', ['uses' => 'LiquidacionesController@liquidaciones_cambiar_estado', 'as' => 'liquidacion.cambiar_estado']);
     });
