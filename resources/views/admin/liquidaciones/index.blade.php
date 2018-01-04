@@ -6,8 +6,12 @@
     <div class="box">
         <div class="panel panel-default">
             <div class="panel-heading font-header">Listado de liquidaciones</div>
-            <div class="panel-body"> 
-           <span style="color: #FF5733; font-size: 16px">Nota: sdfsdfdsf ds fds f sd fsd</span>
+            <div class="panel-body" style="text-align: left;"> 
+           <span style="color: #FF5733; font-size: 13px; ">Queremos recordares que, de acuerdo a los términos establecidos en el contrato de vendedor independiente, es un requisito para el pago de las comisiones causadas en cada periodo el haber subido a la plataforma los documentos requeridos. A saber, RUT que contenga la actividad identificada con el código 8299, Copia simple del documento de identificación y Certificación bancaria que acredite la titularidad de la cuenta donde se realizarán los pagos.</span><br><br>
+ 
+<span style="color: #FF5733; font-size: 13px; ">Adicionalmente, hacemos énfasis en que al monto de las comisiones brutas se le realizarán los descuentos contractuales y retenciones legales a los que haya lugar, de acuerdo con el contrato de vendedor independiente y demás normativa aplicable.</span><br><br>
+ 
+<span style="color: #FF5733; font-size: 13px; ">En consecuencia, a las personas que no hayan completado los requisitos para el pago y/o cuya comisión sea igual o inferior a 0 pesos después de descuentos y retenciones, Tienda Good acumulará los saldos brutos y los pagará en el siguiente corte, haciendo los descuentos contractuales y retenciones legales a los que haya lugar sobre los saldos acumulados.</span>
                 <br>
                 <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                     <table data-order='[[ 0, "asc" ]]' id="tabla_liquidaciones" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">

@@ -10,7 +10,7 @@
                 {!! Alert::render() !!}
                 {{--<input type="button" class="btn btn-danger" id="update" value="Actualizar">--}}
                 <div id="datatable_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                    <table data-order='[[ 0, "desc" ]]' id="tabla_liquidaciones_general" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
+                    <table  id="tabla_liquidaciones_general" class="table table-striped font-12 dataTable no-footer" role="grid" aria-describedby="datatable_info">
                         <thead>
                         <tr>
                             <th style="text-align: left;">#</th>
@@ -18,7 +18,7 @@
                             <th style="text-align: left">Fecha Inicio</th>
                             <th style="text-align: left">Fecha Final</th>
                             <th style="text-align: left">Fecha liquidacion</th> 
-                            <th style="text-align: left">Acciones</th> 
+                            <th style="text-align: center;">Acciones</th> 
                         </tr>
                         </thead>
                     </table>
@@ -32,7 +32,7 @@
 
         $(function() {
             var table = $('#tabla_liquidaciones_general').DataTable({
- 
+                 "order": [[ 4, 'desc' ]],
                 responsive: true,
                 processing: true,
                 serverSide: true,
