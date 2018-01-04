@@ -79,16 +79,8 @@
                               <td class="tdderecho" style="padding: 1px 1px;">{{number_format($liquidaciones_terceros->prime_iva)}}</td> 
                                    </tr>
                                     <tr>
-                              <td class="tdizquierdo" style="padding: 1px 1px;">Transferencia:</td> 
-                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($liquidaciones_terceros->transferencia)}}</td> 
-                                   </tr>
-                                    <tr>
-                              <td class="tdizquierdo" style="padding: 1px 1px;">Extractos:</td> 
-                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($liquidaciones_terceros->extracto)}}</td> 
-                                   </tr>
-                                    <tr>
-                              <td class="tdizquierdo" style="padding: 1px 1px;">Administrativos:</td> 
-                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($liquidaciones_terceros->administrativo)}}</td> 
+                              <td class="tdizquierdo" style="padding: 1px 1px;">Adminsitrativo y transferencia:</td>
+                              <td class="tdderecho" style="padding: 1px 1px;">{{number_format($liquidaciones_terceros->transferencia + $liquidaciones_terceros->extracto + $liquidaciones_terceros->administrativo)}}</td>
                                    </tr>
                                     <tr>
                               <td class="tdizquierdo" style="padding: 1px 1px;">Comisión con descuentos:</td> 

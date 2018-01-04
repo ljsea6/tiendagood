@@ -19,7 +19,7 @@
                 </a>
             </li>
 
-            <li class="has-submenu">
+           <li class="has-submenu">
 
                 <a href="{{ route('admin.liquidaciones.index') }}" class="animsition-link text-left">
                     <i class="fa fa-money">
