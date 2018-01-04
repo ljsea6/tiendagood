@@ -69,22 +69,42 @@
             });       
    });
 
-      function cambio_estado(id, valor, tipo){
+      function cambio_estado(id, valor, tipo, tipo_nombre){
 
-       if(valor == 87){
+       if(valor == 87)
+       {
             $('.tercero_pendiente_'+id).hide();
        }
-       else{
+       else
+       {
            $('.tercero_pendiente_'+id).show();
        }
  
-          $.ajax({
-                    url: '{{route('liquidacion.cambiar_estado')}}',
-                    type: 'post',
-                    data: { id: id, valor: valor, tipo: tipo, _token: $('#_token').val() },
-                    dataType: 'json',
-                    async:false
-                });  
+        swal({
+                  title: '¿Esta seguro que quiere cambiar el estado a este cliente?',
+                  html:
+                    'Cliente: '+$(".nombre_"+id).val()+' <br>'+
+                    'Estado: '+ tipo_nombre +' <br>',
+                  type: 'question',
+                  showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', cancelButtonText: 'Cancelar',  confirmButtonText: 'Guardar'
+                }).then((result) => {
+                  if (result.value) {
+
+                    $.ajax({
+                       url: '{{route('liquidacion.cambiar_estado')}}',
+                       type: 'post',
+                       data: { id: id, valor: valor, tipo: tipo, _token: $('#_token').val() },
+                       dataType: 'json',
+                       async:false
+                    }); 
+
+                    swal(
+                      'Se realizo el cambio correctamente.',
+                      ''
+                    ); 
+
+                  }  
+        });     
       }
 
 </script>

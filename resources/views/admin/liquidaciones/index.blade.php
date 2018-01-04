@@ -35,7 +35,6 @@
     </div>
 @stop
 @push('scripts') 
-
     <script>
 
         $(function() {

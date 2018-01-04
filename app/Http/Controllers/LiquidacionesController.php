@@ -622,7 +622,7 @@ class LiquidacionesController extends Controller {
                         $prime = 'No';
                     }
             
-            $select_1 = '<select class="tercero_tipo_'.$send->liquitercero_id.' form-control" onchange="cambio_estado('.$send->liquitercero_id.', this.options[this.selectedIndex].value, 87)" id="'.$send->liquitercero_id.'">';
+            $select_1 = '<select class="tercero_tipo_'.$send->liquitercero_id.' form-control" onchange="cambio_estado('.$send->liquitercero_id.', this.options[this.selectedIndex].value, 87, this.options[this.selectedIndex].text)" id="'.$send->liquitercero_id.'">';
             foreach ($tipos_estado_comision as $value) {
              	$seleted = '';
              	if($send->estado_id == $value->id){  $seleted = 'selected';  }
@@ -630,7 +630,7 @@ class LiquidacionesController extends Controller {
             }
             $select_1 .= '</select>';
 
-            $select_2 = '<select class="tercero_pendiente_'.$send->liquitercero_id.' pendiente form-control" onchange="cambio_estado('.$send->liquitercero_id.', this.options[this.selectedIndex].value, 88)" id="'.$send->liquitercero_id.'">';
+            $select_2 = '<select class="tercero_pendiente_'.$send->liquitercero_id.' pendiente form-control" onchange="cambio_estado('.$send->liquitercero_id.', this.options[this.selectedIndex].value, 88, this.options[this.selectedIndex].text)" id="'.$send->liquitercero_id.'">';
             foreach ($tipos_estado_pendiente as $value) {
              	$seleted = '';
              	if($send->tipo_pendiente_id == $value->id){  $seleted = 'selected';  }
@@ -678,7 +678,7 @@ class LiquidacionesController extends Controller {
                             return '<div align=left>' . $send['prime']. '</div>';
                         })
                         ->addColumn('estado', function ($send) { 
-                            return '<div align=left> <span>'.$send['estado'].'</span>  </div>';
+                            return '<div align=left> <span>'.$send['estado'].' <input type="hidden" class="nombre_'.$send['liquitercero_id'].'" value="'.$send['nombres']." ".$send['apellidos'].'"></span>  </div>';
                         })
                         ->addColumn('estado_pendiente', function ($send) { 
                             return '<div align=left> <span>'.$send['estado_pendiente'].'</span> </div>';
