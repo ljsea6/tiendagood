@@ -23,6 +23,8 @@
                         <thead>
                         <tr>
                             <th>Número de Orden</th>
+                            <th>Tienda</th>
+                            <th>Puntos</th>
                             <th>Detalle</th>
                             <th>Cliente</th>
                             <th>Email</th>
@@ -71,6 +73,8 @@
                 ajax: '{{route('admin.orders.paid')}}',
                 columns: [
                     { data: 'name', name: 'name', orderable: true, searchable: true  },
+                    { data: 'shop', name: 'shop', orderable: true, searchable: true  },
+                    { data: 'points', name: 'points', orderable: true, searchable: true  },
                     { data: 'order', name: 'order', orderable: false, searchable: true  },
                     { data: 'customer', name: 'customer', orderable: true, searchable: true },
                     { data: 'email', name: 'email', orderable: true, searchable: true },
