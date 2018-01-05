@@ -39,6 +39,7 @@ use GuzzleHttp\Exception\ClientException;
 use App\Traits\Liquidar;
 use App\LiquidacionDetalle;
 
+
 class OrdersController extends Controller {
 
     use OrderPaid,
@@ -1068,109 +1069,15 @@ class OrdersController extends Controller {
                             })
                             ->make(true);
         } else {
+
             $orders = Order::where('financial_status', 'paid')
                     ->where('cancelled_at', null)
                     ->get();
+
             $send = collect($orders);
+
             return Datatables::of($send)
-                            ->addColumn('order', function ($send) {
-                                $result = '';
-                                foreach ($send->line_items as $item) {
-                                    $product = Product::find($item['product_id']);
-                                    if (count($product['image']) > 0 && count($product['images']) > 0) {
-                                        $img = '';
-                                        foreach ($product['images'] as $image) {
-                                            if (count($image['variant_ids']) > 0) {
-                                                if ($image['variant_ids'][0] == $item['variant_id'] && $product['id'] == $item['product_id']) {
-                                                    $img = $image['src'];
-                                                }
-                                            } else {
-                                                $img = $product['image']['src'];
-                                            }
-                                        }
-                                        $result .= '<div class="container" style="width: 100%">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                         <p><strong>Nombre: ' . $item['name'] . '</strong></p>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <!-- Left-aligned media object -->
-                                                        <div class="media">
-                                                            <div class="media-left">
-                                                                
-                                                                <img src="' . $img . '" class="media-object" style="width:60px">
-                                                            </div>
-                                                            <div class="media-body">
-                                                                <h4 class="media-heading">Precio unidad: ' . number_format($item['price']) . '</h4>
-                                                                <p>Cantidad: ' . $item['quantity'] . '</p>
-                                                                
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> <hr>';
-                                    }
-                                }
-                                if (count($send->shipping_lines) > 0) {
-                                    foreach ($send->shipping_lines as $line) {
-                                        return '
-                  
-                            <div class="text-left">
-                                <button style="color: #f60620" class="btn-link" data-toggle="modal" data-target="#myModal' . $send->order_number . '">Ver</button>
-                                <!-- Modal -->
-                                <div id="myModal' . $send->order_number . '" class="modal fade" role="dialog">
-                                    <div class="modal-dialog">
-                                        <!-- Modal content-->
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title" style="color: #f60620">#' . $send->order_number . '</h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                   ' . $result . '
-                                                   <p>Costo Envio: ' . number_format($line['price']) . '</p>
-                                                   <h4 class="media-heading">Precio Total: ' . number_format($send->total_price) . '</h4>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                                                   
-                        ';
-                                    }
-                                } else {
-                                    return '
-                  
-                    <div class="text-left">
-                        <button style="color: #f60620" class="btn-link" data-toggle="modal" data-target="#myModal' . $send->order_number . '">Ver</button>
-                        <!-- Modal -->
-                        <div id="myModal' . $send->order_number . '" class="modal fade" role="dialog">
-                            <div class="modal-dialog">
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title" style="color: #f60620">#' . $send->order_number . '</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                       
-                                           ' . $result . '
-                                           <p>Costo Envio:  0</p>
-                                           <h4 class="media-heading">Precio Total: ' . number_format($send->total_price) . '</h4>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>                        
-                ';
-                                }
-                            })
+
                             ->addColumn('customer', function ($send) {
                                 $customer = Customer::where('email', $send->email)->first();
                                 $orden_sin = 'Orden sin cliente';
@@ -1196,11 +1103,27 @@ class OrdersController extends Controller {
                             ->addColumn('name', function ($send) {
                                 return '<div align=left>' . $send->name . '</div>';
                             })
+                            ->addColumn('shop', function ($send) {
+                                return '<div align=left>' . $send->shop . '</div>';
+                            })
+                            ->addColumn('points', function ($send) {
+                                return '<div align=left>' . $send->points . '</div>';
+                            })
                             ->addColumn('order', function ($send) {
+
                                 $result = '';
+
                                 foreach ($send->line_items as $item) {
-                                    $product = Product::find($item['product_id']);
+
+                                    $li = LineItems::where('variant_id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', $send->shop)
+                                        ->first();
+
+                                    $product = Product::where('id', $item['product_id'])->where('shop', $send->shop)->first();
+
                                     if (count($product['image']) > 0 && count($product['images']) > 0) {
+
                                         $result .= '<div class="container" style="width: 100%">
                                                 <div class="row">
                                                     <div class="col-md-12">
@@ -1215,6 +1138,8 @@ class OrdersController extends Controller {
                                                             <div class="media-body">
                                                                 <h4 class="media-heading">Precio unidad: ' . number_format($item['price']) . '</h4>
                                                                 <p>Cantidad: ' . $item['quantity'] . '</p>
+                                                                <p>Puntos: ' . $li->points .  '</p>
+                                                                <p>Total: ' . (int)$li->points *  (int)$item['quantity'].  '</p>
                                                                 
                                                             </div>
                                                         </div>
@@ -1224,63 +1149,66 @@ class OrdersController extends Controller {
                                     }
                                 }
                                 if (count($send->shipping_lines) > 0) {
+
                                     foreach ($send->shipping_lines as $line) {
+
                                         return '
-                  
-                            <div class="text-left">
-                                <button style="color: #f60620" class="btn-link" data-toggle="modal" data-target="#myModal' . $send->order_number . '">Ver</button>
-                                <!-- Modal -->
-                                <div id="myModal' . $send->order_number . '" class="modal fade" role="dialog">
-                                    <div class="modal-dialog">
-                                        <!-- Modal content-->
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title" style="color: #f60620">#' . $send->order_number . '</h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                   ' . $result . '
-                                                   <p>Costo Envio: ' . number_format($line['price']) . '</p>
-                                                   <h4 class="media-heading">Precio Total: ' . number_format($send->total_price) . '</h4>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                                                   
-                        ';
+                                                <div class="text-left">
+                                                    <button style="color: #f60620" class="btn-link" data-toggle="modal" data-target="#myModal' . $send->order_number . '">Ver</button>
+                                                    <!-- Modal -->
+                                                    <div id="myModal' . $send->order_number . '" class="modal fade" role="dialog">
+                                                        <div class="modal-dialog">
+                                                            <!-- Modal content-->
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                                    <h4 class="modal-title" style="color: #f60620">#' . $send->order_number . '</h4>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                       ' . $result . '
+                                                                       <p>Costo Envio: ' . number_format($line['price']) . '</p>
+                                                                       <h4 class="media-heading">Puntos Totales: ' . number_format($send->points) . '</h4>
+                                                                       <h4 class="media-heading">Precio Total: ' . number_format($send->total_price) . '</h4>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                                       
+                                            ';
                                     }
                                 } else {
                                     return '
                   
-                    <div class="text-left">
-                        <button style="color: #f60620" class="btn-link" data-toggle="modal" data-target="#myModal' . $send->order_number . '">Ver</button>
-                        <!-- Modal -->
-                        <div id="myModal' . $send->order_number . '" class="modal fade" role="dialog">
-                            <div class="modal-dialog">
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title" style="color: #f60620">#' . $send->order_number . '</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                       
-                                           ' . $result . '
-                                           <p>Costo Envio:  0</p>
-                                           <h4 class="media-heading">Precio Total: ' . number_format($send->total_price) . '</h4>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>                        
-                ';
+                                            <div class="text-left">
+                                                <button style="color: #f60620" class="btn-link" data-toggle="modal" data-target="#myModal' . $send->order_number . '">Ver</button>
+                                                <!-- Modal -->
+                                                <div id="myModal' . $send->order_number . '" class="modal fade" role="dialog">
+                                                    <div class="modal-dialog">
+                                                        <!-- Modal content-->
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                                <h4 class="modal-title" style="color: #f60620">#' . $send->order_number . '</h4>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                               
+                                                                   ' . $result . '
+                                                                   <p>Costo Envio:  0</p>
+                                                                   <h4 class="media-heading">Puntos Totales: ' . number_format($send->points) . '</h4>
+                                                                   <h4 class="media-heading">Precio Total: ' . number_format($send->total_price) . '</h4>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>                        
+                                        ';
                                 }
                             })
                             ->addColumn('financial_status', function ($send) {

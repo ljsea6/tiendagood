@@ -145,7 +145,7 @@
             </li>
             @endrole
 
-            @role('logistica|administrador')
+            @role('logistica|dirsac|servicio.al.cliente|administrador')
             <li class="has-submenu">
                 <a href="#logistica" data-toggle="collapse" aria-expanded="false" class="text-left">
                     <i class="fa fa-skyatlas">

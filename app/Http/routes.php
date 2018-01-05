@@ -298,7 +298,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('liquidacion/cambiar_estado', ['uses' => 'LiquidacionesController@liquidaciones_cambiar_estado', 'as' => 'liquidacion.cambiar_estado']);
     });
 
-    Route::group(['middleware' => 'role:logistica'], function () {
+    Route::group(['middleware' => 'role:logistica|administrador|servicio.al.cliente|dirsac'], function () {
         Route::get('orders', ['uses' => 'OrdersController@home', 'as' => 'admin.orders.home']);
         Route::post('orders/{id}', ['uses' => 'OrdersController@up', 'as' => 'admin.orders.up']);
         Route::get('orders/{id}/edit', ['uses' => 'OrdersController@edit', 'as' => 'admin.orders.edit']);
