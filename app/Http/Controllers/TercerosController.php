@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DB;
 use Session;
+use App\Tipo;
+use App\Banco;
 
 class TercerosController extends Controller {
 
@@ -561,6 +563,11 @@ class TercerosController extends Controller {
             $usuario->usuario = strtolower($request->email);
             $usuario->celular = strtolower($p);
             $usuario->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->birthday);
+ 
+            if (strlen($request->tipocuenta_id) >= 1) {  $usuario->tipocuenta_id = $request->tipocuenta_id;   }else{  $usuario->tipocuenta_id = null;  }
+            if (strlen($request->banco_id) >= 1) {  $usuario->banco_id = $request->banco_id;   }else{  $usuario->banco_id = null;  }
+            if (strlen($request->numero_cuenta) >= 1) {  $usuario->numero_cuenta = $request->numero_cuenta;   }else{  $usuario->numero_cuenta = null;  }
+            
 
             if ($request->file('banco')) {
 
@@ -648,7 +655,13 @@ class TercerosController extends Controller {
         $fecha_nacimiento = $tercero['fecha_nacimiento'];
         $fecha_nacimiento = date("d/m/Y", strtotime($fecha_nacimiento));
 
-        return view('admin.terceros.actualizar_datos', compact('tercero', 'fecha_nacimiento', 'fecha_inicio', 'fecha_final'));
+
+        $tipos= Tipo::with('tipos')->find(76);
+        $cuentas = Tipo::with('tipos')->find(75);
+        $documentos = Tipo::with('tipos')->find(74);
+        $bancos = Banco::get();
+
+        return view('admin.terceros.actualizar_datos', compact('tercero', 'fecha_nacimiento', 'fecha_inicio', 'fecha_final', 'tipos', 'cuentas', 'bancos'));
     }
 
 }
