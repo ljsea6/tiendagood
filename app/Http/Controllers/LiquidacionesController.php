@@ -71,6 +71,7 @@ class LiquidacionesController extends Controller {
 //->where('t.id', 41)
 //->limit(41)
     $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)
+  //    ->where('t.id', 53)
    // ->limit(41)
     ->select('t.id', 't.tipo_id', $puntos)->orderByRaw('id ASC')->get();
 
@@ -510,6 +511,7 @@ class LiquidacionesController extends Controller {
 
                             if(($saldo_favor + $valor_comision_descuento) > $descuentos){ 
                                 $valor_comision_descuento = ($saldo_favor + $valor_comision_descuento) - $descuentos;
+                                DB::table('liquidaciones_terceros')->where('tercero_id', $value->tercero_id)->update(['saldo_paga' => 0]);
                             }
                             else{    
                                 $valor_comision_descuento = $valor_comision - round($valor_comision * $parametros->rete_fuente) - round($valor_comision * $parametros->rete_ica) - $descuentos;
