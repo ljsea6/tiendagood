@@ -3375,7 +3375,7 @@ class OrdersController extends Controller {
     public function contador()
     {
 
-        $url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        /*$url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
 
         $url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
 
@@ -3426,7 +3426,7 @@ class OrdersController extends Controller {
                 return $e->getResponse()->getBody();
 
             }
-        }
+        }*/
         /*ini_set('memory_limit', '512M');
 
         Commissions::assign_without_type();

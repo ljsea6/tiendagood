@@ -651,4 +651,171 @@ class TercerosController extends Controller {
         return view('admin.terceros.actualizar_datos', compact('tercero', 'fecha_nacimiento', 'fecha_inicio', 'fecha_final'));
     }
 
+    public function index_search()
+    {
+        return view('admin.terceros.search');
+    }
+
+    public function searching(Request $request)
+    {
+        if ($request->has('search')) {
+
+            $search = $request->search;
+
+            $tercero = Tercero::where('identificacion', $search)->Orwhere('email', $search)->first();
+
+            if (count($tercero) > 0 ) {
+
+                $shops = DB::select(
+                    DB::raw(
+                        "
+                            SELECT *
+                            FROM terceros_tiendas
+                            WHERE tercero_id = '$tercero->id';
+                        "
+                    )
+                );
+
+                return response()->json(['info' => $tercero, 'shops' => $shops]);
+            }
+
+            return response()->json(['msg' => 'not found information']);
+
+        }
+
+        return response()->json(['error' => 'not found variable search']);
+    }
+
+    public function levels(Request $request)
+    {
+
+
+        if ($request->has('level') && $request->has('padre_id')) {
+
+            if ($request->level == 1) {
+
+                $id = (int)$request->padre_id;
+
+                $uno = DB::select(
+                    DB::raw(
+                        "
+                            SELECT  t2.id, t2.nombres,  t2.apellidos, t2.email
+                            FROM terceros t
+                              INNER JOIN terceros_networks tn ON tn.padre_id = t.id
+                              INNER JOIN terceros t2 ON t2.id = tn.customer_id
+                            WHERE t.id = '$id'
+                                  AND t.state = true
+                                  AND t2.tipo_cliente_id <> 85
+                                  AND t2.state = true;
+                        "
+                    )
+                );
+
+                $send = collect($uno);
+
+                return Datatables::of($send)
+                    ->addColumn('id', function ($send) {
+                        return '<div align=left>' . $send->id . '</div>';
+                    })
+                    ->addColumn('nombres', function ($send) {
+                        return '<div align=left>' . $send->nombres . '</div>';
+                    })
+
+                    ->addColumn('apellidos', function ($send) {
+                        return '<div align=left>' . $send->apellidos . '</div>';
+                    })
+                    ->addColumn('email', function ($send) {
+                        return '<div align=left>' . $send->email . '</div>';
+                    })
+                    ->make(true);
+
+            }
+
+            if ($request->level == 2) {
+
+                $id = (int)$request->padre_id;
+
+                $uno = DB::select(
+                    DB::raw(
+                        "
+                            SELECT t3.id, t3.nombres,  t3.apellidos, t3.email
+                            FROM terceros t
+                              INNER JOIN terceros_networks tn ON tn.padre_id = t.id
+                              INNER JOIN terceros t2 ON t2.id = tn.customer_id
+                              INNER JOIN terceros_networks tn2 ON tn2.padre_id = t2.id
+                              INNER JOIN terceros t3 ON t3.id = tn2.customer_id
+                            WHERE t.id = '$id'
+                                  AND t.state = true
+                                  AND t3.tipo_cliente_id <> 85
+                                  AND t3.state = true;
+                        "
+                    )
+                );
+
+                $send = collect($uno);
+
+                return Datatables::of($send)
+                    ->addColumn('id', function ($send) {
+                        return '<div align=left>' . $send->id . '</div>';
+                    })
+                    ->addColumn('nombres', function ($send) {
+                        return '<div align=left>' . $send->nombres . '</div>';
+                    })
+
+                    ->addColumn('apellidos', function ($send) {
+                        return '<div align=left>' . $send->apellidos . '</div>';
+                    })
+                    ->addColumn('email', function ($send) {
+                        return '<div align=left>' . $send->email . '</div>';
+                    })
+                    ->make(true);
+
+            }
+
+            if ($request->level == 3) {
+
+                $id = (int)$request->padre_id;
+
+                $uno = DB::select(
+                    DB::raw(
+                        "
+                            SELECT t4.id as id, t4.nombres as nombres,  t4.apellidos as apellidos, t4.email as email
+                            FROM terceros t
+                              INNER JOIN terceros_networks tn ON tn.padre_id = t.id
+                              INNER JOIN terceros t2 ON t2.id = tn.customer_id
+                              INNER JOIN terceros_networks tn2 ON tn2.padre_id = t2.id
+                              INNER JOIN terceros t3 ON t3.id = tn2.customer_id
+                              INNER JOIN terceros_networks tn3 ON tn3.padre_id = t3.id
+                              INNER JOIN terceros t4 ON t4.id = tn3.customer_id
+                            WHERE t.id = '$id'
+                                  AND t.state = true
+                                  AND t4.tipo_cliente_id <> 85
+                                  AND t4.state = true;
+                        "
+                    )
+                );
+
+                $send = collect($uno);
+
+                return Datatables::of($send)
+                    ->addColumn('id', function ($send) {
+                        return '<div align=left>' . $send->id . '</div>';
+                    })
+                    ->addColumn('nombres', function ($send) {
+                        return '<div align=left>' . $send->nombres . '</div>';
+                    })
+
+                    ->addColumn('apellidos', function ($send) {
+                        return '<div align=left>' . $send->apellidos . '</div>';
+                    })
+                    ->addColumn('email', function ($send) {
+                        return '<div align=left>' . $send->email . '</div>';
+                    })
+                    ->make(true);
+
+            }
+
+        }
+    }
+
 }

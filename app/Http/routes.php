@@ -70,6 +70,9 @@ Route::post('orders/mercando/cancelled', 'OrdersController@cancelled_mercando');
 
 Route::post('products/good/create', 'ProductsController@create');
 Route::post('products/good/update', 'ProductsController@update');
+Route::post('products/good/update_listing', 'ProductsController@update_listing');
+
+
 Route::post('products/mercando/create', 'ProductsController@create_mercando');
 Route::post('products/mercando/update', 'ProductsController@update_mercando');
 
@@ -341,6 +344,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('terceros/setorden', ['uses' => 'TercerosController@setOrden', 'as' => 'admin.terceros.setorden']);
     Route::get('terceros/documentos/lista', ['uses' => 'TercerosController@lista_documentos', 'as' => 'admin.terceros.lista_documentos']);
     Route::get('terceros/documentos/descargar/{id}/{tipo}', ['uses' => 'TercerosController@descargar_documentos', 'as' => 'admin.terceros.descargar_documentos']);
+
+    Route::get('terceros/searching/index', ['uses' => 'TercerosController@index_search', 'as' => 'admin.terceros.index.searching']);
+    Route::post('terceros/searching/data', ['uses' => 'TercerosController@searching', 'as' => 'admin.terceros.index.searching.data']);
+    Route::post('terceros/searching/levels', ['uses' => 'TercerosController@levels', 'as' => 'admin.terceros.index.searching.levels']);
 
     //productos
     Route::get('products/good', ['uses' => 'ProductsController@indexGood', 'as' => 'admin.products.index.good']);
