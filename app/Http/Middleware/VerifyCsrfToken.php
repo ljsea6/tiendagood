@@ -31,6 +31,8 @@ class VerifyCsrfToken extends BaseVerifier {
         'orders/*',
         'customers/meta',
         'products/*',
+        'products/good/*',
+        'products/mercando/*',
         'variants/*',
         'admin/orders/*',
         'admin/tipos/*',
@@ -53,7 +55,9 @@ class VerifyCsrfToken extends BaseVerifier {
         'admin/terceros/setstate',
         'terceros/actualizar-datos',
         'terceros/activarplanprime',
-        'admin/liquidacion/cambiar_estado'
+        'admin/liquidacion/cambiar_estado',
+        'admin/terceros/searching/data',
+        'admin/terceros/searching/levels'
     ];
 
 }
