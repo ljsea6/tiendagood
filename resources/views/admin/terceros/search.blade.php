@@ -136,6 +136,7 @@
                             <th>Nombres</th>
                             <th>Apellidos</th>
                             <th>Email</th>
+                            <th>Referidos</th>
                         </tr>
                         </thead>
                     </table>
@@ -156,6 +157,7 @@
                             <th>Nombres</th>
                             <th>Apellidos</th>
                             <th>Email</th>
+                            <th>Referidos</th>
                         </tr>
                         </thead>
                     </table>
@@ -176,6 +178,7 @@
                             <th>Nombres</th>
                             <th>Apellidos</th>
                             <th>Email</th>
+                            <th>Referidos</th>
                         </tr>
                         </thead>
                     </table>
@@ -223,7 +226,8 @@
                     { data: 'id', name: 'id', orderable: true, searchable: true },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true },
                     { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true },
-                    { data: 'email', name: 'email', orderable: true, searchable: true }
+                    { data: 'email', name: 'email', orderable: true, searchable: true },
+                    { data: 'level_1', name: 'level_1', orderable: true, searchable: true }
 
                 ],
                 language: {
@@ -257,7 +261,8 @@
                     { data: 'id', name: 'id', orderable: true, searchable: true },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true },
                     { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true },
-                    { data: 'email', name: 'email', orderable: true, searchable: true }
+                    { data: 'email', name: 'email', orderable: true, searchable: true },
+                    { data: 'level_1', name: 'level_1', orderable: true, searchable: true }
 
                 ],
                 language: {
@@ -291,7 +296,8 @@
                     { data: 'id', name: 'id', orderable: true, searchable: true },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true },
                     { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true },
-                    { data: 'email', name: 'email', orderable: true, searchable: true }
+                    { data: 'email', name: 'email', orderable: true, searchable: true },
+                    { data: 'level_1', name: 'level_1', orderable: true, searchable: true }
 
                 ],
                 language: {

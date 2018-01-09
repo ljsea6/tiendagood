@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helpers;
 use App\Http\Controllers\Controller;
 use App\Entities\Tercero;
 use App\Transactions;
@@ -841,6 +842,10 @@ class TercerosController extends Controller {
                     ->addColumn('email', function ($send) {
                         return '<div align=left>' . $send->email . '</div>';
                     })
+                    ->addColumn('level_1', function ($send) {
+                        $t = Points::terceros_by_level($send->id, 1);
+                        return '<div align=left>' . count($t) . '</div>';
+                    })
                     ->make(true);
 
             }
@@ -881,6 +886,10 @@ class TercerosController extends Controller {
                     })
                     ->addColumn('email', function ($send) {
                         return '<div align=left>' . $send->email . '</div>';
+                    })
+                    ->addColumn('level_1', function ($send) {
+                        $t = Points::terceros_by_level($send->id, 1);
+                        return '<div align=left>' . count($t) . '</div>';
                     })
                     ->make(true);
 
@@ -924,6 +933,10 @@ class TercerosController extends Controller {
                     })
                     ->addColumn('email', function ($send) {
                         return '<div align=left>' . $send->email . '</div>';
+                    })
+                    ->addColumn('level_1', function ($send) {
+                        $t = Points::terceros_by_level($send->id, 1);
+                        return '<div align=left>' . count($t) . '</div>';
                     })
                     ->make(true);
 
