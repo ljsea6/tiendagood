@@ -444,7 +444,7 @@
                             '    <div class="modal-content" width="100%">\n' +
                             '      <div class="modal-header" width="100%">\n' +
                             '        <button type="button" class="close" data-dismiss="modal">&times;</button>\n' +
-                            '        <h4 style="color: #ed7d01" class="modal-title">Liquidacion</h4>\n' +
+                            '        <h4 style="color: #ed7d01" class="modal-title">Última Liquidación</h4>\n' +
                             '      </div>\n' +
                             '      <div class="modal-body" width="100%">\n' +
                             '        <div id="example-2" ></div><br><hr><br>\n' +
