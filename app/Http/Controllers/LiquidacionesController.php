@@ -7,6 +7,7 @@ use Mail;
 use Session;
 use Carbon\Carbon;
 use App\Entities\Liquidaciones;
+use App\Entities\Tercero;
 use App\Order;
 use App\Entities\LiquidacionDetalle;
 use Illuminate\Http\Request;
@@ -761,23 +762,37 @@ class LiquidacionesController extends Controller {
     $envios =  DB::table('liquidaciones_terceros')
         ->where('liquidaciones_terceros.liquidacion_id', $id)
         ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
-        ->select('identificacion', 'nombres', 'apellidos', 'telefono', 'email', 'valor_comision_paga', DB::raw("(select estado from terceros_prime where terceros.id = terceros_prime.tercero_id limit 1) as prime"))
+        ->select(DB::raw("liquidaciones_terceros.*, terceros.*"))
+        ->limit(1)
         ->orderByRaw('liquidaciones_terceros.valor_comision_paga ASC')->get();
 
         Excel::create('liquidaciones', function($excel) use ($envios) {
             $excel->sheet('liquidaciones', function($sheet) use ($envios)  {
-            	$sheet->prependRow(1, array('Cedula', 'Nombres', 'Apellidos', 'Teléfono', 'Email', 'Valor comisión','Prime'));
+            	$sheet->prependRow(1, array('Cedula', 'Nombres', 'Apellidos', 'Teléfono', 'Email', 
+                    'Prime','Valor comision','Retefuente','Rete ICA','Prime','IVA Prime','Transferencia','Extractos
+','Administrativos','Comision con descuentos','Giro Billetera Virtual','Giro Cuenta', 'Valor del saldo a favor', 'saldo paga'));
             	foreach ($envios as $value) {
 
             		$prime = '';
-                    if ($value->prime != '') {
+                    if ($value->prime != '0') {
                     	 $prime = 'Si';
                     }
                     else{
                         $prime = 'No';
                     }
 
-                    $sheet->prependRow(2, array($value->identificacion, $value->nombres, $value->apellidos, $value->telefono, $value->email, $value->valor_comision_paga, $prime));
+                    $saldo_paga = '';
+                    if ($value->saldo_paga == '1') {
+                         $saldo_paga = 'Si';
+                    }
+                    else{
+                        $saldo_paga = 'No';
+                    }
+
+                    $sheet->prependRow(2, array($value->identificacion, $value->nombres, $value->apellidos, $value->telefono, $value->email, 
+                        $prime, $value->valor_comision, $value->rete_fuente, $value->rete_ica, $value->prime, 
+                        $value->prime_iva, $value->transferencia, $value->extracto, $value->administrativo, $value->valor_comision_paga, 
+                        $value->virtual, $value->giro, $value->saldo, $saldo_paga));
                 }
             });
         })->export('xls');
