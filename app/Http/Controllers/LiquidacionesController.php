@@ -8,6 +8,7 @@ use Session;
 use Carbon\Carbon;
 use App\Entities\Liquidaciones;
 use App\Entities\Tercero;
+use App\LiquidacionTercero;
 use App\Order;
 use App\Entities\LiquidacionDetalle;
 use Illuminate\Http\Request;
