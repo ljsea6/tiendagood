@@ -38,7 +38,6 @@
                 <div class="setup-panel text-left">
 
                     <h3 class="text-center">Información de usuario</h3>
-                    <img id="imagen" class="img-circle" width="150" height="150"><br>
                     <input type="hidden" id="padre_id">
                     <div class="container">
                         <div class="table-responsive">
@@ -398,11 +397,7 @@
                     }
 
                     if (date.info) {
-                        swal(
-                            'Datos encontrados',
-                            '¡Ok!',
-                            'success'
-                        );
+                        
 
                         $("#padre_id").val(date.info.id);
                         $('#first_name').html('' + date.info.nombres.toUpperCase());
