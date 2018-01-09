@@ -292,6 +292,7 @@
                             'success'
                         );
 
+
                         $("#padre_id").val(date.info.id);
                         $('#first_name').html('' + date.info.nombres);
                         $('#last_name').html('' + date.info.apellidos);

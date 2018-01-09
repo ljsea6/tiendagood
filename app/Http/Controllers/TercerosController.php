@@ -666,6 +666,9 @@ class TercerosController extends Controller {
 
             if (count($tercero) > 0 ) {
 
+                $good = 0;
+                $mercando = 0;
+
                 $shops = DB::select(
                     DB::raw(
                         "
@@ -676,7 +679,12 @@ class TercerosController extends Controller {
                     )
                 );
 
-                return response()->json(['info' => $tercero, 'shops' => $shops]);
+                if (count($shops) > 0) {
+                    $mercando = $shops['customer_id_mercando'];
+                    $good = $shops['customer_id_good'];
+                }
+
+                return response()->json(['info' => $tercero, 'good' => $good, 'mercando' => $mercando]);
             }
 
             return response()->json(['msg' => 'not found information']);
