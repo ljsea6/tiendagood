@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use DB;
 use Mail;
 use Session;
-use App\Liquidacion;
 use Carbon\Carbon;
 use App\Entities\Tercero;
+use App\Liquidacion;
 use App\LiquidacionTercero;
 use App\Order;
-use App\Entities\LiquidacionDetalle;
+use App\LiquidacionDetalle;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
@@ -30,7 +30,7 @@ class LiquidacionesController extends Controller {
 
         ini_set("memory_limit", "-1");
 
-        $liquidar = new Liquidaciones();
+        $liquidar = new Liquidacion();
         $liquidar->usuario_id = currentUser()->id;
         $liquidar->fecha_inicio = $request->fecha_inicio;
         $liquidar->fecha_final = $request->fecha_final;
@@ -497,7 +497,7 @@ class LiquidacionesController extends Controller {
                       
                         if($valor_comision_descuento <= 0){
                             $saldo_paga = 1;
-                            $saldo = ($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica)));
+                            $saldo = round($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica)));
                         }
                         if($valor_comision_descuento >= 1){
                           
@@ -764,7 +764,7 @@ class LiquidacionesController extends Controller {
         ->where('liquidaciones_terceros.liquidacion_id', $id)
         ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
         ->select(DB::raw("liquidaciones_terceros.*, terceros.*"))
-        ->limit(1)
+        //->limit(10)
         ->orderByRaw('liquidaciones_terceros.valor_comision_paga ASC')->get();
 
         Excel::create('liquidaciones', function($excel) use ($envios) {
