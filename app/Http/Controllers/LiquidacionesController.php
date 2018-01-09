@@ -49,7 +49,9 @@ class LiquidacionesController extends Controller {
         $id_dos_nivel_amparado = array();
         $id_tres_nivel_amparado = array();
 
-
+        $insert_primer_nivel = array();
+        $insert_segundo_nivel = array();
+        $insert_tercer_nivel = array();
 
         $level_uno = 0;
         $level_dos = 0;
@@ -69,6 +71,7 @@ class LiquidacionesController extends Controller {
 //->where('t.id', 41)
 //->limit(41)
     $vendedores = DB::table('terceros as t')->where('t.tipo_cliente_id', 83)->where('t.state', true)
+  //    ->where('t.id', 53)
    // ->limit(41)
     ->select('t.id', 't.tipo_id', $puntos)->orderByRaw('id ASC')->get();
 
@@ -129,6 +132,7 @@ class LiquidacionesController extends Controller {
                 ->join('terceros as t2', 't2.id', '=', 'tk.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't2.id')
                 ->whereIn('tk.padre_id', $id_vendedores)->where('t.state', true)->where('t2.state', true)->where('t2.tipo_cliente_id', '<>', 85)
+                ->where('orders.updated_at', '>=', $request->fecha_inicio)->where('orders.updated_at', '<=', $request->fecha_final)
                 ->select('tk.padre_id as padre', 't2.id', 't2.email', 't2.nombres', 't2.apellidos', 't2.tipo_cliente_id','points', 'orders.id as orden_id',
                     'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
 
@@ -191,6 +195,21 @@ class LiquidacionesController extends Controller {
                         $id_detalle_1 = $id_vendedores_tipo[$n->padre]['id_detalle_1'];
                         $comision_valor_1 = $id_vendedores_tipo[$n->padre]['comision_valor_1'];
 
+                        $insert_primer_nivel[] =  array(
+                            'liquidacion_id' => $liquidacion_id,
+                            'tercero_id' => $n->padre,
+                            'hijo_id' => $n->id,
+                            'nivel' => 1,
+                            'order_id' => $n->orden_id,
+                            'regla_detalle_id' => $id_detalle_1,
+                            'valor_comision' => ($comision_valor_1 * $n->points),
+                            'puntos' => ($n->points),
+                            'comision_puntos' => ($comision_valor_1),
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now()
+                        );
+
+/*
                         DB::table('liquidaciones_detalles')->insert([
                             'liquidacion_id' => $liquidacion_id,
                             'tercero_id' => $n->padre,
@@ -205,9 +224,9 @@ class LiquidacionesController extends Controller {
                             'updated_at' => Carbon::now()
                         ]);
 
+*/
+
                     }
-
-
                     //  $gente_nivel_1[] = array('id' => $n->id);
                 }
             }
@@ -227,6 +246,7 @@ class LiquidacionesController extends Controller {
                 ->join('terceros as t3', 't3.id', '=', 'tk2.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't3.id')
                 ->whereIn('t.id', $id_vendedores)->where('t.state', true)->where('t3.state', true)->where('t3.tipo_cliente_id', '<>', 85)
+                ->where('orders.updated_at', '>=', $request->fecha_inicio)->where('orders.updated_at', '<=', $request->fecha_final)
                 ->select('t.id as padre', 't3.id', 't3.email', 't3.nombres', 't3.apellidos', 't3.tipo_cliente_id','points', 'orders.id as orden_id',
                     'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
 
@@ -291,7 +311,7 @@ class LiquidacionesController extends Controller {
                         $id_detalle_2 = $id_vendedores_tipo[$d->padre]['id_detalle_2'];
                         $comision_valor_2 = $id_vendedores_tipo[$d->padre]['comision_valor_2'];
 
-                        DB::table('liquidaciones_detalles')->insert([
+                        $insert_segundo_nivel[] =  array(
                             'liquidacion_id' => $liquidacion_id,
                             'tercero_id' => $d->padre,
                             'hijo_id' => $d->id,
@@ -303,7 +323,7 @@ class LiquidacionesController extends Controller {
                             'comision_puntos' => ($comision_valor_2),
                             'created_at' => Carbon::now(),
                             'updated_at' => Carbon::now()
-                        ]);
+                        );
 
                     }
                     //  $gente_nivel_2[] = array('nombre' => $d->id.'-'.$d->nombres.'-'.$d->apellidos.'-'.$d->email.'-'.$d->tipo_cliente_id.' amparados: '.$count_add.' puntos: '.$points_level_vendedor_2.'<br>sd');
@@ -327,6 +347,7 @@ class LiquidacionesController extends Controller {
                 ->join('terceros as t4', 't4.id', '=', 'tk3.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't4.id')
                 ->whereIn('t.id', $id_vendedores)->where('t.state', true)->where('t4.state', true)->where('t4.tipo_cliente_id', '<>', 85)
+                ->where('orders.updated_at', '>=', $request->fecha_inicio)->where('orders.updated_at', '<=', $request->fecha_final)
                 ->select('t.id as padre', 't4.id', 't4.email', 't4.nombres', 't4.apellidos', 't4.tipo_cliente_id','points', 'orders.id as orden_id',
                     'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
 
@@ -391,7 +412,7 @@ class LiquidacionesController extends Controller {
                         $id_detalle_3 = $id_vendedores_tipo[$t->padre]['id_detalle_3'];
                         $comision_valor_3 = $id_vendedores_tipo[$t->padre]['comision_valor_3'];
 
-                        DB::table('liquidaciones_detalles')->insert([
+                        $insert_tercer_nivel[] =  array(
                             'liquidacion_id' => $liquidacion_id,
                             'tercero_id' => $t->padre,
                             'hijo_id' => $t->id,
@@ -403,7 +424,7 @@ class LiquidacionesController extends Controller {
                             'comision_puntos' => ($comision_valor_3),
                             'created_at' => Carbon::now(),
                             'updated_at' => Carbon::now()
-                        ]);
+                        );
 
                     }
                     //  $gente_nivel_3[] = array('nombre' => $t->id.'-'.$t->nombres.'-'.$t->apellidos.'-'.$t->email.'-'.$t->tipo_cliente_id.' amparados: '.$tres_amparados_total.' puntos: '.$points_level_vendedor_3.'<br>');
@@ -418,6 +439,11 @@ class LiquidacionesController extends Controller {
             //echo $value_vendedor->id.' - puntos: '.$points_level_1.' - comision: '.$comision_valor_1.' - puntos: '.$points_level_2.' - comision: '.$comision_valor_2.' - puntos:  '.$points_level_3.' - comision: '.$comision_valor_3.'<br>';
 
 
+        DB::table('liquidaciones_detalles')->insert($insert_primer_nivel);
+        DB::table('liquidaciones_detalles')->insert($insert_segundo_nivel);
+        DB::table('liquidaciones_detalles')->insert($insert_tercer_nivel);
+
+
         DB::table('orders')->whereIn('id', $id_primer_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
         DB::table('orders')->whereIn('id', $id_dos_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
         DB::table('orders')->whereIn('id', $id_tres_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
@@ -426,7 +452,9 @@ class LiquidacionesController extends Controller {
         DB::table('orders')->whereIn('id', $id_dos_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
         DB::table('orders')->whereIn('id', $id_tres_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
 
+
         $fecha_hoy = Carbon::now();
+        $insert_liquidacion_tercero = array();
 
         $liquidaciones_detalles = DB::table('liquidaciones_detalles as ld')
         ->join('terceros as t', 't.id', '=', 'ld.tercero_id')
@@ -440,30 +468,58 @@ class LiquidacionesController extends Controller {
 
         foreach ($liquidaciones_detalles as $value) {
              
-             $valor_comision = 0; $valor_comision_descuento =  0;
+             $valor_comision = 0; $valor_comision_descuento =  0;  $saldo = 0;  $saldo_paga = 0;  $descuentos = 0;  $saldo_favor = 0;
 
-                    if($value->valor_comision > $value->comision_maxima){ 
-                        if($value->comision_maxima != 0){
-                            $valor_comision = $value->comision_maxima; 
+                        if($value->valor_comision > $value->comision_maxima){ 
+                            if($value->comision_maxima != 0){
+                                $valor_comision = $value->comision_maxima; 
+                            }
+                            else{
+                                $valor_comision = $value->valor_comision; 
+                            }
                         }
-                        else{
-                            $valor_comision = $value->valor_comision; 
+                        else{   
+                    	    $valor_comision = $value->valor_comision;    
                         }
-                    }
-                    else{   $valor_comision = $value->valor_comision;    }
                         
                         if($value->prime >= 1){
                             $prime = $parametros->prime;
-                            $prime_iva = $parametros->prime_iva;
+                            $prime_iva = round($parametros->prime*$parametros->prime_iva);
                         }
                         else {
                             $prime = 0;
                             $prime_iva = 0;
                         }
 
-                         $valor_comision_descuento = $valor_comision - ($valor_comision * $parametros->rete_fuente) - ($valor_comision * $parametros->rete_ica) - ($prime) - ($prime * $prime_iva)  - ($parametros->transferencia) - $parametros->extracto - $parametros->administrativo;
+                        $valor_comision_descuento = $valor_comision - round($valor_comision * $parametros->rete_fuente) - round($valor_comision * $parametros->rete_ica) - $prime - $prime_iva - $parametros->transferencia - $parametros->extracto - $parametros->administrativo;
+                      
+                        if($valor_comision_descuento <= 0){
+                            $saldo_paga = 1;
+                            $saldo = ($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica)));
+                        }
+                        if($valor_comision_descuento >= 1){
+                          
+                            $valor_comision_descuento =  0;
+                            $saldo_anterior = DB::table('liquidaciones_terceros')->select(DB::raw('sum(saldo) as saldo_total'))
+                            ->where('tercero_id', $value->tercero_id)->where('saldo_paga', 1)->first();
+                            if(count($saldo_anterior)>0){
+                                $saldo_favor = $saldo_anterior->saldo_total;
+                            }
 
-                           DB::table('liquidaciones_terceros')->insert([
+                            $descuentos = $parametros->administrativo + $parametros->extracto + $parametros->transferencia + $prime + $prime_iva;
+                            $valor_comision_descuento = $valor_comision - (round($valor_comision * $parametros->rete_fuente) + round($valor_comision * $parametros->rete_ica));
+
+                            if(($saldo_favor + $valor_comision_descuento) > $descuentos){ 
+                                $valor_comision_descuento = ($saldo_favor + $valor_comision_descuento) - $descuentos;
+                                DB::table('liquidaciones_terceros')->where('tercero_id', $value->tercero_id)->update(['saldo_paga' => 0]);
+                            }
+                            else{    
+                                $valor_comision_descuento = $valor_comision - round($valor_comision * $parametros->rete_fuente) - round($valor_comision * $parametros->rete_ica) - $descuentos;
+                            }        
+
+                        }
+                        
+                        $insert_liquidacion_tercero[] = array(
                             'liquidacion_id' => $value->liquidacion_id,
                             'tercero_id' => $value->tercero_id,
                             'valor_comision' => $value->valor_comision,
@@ -471,17 +527,23 @@ class LiquidacionesController extends Controller {
                             'created_at' => Carbon::now(),
                             'updated_at' => Carbon::now(),
 
-                            'rete_fuente' => $valor_comision * $parametros->rete_fuente,
-                            'rete_ica' => $valor_comision * $parametros->rete_ica,
+                            'rete_fuente' => round($valor_comision * $parametros->rete_fuente),
+                            'rete_ica' => round($valor_comision * $parametros->rete_ica),
                             'prime' => $prime,
-                            'prime_iva' => $prime * $prime_iva,
+                            'prime_iva' => $prime_iva,
                             'transferencia' => $parametros->transferencia,
                             'extracto' => $parametros->extracto,
                             'administrativo' => $parametros->administrativo,
                             'virtual' => $valor_comision_descuento * 0.30,
                             'giro' => $valor_comision_descuento * 0.70,
-                        ]);  
+
+                            'saldo' => $saldo,
+                            'saldo_paga' => $saldo_paga,
+                        );  
+
         }
+
+        DB::table('liquidaciones_terceros')->insert($insert_liquidacion_tercero);
     } 
 
             Session::flash('flash_msg', 'La liquidación se realizo correctamente');
@@ -719,6 +781,194 @@ class LiquidacionesController extends Controller {
                 }
             });
         })->export('xls');
+
+    }
+
+    public function liquidaciones()
+    {
+        
+        $usuario = currentUser()->id; 
+/*
+         $prime = DB::table('terceros_prime as tp')->join('terceros as t', 'tp.tercero_id', '=', 't.id')->where('tp.tercero_id',  $usuario)
+                    ->where('estado', true)->orderBy('tp.id', 'desc')->first();
+            $prime_val='no';
+                if (count($prime) > 0) {
+
+                    $now = Carbon::now();
+                    $old = Carbon::parse($prime->fecha_final);
+
+                    if ($now <= $old) {
+                        $prime_val='si';
+                    }
+                } 
+  */
+        return view('admin.liquidaciones.index', compact('prime_val'));
+    }
+
+    public function data_liquidaciones()
+    {
+
+       $id = currentUser()->id;
+       
+  //currentUser()->id
+        //$liquidaciones = Tercero::with('liquidacion_tercero')->find($id);
+        $liquidaciones = DB::table('liquidaciones_terceros')
+                                        ->leftjoin('tipos', 'liquidaciones_terceros.estado_id', '=', 'tipos.id')
+                                        ->join('liquidaciones', 'liquidaciones.id', '=', 'liquidaciones_terceros.liquidacion_id')
+                                        ->where('liquidaciones_terceros.tercero_id', $id) 
+                                        ->select(DB::raw("liquidaciones_terceros.*, liquidaciones_terceros.id as liquidacion_tercero_id ,tipos.nombre as tipo_nombre,  tipos.id as tipo_id, liquidaciones.*, 
+                                            (select nombre from tipos as t where t.id = tipo_pendiente_id) as  motivo"))
+                                        ->get();
+
+        $send = collect($liquidaciones);
+
+        return Datatables::of($send)
+
+            ->addColumn('date', function ($send) {
+                
+                return '<div align=center>' . Carbon::parse($send->fecha_inicio)->format('d/m/Y') . ' - ' . Carbon::parse($send->fecha_final)->format('d/m/Y')  . '</div>';
+            })
+            ->addColumn('nombres', function ($send) {
+                $t = Tercero::find($send->tercero_id);
+                return '<div align=center>' . ucwords($t->nombres) . ' ' . ucwords($t->apellidos) . ' </div>';
+            })
+            ->addColumn('consignacion', function ($send) {
+
+                $giro = 0; 
+
+                if($send->giro >= 1){   
+                    $giro = $send->giro;
+                } 
+                else{
+                    $giro = 0; 
+                } 
+               
+                return '<div align=center>' . number_format((float)$giro) . '</div>';
+            })
+            ->addColumn('bono', function ($send) {              
+
+              $ok = LiquidacionTercero::find($send->liquidacion_tercero_id);
+
+                if (count($ok) > 0 && $ok->bono_good == null && $ok->bono_mercando == null && $ok->giftcard_good == null && $ok->giftcard_mercando == null ) {
+
+                    if ($ok->valor_comision_paga > 0 && $ok->estado_id == 87) {
+
+                        $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $ok->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
+                    }elseif ($ok->valor_comision_paga > 0 && $ok->estado_id != 87) {
+                        $boton =  '<div align=center>Falta de documentos para generar Bonos</div>';
+                    } else {
+                        $boton =  '<div align=center>Saldo insuficiente para generar Bonos </div>';
+                    }
+
+                } else {
+                    $boton =  '<div align=center>Sus bonos ya fueron generados</div>';
+                }
+
+                $virtual = 0; 
+
+                if($send->virtual >= 1){   
+                    $virtual = $send->virtual;
+                } 
+                else{
+                    $virtual = 0; 
+                } 
+
+                return '<div align=center>' . number_format((float)$virtual) . ' <br><br> '.($boton).' </div>';
+            })
+            ->addColumn('total', function ($send) {
+                return '<div align=center>' . number_format((float)$send->valor_comision) . '</div>';
+            })
+            ->addColumn('total_paga', function ($send) {
+              if($send->valor_comision_paga >= 1){           
+                return '<div align=center>' . number_format((float)$send->valor_comision_paga) . '</div>';
+               }
+               else{
+                   return '<div align=center>0</div>';
+                } 
+            })
+            ->addColumn('rete_fuente', function ($send) {   
+                return '<div align=left><b>Retefuente:</b> ' . number_format((float)$send->rete_fuente) . '<br>'.
+                    '<div align=left><b>Rete ICA:</b> ' . number_format((float)$send->rete_ica) . '<br>'. 
+                    '<div align=left><b>Prime: </b>' . number_format((float)$send->prime) . '<br>'.   
+                    '<div align=left><b>IVA Prime:</b> ' . number_format((float)$send->prime_iva) . '<br>'. 
+                    '<div align=left><b>Adminsitrativo y transferencia: </b>' . number_format((float)$send->transferencia + (float)$send->extracto + (float)$send->administrativo) . ''. 
+                '<br></div>';
+            })
+
+            ->addColumn('estado', function ($send) {    
+              if($send->tipo_nombre == NULL){
+                return '<div align=center>Sin estado</div>';
+              }  
+              else if($send->tipo_nombre != NULL && $send->tipo_nombre != 'Pendiente'){          
+                return '<div align=center>' . $send->tipo_nombre . '</div>';
+              }
+              else{
+                return '<div align=center>' . $send->tipo_nombre . ' <br><br> <b>Motivo: </b> ' . $send->motivo . ' </div>';
+              }
+            })
+            ->addColumn('edit', function ($send) {
+                $ok = LiquidacionTercero::where('id', $send->id)->where('bono_good', null)->where('bono_mercando', null)->where('giftcard_good', null)->where('giftcard_mercando', null)->first();
+                if (count($ok) > 0 ) {
+
+                    if ($ok->valor_comision_paga > 0) {
+                        return '<div align=center><a href="' . route('admin.liquidaciones.edit', $send->id) . '"  class="btn btn-warning btn-xs">
+                        Crear Bonos                                 </a></div>';
+                    }else {
+
+                        return '<div align=center>Fondos insuficientes para generar bonos. '. $ok->valor_comision_paga .'</div>';
+                    }
+
+
+                } else {
+                    return '<div align=center>Sus bonos ya fueron generados</div>';
+                }
+
+            })
+            ->addColumn('extractos', function ($send) {
+
+                $liquidacion = Liquidacion::find($send->liquidacion_id);
+/*
+                $prime = DB::table('terceros_prime as tp')
+                    ->join('terceros as t', 'tp.tercero_id', '=', 't.id')
+                    ->where('tp.tercero_id',  $send->tercero_id)
+                    ->where('estado', true)
+                    ->orderBy('tp.id', 'desc')
+                    ->first();
+
+                if (count($prime) > 0) {
+
+                    $now = Carbon::now();
+                    $old = Carbon::parse($prime->fecha_final);
+
+                    if ($now <= $old) {
+*/
+                        return '<div align=center><a href="' . route('liquidacion.liquidaciones_extracto_comisiones', $send->liquidacion_id) . '"  class="btn btn-warning btn-xs">
+                        Extracto
+                </a></div>';
+ /*
+                    }
+
+                    return '<div align=center>No es prime</div>';
+
+                }
+
+                return '<div align=center>No es prime</div>';
+*/
+            })
+            ->make(true);
+    }
+
+    public function editar_liquidaciones($id)
+    {
+        $liquidacion_tercero = LiquidacionTercero::find($id);
+
+        $state = true;
+
+        if ($liquidacion_tercero->estado_id == 88 || $liquidacion_tercero->valor_comision_paga <= 0 || $liquidacion_tercero->bono_good != null || $liquidacion_tercero->bono_mercando || $liquidacion_tercero->giftcard_mercando || $liquidacion_tercero->giftcard_good) {
+            $state = false;
+        }
+
+        return view('admin.liquidaciones.edit')->with(['total' => $liquidacion_tercero->virtual, 'id' => $liquidacion_tercero->id, 'consignacion' => ($liquidacion_tercero->virtual), 'bono' => ($liquidacion_tercero->virtual), 'fecha' => Carbon::parse($liquidacion_tercero->fecha_liquidacion)->diffForHumans(), 'state' => $state]);
 
     }
 

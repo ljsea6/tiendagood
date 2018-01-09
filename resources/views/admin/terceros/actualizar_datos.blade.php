@@ -135,7 +135,40 @@ input[type="file"] {display: none;}
 
                              <h3 class="text-center">Documentos</h3>
                              <hr>
+<br>
+                        <div class="form-group">
+                            <label for="bank">Seleccionar Entidad Bancaria</label>
+                            <select id="banco_id" name="banco_id" class="form-control campo" style="width: 100% !important;">
+                                <option value=""></option>
+                                @foreach($bancos as $tipo)
+                                  {{--*/  $selected = '' /*--}}   
+                                      @if ($tipo->id == $tercero['banco_id'])  
+                                               {{--*/  $selected = 'selected' /*--}}   
+                                      @endif 
+                                    <option value="{{$tipo->id}}" {{$selected}}>{{ucwords($tipo->nombre)}}</option>
+                                @endforeach
+                            </select> 
+                        </div>
 
+                        <div class="form-group">
+                            <label for="type_acount_bank">Tipo de cuenta</label>
+                            <select id="tipocuenta_id" name="tipocuenta_id" class="form-control campo" style="width: 100% !important;">
+                                <option value=""></option>
+                                @foreach($cuentas->tipos as $tipo)
+                                  {{--*/  $selected = '' /*--}}   
+                                      @if ($tipo->id == $tercero['tipocuenta_id'])  
+                                               {{--*/  $selected = 'selected' /*--}}   
+                                      @endif 
+                                    <option value="{{$tipo->id}}" {{$selected}}>{{ucwords($tipo->nombre)}}</option>
+                                @endforeach
+                            </select> 
+                        </div>
+
+                        <div class="form-group">
+                            <label for="acount">Número de cuenta</label>
+                            <input type="text" name="numero_cuenta" value="{{$tercero['numero_cuenta']}}" placeholder="Documento..." class="f1-first-name form-control campo" id="numero_cuenta">
+                        </div>
+<br>
                              <div class="row">
                                 <div class="col-xs-12 col-sm-4" style="border-right: 1px solid #C3C3C3">
                                     <label class="col-sm-12 text-center">RUT <span style="color: #F00707"> Recuerde que su RUT debe tener código de actividad 8299 </span> </label>
