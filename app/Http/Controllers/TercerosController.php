@@ -675,6 +675,8 @@ class TercerosController extends Controller {
 
             $search = $request->search;
 
+            $puntos = 0;
+
             $tercero = Tercero::where('identificacion', $search)->Orwhere('email', $search)->first();
 
             if (count($tercero) > 0 ) {
@@ -692,12 +694,103 @@ class TercerosController extends Controller {
                     )
                 );
 
-                if (count($shops) > 0) {
-                    $mercando = $shops['customer_id_mercando'];
-                    $good = $shops['customer_id_good'];
+                $tipo = DB::select(
+                    DB::raw(
+                        "
+                            SELECT tp.nombre
+                            FROM terceros t
+                            INNER JOIN tipos tp ON t.tipo_id = tp.id
+                            WHERE t.id = '$tercero->id';
+                        "
+                    )
+                );
+
+                $vendedor = DB::select(
+                    DB::raw(
+                        "
+                            SELECT tp.nombre
+                            FROM terceros t
+                            INNER JOIN tipos tp ON t.tipo_cliente_id = tp.id
+                            WHERE t.id = '$tercero->id';
+                        "
+                    )
+                );
+
+                $padre = DB::select(
+                    DB::raw(
+                        "
+                            SELECT coalesce(t.nombres || ' ' || t.apellidos) as nombres, t.identificacion
+                            FROM terceros t
+                            INNER JOIN terceros_networks tk ON t.id = tk.padre_id
+                            WHERE tk.customer_id = '$tercero->id';
+                        "
+                    )
+                );
+
+                $ultima = DB::select(
+                    DB::raw(
+                        "
+                            SELECT  t.nombres, t.apellidos, ld.nivel, o.name,  ld.puntos, ld.comision_puntos, ld.valor_comision, ld.created_at
+                            FROM liquidaciones_detalles ld
+                                INNER JOIN orders o ON ld.order_id = o.id
+                                INNER JOIN terceros t ON ld.hijo_id = t.id
+                            WHERE ld.liquidacion_id IN (
+                                  SELECT lt.liquidacion_id
+                                  FROM liquidaciones_terceros lt
+                                  WHERE lt.tercero_id = '$tercero->id'
+                                  ORDER BY lt.id DESC LIMIT 1)
+                            AND ld.tercero_id = '$tercero->id';
+                        "
+                    )
+                );
+
+                $descuentos = DB::select(
+                    DB::raw(
+                        "
+                           SELECT lt.*
+                            FROM liquidaciones_terceros lt
+                            WHERE lt.tercero_id = '$tercero->id'
+                            ORDER BY lt.id DESC LIMIT 1;
+                        "
+                    )
+                );
+
+                if (count($ultima) == 0) {
+                    $ultima = 'Sin liquidaciones';
                 }
 
-                return response()->json(['info' => $tercero, 'good' => $good, 'mercando' => $mercando]);
+                if (count($descuentos) == 0) {
+                    $ultima = 'Sin descuentos';
+                }
+
+
+                if (count($tipo) > 0) {
+                    $tipo = $tipo[0]->nombre;
+                } else {
+                    $tipo = 'Sin tipo';
+                }
+
+                if (count($vendedor) > 0) {
+                    $vendedor = $vendedor[0]->nombre;
+                } else {
+                    $vendedor = 'Sin tipo';
+                }
+
+
+                if (count($shops) > 0) {
+                    $mercando = $shops[0]->customer_id_mercando;
+                    $good = $shops[0]->customer_id_good;
+                }
+
+                if (count($padre) > 0) {
+                    $padre = $padre[0];
+                } else {
+                    $padre = [];
+                }
+
+                $puntos = Points::count_own_points($tercero->id);
+
+                return response()->json(['info' => $tercero, 'good' => $good, 'mercando' => $mercando, 'tipo' => $tipo, 'vendedor' => $vendedor, 'puntos' => $puntos, 'padre' => $padre, 'liquidacion' => $ultima, 'descuentos' => $descuentos]);
             }
 
             return response()->json(['msg' => 'not found information']);
