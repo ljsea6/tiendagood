@@ -58,7 +58,7 @@
                             </a>
                         </li> @endrole
 
-                        <li>@role('dirsac|servicio.al.cliente')
+                        <li>@role('dirsac|servicio.al.cliente|administrador')
                             <a href="{{ route('admin.terceros.index.searching') }}" class="text-left">
                                 <i class="fa fa-edit">
                                 </i>
