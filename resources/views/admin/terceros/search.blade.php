@@ -397,7 +397,7 @@
                     }
 
                     if (date.info) {
-                        
+
 
                         $("#padre_id").val(date.info.id);
                         $('#first_name').html('' + date.info.nombres.toUpperCase());
@@ -494,7 +494,7 @@
 
                             var descuentos = parseFloat(date.descuentos[0].transferencia) + parseFloat(date.descuentos[0].extracto) + parseFloat(date.descuentos[0].administrativo);
                             tr1 += '<tr>';
-                            tr1 += '<td  class="text-left">' + date.descuentos[0].created_at + '</td><td class="text-left">' + number_format(parseFloat(date.descuentos[0].rete_fuente), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].rete_ica), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].valor_comision), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].prime), 0) + '</td> <td>' + number_format(parseFloat(date.descuentos[0].prime_iva), 0) + '</td> <td class="text-left">' + number_format(descuentos, 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].valor_comision_paga), 0) + '</td> ';
+                            tr1 += '<td  class="text-left">' + date.descuentos[0].created_at + '</td><td class="text-left">' + number_format(parseFloat(date.descuentos[0].valor_comision), 0) + '</td><td class="text-left">' + number_format(parseFloat(date.descuentos[0].rete_fuente), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].rete_ica), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].prime), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].prime_iva), 0) + '</td> <td class="text-left">' + number_format(descuentos, 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].valor_comision_paga), 0) + '</td> ';
                             tr1 += '</tr>';
 
                         };
