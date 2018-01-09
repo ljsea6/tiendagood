@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use DB;
 use Mail;
 use Session;
-use App\Liquidacion;
 use Carbon\Carbon;
 use App\Entities\Tercero;
+use App\Liquidacion;
 use App\LiquidacionTercero;
 use App\Order;
-use App\Entities\LiquidacionDetalle;
+use App\LiquidacionDetalle;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 use App\Http\Controllers\Controller;
@@ -30,7 +30,7 @@ class LiquidacionesController extends Controller {
 
         ini_set("memory_limit", "-1");
 
-        $liquidar = new Liquidaciones();
+        $liquidar = new Liquidacion();
         $liquidar->usuario_id = currentUser()->id;
         $liquidar->fecha_inicio = $request->fecha_inicio;
         $liquidar->fecha_final = $request->fecha_final;
@@ -134,7 +134,7 @@ class LiquidacionesController extends Controller {
                 ->join('terceros as t2', 't2.id', '=', 'tk.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't2.id')
                 ->whereIn('tk.padre_id', $id_vendedores)->where('t.state', true)->where('t2.state', true)->where('t2.tipo_cliente_id', '<>', 85)
-                ->where('orders.updated_at', '>=', $request->fecha_inicio)->where('orders.updated_at', '<=', $request->fecha_final)
+                ->where('orders.created_at', '>=', $request->fecha_inicio)->where('orders.created_at', '<=', $request->fecha_final)
                 ->select('tk.padre_id as padre', 't2.id', 't2.email', 't2.nombres', 't2.apellidos', 't2.tipo_cliente_id','points', 'orders.id as orden_id',
                     'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
 
@@ -248,7 +248,7 @@ class LiquidacionesController extends Controller {
                 ->join('terceros as t3', 't3.id', '=', 'tk2.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't3.id')
                 ->whereIn('t.id', $id_vendedores)->where('t.state', true)->where('t3.state', true)->where('t3.tipo_cliente_id', '<>', 85)
-                ->where('orders.updated_at', '>=', $request->fecha_inicio)->where('orders.updated_at', '<=', $request->fecha_final)
+                ->where('orders.created_at', '>=', $request->fecha_inicio)->where('orders.created_at', '<=', $request->fecha_final)
                 ->select('t.id as padre', 't3.id', 't3.email', 't3.nombres', 't3.apellidos', 't3.tipo_cliente_id','points', 'orders.id as orden_id',
                     'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
 
@@ -349,7 +349,7 @@ class LiquidacionesController extends Controller {
                 ->join('terceros as t4', 't4.id', '=', 'tk3.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't4.id')
                 ->whereIn('t.id', $id_vendedores)->where('t.state', true)->where('t4.state', true)->where('t4.tipo_cliente_id', '<>', 85)
-                ->where('orders.updated_at', '>=', $request->fecha_inicio)->where('orders.updated_at', '<=', $request->fecha_final)
+                ->where('orders.created_at', '>=', $request->fecha_inicio)->where('orders.created_at', '<=', $request->fecha_final)
                 ->select('t.id as padre', 't4.id', 't4.email', 't4.nombres', 't4.apellidos', 't4.tipo_cliente_id','points', 'orders.id as orden_id',
                     'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
 
@@ -497,7 +497,7 @@ class LiquidacionesController extends Controller {
                       
                         if($valor_comision_descuento <= 0){
                             $saldo_paga = 1;
-                            $saldo = ($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica)));
+                            $saldo = round($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica)));
                         }
                         if($valor_comision_descuento >= 1){
                           
@@ -764,7 +764,7 @@ class LiquidacionesController extends Controller {
         ->where('liquidaciones_terceros.liquidacion_id', $id)
         ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
         ->select(DB::raw("liquidaciones_terceros.*, terceros.*"))
-        ->limit(1)
+        //->limit(10)
         ->orderByRaw('liquidaciones_terceros.valor_comision_paga ASC')->get();
 
         Excel::create('liquidaciones', function($excel) use ($envios) {
