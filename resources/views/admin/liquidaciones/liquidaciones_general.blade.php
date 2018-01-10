@@ -52,6 +52,28 @@
                 }
             });
 
+
+
+        @if(Session::has('flash_msg'))
+
+swal({
+  title: '{{Session::get("flash_msg")}}',
+  html:
+    '¿Desea descargar el excel de esta liquidación?',
+  type: 'question',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  cancelButtonText: 'No',
+  confirmButtonText: 'Si'
+}).then((result) => {
+  if (result.value) {
+    window.location.href = "{{route('liquidacion.detalles_excel', Session::get('id'))}}";
+  }
+});
+
+        @endif
+
         });
 
     </script>
