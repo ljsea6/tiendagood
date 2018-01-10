@@ -38,7 +38,6 @@
                 <div class="setup-panel text-left">
 
                     <h3 class="text-center">Información de usuario</h3>
-                    <img id="imagen" class="img-circle" width="150" height="150"><br>
                     <input type="hidden" id="padre_id">
                     <div class="container">
                         <div class="table-responsive">
@@ -136,6 +135,7 @@
                             <th>Nombres</th>
                             <th>Apellidos</th>
                             <th>Email</th>
+                            <th>Referidos</th>
                         </tr>
                         </thead>
                     </table>
@@ -156,6 +156,7 @@
                             <th>Nombres</th>
                             <th>Apellidos</th>
                             <th>Email</th>
+                            <th>Referidos</th>
                         </tr>
                         </thead>
                     </table>
@@ -176,6 +177,7 @@
                             <th>Nombres</th>
                             <th>Apellidos</th>
                             <th>Email</th>
+                            <th>Referidos</th>
                         </tr>
                         </thead>
                     </table>
@@ -223,7 +225,8 @@
                     { data: 'id', name: 'id', orderable: true, searchable: true },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true },
                     { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true },
-                    { data: 'email', name: 'email', orderable: true, searchable: true }
+                    { data: 'email', name: 'email', orderable: true, searchable: true },
+                    { data: 'level_1', name: 'level_1', orderable: true, searchable: true }
 
                 ],
                 language: {
@@ -257,7 +260,8 @@
                     { data: 'id', name: 'id', orderable: true, searchable: true },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true },
                     { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true },
-                    { data: 'email', name: 'email', orderable: true, searchable: true }
+                    { data: 'email', name: 'email', orderable: true, searchable: true },
+                    { data: 'level_1', name: 'level_1', orderable: true, searchable: true }
 
                 ],
                 language: {
@@ -291,7 +295,8 @@
                     { data: 'id', name: 'id', orderable: true, searchable: true },
                     { data: 'nombres', name: 'nombres', orderable: true, searchable: true },
                     { data: 'apellidos', name: 'apellidos', orderable: true, searchable: true },
-                    { data: 'email', name: 'email', orderable: true, searchable: true }
+                    { data: 'email', name: 'email', orderable: true, searchable: true },
+                    { data: 'level_1', name: 'level_1', orderable: true, searchable: true }
 
                 ],
                 language: {
@@ -392,11 +397,7 @@
                     }
 
                     if (date.info) {
-                        swal(
-                            'Datos encontrados',
-                            '¡Ok!',
-                            'success'
-                        );
+
 
                         $("#padre_id").val(date.info.id);
                         $('#first_name').html('' + date.info.nombres.toUpperCase());
@@ -443,7 +444,7 @@
                             '    <div class="modal-content" width="100%">\n' +
                             '      <div class="modal-header" width="100%">\n' +
                             '        <button type="button" class="close" data-dismiss="modal">&times;</button>\n' +
-                            '        <h4 style="color: #ed7d01" class="modal-title">Liquidacion</h4>\n' +
+                            '        <h4 style="color: #ed7d01" class="modal-title">Última Liquidación</h4>\n' +
                             '      </div>\n' +
                             '      <div class="modal-body" width="100%">\n' +
                             '        <div id="example-2" ></div><br><hr><br>\n' +
@@ -493,7 +494,7 @@
 
                             var descuentos = parseFloat(date.descuentos[0].transferencia) + parseFloat(date.descuentos[0].extracto) + parseFloat(date.descuentos[0].administrativo);
                             tr1 += '<tr>';
-                            tr1 += '<td  class="text-left">' + date.descuentos[0].created_at + '</td><td class="text-left">' + number_format(parseFloat(date.descuentos[0].rete_fuente), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].rete_ica), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].valor_comision), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].prime), 0) + '</td> <td>' + number_format(parseFloat(date.descuentos[0].prime_iva), 0) + '</td> <td class="text-left">' + number_format(descuentos, 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].valor_comision_paga), 0) + '</td> ';
+                            tr1 += '<td  class="text-left">' + date.descuentos[0].created_at + '</td><td class="text-left">' + number_format(parseFloat(date.descuentos[0].valor_comision), 0) + '</td><td class="text-left">' + number_format(parseFloat(date.descuentos[0].rete_fuente), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].rete_ica), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].prime), 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].prime_iva), 0) + '</td> <td class="text-left">' + number_format(descuentos, 0) + '</td> <td class="text-left">' + number_format(parseFloat(date.descuentos[0].valor_comision_paga), 0) + '</td> ';
                             tr1 += '</tr>';
 
                         };
