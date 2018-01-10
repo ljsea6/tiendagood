@@ -115,7 +115,12 @@ class UsuariosController extends Controller {
             $dni = Tercero::where('identificacion', strtolower($request->dni))->first();
 
             if (count($dni) > 0 ) {
-                return response()->json(['err' => 'dni no valido'], 200);
+                if($dni->state == true){     
+                    return response()->json(['err' => 'dni no valido'], 200);
+                }
+                else{
+                    return response()->json(['err' => 'desactivado'], 200);
+                }
             } else {
                 return response()->json(['msg' => 'dni valido'], 200);
             }
@@ -366,6 +371,19 @@ class UsuariosController extends Controller {
             'password.confirmed' => 'Se requiere confirmar las contraseñas.',
         ];
 
+        $p = '';
+
+        if (strlen($request->phone) == 13) {
+            $p .= ltrim( $request->phone , '+57' );
+        }else {
+            $p .= $request->phone;
+        }
+
+        $terceros = DB::table('terceros')->where('identificacion', strtolower($request->dni))->select('id', 'state')->first();       
+
+        if(count($terceros) == 0){
+
+ 
         $validator = Validator::make($request->all(), [
             'first-name' => 'required',
             'last-name' => 'required',
@@ -390,15 +408,40 @@ class UsuariosController extends Controller {
                 ->withInput();
         }
 
-        $p = '';
+           $usuario = new Tercero();
+        }
+        else{
 
-        if (strlen($request->phone) == 13) {
-            $p .= ltrim( $request->phone , '+57' );
-        }else {
-            $p .= $request->phone;
+
+        $validator = Validator::make($request->all(), [
+            'first-name' => 'required',
+            'last-name' => 'required',
+            'type_client' => 'required',
+            'type_dni' => 'required',
+            'dni' => 'required',
+            'city' => 'required',
+            'sex' => 'required',
+            'birthday' => 'required',
+            'address' => 'required',
+            'phone' => 'required|unique:terceros,telefono',
+            'code' => 'required|string|exists:terceros,identificacion',
+            'email' => 'required|email|unique:terceros,email',
+            'password' => 'required|min:3|confirmed',
+            'password_confirmation' => 'required|min:3'
+        ], $messages);
+
+        if ($validator->fails()) {
+
+            return redirect('/')
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        $usuario = new Tercero();
+            $usuario = Tercero::find($terceros->id);
+            $usuario->state = true;
+        }
+
+
         $usuario->nombres = strtolower($request['first-name']);
         $usuario->apellidos = strtolower($request['last-name']);
         $usuario->direccion = strtolower($request->address);
@@ -415,6 +458,10 @@ class UsuariosController extends Controller {
         $usuario->identificacion = strtolower($request->dni);
         $usuario->sexo = strtolower($request->sex);
         $usuario->fecha_nacimiento = Carbon::createFromFormat('d/m/Y', $request->birthday);
+ 
+            if (strlen($request->type_acount_bank) >= 1) {  $usuario->tipocuenta_id = $request->type_acount_bank;   }else{  $usuario->tipocuenta_id = null;  }
+            if (strlen($request->bank) >= 1) {  $usuario->banco_id = $request->bank;   }else{  $usuario->banco_id = null;  }
+            if (strlen($request->acount) >= 1) {  $usuario->numero_cuenta = $request->acount;   }else{  $usuario->numero_cuenta = null;  }
 
         if ($request->has('contract')) {
 
@@ -519,6 +566,12 @@ class UsuariosController extends Controller {
 
         $good_id  = '';
         $mercando_id = '';
+
+
+        $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
+        $this->envio_registro($request->code, $data);
+
+    if(count($terceros) == 0){
 
         if (count($usuario) > 0) {
 
@@ -630,10 +683,10 @@ class UsuariosController extends Controller {
                 'customer_id_mercando' =>  $mercando_id,
             ]
         );
-
-
-        $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
-        $this->envio_registro($request->code, $data);
+    }
+    else{
+        
+    }
 
         return redirect()->route('login')->with(['message' => 'Felicitaciones, has sido registrado correctamente.']);
     }
