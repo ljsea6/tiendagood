@@ -128,6 +128,13 @@
                 <div class="sub-menu collapse secondary list-style-circle" id="contabilidad">
                     <ul>
                         <li>
+                            <a href="{{ route('liquidacion.liquidar') }}" class="text-left">
+                                <i class="fa fa-chevron-right">
+                                </i>
+                                Generar liquidación
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{ route('liquidacion.liquidaciones_general') }}" class="text-left">
                                 <i class="fa fa-chevron-right">
                                 </i>
@@ -241,13 +248,6 @@
                 </a>
                 <div class="sub-menu collapse secondary list-style-circle" id="submenu1">
                     <ul>
-                        <li>
-                            <a href="{{ route('liquidacion.liquidar') }}" class="text-left">
-                                <i class="fa fa-bank">
-                                </i>
-                                Generar liquidación
-                            </a>
-                        </li>
                         <li>
                             <a href="{{ route('admin.ciudades.index') }}" class="text-left">
                                 <i class="fa fa-bank">
