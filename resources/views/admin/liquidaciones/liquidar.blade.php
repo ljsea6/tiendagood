@@ -52,10 +52,10 @@
                 swal("Vuelva a intentarlo", "El rango de fecha que puso ya se liquido.", "error");     
                 event.preventDefault();  
                 $('#enviar').prop('disabled', false);  
+            }else{   
+            $("#g").prop("disabled",true); 
+            $("div#divLoading").show();
             }
-
-    $("#g").prop("disabled",true); 
-    $("div#divLoading").show();
 
         });
 
