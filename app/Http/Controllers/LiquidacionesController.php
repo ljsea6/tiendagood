@@ -552,9 +552,7 @@ class LiquidacionesController extends Controller {
     } 
 
             Session::flash('flash_msg', 'La liquidación No '.$liquidacion_id.' se genero correctamente');
-             Session::flash('id', $liquidacion_id);
-
-         }
+            Session::flash('id', $liquidacion_id);
             return redirect()->action('LiquidacionesController@liquidaciones_general');
     }
 
