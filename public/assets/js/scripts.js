@@ -1113,6 +1113,7 @@ jQuery(document).ready(function() {
         if (result_code.err  || result_email.err || result_phone.err || result_dni.err) {
 
             if (result_code.err) {
+
                 swal(
                     'Oops...',
                     'El código de su referido no existe o no se puede hacer red con este código, verifiquelo por favor.',
@@ -1120,6 +1121,7 @@ jQuery(document).ready(function() {
                 );
 
                 e.preventDefault();
+
             }
 
             if (result_email.err) {
@@ -1142,14 +1144,14 @@ jQuery(document).ready(function() {
                 e.preventDefault();
             }
 
-            if (result_dni.err) {
-                swal(
+            if(result_dni.err == 'dni no valido') {
+                     swal(
                     'Oops...',
                     'El número de documento que ingresó existe, ingrese otro por favor.',
                     'error'
-                );
+                    );
 
-                e.preventDefault();
+                    e.preventDefault();                              
             }
         }
 
@@ -1199,7 +1201,11 @@ jQuery(document).ready(function() {
                     $('#dni').next().fadeIn();
                     $('#dni').next().html('El número de documento que ingresó existe, ingrese otro por favor.');
                     return false;
-                } 
+                }
+                else if(result_dni.err == 'desactivado') { 
+                    $('#dni').next().fadeIn();
+                    $('#dni').next().html('<span style="color:green">Usuario anulado, la información sera actualizada.</span>'); 
+                }  
         }
         else{
                     $('#dni').addClass('input-error');

@@ -20,8 +20,11 @@ use Excel;
 
 class LiquidacionesController extends Controller {
 
-    public function get_liquidar() {
-        return view('admin.liquidaciones.liquidar');
+    public function get_liquidar() {        
+        $liquidaciones = DB::table('liquidaciones')->select(DB::raw('DATE(fecha_final) AS fecha_final'))->orderByRaw('fecha_final DESC')->first();
+        $fecha_final = '1992-12-12'; 
+        if(count($liquidaciones) > 0){ $fecha_final = $liquidaciones->fecha_final; }
+        return view('admin.liquidaciones.liquidar', compact('fecha_final'));
     }
 
     public function post_liquidar(Request $request) {
@@ -497,7 +500,7 @@ class LiquidacionesController extends Controller {
                       
                         if($valor_comision_descuento <= 0){
                             $saldo_paga = 1;
-                            $saldo = round($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica)));
+                            $saldo = round(($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica))) - $prime - $prime_iva);
                         }
                         if($valor_comision_descuento >= 1){
                           
@@ -548,8 +551,9 @@ class LiquidacionesController extends Controller {
         DB::table('liquidaciones_terceros')->insert($insert_liquidacion_tercero);
     } 
 
-            Session::flash('flash_msg', 'La liquidación se realizo correctamente');
-            return redirect()->action('LiquidacionesController@get_liquidar');
+            Session::flash('flash_msg', 'La liquidación No '.$liquidacion_id.' se genero correctamente');
+            Session::flash('id', $liquidacion_id);
+            return redirect()->action('LiquidacionesController@liquidaciones_general');
     }
 
     public function liquidaciones_general() {
