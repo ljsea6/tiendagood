@@ -761,7 +761,7 @@ class TercerosController extends Controller {
                 }
 
                 if (count($descuentos) == 0) {
-                    $ultima = 'Sin descuentos';
+                    $descuentos = 'Sin descuentos';
                 }
 
 
@@ -803,7 +803,6 @@ class TercerosController extends Controller {
 
     public function levels(Request $request)
     {
-
 
         if ($request->has('level') && $request->has('padre_id')) {
 

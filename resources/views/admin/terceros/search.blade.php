@@ -368,6 +368,7 @@
 
 
                     if (date.msg) {
+
                         $("#padre_id").val('');
                         $('#first_name').html('');
                         $('#last_name').html('');
@@ -410,6 +411,10 @@
                         $('#nombre_padre').html('' + date.padre.nombres.toUpperCase());
                         $('#identidicacion_padre').html('' + date.padre.identificacion.toUpperCase());
                         $('#puntos').html('' + date.puntos);
+
+                        uno.ajax.reload();
+                        dos.ajax.reload();
+                        tres.ajax.reload();
 
                         if (date.good != 0) {
                             $('#good').html('<input type="checkbox" id="good-tienda" checked> ');
@@ -513,9 +518,6 @@
                         $('#lista1').DataTable();
 
 
-                        uno.ajax.reload();
-                        dos.ajax.reload();
-                        tres.ajax.reload();
 
                     }
 

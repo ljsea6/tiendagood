@@ -176,11 +176,17 @@ class VariantsController extends Controller
                 $variant = Variant::where('id', $r[0])->where('shop', 'good')->first();
 
 
+
+
                 if (count($variant) > 0) {
 
                     if ($r[1] != "") {
 
+
+
                         if ((int)$variant->percentage != (int)$r[1]) {
+
+
 
                             DB::table('variants')
                                 ->where('id', $r[0])
@@ -198,11 +204,14 @@ class VariantsController extends Controller
 
                                 $results = json_decode($res->getBody(), true);
 
+
                                 if (count($results['metafields']) > 0) {
 
                                     foreach ($results['metafields'] as $result) {
 
                                         if ($result['key'] == 'points' && $result['namespace'] == 'variants') {
+
+
 
                                             try {
 
@@ -218,6 +227,8 @@ class VariantsController extends Controller
                                                     )
                                                 );
 
+
+
                                                 $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
                                                 $x = explode('/', $headers[0]);
                                                 $diferencia = $x[1] - $x[0];
@@ -225,6 +236,7 @@ class VariantsController extends Controller
                                                     usleep(30000000);
                                                 }
 
+                                                $r = json_decode($res->getBody(), true);
 
                                             } catch (ClientException $e) {
 
@@ -276,6 +288,7 @@ class VariantsController extends Controller
                     }
                 }
             }
+
             return response()->json(['data' => 'actualización terminada']);
         }
     }
