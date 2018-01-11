@@ -1124,7 +1124,7 @@ jQuery(document).ready(function() {
 
             }
 
-            if (result_email.err) {
+            if (result_email.err == 'email existe') {
                 swal(
                     'Oops...',
                     'El email que ingresó existe, ingrese otro por favor.',
@@ -1134,7 +1134,7 @@ jQuery(document).ready(function() {
                 e.preventDefault();
             }
 
-            if (result_phone.err) {
+            if (result_phone.err == 'telefono existe') {
                 swal(
                     'Oops...',
                     'El número de teléfono que ingresó existe, ingrese otro por favor.',

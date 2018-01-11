@@ -27,6 +27,7 @@ use Yajra\Datatables\Datatables;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ClientException;
+use App\Helpers\GuzzleHttp;
 
 use Mail;
 
@@ -54,7 +55,12 @@ class UsuariosController extends Controller {
             $email = Tercero::where('email', strtolower($request->email))->first();
 
             if (count($email) > 0) {
-                return response()->json(['err' => 'email existe'], 200);
+                if($email->state == true){  
+                    return response()->json(['err' => 'email existe'], 200);
+                }
+                else{
+                    return response()->json(['err' => 'desactivado'], 200);
+                }
             } else {
                 return response()->json(['msg' => 'email valido'], 200);
             }
@@ -65,6 +71,7 @@ class UsuariosController extends Controller {
         }
 
     }
+
     public function verified_phone(Request $request)
     {
         if ($request->has('phone')) {
@@ -80,7 +87,12 @@ class UsuariosController extends Controller {
             $phone = Tercero::where('telefono', '=' , '' . $p .'')->first();
 
             if (count($phone) > 0) {
-                return response()->json(['err' => 'telefono existe'], 200);
+                if($phone->state == true){   
+                    return response()->json(['err' => 'telefono existe'], 200);
+                }
+                else{
+                    return response()->json(['err' => 'desactivado'], 200);
+                }
             } else {
                 return response()->json(['msg' => 'telefono valido'], 200);
             }
@@ -91,23 +103,7 @@ class UsuariosController extends Controller {
 
 
     }
-    public function verified_code(Request $request)
-    {
-        if ($request->has('code')) {
 
-            $code = Tercero::where(DB::raw('UPPER(identificacion)'), strtoupper($request->code))->first();
-
-            if (count($code) > 0 && $code->tipo_cliente_id == 83 && $code->state == true) {
-                return response()->json(['msg' => 'código valido'], 200);
-            } else {
-                return response()->json(['err' => 'código no valido'], 200);
-            }
-
-
-        } else {
-            return response()->json(['err' => 'Falta el parametro code'], 200);
-        }
-    }
     public function verified_dni(Request $request)
     {
         if ($request->has('dni')) {
@@ -130,11 +126,30 @@ class UsuariosController extends Controller {
         }
     }
 
+    public function verified_code(Request $request)
+    {
+        if ($request->has('code')) {
+
+            $code = Tercero::where(DB::raw('UPPER(identificacion)'), strtoupper($request->code))->first();
+
+            if (count($code) > 0 && $code->tipo_cliente_id == 83 && $code->state == true) {
+                return response()->json(['msg' => 'código valido'], 200);
+            } else {
+                return response()->json(['err' => 'código no valido'], 200);
+            }
+
+
+        } else {
+            return response()->json(['err' => 'Falta el parametro code'], 200);
+        }
+    }
+
     public function index()
     {
         return $permisos = Permission::lists('name', 'id')->get();
         return view('admin.usuarios.index', compact('permisos'));
     }
+
     public function anyData()
     {
         $usuarios = Tercero::select('terceros.id', 'terceros.avatar', 'terceros.identificacion', 'terceros.nombres', 'terceros.apellidos', 'terceros.direccion', 'ciudades.nombre as ciudad', 'terceros.email', 'roles.name as rol', 'tipos.nombre as tipo')
@@ -423,9 +438,9 @@ class UsuariosController extends Controller {
             'sex' => 'required',
             'birthday' => 'required',
             'address' => 'required',
-            'phone' => 'required|unique:terceros,telefono',
+            'phone' => 'required',
             'code' => 'required|string|exists:terceros,identificacion',
-            'email' => 'required|email|unique:terceros,email',
+            'email' => 'required|email',
             'password' => 'required|min:3|confirmed',
             'password_confirmation' => 'required|min:3'
         ], $messages);
@@ -509,6 +524,28 @@ class UsuariosController extends Controller {
 
         $padre = Tercero::with('networks')->where('identificacion', '=', '' .$request->code. '')->first();
 
+        if ($request->has('prime')) {
+            $usuario->primes()->create([
+                'fecha_inicio' => Carbon::now(),
+                'fecha_final' => Carbon::now()->addMonth(),
+                'log' => [
+                    'id' => $request->getClientIp(),
+                    'browser' => $request->header('User-Agent')
+                ]
+            ]);
+        }
+
+        $city = Ciudad::find($request->city);
+
+        $good_id  = '';
+        $mercando_id = '';
+
+
+        $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
+        $this->envio_registro($request->code, $data);
+
+    if(count($terceros) == 0){
+
         if (count($padre) > 0 ) {
 
             if ($padre->tipo_cliente_id == 83 && $padre->state == true) {
@@ -520,7 +557,6 @@ class UsuariosController extends Controller {
                     ->get();
 
                 if (count($result) == 0) {
-
                     $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
                 }
 
@@ -546,32 +582,9 @@ class UsuariosController extends Controller {
                 ->get();
 
             if (count($result) == 0) {
-
                 $usuario->networks()->attach(1, ['padre_id' => 1]);
             }
         }
-
-        if ($request->has('prime')) {
-            $usuario->primes()->create([
-                'fecha_inicio' => Carbon::now(),
-                'fecha_final' => Carbon::now()->addMonth(),
-                'log' => [
-                    'id' => $request->getClientIp(),
-                    'browser' => $request->header('User-Agent')
-                ]
-            ]);
-        }
-
-        $city = Ciudad::find($request->city);
-
-        $good_id  = '';
-        $mercando_id = '';
-
-
-        $data = array('nombre' => $request['first-name'].' '.$request['last-name'], 'email' => $request->email, 'usario' => $request->email, 'password' => $request->password);
-        $this->envio_registro($request->code, $data);
-
-    if(count($terceros) == 0){
 
         if (count($usuario) > 0) {
 
@@ -685,7 +698,37 @@ class UsuariosController extends Controller {
         );
     }
     else{
-        
+ 
+        DB::table('terceros_networks')->where('customer_id', $usuario->id)->update(['padre_id' => $padre->id]);
+
+        $data = array( 'first_name' => strtolower($request['first-name']),
+                                'last_name' => strtolower($request['last-name']),
+                                'email' => strtolower($request->email),
+                                'verified_email' => true,
+                                'phone' => $p,
+                                'addresses' => [
+
+                                    [
+                                        'address1' => strtolower($request->address),
+                                        'city' => strtolower($city->nombre),
+                                        'province' => '',
+
+                                        "zip" => '',
+                                        'first_name' => strtolower($request['first-name']),
+                                        'last_name' => strtolower($request['last-name']),
+                                        'country' => 'CO'
+                                    ],
+
+                                ],
+                                "password" => $request->password,
+                                "password_confirmation" => $request->password_confirmation,
+                                'send_email_invite' => false,
+                                'send_email_welcome' => false
+                            );
+
+        GuzzleHttp::api_usuarios('good', $usuario->email, $data, 'actualizar'); 
+        GuzzleHttp::api_usuarios('mercando', $usuario->email, $data, 'actualizar'); 
+              
     }
 
         return redirect()->route('login')->with(['message' => 'Felicitaciones, has sido registrado correctamente.']);
