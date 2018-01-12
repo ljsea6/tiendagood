@@ -9,6 +9,8 @@ use Mail;
 use App\Order;
 use App\Liquidacion;
 use App\Helpers\Good;
+use App\Helpers\Points;
+use App\Helpers\Terceros;
 use App\Helpers\Mercando;
 use App\Entities\Network;
 use App\Entities\Tercero;
@@ -297,7 +299,7 @@ class AdminController extends Controller {
 
     public function index() {
 
-        $level_uno = 0;
+        /*$level_uno = 0;
         $level_dos = 0;
         $level_tres = 0;
 
@@ -326,12 +328,18 @@ class AdminController extends Controller {
                 ->join('terceros as t', 'orders.tercero_id', '=', 't.id')
                 ->whereRaw("tn.padre_id = " . currentUser()->id . " AND t.tipo_cliente_id = 85 AND financial_status = 'paid' AND cancelled_at IS NULL AND comisionada IS NULL AND liquidacion_id IS NULL")
                 ->selectRaw('COALESCE(SUM(points),0) as puntos')
-                ->value('puntos');
+                ->value('puntos');*/
 
 
-        $my_points += $puntos_propios + $puntos_amparados;
+        $my_points = Points::count_own_points(currentUser()->id);
+        $points_level_1 = Points::points_by_level(currentUser()->id, 1);
+        $points_level_2 = Points::points_by_level(currentUser()->id, 2);
+        $points_level_3 = Points::points_by_level(currentUser()->id, 3);
+        $level_uno = count(Points::terceros_by_level(currentUser()->id, 1));
+        $level_dos = count(Points::terceros_by_level(currentUser()->id, 2));
+        $level_tres = count(Points::terceros_by_level(currentUser()->id, 3));
 
-        if (count($uno) > 0) {
+        /*if (count($uno) > 0) {
 
             $level_uno = $level_uno + count($uno);
 
@@ -413,7 +421,7 @@ class AdminController extends Controller {
                     }
                 }
             }
-        }
+        }*/
 
         $send = Tercero::with('cliente', 'levels', 'networks', 'primes', 'tipo')->find(currentUser()->id);
         $patrocinador = '';
@@ -546,7 +554,11 @@ class AdminController extends Controller {
 
             if ($request->level == 1) {
 
-                $total_referidos = DB::raw('(SELECT COUNT(1) FROM terceros_networks tn WHERE tn.padre_id = t.id) as referidos');
+
+                $results = Terceros::terceros_by_level(currentUser()->id, 1);
+
+
+                /*$total_referidos = DB::raw('(SELECT COUNT(1) FROM terceros_networks tn INNER JOIN terceros t ON tn.customer_id = t.id AND t.tipo_cliente_id <> 85 WHERE tn.padre_id = t.id) as referidos');
 
                 $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
                 (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
@@ -560,26 +572,33 @@ class AdminController extends Controller {
                         ->where('t.state', true)
                         ->where('t.tipo_cliente_id', '!=', 85)
                         ->select('t.id', 't.nombres', 't.apellidos', $puntos, $total_referidos)
-                        ->get();
+                        ->get();*/
+                
                 $send = collect($results);
 
                 return Datatables::of($send)
-                                ->addColumn('id', function ($send) {
-                                    return '<div align=left>' . $send->id . '</div>';
-                                })
-                                ->addColumn('nombres', function ($send) {
-                                    return '<div align=left>' . ucwords($send->nombres) . '</div>';
-                                })
-                                ->addColumn('apellidos', function ($send) {
-                                    return '<div align=left>' . ucwords($send->apellidos) . '</div>';
-                                })
-                                ->addColumn('puntos', function ($send) {
-                                    return '<div align=left>' . number_format($send->puntos) . '</div>';
-                                })
-                                ->addColumn('referidos', function ($send) {
-                                    return '<div align=left>' . number_format($send->referidos) . '</div>';
-                                })
-                                ->make(true);
+                    ->addColumn('id', function ($send) {
+                        return '<div align=left>' . $send->id . '</div>';
+                    })
+                    ->addColumn('nombres', function ($send) {
+                        return '<div align=left>' . ucwords($send->nombres) . '</div>';
+                    })
+                    ->addColumn('apellidos', function ($send) {
+                        return '<div align=left>' . ucwords($send->apellidos) . '</div>';
+                    })
+                    ->addColumn('puntos', function ($send) {
+
+                        $puntos = Points::count_own_points($send->id);
+                        return '<div align=left>' . number_format($puntos) . '</div>';
+
+                    })
+                    ->addColumn('referidos', function ($send) {
+
+                        $referidos = count(Points::terceros_by_level($send->id, 1));
+                        return '<div align=left>' . number_format($referidos) . '</div>';
+
+                    })
+                    ->make(true);
             }
         }
     }
@@ -588,7 +607,10 @@ class AdminController extends Controller {
         if ($request->has('level') && $request->has('id')) {
 
             if ($request->level == 2) {
-                $total_referidos = DB::raw('(SELECT COUNT(1) FROM terceros_networks tn WHERE tn.padre_id = t.id) as referidos');
+
+                $results = Terceros::terceros_by_level(currentUser()->id, 2);
+
+                /*$total_referidos = DB::raw('(SELECT COUNT(1) FROM terceros_networks tn INNER JOIN terceros t ON tn.customer_id = t.id AND t.tipo_cliente_id <> 85 WHERE tn.padre_id = t.id) as referidos');
 
                 $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
                 (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
@@ -623,7 +645,7 @@ class AdminController extends Controller {
                             }
                         }
                     }
-                }
+                }*/
 
                 $send = collect($results);
 
@@ -638,10 +660,16 @@ class AdminController extends Controller {
                                     return '<div align=left>' . ucwords($send->apellidos) . '</div>';
                                 })
                                 ->addColumn('puntos', function ($send) {
-                                    return '<div align=left>' . number_format($send->puntos) . '</div>';
+
+                                    $puntos = Points::count_own_points($send->id);
+                                    return '<div align=left>' . number_format($puntos) . '</div>';
+
                                 })
                                 ->addColumn('referidos', function ($send) {
-                                    return '<div align=left>' . number_format($send->referidos) . '</div>';
+
+                                    $referidos = count(Points::terceros_by_level($send->id, 1));
+                                    return '<div align=left>' . number_format($referidos) . '</div>';
+
                                 })
                                 ->make(true);
             }
@@ -653,7 +681,9 @@ class AdminController extends Controller {
 
             if ($request->level == 3) {
 
-                $total_referidos = DB::raw('(SELECT COUNT(1) FROM terceros_networks tn WHERE tn.padre_id = t.id) as referidos');
+                $results = Terceros::terceros_by_level(currentUser()->id, 3);
+
+                /*$total_referidos = DB::raw('(SELECT COUNT(1) FROM terceros_networks tn INNER JOIN terceros t ON tn.customer_id = t.id AND t.tipo_cliente_id <> 85 WHERE tn.padre_id = t.id) as referidos');
 
                 $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
                 (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
@@ -702,27 +732,33 @@ class AdminController extends Controller {
                             }
                         }
                     }
-                }
+                }*/
 
                 $send = collect($results);
 
                 return Datatables::of($send)
-                                ->addColumn('id', function ($send) {
-                                    return '<div align=left>' . $send->id . '</div>';
-                                })
-                                ->addColumn('nombres', function ($send) {
-                                    return '<div align=left>' . ucwords($send->nombres) . '</div>';
-                                })
-                                ->addColumn('apellidos', function ($send) {
-                                    return '<div align=left>' . ucwords($send->apellidos) . '</div>';
-                                })
-                                ->addColumn('puntos', function ($send) {
-                                    return '<div align=left>' . number_format($send->puntos) . '</div>';
-                                })
-                                ->addColumn('referidos', function ($send) {
-                                    return '<div align=left>' . number_format($send->puntos) . '</div>';
-                                })
-                                ->make(true);
+                    ->addColumn('id', function ($send) {
+                        return '<div align=left>' . $send->id . '</div>';
+                    })
+                    ->addColumn('nombres', function ($send) {
+                        return '<div align=left>' . ucwords($send->nombres) . '</div>';
+                    })
+                    ->addColumn('apellidos', function ($send) {
+                        return '<div align=left>' . ucwords($send->apellidos) . '</div>';
+                    })
+                    ->addColumn('puntos', function ($send) {
+
+                        $puntos = Points::count_own_points($send->id);
+                        return '<div align=left>' . number_format($puntos) . '</div>';
+
+                    })
+                    ->addColumn('referidos', function ($send) {
+
+                        $referidos = count(Points::terceros_by_level($send->id, 1));
+                        return '<div align=left>' . number_format($referidos) . '</div>';
+
+                    })
+                    ->make(true);
             }
         }
     }

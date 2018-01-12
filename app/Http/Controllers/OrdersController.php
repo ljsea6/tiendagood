@@ -458,26 +458,27 @@ class OrdersController extends Controller {
         ini_set('memory_limit', '2000M');
 
         if (Auth::user()->hasRole('logistica') && !Auth::user()->hasRole('administrador')) {
+
             $orders = Order::where('financial_status', 'paid')
                     ->where('cancelled_at', null)
                     ->get();
+
             $send = collect($orders);
+
             return Datatables::of($send)
                             ->addColumn('order', function ($send) {
                                 $result = '';
                                 foreach ($send->line_items as $item) {
-                                    $product = Product::find($item['product_id']);
+
+                                    $li = LineItems::where('variant_id', $item['variant_id'])
+                                        ->where('product_id', $item['product_id'])
+                                        ->where('shop', $send->shop)
+                                        ->first();
+
+                                    $product = Product::where('id', $item['product_id'])->where('shop', $send->shop)->first();
+
                                     if (count($product['image']) > 0 && count($product['images']) > 0) {
-                                        $img = '';
-                                        foreach ($product['images'] as $image) {
-                                            if (count($image['variant_ids']) > 0) {
-                                                if ($image['variant_ids'][0] == $item['variant_id'] && $product['id'] == $item['product_id']) {
-                                                    $img = $image['src'];
-                                                }
-                                            } else {
-                                                $img = $product['image']['src'];
-                                            }
-                                        }
+
                                         $result .= '<div class="container" style="width: 100%">
                                                 <div class="row">
                                                     <div class="col-md-12">
@@ -487,11 +488,13 @@ class OrdersController extends Controller {
                                                         <!-- Left-aligned media object -->
                                                         <div class="media">
                                                             <div class="media-left">
-                                                                <img src="' . $img . '" class="media-object" style="width:60px">
+                                                                <img src="' . $product['image']['src'] . '" class="media-object" style="width:60px">
                                                             </div>
                                                             <div class="media-body">
                                                                 <h4 class="media-heading">Precio unidad: ' . number_format($item['price']) . '</h4>
                                                                 <p>Cantidad: ' . $item['quantity'] . '</p>
+                                                                <p>Puntos: ' . $li->points .  '</p>
+                                                                <p>Total: ' . (int)$li->points *  (int)$item['quantity'].  '</p>
                                                                 
                                                             </div>
                                                         </div>
