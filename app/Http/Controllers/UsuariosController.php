@@ -753,7 +753,7 @@ class UsuariosController extends Controller {
         $info = array('view' => 'admin.send.welcome_2', 'asunto' => 'Bienvenido a tienda good');
         $this->mail($data, $info, 1, 0);  
 
-        $info = array('view' => 'admin.send.welcome', 'asunto' => 'Se inscribieron con su código');
+        $info = array('view' => 'admin.send.welcome', 'asunto' => 'Se inscribieron con tu código');
         $level = Tercero::with('networks')->where('identificacion', strtolower($code))->first();
         
         if (count($level->networks) > 0) {
