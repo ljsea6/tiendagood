@@ -177,6 +177,13 @@
                                 <span class="nav-text">Ordenes</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin.orders.news') }}" class="text-left">
+                                <i class="fa fa-slack">
+                                </i>
+                                <span class="nav-text">Novedades</span>
+                            </a>
+                        </li>
 
                     </ul>
                 </div>

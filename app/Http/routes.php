@@ -306,6 +306,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('orders/{id}', ['uses' => 'OrdersController@up', 'as' => 'admin.orders.up']);
         Route::get('orders/{id}/edit', ['uses' => 'OrdersController@edit', 'as' => 'admin.orders.edit']);
         Route::any('orders/paid', ['uses' => 'OrdersController@anyData', 'as' => 'admin.orders.paid']);
+        Route::get('orders/news', ['uses' => 'OrdersController@news', 'as' => 'admin.orders.news']);
+        Route::post('orders/news/data', ['uses' => 'OrdersController@news_data', 'as' => 'admin.orders.news_data']);
+        Route::post('orders/news/update', ['uses' => 'OrdersController@news_update', 'as' => 'admin.orders.news_update']);
     });
 
     Route::any('reportes/order', ['uses' => 'OrdersController@index', 'as' => 'admin.reportes.order']);

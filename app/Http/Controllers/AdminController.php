@@ -330,7 +330,6 @@ class AdminController extends Controller {
                 ->selectRaw('COALESCE(SUM(points),0) as puntos')
                 ->value('puntos');*/
 
-
         $my_points = Points::count_own_points(currentUser()->id);
         $points_level_1 = Points::points_by_level(currentUser()->id, 1);
         $points_level_2 = Points::points_by_level(currentUser()->id, 2);
@@ -573,7 +572,7 @@ class AdminController extends Controller {
                         ->where('t.tipo_cliente_id', '!=', 85)
                         ->select('t.id', 't.nombres', 't.apellidos', $puntos, $total_referidos)
                         ->get();*/
-                
+
                 $send = collect($results);
 
                 return Datatables::of($send)
