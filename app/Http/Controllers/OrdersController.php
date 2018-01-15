@@ -3661,8 +3661,12 @@ class OrdersController extends Controller {
                     }
                 }
 
-                if (count($orders) > 1) {
+                if (count($orders) > 1 && $send->shop == 'duplicado') {
                     return '<div>Duplicado</div>';
+                }
+
+                if (count($orders) > 1 && $send->shop != 'duplicado') {
+                    return '<div>La orden ha sido duplicada</div>';
                 }
             })
             ->make(true);
