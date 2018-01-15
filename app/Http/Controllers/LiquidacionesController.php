@@ -139,7 +139,7 @@ class LiquidacionesController extends Controller {
                 ->whereIn('tk.padre_id', $id_vendedores)->where('t.state', true)->where('t2.state', true)->where('t2.tipo_cliente_id', '<>', 85)
                 //->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
                 ->select('tk.padre_id as padre', 't2.id', 't2.email', 't2.nombres', 't2.apellidos', 't2.tipo_cliente_id','points', 'orders.id as orden_id',
-                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id', 'orders.created_at', 
+                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id', DB::raw('DATE(orders.created_at) as created_at'), 
                     DB::raw('(select count(*) as total from orders 
                     	       inner join terceros_networks on orders.tercero_id = terceros_networks.customer_id 
                     	       inner join terceros on orders.tercero_id = terceros.id 
@@ -148,6 +148,9 @@ class LiquidacionesController extends Controller {
             if (count($uno) > 0) {
                 $level_uno = $level_uno + count($uno);
                 foreach ($uno as $n) {
+
+                        $id_detalle_1 = $id_vendedores_tipo[$n->padre]['id_detalle_1'];
+                        $comision_valor_1 = $id_vendedores_tipo[$n->padre]['comision_valor_1'];
                     
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel uno con sus amparados   inicio     ------------------------           */
@@ -159,6 +162,7 @@ class LiquidacionesController extends Controller {
                        $uno_amparados_total = 0;
                        $uno_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $n->id)
                        ->where('t.state', true)->where('t.tipo_cliente_id', 85)
+                       ->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
                        ->join('orders', 'orders.tercero_id', '=', 't.id')
                            ->where('financial_status', 'paid')
                            ->where('cancelled_at', null)
@@ -195,9 +199,6 @@ class LiquidacionesController extends Controller {
 
                         $points_level_1 +=  $n->points;
                         $points_level_vendedor_1 += $n->points;
-                        
-                        $id_detalle_1 = $id_vendedores_tipo[$n->padre]['id_detalle_1'];
-                        $comision_valor_1 = $id_vendedores_tipo[$n->padre]['comision_valor_1'];
 
                         $insert_primer_nivel[] =  array(
                             'liquidacion_id' => $liquidacion_id,
@@ -235,7 +236,7 @@ class LiquidacionesController extends Controller {
                 ->whereIn('t.id', $id_vendedores)->where('t.state', true)->where('t3.state', true)->where('t3.tipo_cliente_id', '<>', 85)
                 //->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
                 ->select('t.id as padre', 't3.id', 't3.email', 't3.nombres', 't3.apellidos', 't3.tipo_cliente_id','points', 'orders.id as orden_id',
-                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id', 'orders.created_at', 
+                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id', DB::raw('DATE(orders.created_at) as created_at'), 
                     DB::raw('(select count(*) as total from orders 
                     	       inner join terceros_networks on orders.tercero_id = terceros_networks.customer_id 
                     	       inner join terceros on orders.tercero_id = terceros.id 
@@ -248,6 +249,9 @@ class LiquidacionesController extends Controller {
                 $count_add=0;
                 foreach ($dos as $d) {  $count_add++;
 
+                        $id_detalle_2 = $id_vendedores_tipo[$d->padre]['id_detalle_2'];
+                        $comision_valor_2 = $id_vendedores_tipo[$d->padre]['comision_valor_2'];
+
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel dos con sus amparados   inicio     ------------------------           */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
@@ -258,6 +262,7 @@ class LiquidacionesController extends Controller {
                        $dos_amparados_total = 0;
                        $dos_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $d->id)
                        ->where('t.state', true)->where('t.tipo_cliente_id', 85)
+                       ->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
                        ->join('orders', 'orders.tercero_id', '=', 't.id')
                            ->where('financial_status', 'paid')
                            ->where('cancelled_at', null)
@@ -296,9 +301,6 @@ class LiquidacionesController extends Controller {
                         $points_level_2 += $d->points;
                         $points_level_vendedor_2 += $d->points;
                         
-                        $id_detalle_2 = $id_vendedores_tipo[$d->padre]['id_detalle_2'];
-                        $comision_valor_2 = $id_vendedores_tipo[$d->padre]['comision_valor_2'];
-
                         $insert_segundo_nivel[] =  array(
                             'liquidacion_id' => $liquidacion_id,
                             'tercero_id' => $d->padre,
@@ -337,7 +339,7 @@ class LiquidacionesController extends Controller {
                 ->whereIn('t.id', $id_vendedores)->where('t.state', true)->where('t4.state', true)->where('t4.tipo_cliente_id', '<>', 85)
                 //->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
                 ->select('t.id as padre', 't4.id', 't4.email', 't4.nombres', 't4.apellidos', 't4.tipo_cliente_id','points', 'orders.id as orden_id',
-                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id', 'orders.created_at',  
+                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id', DB::raw('DATE(orders.created_at) as created_at'), 
                     DB::raw('(select count(*) as total from orders 
                     	       inner join terceros_networks on orders.tercero_id = terceros_networks.customer_id 
                     	       inner join terceros on orders.tercero_id = terceros.id 
@@ -350,7 +352,9 @@ class LiquidacionesController extends Controller {
 
                 foreach ($tres as $t) {
 
-
+                        $id_detalle_3 = $id_vendedores_tipo[$t->padre]['id_detalle_3'];
+                        $comision_valor_3 = $id_vendedores_tipo[$t->padre]['comision_valor_3'];
+                        
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel tres con sus amparados   inicio     ------------------------          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
@@ -361,6 +365,7 @@ class LiquidacionesController extends Controller {
                        $tres_amparados_total = 0;
                        $tres_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $t->id)
                        ->where('t.state', true)->where('t.tipo_cliente_id', 85)
+                       ->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
                        ->join('orders', 'orders.tercero_id', '=', 't.id')
                            ->where('financial_status', 'paid')
                            ->where('cancelled_at', null)
@@ -398,9 +403,6 @@ class LiquidacionesController extends Controller {
                         $points_level_3 += $t->points;
                         $points_level_vendedor_3 += $t->points;
  
-                        $id_detalle_3 = $id_vendedores_tipo[$t->padre]['id_detalle_3'];
-                        $comision_valor_3 = $id_vendedores_tipo[$t->padre]['comision_valor_3'];
-
                         $insert_tercer_nivel[] =  array(
                             'liquidacion_id' => $liquidacion_id,
                             'tercero_id' => $t->padre,
