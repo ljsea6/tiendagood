@@ -163,7 +163,7 @@
 
                                 if (date.double) {
                                     swal(
-                                        '¡La orden ya ha sido duplicada!',
+                                        '¡La orden ya ha sido revertida!',
                                         '¡Error!',
                                         'error'
                                     );
