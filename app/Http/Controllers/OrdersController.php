@@ -3613,7 +3613,13 @@ class OrdersController extends Controller {
                 return '<div id="name" align=left>' . $send->name . '</div>';
             })
             ->addColumn('shop', function ($send) {
-                return '<div align=left>' . ucwords($send->shop) . '</div>';
+
+                if ($send->shop == 'duplicado'){
+                    return '<div>Revertida</div>';
+                } else {
+                    return '<div align=left>' . ucwords($send->shop) . '</div>';
+                }
+
             })
             ->addColumn('nombres', function ($send) {
 
