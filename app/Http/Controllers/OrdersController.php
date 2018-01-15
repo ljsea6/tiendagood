@@ -3655,18 +3655,18 @@ class OrdersController extends Controller {
 
                 if (count($orders) == 1) {
                     if ($send->shop == 'duplicado'){
-                        return '<div>Orden Duplicada</div>';
+                        return '<div>Orden revertida</div>';
                     } else {
-                        return '<div><a id="update" class="btn btn-warning btn-sm">Duplicar</a></div>';
+                        return '<div><a id="update" class="btn btn-warning btn-sm">Revertir</a></div>';
                     }
                 }
 
                 if (count($orders) > 1 && $send->shop == 'duplicado') {
-                    return '<div>Duplicado</div>';
+                    return '<div>Revertida</div>';
                 }
 
                 if (count($orders) > 1 && $send->shop != 'duplicado') {
-                    return '<div>La orden ha sido duplicada</div>';
+                    return '<div>La orden ha sido revertida</div>';
                 }
             })
             ->make(true);
