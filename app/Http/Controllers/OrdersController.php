@@ -3377,7 +3377,7 @@ class OrdersController extends Controller {
 
     public function contador()
     {
-
+        return Points::points_red(364);
         /*$url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
 
         $url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
@@ -3593,6 +3593,107 @@ class OrdersController extends Controller {
                 }
             }
         }
+    }
+
+    public function news()
+    {
+        return view('admin.orders.news');
+    }
+
+    public function news_data(Request $request)
+    {
+        $name = strtoupper($request->name);
+
+        $order = Order::where('name', $name)->get();
+
+        $send = collect($order);
+
+        return Datatables::of($send)
+            ->addColumn('id', function ($send) {
+                return '<div id="name" align=left>' . $send->name . '</div>';
+            })
+            ->addColumn('shop', function ($send) {
+                return '<div align=left>' . ucwords($send->shop) . '</div>';
+            })
+            ->addColumn('nombres', function ($send) {
+
+                $tercero = Tercero::where('email', strtolower($send->email))->first();
+
+                if (count($tercero) > 0) {
+                    return '<div align=left>' . $tercero->nombres . '</div>';
+                }
+
+                return '<div align=left>Sin usuario</div>';
+
+            })
+            ->addColumn('apellidos', function ($send) {
+                $tercero = Tercero::where('email', strtolower($send->email))->first();
+
+                if (count($tercero) > 0) {
+                    return '<div align=left>' . $tercero->apellidos . '</div>';
+                }
+
+                return '<div align=left>Sin usuario</div>';
+            })
+
+            ->addColumn('email', function ($send) {
+                return '<div align=left>' . $send->email . '</div>';
+            })
+
+            ->addColumn('estado', function ($send) {
+                return '<div align=left>' . $send->financial_status . '</div>';
+            })
+            ->addColumn('total', function ($send) {
+                return '<div align=left>' . number_format($send->total_price) . '</div>';
+            })
+            ->addColumn('puntos', function ($send) {
+                return '<div align=left>' . number_format($send->points) . '</div>';
+            })
+            ->addColumn('acciones', function ($send) {
+
+                $orders = Order::where('name', $send->name)->get();
+
+                if (count($orders) == 1) {
+                    if ($send->shop == 'duplicado'){
+                        return '<div>Orden Duplicada</div>';
+                    } else {
+                        return '<div><a id="update" class="btn btn-warning btn-sm">Duplicar</a></div>';
+                    }
+                }
+
+                if (count($orders) > 1) {
+                    return '<div>Duplicado</div>';
+                }
+            })
+            ->make(true);
+    }
+
+    public function news_update(Request $request)
+    {
+        if($request->has('name')){
+
+            $name =  strtoupper($request->name);
+
+            $orders = Order::where('name', $name)->get();
+
+            if (count($orders) == 1) {
+
+                Order::duplicateOrder($orders[0]);
+
+                return response()->json(['info' => 'La orden ha sido duplicada.']);
+            }
+
+            if (count($orders) > 1) {
+                return response()->json(['double' => 'La orden ya fue duplicada.']);
+            }
+
+            if (count($orders) < 1) {
+                return response()->json(['no_order' => 'La orden no se encontró']);
+            }
+
+        }
+
+        return response()->json(['error' => 'Bad request']);
     }
 
 }
