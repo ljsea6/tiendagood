@@ -3615,7 +3615,7 @@ class OrdersController extends Controller {
             ->addColumn('shop', function ($send) {
 
                 if ($send->shop == 'duplicado'){
-                    return '<div>Revertida</div>';
+                    return '<div align=left>Revertida</div>';
                 } else {
                     return '<div align=left>' . ucwords($send->shop) . '</div>';
                 }
