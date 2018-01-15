@@ -69,7 +69,7 @@
             });       
    });
 
-      function cambio_estado(id, valor, tipo, tipo_nombre){
+  function cambio_estado(id, valor, tipo, tipo_nombre){
 
        if(valor == 87)
        {
@@ -98,14 +98,11 @@
                        async:false
                     }); 
 
-                    swal(
-                      'Se realizo el cambio correctamente.',
-                      ''
-                    ); 
+                    swal('Se realizo el cambio correctamente.', ''); 
 
                   }  
         });     
-      }
+  }
 
 </script>
 @endpush

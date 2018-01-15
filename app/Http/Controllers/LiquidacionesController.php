@@ -137,62 +137,61 @@ class LiquidacionesController extends Controller {
                 ->join('terceros as t2', 't2.id', '=', 'tk.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't2.id')
                 ->whereIn('tk.padre_id', $id_vendedores)->where('t.state', true)->where('t2.state', true)->where('t2.tipo_cliente_id', '<>', 85)
-                ->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
+                //->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
                 ->select('tk.padre_id as padre', 't2.id', 't2.email', 't2.nombres', 't2.apellidos', 't2.tipo_cliente_id','points', 'orders.id as orden_id',
-                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
+                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id', 'orders.created_at', 
+                    DB::raw('(select count(*) as total from orders 
+                    	       inner join terceros_networks on orders.tercero_id = terceros_networks.customer_id 
+                    	       inner join terceros on orders.tercero_id = terceros.id 
+                    	      where terceros_networks.padre_id = t2.id and terceros.tipo_cliente_id = 85) as total'))->get();
 
             if (count($uno) > 0) {
                 $level_uno = $level_uno + count($uno);
                 foreach ($uno as $n) {
-
-                    $id_primer_nivel[] = array($n->orden_id);
-
+                    
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel uno con sus amparados   inicio     ------------------------           */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
 
                     $points_level_vendedor_1 = 0;
-                    /*
+                    
+                    if($n->total > 0){ 
                        $uno_amparados_total = 0;
                        $uno_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $n->id)
                        ->where('t.state', true)->where('t.tipo_cliente_id', 85)
-                       ->select('t.id', 't.email', 't.nombres', 't.apellidos', 't.tipo_cliente_id')->get();
-                       foreach ($uno_amparados as $uno_amparados_value) {
-                           $uno_amparados_total++;
-                           $uno_amparados_orders = DB::table('orders')->where('tercero_id', $uno_amparados_value->id)
+                       ->join('orders', 'orders.tercero_id', '=', 't.id')
                            ->where('financial_status', 'paid')
                            ->where('cancelled_at', null)
                            ->where('comisionada', null)
                            ->where('liquidacion_id', null)
-                           ->select('points', 'orders.id as orden_id')->get();
-                           foreach ($uno_amparados_orders as $uno_amparados_orders_value) {
-                               $points_level_1 += $uno_amparados_orders_value->points;
-                               $points_level_vendedor_1 += $uno_amparados_orders_value->points;
+                       ->select('t.id', 't.email', 't.nombres', 't.apellidos', 't.tipo_cliente_id', 'points', 'orders.id as orden_id','padre_id')->get();
+                        foreach ($uno_amparados as $uno_amparados_value) {
 
                                DB::table('liquidaciones_detalles')->insert([
                                'liquidacion_id' => $liquidacion_id,
-                               'tercero_id' => $n->id,
-                               'hijo_id' => $uno_amparados_value->id,
+                               'tercero_id' => $n->padre,
+                               'hijo_id' => $uno_amparados_value->padre_id,
                                'nivel' => 1,
-                               'order_id' => $uno_amparados_orders_value->orden_id,
+                               'order_id' => $uno_amparados_value->orden_id,
                                'regla_detalle_id' => $id_detalle_1,
-                               'valor_comision' => ($comision_valor_1 * $uno_amparados_orders_value->points),
-                               'puntos' => ($uno_amparados_orders_value->points),
+                               'valor_comision' => ($comision_valor_1 * $uno_amparados_value->points),
+                               'puntos' => ($uno_amparados_value->points),
                                'comision_puntos' => ($comision_valor_1),
                                'created_at' => Carbon::now(),
                                'updated_at' => Carbon::now()
                                ]);
 
-                               $id_primer_nivel_amparado[] = array($n->orden_id);
-
-                           }
-                       }
-                       */
+                               $id_primer_nivel_amparado[] = array($uno_amparados_value->orden_id);
+                        }
+                                DB::table('orders')->whereIn('id', $id_primer_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                    }  
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel uno con sus amparados    fin                                          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
 
-                    if($n->financial_status == 'paid' && $n->cancelled_at == '' && $n->comisionada == '' && $n->liquidacion_id == ''){
+                    if($n->financial_status == 'paid' && $n->cancelled_at == '' && $n->comisionada == '' && $n->liquidacion_id == '' && $n->created_at >= $request->fecha_inicio && $n->created_at <= $request->fecha_final){
+
+                    $id_primer_nivel[] = array($n->orden_id);
 
                         $points_level_1 +=  $n->points;
                         $points_level_vendedor_1 += $n->points;
@@ -213,24 +212,7 @@ class LiquidacionesController extends Controller {
                             'created_at' => Carbon::now(),
                             'updated_at' => Carbon::now()
                         );
-
-/*
-                        DB::table('liquidaciones_detalles')->insert([
-                            'liquidacion_id' => $liquidacion_id,
-                            'tercero_id' => $n->padre,
-                            'hijo_id' => $n->id,
-                            'nivel' => 1,
-                            'order_id' => $n->orden_id,
-                            'regla_detalle_id' => $id_detalle_1,
-                            'valor_comision' => ($comision_valor_1 * $n->points),
-                            'puntos' => ($n->points),
-                            'comision_puntos' => ($comision_valor_1),
-                            'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now()
-                        ]);
-
-*/
-
+ 
                     }
                     //  $gente_nivel_1[] = array('id' => $n->id);
                 }
@@ -251,9 +233,13 @@ class LiquidacionesController extends Controller {
                 ->join('terceros as t3', 't3.id', '=', 'tk2.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't3.id')
                 ->whereIn('t.id', $id_vendedores)->where('t.state', true)->where('t3.state', true)->where('t3.tipo_cliente_id', '<>', 85)
-                ->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
+                //->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
                 ->select('t.id as padre', 't3.id', 't3.email', 't3.nombres', 't3.apellidos', 't3.tipo_cliente_id','points', 'orders.id as orden_id',
-                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
+                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id', 'orders.created_at', 
+                    DB::raw('(select count(*) as total from orders 
+                    	       inner join terceros_networks on orders.tercero_id = terceros_networks.customer_id 
+                    	       inner join terceros on orders.tercero_id = terceros.id 
+                    	      where terceros_networks.padre_id = t3.id and terceros.tipo_cliente_id = 85) as total'))->get();
 
             if (count($dos) > 0) {
 
@@ -262,53 +248,50 @@ class LiquidacionesController extends Controller {
                 $count_add=0;
                 foreach ($dos as $d) {  $count_add++;
 
-                    $id_dos_nivel[] = array($d->orden_id);
-
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel dos con sus amparados   inicio     ------------------------           */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
 
                     $points_level_vendedor_2 = 0;
-                    /*
-                        $dos_amparados_total = 0;
-                        $dos_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $d->id)
-                        ->where('t.state', true)->where('t.tipo_cliente_id', 85)->select('t.id', 't.email', 't.nombres', 't.apellidos', 't.tipo_cliente_id')->get();
+
+                    if($d->total > 0){ 
+                       $dos_amparados_total = 0;
+                       $dos_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $d->id)
+                       ->where('t.state', true)->where('t.tipo_cliente_id', 85)
+                       ->join('orders', 'orders.tercero_id', '=', 't.id')
+                           ->where('financial_status', 'paid')
+                           ->where('cancelled_at', null)
+                           ->where('comisionada', null)
+                           ->where('liquidacion_id', null)
+                       ->select('t.id', 't.email', 't.nombres', 't.apellidos', 't.tipo_cliente_id', 'points', 'orders.id as orden_id','padre_id')->get();
                         foreach ($dos_amparados as $dos_amparados_value) {
-                            $dos_amparados_total++;
-                            $dos_amparados_orders = DB::table('orders')->where('tercero_id', $dos_amparados_value->id)
-                            ->where('financial_status', 'paid')
-                            ->where('cancelled_at', null)
-                            ->where('comisionada', null)
-                            ->where('liquidacion_id', null)
-                            ->select('points', 'orders.id as orden_id')->get();
-                            foreach ($dos_amparados_orders as $dos_amparados_orders_value) {
-                                $points_level_2 += $dos_amparados_orders_value->points;
-                                $points_level_vendedor_2 += $dos_amparados_orders_value->points;
 
                                 DB::table('liquidaciones_detalles')->insert([
                                 'liquidacion_id' => $liquidacion_id,
                                 'tercero_id' => $d->id,
-                                'hijo_id' => $dos_amparados_value->id,
+                                'hijo_id' => $dos_amparados_value->padre_id,
                                 'nivel' => 2,
-                                'order_id' => $dos_amparados_orders_value->orden_id,
+                                'order_id' => $dos_amparados_value->orden_id,
                                 'regla_detalle_id' => $id_detalle_2,
-                                'valor_comision' => ($comision_valor_2 * $dos_amparados_orders_value->points),
-                                'puntos' => ($dos_amparados_orders_value->points),
+                                'valor_comision' => ($comision_valor_2 * $dos_amparados_value->points),
+                                'puntos' => ($dos_amparados_value->points),
                                 'comision_puntos' => ($comision_valor_2),
                                 'created_at' => Carbon::now(),
                                 'updated_at' => Carbon::now()
                                 ]);
 
-                                $id_dos_nivel_amparado[] = array($n->orden_id);
-
-                            }
+                               $id_dos_nivel_amparado[] = array($dos_amparados_value->orden_id);
                         }
-                         */
+                             DB::table('orders')->whereIn('id', $id_dos_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                    }  
+                        
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel dos con sus amparados    fin                                          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
 
-                    if($d->financial_status == 'paid' && $d->cancelled_at == '' && $d->comisionada == '' && $d->liquidacion_id == ''){
+                    if($d->financial_status == 'paid' && $d->cancelled_at == '' && $d->comisionada == '' && $d->liquidacion_id == '' && $d->created_at >= $request->fecha_inicio && $d->created_at <= $request->fecha_final){
+
+                    $id_dos_nivel[] = array($d->orden_id);
 
                         $points_level_2 += $d->points;
                         $points_level_vendedor_2 += $d->points;
@@ -352,9 +335,13 @@ class LiquidacionesController extends Controller {
                 ->join('terceros as t4', 't4.id', '=', 'tk3.customer_id')
                 ->leftjoin('orders', 'orders.tercero_id', '=', 't4.id')
                 ->whereIn('t.id', $id_vendedores)->where('t.state', true)->where('t4.state', true)->where('t4.tipo_cliente_id', '<>', 85)
-                ->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
+                //->whereRaw("date(orders.created_at) >= '".$request->fecha_inicio."'")->whereRaw("date(orders.created_at) <= '".$request->fecha_final."'") 
                 ->select('t.id as padre', 't4.id', 't4.email', 't4.nombres', 't4.apellidos', 't4.tipo_cliente_id','points', 'orders.id as orden_id',
-                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id')->get();
+                    'orders.financial_status', 'orders.cancelled_at', 'orders.comisionada', 'orders.liquidacion_id', 'orders.created_at',  
+                    DB::raw('(select count(*) as total from orders 
+                    	       inner join terceros_networks on orders.tercero_id = terceros_networks.customer_id 
+                    	       inner join terceros on orders.tercero_id = terceros.id 
+                    	      where terceros_networks.padre_id = t4.id and terceros.tipo_cliente_id = 85) as total'))->get();
 
             if (count($tres) > 0) {
 
@@ -363,54 +350,51 @@ class LiquidacionesController extends Controller {
 
                 foreach ($tres as $t) {
 
-                    $id_tres_nivel[] = array($t->orden_id);
 
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel tres con sus amparados   inicio     ------------------------          */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
 
                     $points_level_vendedor_3 = 0;
-                    /*
-                        $tres_amparados_total = 0;
-                        $tres_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $t->id)
-                        ->where('t.state', true)->where('t.tipo_cliente_id', 85)->select('t.id', 't.email', 't.nombres', 't.apellidos', 't.tipo_cliente_id')->get();
+
+                    if($t->total > 0){ 
+                       $tres_amparados_total = 0;
+                       $tres_amparados = DB::table('terceros as t')->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')->where('tk.padre_id', $t->id)
+                       ->where('t.state', true)->where('t.tipo_cliente_id', 85)
+                       ->join('orders', 'orders.tercero_id', '=', 't.id')
+                           ->where('financial_status', 'paid')
+                           ->where('cancelled_at', null)
+                           ->where('comisionada', null)
+                           ->where('liquidacion_id', null)
+                       ->select('t.id', 't.email', 't.nombres', 't.apellidos', 't.tipo_cliente_id', 'points', 'orders.id as orden_id','padre_id')->get();
                         foreach ($tres_amparados as $tres_amparados_value) {
-                            $tres_amparados_total++;
-                            $tres_amparados_orders = DB::table('orders')->where('tercero_id', $tres_amparados_value->id)
-                            ->where('financial_status', 'paid')
-                            ->where('cancelled_at', null)
-                            ->where('comisionada', null)
-                            ->where('liquidacion_id', null)
-                            ->select('points', 'orders.id as orden_id')->get();
-                            foreach ($tres_amparados_orders as $tres_amparados_orders_value) {
-                                $points_level_3 += $tres_amparados_orders_value->points;
-                                $points_level_vendedor_3 += $tres_amparados_orders_value->points;
 
                                 DB::table('liquidaciones_detalles')->insert([
                                 'liquidacion_id' => $liquidacion_id,
                                 'tercero_id' => $t->id,
-                                'hijo_id' => $tres_amparados_value->id,
+                                'hijo_id' => $tres_amparados_value->padre_id,
                                 'nivel' => 3,
-                                'order_id' => $tres_amparados_orders_value->orden_id,
+                                'order_id' => $tres_amparados_value->orden_id,
                                 'regla_detalle_id' => $id_detalle_3,
-                                'valor_comision' => ($comision_valor_3 * $tres_amparados_orders_value->points),
-                                'puntos' => ($tres_amparados_orders_value->points),
+                                'valor_comision' => ($comision_valor_3 * $tres_amparados_value->points),
+                                'puntos' => ($tres_amparados_value->points),
                                 'comision_puntos' => ($comision_valor_3),
                                 'created_at' => Carbon::now(),
                                 'updated_at' => Carbon::now()
                                 ]);
 
-                                $id_tres_nivel_amparado[] = array($n->orden_id);
-
-                            }
+                               $id_tres_nivel_amparado[] = array($tres_amparados_value->orden_id);
                         }
-                    */
+                            DB::table('orders')->whereIn('id', $id_tres_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
+                    }  
+
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
                     /*                                                     ordenes del nivel tres con sus amparados    fin                                         */
                     /*   ----------------------------------------------------------------------------------------------------------------------------------------  */
 
-                    if($t->financial_status == 'paid' && $t->cancelled_at == '' && $t->comisionada == '' && $t->liquidacion_id == ''){
+                    if($t->financial_status == 'paid' && $t->cancelled_at == '' && $t->comisionada == '' && $t->liquidacion_id == '' && $t->created_at >= $request->fecha_inicio && $t->created_at <= $request->fecha_final){
 
+                    $id_tres_nivel[] = array($t->orden_id);
                         $points_level_3 += $t->points;
                         $points_level_vendedor_3 += $t->points;
  
@@ -446,17 +430,11 @@ class LiquidacionesController extends Controller {
 
         DB::table('liquidaciones_detalles')->insert($insert_primer_nivel);
         DB::table('liquidaciones_detalles')->insert($insert_segundo_nivel);
-        DB::table('liquidaciones_detalles')->insert($insert_tercer_nivel);
-
+        DB::table('liquidaciones_detalles')->insert($insert_tercer_nivel); 
 
         DB::table('orders')->whereIn('id', $id_primer_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
         DB::table('orders')->whereIn('id', $id_dos_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
         DB::table('orders')->whereIn('id', $id_tres_nivel)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
-
-        DB::table('orders')->whereIn('id', $id_primer_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
-        DB::table('orders')->whereIn('id', $id_dos_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
-        DB::table('orders')->whereIn('id', $id_tres_nivel_amparado)->update(['comisionada' => Carbon::now(), 'liquidacion_id' => $liquidacion_id]);
-
 
         $fecha_hoy = Carbon::now();
         $insert_liquidacion_tercero = array();
@@ -473,7 +451,7 @@ class LiquidacionesController extends Controller {
 
         foreach ($liquidaciones_detalles as $value) {
              
-             $valor_comision = 0; $valor_comision_descuento =  0;  $saldo = 0;  $saldo_paga = 0;  $descuentos = 0;  $saldo_favor = 0;
+             $valor_comision = 0; $valor_comision_descuento =  0;  $saldo = 0;  $saldo_paga = 0;  $descuentos = 0;  $saldo_favor = 0;   $tipo_pendiente_id = 0;
 
                         if($value->valor_comision > $value->comision_maxima){ 
                             if($value->comision_maxima != 0){
@@ -501,6 +479,7 @@ class LiquidacionesController extends Controller {
                         if($valor_comision_descuento <= 0){
                             $saldo_paga = 1;
                             $saldo = round(($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica))) - $prime - $prime_iva);
+                            $tipo_pendiente_id = 90;
                         }
                         if($valor_comision_descuento >= 1){
                           
@@ -522,6 +501,7 @@ class LiquidacionesController extends Controller {
                                 $valor_comision_descuento = $valor_comision - round($valor_comision * $parametros->rete_fuente) - round($valor_comision * $parametros->rete_ica) - $descuentos;
                             }        
 
+                            $tipo_pendiente_id = 89;
                         }
                         
                         $insert_liquidacion_tercero[] = array(
@@ -544,6 +524,9 @@ class LiquidacionesController extends Controller {
 
                             'saldo' => $saldo,
                             'saldo_paga' => $saldo_paga,
+
+                            'estado_id' => 88,
+                            'tipo_pendiente_id' => $tipo_pendiente_id,
                         );  
 
         }
@@ -657,11 +640,21 @@ class LiquidacionesController extends Controller {
 
     public function liquidaciones_cambiar_estado(Request $request) {
         if ($request->has('id')){ 
-        	if($request->tipo == "87"){
-                DB::table('liquidaciones_terceros')->where('id', $request->id)->update(['estado_id' => $request->valor]); 
+
+            $liquidaciones = DB::table('liquidaciones_terceros')
+                ->select('valor_comision','rete_fuente', 'rete_ica', 'prime', 'prime_iva','valor_comision_paga')
+                ->where('id', $request->id) 
+                ->first();  
+ 
+                $saldo = round($liquidaciones->valor_comision - $liquidaciones->rete_fuente - $liquidaciones->rete_ica - $liquidaciones->prime - $liquidaciones->prime_iva);  
+
+        	if($request->tipo == "87"){ 
+                if($request->valor == 87){   $saldo = 0;  $saldo_paga = 0;  }else{   $saldo = $saldo;  $saldo_paga = 1;   }
+                DB::table('liquidaciones_terceros')->where('id', $request->id)->update(['estado_id' => $request->valor, 'saldo' => $saldo, 'saldo_paga' => $saldo_paga]); 
         	}
-        	else{
-                DB::table('liquidaciones_terceros')->where('id', $request->id)->update(['tipo_pendiente_id' => $request->valor]); 
+            else{
+                $saldo = $saldo;  $saldo_paga = 1; 
+                DB::table('liquidaciones_terceros')->where('id', $request->id)->update(['estado_id' => $request->tipo, 'tipo_pendiente_id' => $request->valor, 'saldo' => $saldo, 'saldo_paga' => $saldo_paga]); 
         	}
         } 
             return response()->json(['val' => 'bien'], 200);
