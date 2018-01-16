@@ -142,6 +142,13 @@
                             </a>
                         </li>
                         <li>
+                            <a href="{{ route('admin.orders.news') }}" class="text-left">
+                                <i class="fa fa-slack">
+                                </i>
+                                <span class="nav-text">Novedades</span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{ route('admin.orders.list-paid') }}" class="text-left">
                                 <i class="fa fa-chevron-right">
                                 </i>
@@ -177,13 +184,7 @@
                                 <span class="nav-text">Ordenes</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="{{ route('admin.orders.news') }}" class="text-left">
-                                <i class="fa fa-slack">
-                                </i>
-                                <span class="nav-text">Novedades</span>
-                            </a>
-                        </li>
+
 
                     </ul>
                 </div>
