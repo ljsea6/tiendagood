@@ -45,6 +45,7 @@ class Order extends Model
 
     public static function createOrder($order, $shop, $points, $tipo_orden, $id)
     {
+        date_default_timezone_set('America/Bogota');
         return Order::create([
             'billing_address' => (isset($order['billing_address'])) ? $order['billing_address'] : null,
             'browser_ip' => $order['browser_ip'],
@@ -116,6 +117,7 @@ class Order extends Model
 
     public static function duplicateOrder($order)
     {
+        date_default_timezone_set('America/Bogota');
         return Order::create([
             'billing_address' => $order['billing_address'],
             'browser_ip' => $order['browser_ip'],

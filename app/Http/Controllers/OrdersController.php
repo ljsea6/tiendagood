@@ -3680,6 +3680,7 @@ class OrdersController extends Controller {
 
     public function news_update(Request $request)
     {
+
         if($request->has('name')){
 
             $name =  strtoupper($request->name);
