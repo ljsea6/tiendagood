@@ -869,10 +869,22 @@ class LiquidacionesController extends Controller {
                     if ($ok->valor_comision_paga > 0 && $ok->estado_id == 87) {
 
                         $boton = '<div align=center><a href="' . route('admin.liquidaciones.edit', $ok->id) . '"  class="btn btn-warning btn-xs">Crear Bonos</a></div>';
-                    }elseif ($ok->valor_comision_paga > 0 && $ok->estado_id != 87) {
+
+                    }elseif ($ok->valor_comision_paga > 0 && $ok->estado_id == 88 && $ok->tipo_pendiente_id == 89) {
+
+                        $boton =  '<div align=center>En revisión administrativa para poder crear bonos</div>';
+
+                    }elseif ($ok->valor_comision_paga > 0 && $ok->estado_id == 88 && $ok->tipo_pendiente_id == 90) {
+
+                        $boton =  '<div align=center>Fondos insuficientes para crear bonos</div>';
+
+                    }elseif ($ok->valor_comision_paga > 0 && $ok->estado_id == 88 && $ok->tipo_pendiente_id == 91) {
+
                         $boton =  '<div align=center>Falta de documentos para generar Bonos</div>';
-                    } else {
-                        $boton =  '<div align=center>Saldo insuficiente para generar Bonos </div>';
+
+                    }  else {
+
+                        $boton =  '<div align=center>Falta de documentos para generar Bonos</div>';
                     }
 
                 } else {
