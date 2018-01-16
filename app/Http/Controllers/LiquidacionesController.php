@@ -763,7 +763,7 @@ class LiquidacionesController extends Controller {
     $envios =  DB::table('liquidaciones_terceros')
         ->where('liquidaciones_terceros.liquidacion_id', $id)
         ->join('terceros', 'terceros.id', '=', 'liquidaciones_terceros.tercero_id')
-        ->select(DB::raw("liquidaciones_terceros.*, terceros.*"))
+        ->select(DB::raw("liquidaciones_terceros.*, terceros.*, ( select coalesce(sum(saldo), 0) from liquidaciones_terceros as lt2 where lt2.tercero_id = liquidaciones_terceros.tercero_id  and lt2.liquidacion_id < liquidaciones_terceros.liquidacion_id) as saldo_anterior"))
         //->limit(10)
         ->orderByRaw('liquidaciones_terceros.valor_comision_paga ASC')->get();
 
@@ -771,7 +771,7 @@ class LiquidacionesController extends Controller {
             $excel->sheet('liquidaciones', function($sheet) use ($envios)  {
             	$sheet->prependRow(1, array('Cedula', 'Nombres', 'Apellidos', 'Teléfono', 'Email', 
                     'Prime','Valor comision','Retefuente','Rete ICA','Prime','IVA Prime','Transferencia','Extractos
-','Administrativos','Comision con descuentos','Giro Billetera Virtual','Giro Cuenta', 'Valor del saldo a favor', 'saldo paga'));
+','Administrativos','Comision con descuentos','Giro Billetera Virtual','Giro Cuenta', 'Valor del saldo a favor', 'saldo paga', 'saldo anterior'));
             	foreach ($envios as $value) {
 
             		$prime = '';
@@ -793,7 +793,7 @@ class LiquidacionesController extends Controller {
                     $sheet->prependRow(2, array($value->identificacion, $value->nombres, $value->apellidos, $value->telefono, $value->email, 
                         $prime, $value->valor_comision, $value->rete_fuente, $value->rete_ica, $value->prime, 
                         $value->prime_iva, $value->transferencia, $value->extracto, $value->administrativo, $value->valor_comision_paga, 
-                        $value->virtual, $value->giro, $value->saldo, $saldo_paga));
+                        $value->virtual, $value->giro, $value->saldo, $saldo_paga, $value->saldo_anterior));
                 }
             });
         })->export('xls');
