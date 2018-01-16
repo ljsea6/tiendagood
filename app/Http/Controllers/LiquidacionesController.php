@@ -587,7 +587,7 @@ class LiquidacionesController extends Controller {
         $mes = strtotime($liquidaciones->fecha_liquidacion);
         $mes = date("m", $mes);
 
-    	$liquidaciones_detalles = $this->liquidaciones_extracto_comisiones_datos($usuario);
+    	$liquidaciones_detalles = $this->liquidaciones_extracto_comisiones_datos($usuario, $id);
     	$mes = $this->nombremes($mes);
 
         return view('admin.liquidaciones.extracto_comisiones', compact('id','liquidaciones_detalles','mes','parametros','liquidaciones_terceros'));
@@ -599,11 +599,12 @@ class LiquidacionesController extends Controller {
     	return $meses[$mes-1];
     } 
 
-    public function liquidaciones_extracto_comisiones_datos($id=0) {
+    public function liquidaciones_extracto_comisiones_datos($id=0, $liquidacion_id=0) {
 
         $liquidaciones = DB::table('liquidaciones_detalles')
                 ->select('nombres','apellidos', 'name', 'puntos', 'valor_comision','orders.created_at')
                 ->where('liquidaciones_detalles.tercero_id', $id)
+                ->where('liquidaciones_detalles.liquidacion_id', $liquidacion_id)
                 ->join('terceros', 'terceros.id', '=', 'liquidaciones_detalles.hijo_id')
                 ->join('orders', 'orders.id', '=', 'liquidaciones_detalles.order_id')
                 ->orderByRaw('valor_comision DESC')
