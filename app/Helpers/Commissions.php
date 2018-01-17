@@ -248,8 +248,4 @@ class Commissions
         }
     }
 
-    public static function hola ()
-    {
-
-    }
 }

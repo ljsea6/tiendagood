@@ -3377,7 +3377,27 @@ class OrdersController extends Controller {
 
     public function contador()
     {
-        return Points::points_red(364);
+
+        $terceros = DB::select(
+            DB::raw(
+                "
+                
+                 select id, tipo_id FROM terceros WHERE id IN (8262, 8327, 5847);
+                "
+            )
+        );
+
+        foreach ($terceros as $tercero){
+
+            Commissions::change_type($tercero->id);
+            Commissions::junior_prime($tercero->id);
+            Commissions::senior_prime($tercero->id);
+            Commissions::master_prime($tercero->id);
+
+        }
+
+        return response()->json(['info' => 'finished']);
+
         /*$url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
 
         $url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
