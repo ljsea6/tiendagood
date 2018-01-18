@@ -723,7 +723,8 @@ class UsuariosController extends Controller {
                                 "password" => $request->password,
                                 "password_confirmation" => $request->password_confirmation,
                                 'send_email_invite' => false,
-                                'send_email_welcome' => false
+                                'send_email_welcome' => false,
+                                'state' => 'enable'
                             );
 
         GuzzleHttp::api_usuarios('good', $usuario->email, $data, 'actualizar'); 
