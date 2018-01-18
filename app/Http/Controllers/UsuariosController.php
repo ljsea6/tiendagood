@@ -464,7 +464,7 @@ class UsuariosController extends Controller {
         $usuario->email = strtolower($request->email);
         $usuario->usuario = strtolower($request->email);
         $usuario->contraseña = bcrypt($request->password);
-        $usuario->tipo_id = null;
+        $usuario->tipo_id = 2;
         $usuario->ciudad_id = strtolower($request->city);
         $usuario->celular = strtolower($p);
         $usuario->network_id = 1;
