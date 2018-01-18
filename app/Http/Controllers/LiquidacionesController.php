@@ -771,7 +771,7 @@ class LiquidacionesController extends Controller {
             $excel->sheet('liquidaciones', function($sheet) use ($envios)  {
             	$sheet->prependRow(1, array('Cedula', 'Nombres', 'Apellidos', 'Teléfono', 'Email', 
                     'Prime','Valor comision','Retefuente','Rete ICA','Prime','IVA Prime','Transferencia','Extractos
-','Administrativos','Comision con descuentos','Giro Billetera Virtual','Giro Cuenta', 'Valor del saldo a favor', 'saldo paga', 'saldo anterior', 'Mes anterior', 'Acomulado actual'));
+','Administrativos','Comision con descuentos','Giro Billetera Virtual','Giro Cuenta', 'Valor del saldo a favor', 'saldo paga', 'saldo anterior', 'Mes anterior'));
             	foreach ($envios as $value) {
 
             		$prime = '';
@@ -784,16 +784,16 @@ class LiquidacionesController extends Controller {
 
                     $saldo_paga = '';
                     if ($value->saldo_paga == '1') {
-                         $saldo_paga = 'Si';
+                         $saldo_paga = 'No paso formula de descuentos para verificar si se acomula este saldo o no.';
                     }
                     else{
-                        $saldo_paga = 'No';
+                        $saldo_paga = 'Saldos anteriores agregado a la comision actual.';
                     }
 
                     $sheet->prependRow(2, array($value->identificacion, $value->nombres, $value->apellidos, $value->telefono, $value->email, 
                         $prime, $value->valor_comision, $value->rete_fuente, $value->rete_ica, $value->prime, 
                         $value->prime_iva, $value->transferencia, $value->extracto, $value->administrativo, $value->valor_comision_paga, 
-                        $value->virtual, $value->giro, $value->saldo, $saldo_paga, $value->saldo_anterior, $value->mes_anterior, $value->saldo));
+                        $value->virtual, $value->giro, $value->saldo, $saldo_paga, $value->saldo_anterior, $value->mes_anterior));
                 }
             });
         })->export('xls');
