@@ -10,7 +10,7 @@
             <div class="col-md-3" style="text-align: center"></div>
             <div class="col-md-6" style="text-align: left; font-family: 'Times New Roman', Times, serif; font-size: 15px">
                 <p align="justify" style="color: #FF5733;">
-                    Queremos recordares que, de acuerdo a los términos establecidos en el contrato de vendedor independiente, es un requisito para el pago de las comisiones causadas en cada periodo el haber subido a la plataforma los documentos requeridos. A saber, RUT que contenga la actividad identificada con el código 8299, Copia simple del documento de identificación y Certificación bancaria que acredite la titularidad de la cuenta donde se realizarán los pagos.
+                    Queremos recordarles que, de acuerdo a los términos establecidos en el contrato de vendedor independiente, es un requisito para el pago de las comisiones causadas en cada periodo el haber subido a la plataforma los documentos requeridos. A saber, RUT que contenga la actividad identificada con el código 8299, Copia simple del documento de identificación y Certificación bancaria que acredite la titularidad de la cuenta donde se realizarán los pagos.
                 </p>
                 <p align="justify" style="color: #FF5733;">
                     Adicionalmente, hacemos énfasis en que al monto de las comisiones brutas se le realizarán los descuentos contractuales y retenciones legales a los que haya lugar, de acuerdo con el contrato de vendedor independiente y demás normativa aplicable.

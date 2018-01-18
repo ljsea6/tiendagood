@@ -919,7 +919,7 @@ class LiquidacionesController extends Controller {
                     '<div align=left><b>Rete ICA:</b> ' . number_format((float)$send->rete_ica) . '<br>'. 
                     '<div align=left><b>Prime: </b>' . number_format((float)$send->prime) . '<br>'.   
                     '<div align=left><b>IVA Prime:</b> ' . number_format((float)$send->prime_iva) . '<br>'. 
-                    '<div align=left><b>Adminsitrativo y transferencia: </b>' . number_format((float)$send->transferencia + (float)$send->extracto + (float)$send->administrativo) . ''. 
+                    '<div align=left><b>Administrativo y transferencia: </b>' . number_format((float)$send->transferencia + (float)$send->extracto + (float)$send->administrativo) . ''.
                 '<br></div>';
             })
 
