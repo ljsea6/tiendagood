@@ -94,6 +94,18 @@ class AuthController extends Controller {
 
         $credentials = $this->getCredentials($request);
 
+
+        $tercero = Tercero::where('email', $credentials['usuario'])->first();
+
+        if (count($tercero) > 0 && $tercero->state == false) {
+            return redirect($this->loginPath())
+                ->withInput($request->only($this->loginUsername(), 'remember'))
+                ->withErrors([
+                    'err' => 'Su usuario ha sido desactivado, por favor vuelva a registrarse con su misma información y un código de referido.'
+                ]);
+        }
+
+
         if (Auth::attempt($credentials, $request->has('remember'))) {
             return $this->handleUserWasAuthenticated($request, $throttles);
         }
