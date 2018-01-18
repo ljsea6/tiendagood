@@ -25,9 +25,11 @@ class GuzzleHttp
 //usuarios
     public static function api_usuarios($api, $email, $data, $metodo) {
 
+
         if ($api == 'good') {
       	    $api = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
         }
+
         if($api == 'mercando'){
       	    $api = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
         }

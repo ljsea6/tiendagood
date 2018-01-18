@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
+use Faker;
+use App\Entities\Tercero;
 use App\Helpers\GuzzleHttp;
+use Illuminate\Console\Command;
 
 class CustomerDisabled extends Command
 {
@@ -38,12 +40,27 @@ class CustomerDisabled extends Command
      */
     public function handle()
     {
-        $data = array(
-            'state' => 'enable'
-        );
+        $faker = Faker\Factory::create();
 
-        GuzzleHttp::api_usuarios('good', 'ljsea6@gmail.com', $data, 'actualizar');
-        GuzzleHttp::api_usuarios('mercando', 'ljsea6@gmail.com', $data, 'actualizar');
+        $terceros = Tercero::where('state', false)->get();
+
+        foreach ($terceros as $tercero) {
+
+            $password = $faker->uuid;
+
+            $data = array(
+                "password" => $password,
+                "password_confirmation" => $password
+            );
+
+
+            $this->info('Password: ' . $password);
+            $this->info('Desavilitando a usuario con email ' . $tercero->email);
+
+            GuzzleHttp::api_usuarios('good', $tercero->email, $data, 'actualizar');
+            GuzzleHttp::api_usuarios('mercando', $tercero->email, $data, 'actualizar');
+
+        }
 
         $this->info('Los clientes han sido desavilitados');
     }

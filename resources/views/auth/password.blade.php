@@ -300,6 +300,19 @@ $('.submit').on('submit',function(event){
 
                     event.preventDefault() ;
                 }
+
+                if (result_email.err == 'desactivado') {
+                    swal({
+                        title: 'Usted es un usuario inactivo dentro de la red',
+                        html: $('<div>').text('Lo sentimos, pero no usted está inactivo, por favor vuelva a registrarse con su código de referido.'),
+                        animation: false,
+                        customClass: 'animated tada'
+                    });
+
+                    $('#enviar').prop('disabled', false);
+
+                    event.preventDefault() ;
+                }
      
 });
 

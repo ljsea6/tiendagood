@@ -39,7 +39,9 @@ class PasswordController extends Controller {
     }
 
     public function postEmail(Request $request) {
-        $email = Tercero::where('email', strtolower($request->email))->first();
+        $email = Tercero::where('email', strtolower($request->email))
+            ->where('state', true)
+            ->first();
 
         if($email){  
            $token = str_shuffle("abcdefghijklmnopqrstuvwxyz0123456789".uniqid());
