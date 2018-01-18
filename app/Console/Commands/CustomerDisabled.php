@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Helpers\GuzzleHttp;
 
 class CustomerDisabled extends Command
 {
@@ -18,7 +19,7 @@ class CustomerDisabled extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Comando para desabilitar customer en tienda good y en mercando';
 
     /**
      * Create a new command instance.
@@ -37,6 +38,13 @@ class CustomerDisabled extends Command
      */
     public function handle()
     {
-        //
+        $data = array(
+            'state' => 'enable'
+        );
+
+        GuzzleHttp::api_usuarios('good', 'ljsea6@gmail.com', $data, 'actualizar');
+        GuzzleHttp::api_usuarios('mercando', 'ljsea6@gmail.com', $data, 'actualizar');
+
+        $this->info('Los clientes han sido desavilitados');
     }
 }

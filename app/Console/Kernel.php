@@ -31,6 +31,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\SendMails::class,
         \App\Console\Commands\SetTransactions::class,
         \App\Console\Commands\Compresion::class,
+        \App\Console\Commands\CustomerDisabled::class,
     ];
 
     /**
