@@ -3382,7 +3382,7 @@ class OrdersController extends Controller {
             DB::raw(
                 "
                 
-                 select id, tipo_id FROM terceros WHERE id IN (8262, 8327, 5847);
+                 select id, tipo_id FROM terceros WHERE id IN (8511,8634,8642,8661,8692,8868,9418,9354,9427,8533,8696,8881,5847,8708,8269,8300,9425,8616,9364,9450,8864,9362,8585,8327,8274,8589);
                 "
             )
         );
