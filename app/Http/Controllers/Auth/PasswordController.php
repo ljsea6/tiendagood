@@ -59,7 +59,7 @@ class PasswordController extends Controller {
             Session::flash('flash_msg', 'Revise su correo para saber como puede cambiar su contrase\u00f1a');
              return redirect()->action('Auth\PasswordController@getEmail');
         } else {
-            Session::flash('flash_msg', 'Su usuario está inactivo, por favor vuelvase a registrar con su código de referido.');
+            Session::flash('flash_msg', 'Su usuario esta inactivo, por favor vuelvase a registrar con su codigo de referido.');
             return redirect()->back();
         }
       // return view('auth.password', compact('nivel'));
