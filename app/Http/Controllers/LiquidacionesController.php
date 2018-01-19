@@ -476,15 +476,6 @@ class LiquidacionesController extends Controller {
                             $prime_iva = 0;
                         }
 
-                        $valor_comision_descuento = $valor_comision - round($valor_comision * $parametros->rete_fuente) - round($valor_comision * $parametros->rete_ica) - $prime - $prime_iva - $parametros->transferencia - $parametros->extracto - $parametros->administrativo;
-                      
-                        if($valor_comision_descuento <= 0){
-                            $saldo_paga = 1;
-                            $saldo = round(($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica))) - $prime - $prime_iva);
-                            $tipo_pendiente_id = 90;
-                        }
-                        if($valor_comision_descuento >= 1){
-                          
                             $valor_comision_descuento =  0;
                             $saldo_anterior = DB::table('liquidaciones_terceros')->select(DB::raw('sum(saldo) as saldo_total'))
                             ->where('tercero_id', $value->tercero_id)->where('saldo_paga', 1)->first();
@@ -492,19 +483,19 @@ class LiquidacionesController extends Controller {
                                 $saldo_favor = $saldo_anterior->saldo_total;
                             }
 
-                            $descuentos = $parametros->administrativo + $parametros->extracto + $parametros->transferencia + $prime + $prime_iva;
-                            $valor_comision_descuento = $valor_comision - (round($valor_comision * $parametros->rete_fuente) + round($valor_comision * $parametros->rete_ica));
+                            $descuentos = $parametros->administrativo + $parametros->extracto + $parametros->transferencia;
+                            $valor_comision_descuento = $valor_comision - (round($valor_comision * $parametros->rete_fuente) + round($valor_comision * $parametros->rete_ica)) - $prime - $prime_iva;
 
                             if(($saldo_favor + $valor_comision_descuento) > $descuentos){ 
                                 $valor_comision_descuento = ($saldo_favor + $valor_comision_descuento) - $descuentos;
                                 DB::table('liquidaciones_terceros')->where('tercero_id', $value->tercero_id)->update(['saldo_paga' => 0]);
+                                $tipo_pendiente_id = 89;
                             }
                             else{    
-                                $valor_comision_descuento = $valor_comision - round($valor_comision * $parametros->rete_fuente) - round($valor_comision * $parametros->rete_ica) - $descuentos;
-                            }        
-
-                            $tipo_pendiente_id = 89;
-                        }
+                                $saldo_paga = 1;
+                                $saldo = round(($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica))) - $prime - $prime_iva);
+                                $tipo_pendiente_id = 90;
+                            }     
                         
                         $insert_liquidacion_tercero[] = array(
                             'liquidacion_id' => $value->liquidacion_id,
