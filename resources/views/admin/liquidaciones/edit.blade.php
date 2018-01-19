@@ -116,6 +116,8 @@
 
     <section class="invoice">
 
+
+
         <div class="row">
 
             <form id="bono" name="bono" action="{{route('admin.liquidaciones.gift_card')}}" method="post">
@@ -153,7 +155,7 @@
                                     </div>
                                     <div class="card-footer" style="display: block;">
                                         <div class="stats">
-                                            <h4 style="color: gray;"> Distribuye tu bono en ambas tiendas moviendo en círculo</h4>
+                                            <h4 style="color: gray;">¡Este es el valor total de tu bono, moviendo el circulo que esta en la parte de abajo podrás distribuirlo como prefieras en nuestras tiendas Tienda Good y Mercando, a disfrutar con Good!</h4>
                                             <i class="material-icons text-danger"></i>
                                             <a href="http://a4469bba.ngrok.io/admin/liquidaciones/1345/edit#pablo"></a>
                                         </div>
@@ -230,14 +232,32 @@
                                 </div>
                             </div>
                         @else
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="card-content" style="text-align: center;">
-                                    <button id="enviar" class="btn btn-primary text-center" data-background-color="orange" type="submit" value="Crear Bonos">Generar Bonos Digitales Ahora</button>
+
+                        <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary text-center" data-background-color="orange" data-toggle="modal" data-target="#exampleModal">
+                                Generar Bonos Digitales Ahora
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Generar Bonos</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            ¿Está realmente seguro?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                            <button id="enviar" class="btn btn-primary text-center" data-background-color="orange" type="submit" value="Crear Bonos">Generar</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
                         @endif
 
                     </div>
@@ -296,6 +316,8 @@
             tooltipFormat: "changeTooltip"
         });*/
 
+
+
         function changeTooltip(e) {
 
             var val = e.value, speed;
@@ -320,6 +342,8 @@
             return "G " + " % " + " M";
         }
 
+
+
         $("form").submit(function(e){
 
             $('#enviar').prop('disabled', true);
@@ -337,6 +361,7 @@
             var suma = (good + mercando);
 
             if (suma > total) {
+
                 swal(
                     '¡Por favor, verifique que la suma de los bonos para Tienda Good y Mercando no superen el total del Bono!',
                     'Clicked para corregir!',
@@ -344,8 +369,8 @@
                 );
                 $('#enviar').prop('disabled', false);
                 e.preventDefault();
-
             }
+
         });
 
         function number_format(amount, decimals) {

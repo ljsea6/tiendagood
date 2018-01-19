@@ -70,7 +70,6 @@
 
         $(function() {
 
-
             var uno = $('#orders').DataTable({
 
                 responsive: true,
@@ -224,7 +223,6 @@
             $( "#searching" ).click(function() {
                 search();
             });
-
 
         });
 
