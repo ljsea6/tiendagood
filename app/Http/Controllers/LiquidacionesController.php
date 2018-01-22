@@ -483,15 +483,15 @@ class LiquidacionesController extends Controller {
                                 $saldo_favor = $saldo_anterior->saldo_total;
                             }
 
-                            $descuentos = $parametros->administrativo + $parametros->extracto + $parametros->transferencia;
+                            $descuentos = ($parametros->administrativo + $parametros->extracto + $parametros->transferencia);
+                            $descuentos_iva = ($parametros->administrativo + $parametros->extracto + $parametros->transferencia) * 0.19;
                             $valor_comision_descuento = $valor_comision - (round($valor_comision * $parametros->rete_fuente) + round($valor_comision * $parametros->rete_ica)) - $prime - $prime_iva;
 
-                            if(($saldo_favor + $valor_comision_descuento) > $descuentos){ 
-                                $valor_comision_descuento = ($saldo_favor + $valor_comision_descuento) - $descuentos;
+                            if(($saldo_favor + $valor_comision_descuento) > $descuentos){
+                                $valor_comision_descuento = ($saldo_favor + $valor_comision_descuento) - $descuentos - $descuentos_iva;
                                 DB::table('liquidaciones_terceros')->where('tercero_id', $value->tercero_id)->update(['saldo_paga' => 0]);
                                 $tipo_pendiente_id = 89;
-                            }
-                            else{    
+                            } else{
                                 $saldo_paga = 1;
                                 $saldo = round(($valor_comision - (($valor_comision * $parametros->rete_fuente) + ($valor_comision * $parametros->rete_ica))) - $prime - $prime_iva);
                                 $tipo_pendiente_id = 90;
