@@ -58,7 +58,7 @@ class GuzzleHttp
                     self::cambio_usario($api, $id, $data, 'put');
                 }
                 else{
-                    self::cambio_usario($api, $id, $data);
+                    self::cambio_usario($api, $id, $data, 'post');
                 }                   
             }
             if($metodo == 'ingresar'){ 
