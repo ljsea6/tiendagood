@@ -396,6 +396,8 @@ class UsuariosController extends Controller {
 
         $terceros = DB::table('terceros')->where('identificacion', strtolower($request->dni))->select('id', 'state')->first();       
 
+        return count($terceros);
+
         if(count($terceros) == 0){
 
  
