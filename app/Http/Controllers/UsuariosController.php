@@ -557,7 +557,14 @@ class UsuariosController extends Controller {
                     ->get();
 
                 if (count($result) == 0) {
-                    $usuario->networks()->attach(1, ['padre_id' => $padre->id]);
+
+                    BD::table('terceros_networks')->insert([
+                        'customer_id' => $usuario->id,
+                        'network_id' => 1,
+                        'padre_id' => $padre->id,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now()
+                    ]);
                 }
 
             } else {
@@ -569,7 +576,15 @@ class UsuariosController extends Controller {
                     ->get();
 
                 if (count($result) == 0) {
-                    $usuario->networks()->attach(1, ['padre_id' => 1]);
+
+                    BD::table('terceros_networks')->insert([
+                        'customer_id' => $usuario->id,
+                        'network_id' => 1,
+                        'padre_id' => 1,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now()
+                    ]);
+
                 }
             }
 
@@ -582,7 +597,14 @@ class UsuariosController extends Controller {
                 ->get();
 
             if (count($result) == 0) {
-                $usuario->networks()->attach(1, ['padre_id' => 1]);
+
+                BD::table('terceros_networks')->insert([
+                    'customer_id' => $usuario->id,
+                    'network_id' => 1,
+                    'padre_id' => 1,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
             }
         }
 

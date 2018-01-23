@@ -7,7 +7,7 @@
 
         {!! Html::style('css/material-dashboard.css?act=4') !!}
 
-<link href="https://fonts.googleapis.com/css?family=Bungee|Roboto+Slab:100,300,400,700" rel="stylesheet">
+         <link href="https://fonts.googleapis.com/css?family=Bungee|Roboto+Slab:100,300,400,700" rel="stylesheet">
 
 
 
@@ -19,6 +19,7 @@
         <img src="https://cdn.shopify.com/s/files/1/2256/3751/files/logo-good2.png?4867312163605074192" alt="" style="width: 300px; padding: 20px 0">
     </div>
 </div>
+
 <div class="col-lg-4 col-md-6 col-sm-6">
    <div class="card card-stats">
       <div class="card-header" data-background-color="green">
@@ -38,6 +39,9 @@
       </div>
    </div>
 </div>
+               <img src="{{ asset("barcode/barcode.php?text=0123456789&size=40&codetype=Code39&print=true") }}" />
+               <img src="{{ asset("barcode/barcode.php?text=0123456789&size=40&codetype=Code128&print=true") }}" />
+               <img src="{{ asset("barcode/barcode.php?text=0123456789&size=40&codetype=Codabar&print=true") }}" />
 <div class="col-lg-4 col-md-6 col-sm-6">
    <div class="card card-stats">
       <div class="card-header" data-background-color="blue">
@@ -145,7 +149,6 @@
       </div>
    </div>
 </div>
- 
 <script type="text/javascript"> function link(nivel){ location.href = "/nivel/"+nivel; } 
 function plan(){
 swal({
@@ -185,5 +188,9 @@ swal({
 </script>
 
 </section> 
+
+@endsection
+
+@section('scripts')
 
 @endsection

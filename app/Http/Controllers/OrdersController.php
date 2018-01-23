@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace App\Http\Controllers;
 
 use App\LiquidacionTercero;
@@ -38,6 +40,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ClientException;
 use App\Traits\Liquidar;
 use App\LiquidacionDetalle;
+
 
 
 class OrdersController extends Controller {
@@ -3378,241 +3381,118 @@ class OrdersController extends Controller {
     public function contador()
     {
 
-        $terceros = DB::select(
-            DB::raw(
-                "
-                
-                 select id, tipo_id FROM terceros WHERE id IN (8511,8634,8642,8661,8692,8868,9418,9354,9427,8533,8696,8881,5847,8708,8269,8300,9425,8616,9364,9450,8864,9362,8585,8327,8274,8589);
-                "
-            )
-        );
 
-        foreach ($terceros as $tercero){
+        // -------------------------------------------------- //
+        //                  PROPERTIES
+        // -------------------------------------------------- //
 
-            Commissions::change_type($tercero->id);
-            Commissions::junior_prime($tercero->id);
-            Commissions::senior_prime($tercero->id);
-            Commissions::master_prime($tercero->id);
+        // download a ttf font here for example : http://www.dafont.com/fr/nottke.font
+        //$font     = './NOTTB___.TTF';
+        // - -
 
+        $fontSize = 10;   // GD1 in px ; GD2 in point
+        $marge    = 10;   // between barcode and hri in pixel
+        $x        = 125;  // barcode center
+        $y        = 125;  // barcode center
+        $height   = 50;   // barcode height in 1D ; module size in 2D
+        $width    = 2;    // barcode height in 1D ; not use in 2D
+        $angle    = 90;   // rotation in degrees : nb : non horizontable barcode might not be usable because of pixelisation
+
+        $code     = '123456789012'; // barcode, of course ;)
+        $type     = 'ean13';
+
+        // -------------------------------------------------- //
+        //                    USEFUL
+        // -------------------------------------------------- //
+
+        function drawCross($im, $color, $x, $y){
+            imageline($im, $x - 10, $y, $x + 10, $y, $color);
+            imageline($im, $x, $y- 10, $x, $y + 10, $color);
         }
 
-        return response()->json(['info' => 'finished']);
+        // -------------------------------------------------- //
+        //            ALLOCATE GD RESSOURCE
+        // -------------------------------------------------- //
+        $im     = imagecreatetruecolor(300, 300);
+        $black  = ImageColorAllocate($im,0x00,0x00,0x00);
+        $white  = ImageColorAllocate($im,0xff,0xff,0xff);
+        $red    = ImageColorAllocate($im,0xff,0x00,0x00);
+        $blue   = ImageColorAllocate($im,0x00,0x00,0xff);
+        imagefilledrectangle($im, 0, 0, 300, 300, $white);
 
-        /*$url_good = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
+        // -------------------------------------------------- //
+        //                      BARCODE
+        // -------------------------------------------------- //
+        $data = \Barcode::gd($im, $black, $x, $y, $angle, $type, array('code'=>$code), $width, $height);
 
-        $url_mercando = 'https://'. env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
 
-        $url_hello = 'https://c17edef9514920c1d2a6aeaf9066b150:afc86df7e11dcbe0ab414fa158ac1767@mall-hello.myshopify.com';  // api hello
-        $id_m = 276171980843;
-        $id_g = 239272853541;
-        $id_h = 5960597121;
+        // -------------------------------------------------- //
+        //                        HRI
+        // -------------------------------------------------- //
+        if ( isset($font) ){
+            $box = imagettfbbox($fontSize, 0, $font, $data['hri']);
+            $len = $box[2] - $box[0];
+            \Barcode::rotate(-$len / 2, ($data['height'] / 2) + $fontSize + $marge, $angle, $xt, $yt);
+            imagettftext($im, $fontSize, $angle, $x + $xt, $y + $yt, $blue, $font, $data['hri']);
+        }
+        // -------------------------------------------------- //
+        //                     ROTATE
+        // -------------------------------------------------- //
+        // Beware ! the rotate function should be use only with right angle
+        // Remove the comment below to see a non right rotation
+        /** /
+        $rot = imagerotate($im, 45, $white);
+        imagedestroy($im);
+        $im     = imagecreatetruecolor(900, 300);
+        $black  = ImageColorAllocate($im,0x00,0x00,0x00);
+        $white  = ImageColorAllocate($im,0xff,0xff,0xff);
+        $red    = ImageColorAllocate($im,0xff,0x00,0x00);
+        $blue   = ImageColorAllocate($im,0x00,0x00,0xff);
+        imagefilledrectangle($im, 0, 0, 900, 300, $white);
 
-        $client = GuzzleHttp::client();
+        // Barcode rotation : 90�
+        $angle = 90;
+        $data = Barcode::gd($im, $black, $x, $y, $angle, $type, array('code'=>$code), $width, $height);
+        Barcode::rotate(-$len / 2, ($data['height'] / 2) + $fontSize + $marge, $angle, $xt, $yt);
+        imagettftext($im, $fontSize, $angle, $x + $xt, $y + $yt, $blue, $font, $data['hri']);
+        imagettftext($im, 10, 0, 60, 290, $black, $font, 'BARCODE ROTATION : 90�');
 
-        $r = $client->request('get', $url_mercando . '/admin/customers/search.json?query=email:oscar.fonseca.castro@gmail.com');
-        $result = json_decode($r->getBody(), true);
+        // barcode rotation : 135
+        $angle = 135;
+        Barcode::gd($im, $black, $x+300, $y, $angle, $type, array('code'=>$code), $width, $height);
+        Barcode::rotate(-$len / 2, ($data['height'] / 2) + $fontSize + $marge, $angle, $xt, $yt);
+        imagettftext($im, $fontSize, $angle, $x + 300 + $xt, $y + $yt, $blue, $font, $data['hri']);
+        imagettftext($im, 10, 0, 360, 290, $black, $font, 'BARCODE ROTATION : 135�');
 
-        $send = [
-            'form_params' => [
-                'gift_card' => [
-                    "note" => "This is a note",
-                    "initial_value" => 1000,
-                    "template_suffix" => "gift_cards.birthday.liquid",
-                    "currency" => "COP",
-                    "customer_id" => $result['customers'][0]['id'],
-                    "expires_on" => Carbon::now()->addMonth()
-                ]
-            ]
-        ];
+        // last one : image rotation
+        imagecopy($im, $rot, 580, -50, 0, 0, 300, 300);
+        imagerectangle($im, 0, 0, 299, 299, $black);
+        imagerectangle($im, 299, 0, 599, 299, $black);
+        imagerectangle($im, 599, 0, 899, 299, $black);
+        imagettftext($im, 10, 0, 690, 290, $black, $font, 'IMAGE ROTATION');
+        /**/
 
-        try {
+        // -------------------------------------------------- //
+        //                    MIDDLE AXE
+        // -------------------------------------------------- //
+        imageline($im, $x, 0, $x, 250, $red);
+        imageline($im, 0, $y, 250, $y, $red);
 
-            $response = $client->request('post', $url_mercando . '/admin/gift_cards.json', $send);
-
-            $headers = $response->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-            $x = explode('/', $headers[0]);
-            $diferencia = $x[1] - $x[0];
-
-            if ($diferencia < 10) {
-                usleep(500000);
-
-            }
-
-            $result = json_decode($response->getBody(), true);
-
-            return $result['gift_card'];
-
-        } catch (ClientException $e) {
-
-            if ($e->hasResponse()) {
-
-                return $e->getResponse()->getBody();
-
-            }
-        }*/
-        /*ini_set('memory_limit', '512M');
-
-        Commissions::assign_without_type();
-
-        $terceros = Commissions::assign_with_type();
-
-        foreach ($terceros as $tercero) {
-
-            Commissions::change_type($tercero->id);
-            Commissions::junior_prime($tercero->id);
-            Commissions::senior_prime($tercero->id);
-            Commissions::master_prime($tercero->id);
-
+        // -------------------------------------------------- //
+        //                  BARCODE BOUNDARIES
+        // -------------------------------------------------- //
+        for($i=1; $i<5; $i++){
+            drawCross($im, $blue, $data['p'.$i]['x'], $data['p'.$i]['y']);
         }
 
-        return response()->json(['msg' => 'hecho']);*/
-    }
-
-    public function contador_uno() {
-        $api_url_good = 'https://' . env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
-        $api_url_mercando = 'https://' . env('API_KEY_MERCANDO') . ':' . env('API_PASSWORD_MERCANDO') . '@' . env('API_SHOP_MERCANDO');
-        $client = new \GuzzleHttp\Client();
-
-        //$terceros = Tercero::all();
-
-        $terceros = DB::table('terceros')->whereNotIn('id', function($q) {
-                    $q->select('tercero_id')->from('terceros_tiendas');
-                })->get();
-
-        foreach ($terceros as $tercero) {
-
-            $res_good = $client->request('GET', $api_url_good . '/admin/customers/search.json?query=email:' . $tercero->email);
-            $headers = $res_good->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-            $x = explode('/', $headers[0]);
-            $diferencia = $x[1] - $x[0];
-
-            if ($diferencia < 20) {
-
-                usleep(20000000);
-            }
-
-            $results_good = json_decode($res_good->getBody(), true);
-
-            if (count($results_good['customers']) > 0) {
+        // -------------------------------------------------- //
+        //                    GENERATE
+        // -------------------------------------------------- //
+        header('Content-type: image/gif');
+        imagegif($im);
+        return imagedestroy($im);
 
 
-                $res_mercando = $client->request('GET', $api_url_mercando . '/admin/customers/search.json?query=email:' . $tercero->email);
-
-                $headers = $res_mercando->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                $x = explode('/', $headers[0]);
-                $diferencia = $x[1] - $x[0];
-
-                if ($diferencia < 20) {
-
-                    usleep(20000000);
-                }
-
-                $results_mercando = json_decode($res_mercando->getBody(), true);
-
-                if (count($results_mercando['customers']) > 0) {
-
-                    /* $a = DB::table('terceros_tiendas')
-                      ->where('tercero_id', $tercero->id)
-                      ->where('customer_id_good', $results_good['customers'][0]['id'])
-                      ->where('customer_id_mercando', $results_mercando['customers'][0]['id'])
-                      ->first();
-
-                      if (count($a) == 0) {
-
-                      DB::table('terceros_tiendas')->insertGetId(
-                      [
-                      'tercero_id' => $tercero->id,
-                      'customer_id_good' =>  $results_good['customers'][0]['id'],
-                      'customer_id_mercando' => $results_mercando['customers'][0]['id'],
-                      ]
-                      );
-                      }
-
-                      try {
-                      $res = $client->request('put', $api_url_mercando . '/admin/customers/'. $results_mercando['customers'][0]['id'] .'.json', array(
-                      'form_params' => array(
-                      'customer' => array(
-                      "email" => $tercero->email,
-                      )
-                      )
-                      )
-                      );
-
-                      $headers =  $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                      $x = explode('/', $headers[0]);
-                      $diferencia = $x[1] - $x[0];
-                      if ($diferencia < 20) {
-                      usleep(10000000);
-                      }
-
-                      } catch (ClientException $e) {
-
-                      if ($e->hasResponse()) {
-
-
-                      }
-                      } */
-
-                    continue;
-                } else {
-
-                    try {
-
-                        $res = $client->request('post', $api_url_mercando . '/admin/customers.json', array(
-                            'form_params' => array(
-                                'customer' => array(
-                                    'first_name' => strtolower($results_good['customers'][0]['first_name']),
-                                    'last_name' => strtolower($results_good['customers'][0]['last_name']),
-                                    'email' => strtolower($results_good['customers'][0]['email']),
-                                    'verified_email' => true,
-                                    'phone' => $results_good['customers'][0]['phone'],
-                                    'addresses' => [
-                                        $results_good['customers'][0]['addresses'],
-                                    ],
-                                    "password" => $tercero->identificacion,
-                                    "password_confirmation" => $tercero->identificacion,
-                                    'send_email_invite' => false,
-                                    'send_email_welcome' => false
-                                )
-                            )
-                                )
-                        );
-
-                        $headers = $res->getHeaders()['X-Shopify-Shop-Api-Call-Limit'];
-                        $x = explode('/', $headers[0]);
-                        $diferencia = $x[1] - $x[0];
-
-                        if ($diferencia < 20) {
-
-                            usleep(20000000);
-                        }
-
-                        $customer = json_decode($res->getBody(), true);
-
-                        $b = DB::table('terceros_tiendas')
-                                ->where('tercero_id', $tercero->id)
-                                ->where('customer_id_good', $results_good['customers'][0]['id'])
-                                ->where('customer_id_mercando', $customer['customer']['id'])
-                                ->first();
-
-                        if (count($b) == 0) {
-                            DB::table('terceros_tiendas')->insertGetId(
-                                    [
-                                        'tercero_id' => $tercero->id,
-                                        'customer_id_good' => $results_good['customers'][0]['id'],
-                                        'customer_id_mercando' => $customer['customer']['id'],
-                                    ]
-                            );
-                        }
-                    } catch (ClientException $e) {
-
-                        if ($e->hasResponse()) {
-                            
-                        }
-                    }
-                }
-            }
-        }
     }
 
     public function news()
