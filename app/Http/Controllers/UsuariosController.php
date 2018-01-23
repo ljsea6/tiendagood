@@ -396,7 +396,7 @@ class UsuariosController extends Controller {
 
         $terceros = DB::table('terceros')->where('identificacion', strtolower($request->dni))->select('id', 'state')->first();       
 
-        return count($terceros);
+
 
         if(count($terceros) == 0){
 
@@ -548,9 +548,13 @@ class UsuariosController extends Controller {
 
     if(count($terceros) == 0){
 
+        echo 'hola, entré';
+
         if (count($padre) > 0 ) {
 
             if ($padre->tipo_cliente_id == 83 && $padre->state == true) {
+
+                echo 'hola, padre activo';
 
                 $result = DB::table('terceros_networks')
                     ->where('customer_id', $usuario->id)
@@ -570,6 +574,8 @@ class UsuariosController extends Controller {
                 }
 
             } else {
+
+                echo 'hola, padre inactivo';
 
                 $result = DB::table('terceros_networks')
                     ->where('customer_id', $usuario->id)
@@ -591,6 +597,8 @@ class UsuariosController extends Controller {
             }
 
         } else {
+
+            echo 'hola, padre no existe';
 
             $result = DB::table('terceros_networks')
                 ->where('customer_id', $usuario->id)
