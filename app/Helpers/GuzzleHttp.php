@@ -9,6 +9,7 @@
 namespace App\Helpers;
 
 
+use GuzzleHttp\Exception\ClientException;
 class GuzzleHttp
 {
     public static function client()
@@ -57,11 +58,11 @@ class GuzzleHttp
                     self::cambio_usario($api, $id, $data, 'put');
                 }
                 else{
-                    self::cambio($api, $id, $data);
+                    self::cambio_usario($api, $id, $data);
                 }                   
             }
             if($metodo == 'ingresar'){ 
-                self::cambio($api, $id, $data, 'post');
+                self::cambio_usario($api, $id, $data, 'post');
             }
 
         } catch (ClientException $e) {
