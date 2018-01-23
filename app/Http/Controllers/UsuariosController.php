@@ -558,7 +558,7 @@ class UsuariosController extends Controller {
 
                 if (count($result) == 0) {
 
-                    BD::table('terceros_networks')->insert([
+                    DB::table('terceros_networks')->insert([
                         'customer_id' => $usuario->id,
                         'network_id' => 1,
                         'padre_id' => $padre->id,
@@ -577,7 +577,7 @@ class UsuariosController extends Controller {
 
                 if (count($result) == 0) {
 
-                    BD::table('terceros_networks')->insert([
+                    DB::table('terceros_networks')->insert([
                         'customer_id' => $usuario->id,
                         'network_id' => 1,
                         'padre_id' => 1,
@@ -598,7 +598,7 @@ class UsuariosController extends Controller {
 
             if (count($result) == 0) {
 
-                BD::table('terceros_networks')->insert([
+                DB::table('terceros_networks')->insert([
                     'customer_id' => $usuario->id,
                     'network_id' => 1,
                     'padre_id' => 1,
