@@ -617,7 +617,7 @@ class UsuariosController extends Controller {
                 ]);
             }
         }
-exit;
+
         if (count($usuario) > 0) {
 
             $api_url = 'https://'. env('API_KEY_SHOPIFY') . ':' . env('API_PASSWORD_SHOPIFY') . '@' . env('API_SHOP');
