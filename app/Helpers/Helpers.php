@@ -22,6 +22,18 @@ class Helpers {
             $m->to($user->email, $user->name)->subject($msg);
         });
     }
+
+    public static function mailing($view, $user, $msg, $bonuses)
+    {
+        Mail::send($view, [
+            'user' => $user,
+            'msg' => $msg,
+            'bonuses' => $bonuses
+        ], function ($m)  use ($user, $msg) {
+            $m->from('info@tiendagood.com', 'Tienda Good');
+            $m->to('ljsea6@gmail.com', $user->name)->subject($msg);
+        });
+    }
 }
 
 

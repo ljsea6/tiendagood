@@ -245,4 +245,23 @@ class Points
         return $total;
     }
 
+    public static function commissions($id)
+    {
+        $commissions = DB::select(
+            DB::raw(
+                "
+                SELECT t.id as tercero_id, t.nombres as nombres, t2.nombre as tipo, r.id as regla, rd.id as detalle, rd.nivel as nivel, rd.comision_puntos as comision
+                FROM terceros t
+                  INNER JOIN tipos t2 ON t.tipo_id = t2.id
+                  INNER JOIN rules r ON t2.id = r.tipo_id
+                  INNER JOIN rules_details rd ON r.id = rd.rule_id
+                WHERE t.id = '$id' AND t.state = TRUE;
+            "
+            )
+        );
+
+        return $commissions;
+    }
+
+
 }

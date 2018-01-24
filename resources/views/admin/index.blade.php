@@ -118,7 +118,8 @@
 
                   <td>#{{$uno}} <span class="fa fa-user" aria-hidden="true"></span></td> 
                   <td>{{ number_format($points_level_1) }}  Pts</td> 
-                  <td>$ 0</td>
+                  <td style="transform: translateY(10px)">$ {{ number_format($saldo_uno) }}
+                  </td>
                   </a>
                </tr>
                <tr onclick="link(2)">
@@ -128,8 +129,9 @@
                      </div>
                   </td>
                   <td>#{{$dos}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>{{ number_format($points_level_2) }}  Pts</td> 
-                  <td>$ 0</td>
+                  <td>{{ number_format($points_level_2) }}  Pts</td>
+                  <td style="transform: translateY(10px)">$ {{ number_format($saldo_dos) }}
+                  </td>
                </tr>
                <tr onclick="link(3)">
                   <td>
@@ -138,11 +140,17 @@
                      </div>
                   </td>
                   <td>#{{$tres}} <span class="fa fa-user" aria-hidden="true"></span></td>
-                  <td>{{ number_format($points_level_3) }}  Pts</td> 
-                  <td>$ 0</td>
+                  <td>{{ number_format($points_level_3) }}  Pts</td>
+                  <td style="transform: translateY(10px)">$ {{ number_format($saldo_tres) }}
+                  </td>
                </tr>
+
             </tbody>
-         </table><br><br><br>
+         </table><br>
+
+         <span style="font-size: 15px; display: block; color: #fd950c; font-weight: bold" >¡Los valore corresponde a las compras brutas de sus referidos, puede variar en la liquidación!</span>
+         <br><br><br>
+
       </div>
    </div>
 </div>

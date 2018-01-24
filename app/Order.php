@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Code;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use App\Entities\Tercero;
@@ -185,5 +186,10 @@ class Order extends Model
             'shop' => 'duplicado',
             'tercero_id' => $order['tercero_id']
         ]);
+    }
+
+    public function codes()
+    {
+        return $this->hasMany(Code::class, 'order_id');
     }
 }

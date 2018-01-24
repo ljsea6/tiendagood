@@ -4,6 +4,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helpers;
+use App\Code;
 use App\LiquidacionTercero;
 use App\Helpers\Orders;
 use App\Helpers\Commissions;
@@ -3381,118 +3383,100 @@ class OrdersController extends Controller {
     public function contador()
     {
 
+        $info = DB::select(
+            DB::raw(
+                "
+                SELECT t.id as user_id, t.nombres, t.apellidos, t.email, o.id, o.name, o.order_id ,(lt.quantity * 4) as quantity
+                FROM  lineitems lt
+                  INNER JOIN orders o ON lt.order_name = o.name AND o.shop = 'good' AND o.financial_status = 'paid' AND o.cancelled_at ISNULL
+                  INNER JOIN terceros t ON o.tercero_id = t.id
+                WHERE  lt.variant_id = 5011999162405 AND lt.product_id = 425003843621 AND lt.shop = 'good';
+                "
+            )
+        );
 
-        // -------------------------------------------------- //
-        //                  PROPERTIES
-        // -------------------------------------------------- //
+        foreach ($info  as $order) {
 
-        // download a ttf font here for example : http://www.dafont.com/fr/nottke.font
-        //$font     = './NOTTB___.TTF';
-        // - -
+            $find = Order::with('codes')->find($order->id);
 
-        $fontSize = 10;   // GD1 in px ; GD2 in point
-        $marge    = 10;   // between barcode and hri in pixel
-        $x        = 125;  // barcode center
-        $y        = 125;  // barcode center
-        $height   = 50;   // barcode height in 1D ; module size in 2D
-        $width    = 2;    // barcode height in 1D ; not use in 2D
-        $angle    = 90;   // rotation in degrees : nb : non horizontable barcode might not be usable because of pixelisation
+            if (count($find->codes) < (int)$order->quantity) {
 
-        $code     = '123456789012'; // barcode, of course ;)
-        $type     = 'ean13';
+                if (count($find->codes) == 0) {
 
-        // -------------------------------------------------- //
-        //                    USEFUL
-        // -------------------------------------------------- //
+                    for ($i = 1; $i <= (int)$order->quantity; $i++) {
 
-        function drawCross($im, $color, $x, $y){
-            imageline($im, $x - 10, $y, $x + 10, $y, $color);
-            imageline($im, $x, $y- 10, $x, $y + 10, $color);
+                        $c = DB::select(
+                            DB::raw(
+                                "
+                                SELECT id
+                                FROM codes
+                                WHERE state = FALSE
+                                AND burned_at ISNULL
+                                ORDER BY id ASC LIMIT 1;
+                                "
+                            )
+                        );
+
+                        $update = Code::find($c[0]->id);
+                        $update->order_id = $order->id;
+                        $update->state = true;
+                        $update->burned_at = Carbon::now();
+                        $update->save();
+
+                        if ($update) {
+
+                            $user = Tercero::find($order->user_id);
+
+                            Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', 111111111111);
+                        }
+
+
+                        return 'email envialdo';
+
+                    }
+                }
+
+                if (count($find->codes) > 0 && count($find->codes) < (int)$order->quantity) {
+
+                    $diff = (int)$order->quantity - count($find->codes);
+
+                    for ($i = 1; $i <= (int)$diff; $i++) {
+
+                        $c = DB::select(
+                            DB::raw(
+                                "
+                                SELECT id
+                                FROM codes
+                                WHERE state = FALSE
+                                AND burned_at ISNULL
+                                ORDER BY id ASC LIMIT 1;
+                                "
+                            )
+                        );
+
+                        $update = Code::find($c[0]->id);
+                        $update->order_id = $order->id;
+                        $update->state = true;
+                        $update->burned_at = Carbon::now();
+                        $update->save();
+
+                        if ($update) {
+
+                            $user = Tercero::find($order->user_id);
+
+                            Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', 111111111111);
+                        }
+
+
+                        return 'email envialdo';
+                    }
+                }
+            }
+
         }
 
-        // -------------------------------------------------- //
-        //            ALLOCATE GD RESSOURCE
-        // -------------------------------------------------- //
-        $im     = imagecreatetruecolor(300, 300);
-        $black  = ImageColorAllocate($im,0x00,0x00,0x00);
-        $white  = ImageColorAllocate($im,0xff,0xff,0xff);
-        $red    = ImageColorAllocate($im,0xff,0x00,0x00);
-        $blue   = ImageColorAllocate($im,0x00,0x00,0xff);
-        imagefilledrectangle($im, 0, 0, 300, 300, $white);
 
-        // -------------------------------------------------- //
-        //                      BARCODE
-        // -------------------------------------------------- //
-        $data = \Barcode::gd($im, $black, $x, $y, $angle, $type, array('code'=>$code), $width, $height);
-
-
-        // -------------------------------------------------- //
-        //                        HRI
-        // -------------------------------------------------- //
-        if ( isset($font) ){
-            $box = imagettfbbox($fontSize, 0, $font, $data['hri']);
-            $len = $box[2] - $box[0];
-            \Barcode::rotate(-$len / 2, ($data['height'] / 2) + $fontSize + $marge, $angle, $xt, $yt);
-            imagettftext($im, $fontSize, $angle, $x + $xt, $y + $yt, $blue, $font, $data['hri']);
-        }
-        // -------------------------------------------------- //
-        //                     ROTATE
-        // -------------------------------------------------- //
-        // Beware ! the rotate function should be use only with right angle
-        // Remove the comment below to see a non right rotation
-        /** /
-        $rot = imagerotate($im, 45, $white);
-        imagedestroy($im);
-        $im     = imagecreatetruecolor(900, 300);
-        $black  = ImageColorAllocate($im,0x00,0x00,0x00);
-        $white  = ImageColorAllocate($im,0xff,0xff,0xff);
-        $red    = ImageColorAllocate($im,0xff,0x00,0x00);
-        $blue   = ImageColorAllocate($im,0x00,0x00,0xff);
-        imagefilledrectangle($im, 0, 0, 900, 300, $white);
-
-        // Barcode rotation : 90�
-        $angle = 90;
-        $data = Barcode::gd($im, $black, $x, $y, $angle, $type, array('code'=>$code), $width, $height);
-        Barcode::rotate(-$len / 2, ($data['height'] / 2) + $fontSize + $marge, $angle, $xt, $yt);
-        imagettftext($im, $fontSize, $angle, $x + $xt, $y + $yt, $blue, $font, $data['hri']);
-        imagettftext($im, 10, 0, 60, 290, $black, $font, 'BARCODE ROTATION : 90�');
-
-        // barcode rotation : 135
-        $angle = 135;
-        Barcode::gd($im, $black, $x+300, $y, $angle, $type, array('code'=>$code), $width, $height);
-        Barcode::rotate(-$len / 2, ($data['height'] / 2) + $fontSize + $marge, $angle, $xt, $yt);
-        imagettftext($im, $fontSize, $angle, $x + 300 + $xt, $y + $yt, $blue, $font, $data['hri']);
-        imagettftext($im, 10, 0, 360, 290, $black, $font, 'BARCODE ROTATION : 135�');
-
-        // last one : image rotation
-        imagecopy($im, $rot, 580, -50, 0, 0, 300, 300);
-        imagerectangle($im, 0, 0, 299, 299, $black);
-        imagerectangle($im, 299, 0, 599, 299, $black);
-        imagerectangle($im, 599, 0, 899, 299, $black);
-        imagettftext($im, 10, 0, 690, 290, $black, $font, 'IMAGE ROTATION');
-        /**/
-
-        // -------------------------------------------------- //
-        //                    MIDDLE AXE
-        // -------------------------------------------------- //
-        imageline($im, $x, 0, $x, 250, $red);
-        imageline($im, 0, $y, 250, $y, $red);
-
-        // -------------------------------------------------- //
-        //                  BARCODE BOUNDARIES
-        // -------------------------------------------------- //
-        for($i=1; $i<5; $i++){
-            drawCross($im, $blue, $data['p'.$i]['x'], $data['p'.$i]['y']);
-        }
-
-        // -------------------------------------------------- //
-        //                    GENERATE
-        // -------------------------------------------------- //
-        header('Content-type: image/gif');
-        imagegif($im);
-        return imagedestroy($im);
-
-
+        return 'Hecho';
     }
 
     public function news()

@@ -299,37 +299,6 @@ class AdminController extends Controller {
 
     public function index() {
 
-        /*$level_uno = 0;
-        $level_dos = 0;
-        $level_tres = 0;
-
-        $points_level_1 = 0;
-        $points_level_2 = 0;
-        $points_level_3 = 0;
-        $my_points = 0;
-
-        $uno = DB::table('terceros as t')
-                ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
-                ->where('tk.padre_id', currentUser()->id)
-                ->where('t.tipo_cliente_id', '!=', 85)
-                ->where('t.state', true)
-                ->select('t.id', 't.email')
-                ->get();
-
-        $results = array();
-
-        $puntos_propios = DB::table('orders')
-                ->whereRaw("tercero_id = " . currentUser()->id . " AND financial_status = 'paid' AND cancelled_at IS NULL AND comisionada IS NULL AND liquidacion_id IS NULL")
-                ->selectRaw('COALESCE(SUM(points),0) as puntos')
-                ->value('puntos');
-
-        $puntos_amparados = DB::table('orders')
-                ->join('terceros_networks as tn', 'orders.tercero_id', '=', 'tn.customer_id')
-                ->join('terceros as t', 'orders.tercero_id', '=', 't.id')
-                ->whereRaw("tn.padre_id = " . currentUser()->id . " AND t.tipo_cliente_id = 85 AND financial_status = 'paid' AND cancelled_at IS NULL AND comisionada IS NULL AND liquidacion_id IS NULL")
-                ->selectRaw('COALESCE(SUM(points),0) as puntos')
-                ->value('puntos');*/
-
         $my_points = Points::count_own_points(currentUser()->id);
         $points_level_1 = Points::points_by_level(currentUser()->id, 1);
         $points_level_2 = Points::points_by_level(currentUser()->id, 2);
@@ -338,89 +307,32 @@ class AdminController extends Controller {
         $level_dos = count(Points::terceros_by_level(currentUser()->id, 2));
         $level_tres = count(Points::terceros_by_level(currentUser()->id, 3));
 
-        /*if (count($uno) > 0) {
+        $saldo_uno = 0;
+        $saldo_dos = 0;
+        $saldo_tres = 0;
 
-            $level_uno = $level_uno + count($uno);
+        $commissions = Points::commissions(currentUser()->id);
 
-            foreach ($uno as $n) {
+        if (count($commissions) > 0) {
 
-                $puntos_propios1 = DB::table('orders')
-                        ->whereRaw("tercero_id = " . $n->id . " AND financial_status = 'paid' AND cancelled_at IS NULL AND comisionada IS NULL AND liquidacion_id IS NULL")
-                        ->selectRaw('COALESCE(SUM(points),0) as puntos')
-                        ->value('puntos');
+            foreach ($commissions as $commission) {
 
-                $puntos_amparados1 = DB::table('orders')
-                        ->join('terceros_networks as tn', 'orders.tercero_id', '=', 'tn.customer_id')
-                        ->join('terceros as t', 'orders.tercero_id', '=', 't.id')
-                        ->whereRaw("tn.padre_id = " . $n->id . " AND t.tipo_cliente_id = 85 AND financial_status = 'paid' AND cancelled_at IS NULL AND comisionada IS NULL AND liquidacion_id IS NULL")
-                        ->selectRaw('COALESCE(SUM(points),0) as puntos')
-                        ->value('puntos');
+                if ((int)$commission->nivel == 1) {
 
-                $points_level_1 += $puntos_propios1 + $puntos_amparados1;
+                    $saldo_uno = $saldo_uno + ((int)$points_level_1 * (int)$commission->comision);
 
-                $dos = DB::table('terceros as t')
-                        ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
-                        ->where('tk.padre_id', $n->id)
-                        ->where('t.tipo_cliente_id', '!=', 85)
-                        ->where('t.state', true)
-                        ->select('t.id', 't.email')
-                        ->get();
+                }
 
-                if (count($dos) > 0) {
+                if ((int)$commission->nivel == 2) {
+                    $saldo_dos = $saldo_dos + ((int)$points_level_2 * (int)$commission->comision);
+                }
 
-                    $level_dos = $level_dos + count($dos);
-
-                    foreach ($dos as $d) {
-
-                        $puntos_propios2 = DB::table('orders')
-                                ->whereRaw("tercero_id = " . $d->id . " AND financial_status = 'paid' AND cancelled_at IS NULL AND comisionada IS NULL AND liquidacion_id IS NULL")
-                                ->selectRaw('COALESCE(SUM(points),0) as puntos')
-                                ->value('puntos');
-
-                        $puntos_amparados2 = DB::table('orders')
-                                ->join('terceros_networks as tn', 'orders.tercero_id', '=', 'tn.customer_id')
-                                ->join('terceros as t', 'orders.tercero_id', '=', 't.id')
-                                ->whereRaw("tn.padre_id = " . $d->id . " AND t.tipo_cliente_id = 85 AND financial_status = 'paid' AND cancelled_at IS NULL AND comisionada IS NULL AND liquidacion_id IS NULL")
-                                ->selectRaw('COALESCE(SUM(points),0) as puntos')
-                                ->value('puntos');
-
-                        $points_level_2 += $puntos_propios2 + $puntos_amparados2;
-
-                        $tres = DB::table('terceros as t')
-                                ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
-                                ->where('tk.padre_id', $d->id)
-                                ->where('t.tipo_cliente_id', '!=', 85)
-                                ->where('t.state', true)
-                                ->select('t.id', 't.email')
-                                ->get();
-
-                        if (count($tres) > 0) {
-
-                            $level_tres = $level_tres + count($tres);
-
-                            foreach ($tres as $t) {
-
-                                $puntos_propios3 = DB::table('orders')
-                                        ->whereRaw("tercero_id = " . $t->id . " AND financial_status = 'paid' AND cancelled_at IS NULL AND comisionada IS NULL AND liquidacion_id IS NULL")
-                                        ->selectRaw('COALESCE(SUM(points),0) as puntos')
-                                        ->value('puntos');
-
-                                $puntos_amparados3 = DB::table('orders')
-                                        ->join('terceros_networks as tn', 'orders.tercero_id', '=', 'tn.customer_id')
-                                        ->join('terceros as t', 'orders.tercero_id', '=', 't.id')
-                                        ->whereRaw("tn.padre_id = " . $t->id . " AND t.tipo_cliente_id = 85 AND financial_status = 'paid' AND cancelled_at IS NULL AND comisionada IS NULL AND liquidacion_id IS NULL")
-                                        ->selectRaw('COALESCE(SUM(points),0) as puntos')
-                                        ->value('puntos');
-
-                                $points_level_3 += $puntos_propios3 + $puntos_amparados3;
-
-                                array_push($results, $t);
-                            }
-                        }
-                    }
+                if ((int)$commission->nivel == 2) {
+                    $saldo_tres = $saldo_tres + ((int)$points_level_3 * (int)$commission->comision);
                 }
             }
-        }*/
+
+        }
 
         $send = Tercero::with('cliente', 'levels', 'networks', 'primes', 'tipo')->find(currentUser()->id);
         $patrocinador = '';
@@ -455,7 +367,7 @@ class AdminController extends Controller {
         return view('admin.index')->with(['send' => $send, 'uno' => $level_uno, 'dos' => $level_dos, 'tres' => $level_tres,
                     'points_level_1' => $points_level_1, 'points_level_2' => $points_level_2, 'points_level_3' => $points_level_3,
                     'my_points' => $my_points, 'nombre_completo' => $nombre_completo, 'email' => $email, 'telefono' => $telefono,
-                    'fecha_inicio' => $fecha_inicio, 'fecha_final' => $fecha_final, 'tipo_nombre' => $send->tipo['nombre']]);
+                    'fecha_inicio' => $fecha_inicio, 'fecha_final' => $fecha_final, 'tipo_nombre' => $send->tipo['nombre'], 'saldo_uno' => $saldo_uno, 'saldo_dos' => $saldo_dos, 'saldo_tres' => $saldo_tres]);
     }
 
     public function carga() {
@@ -553,25 +465,7 @@ class AdminController extends Controller {
 
             if ($request->level == 1) {
 
-
                 $results = Terceros::terceros_by_level(currentUser()->id, 1);
-
-
-                /*$total_referidos = DB::raw('(SELECT COUNT(1) FROM terceros_networks tn INNER JOIN terceros t ON tn.customer_id = t.id AND t.tipo_cliente_id <> 85 WHERE tn.padre_id = t.id) as referidos');
-
-                $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
-                (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
-      JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
-      JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
-      WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
-
-                $results = DB::table('terceros as t')
-                        ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
-                        ->where('tk.padre_id', $request->id)
-                        ->where('t.state', true)
-                        ->where('t.tipo_cliente_id', '!=', 85)
-                        ->select('t.id', 't.nombres', 't.apellidos', $puntos, $total_referidos)
-                        ->get();*/
 
                 $send = collect($results);
 
@@ -609,43 +503,6 @@ class AdminController extends Controller {
 
                 $results = Terceros::terceros_by_level(currentUser()->id, 2);
 
-                /*$total_referidos = DB::raw('(SELECT COUNT(1) FROM terceros_networks tn INNER JOIN terceros t ON tn.customer_id = t.id AND t.tipo_cliente_id <> 85 WHERE tn.padre_id = t.id) as referidos');
-
-                $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
-                (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
-      JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
-      JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
-      WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
-
-                $uno = DB::table('terceros as t')
-                        ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
-                        ->where('tk.padre_id', $request->id)
-                        ->where('t.state', true)
-                        ->select('t.id')
-                        ->get();
-
-                $results = array();
-
-                if (count($uno) > 0) {
-
-                    foreach ($uno as $n) {
-
-                        $dos = DB::table('terceros as t')
-                                ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
-                                ->where('tk.padre_id', $n->id)
-                                ->where('t.state', true)
-                                ->select('t.id', 't.nombres', 't.apellidos', $puntos, $total_referidos)
-                                ->get();
-
-                        if (count($dos) > 0) {
-
-                            foreach ($dos as $d) {
-                                array_push($results, $d);
-                            }
-                        }
-                    }
-                }*/
-
                 $send = collect($results);
 
                 return Datatables::of($send)
@@ -681,57 +538,6 @@ class AdminController extends Controller {
             if ($request->level == 3) {
 
                 $results = Terceros::terceros_by_level(currentUser()->id, 3);
-
-                /*$total_referidos = DB::raw('(SELECT COUNT(1) FROM terceros_networks tn INNER JOIN terceros t ON tn.customer_id = t.id AND t.tipo_cliente_id <> 85 WHERE tn.padre_id = t.id) as referidos');
-
-                $puntos = DB::raw("(SELECT COALESCE(SUM(o.points),0) FROM orders o WHERE o.tercero_id = t.id AND o.financial_status = 'paid' AND o.cancelled_at IS NULL AND o.comisionada IS NULL AND o.liquidacion_id IS NULL) + 
-                (SELECT COALESCE(SUM(oa.points), 0) FROM orders oa
-      JOIN terceros_networks tn ON oa.tercero_id = tn.customer_id
-      JOIN terceros t1 ON oa.tercero_id = t1.id AND t1.tipo_cliente_id = 85 AND tn.padre_id = t.id
-      WHERE oa.financial_status = 'paid' AND oa.cancelled_at IS NULL AND oa.comisionada IS NULL AND oa.liquidacion_id IS NULL) AS puntos");
-
-                $uno = DB::table('terceros as t')
-                        ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
-                        ->where('tk.padre_id', $request->id)
-                        ->where('t.state', true)
-                        ->select('t.id')
-                        ->get();
-
-                $results = array();
-
-                if (count($uno) > 0) {
-
-                    foreach ($uno as $n) {
-
-                        $dos = DB::table('terceros as t')
-                                ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
-                                ->where('tk.padre_id', $n->id)
-                                ->where('t.state', true)
-                                ->select('t.id')
-                                ->get();
-
-                        if (count($dos) > 0) {
-
-                            foreach ($dos as $d) {
-
-                                $tres = DB::table('terceros as t')
-                                        ->join('terceros_networks as tk', 'tk.customer_id', '=', 't.id')
-                                        ->where('tk.padre_id', $d->id)
-                                        ->where('t.state', true)
-                                        ->select('t.id', 't.nombres', 't.apellidos', $puntos, $total_referidos)
-                                        ->get();
-
-                                if (count($tres) > 0) {
-
-                                    foreach ($tres as $t) {
-
-                                        array_push($results, $t);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }*/
 
                 $send = collect($results);
 
