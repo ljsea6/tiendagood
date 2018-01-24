@@ -148,7 +148,7 @@
             </tbody>
          </table><br>
 
-         <span style="font-size: 15px; display: block; color: #fd950c; font-weight: bold" >¡Los valore corresponde a las compras brutas de sus referidos, puede variar en la liquidación!</span>
+         <span style="font-size: 15px; display: block; color: #fd950c; font-weight: bold" >¡Los valore corresponden a las compras brutas de sus referidos, pueden variar en la liquidación!</span>
          <br><br><br>
 
       </div>
