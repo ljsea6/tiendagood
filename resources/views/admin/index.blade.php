@@ -39,9 +39,6 @@
       </div>
    </div>
 </div>
-               <img src="{{ asset("barcode/barcode.php?text=0123456789&size=40&codetype=Code39&print=true") }}" />
-               <img src="{{ asset("barcode/barcode.php?text=0123456789&size=40&codetype=Code128&print=true") }}" />
-               <img src="{{ asset("barcode/barcode.php?text=0123456789&size=40&codetype=Codabar&print=true") }}" />
 <div class="col-lg-4 col-md-6 col-sm-6">
    <div class="card card-stats">
       <div class="card-header" data-background-color="blue">
