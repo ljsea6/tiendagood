@@ -32,6 +32,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\SetTransactions::class,
         \App\Console\Commands\Compresion::class,
         \App\Console\Commands\CustomerDisabled::class,
+        \App\Console\Commands\SendBond::class,
     ];
 
     /**

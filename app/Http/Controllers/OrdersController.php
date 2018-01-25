@@ -3382,7 +3382,6 @@ class OrdersController extends Controller {
 
     public function contador()
     {
-
         $info = DB::select(
             DB::raw(
                 "
@@ -3427,12 +3426,10 @@ class OrdersController extends Controller {
 
                             $user = Tercero::find($order->user_id);
 
-                            Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', 111111111111);
+                            Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', 1628767);
                         }
 
-
                         return 'email envialdo';
-
                     }
                 }
 
@@ -3464,17 +3461,14 @@ class OrdersController extends Controller {
 
                             $user = Tercero::find($order->user_id);
 
-                            Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', 111111111111);
+                            Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', 1628767);
                         }
-
 
                         return 'email envialdo';
                     }
                 }
             }
-
         }
-
 
         return 'Hecho';
     }

@@ -616,7 +616,7 @@ class AdminController extends Controller {
 
                             if ($ID_GOOD != 0) {
 
-                                $result = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+                                $result = GiftCard::gift(Good::url(), round($good), $ID_GOOD);
 
 
                                 if ($result == null) {
@@ -624,8 +624,8 @@ class AdminController extends Controller {
                                     return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Tienda Good, pongase en contacto con servicio al cliente.!']);
                                 }
 
-                                $update->bono_good = $good;
-                                $update->bono_mercando = $mercando;
+                                $update->bono_good = round($good);
+                                $update->bono_mercando = round($mercando);
                                 $update->giftcard_good = $result;
                                 $update->giftcard_mercando = null;
                                 $update->save();
@@ -641,7 +641,7 @@ class AdminController extends Controller {
                             if ($ID_MERCANDO != 0) {
 
 
-                                $result = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
+                                $result = GiftCard::gift(Mercando::url(), round($mercando), $ID_MERCANDO);
 
 
                                 if ($result == null) {
@@ -649,8 +649,8 @@ class AdminController extends Controller {
                                     return redirect()->back()->withErrors(['errors' => '¡Lo sentimos, hubo un error al tratar de crear su bono en Mercando, pongase en contacto con servicio al cliente.!']);
                                 }
 
-                                $update->bono_good = $good;
-                                $update->bono_mercando = $mercando;
+                                $update->bono_good = round($good);
+                                $update->bono_mercando = round($mercando);
                                 $update->giftcard_good = null;
                                 $update->giftcard_mercando = $result;
                                 $update->save();
@@ -667,7 +667,7 @@ class AdminController extends Controller {
 
                             if ($ID_GOOD != 0) {
 
-                                $result_g = GiftCard::gift(Good::url(), $good, $ID_GOOD);
+                                $result_g = GiftCard::gift(Good::url(), round($good), $ID_GOOD);
 
 
                                 if ($result_g == null) {
@@ -680,7 +680,7 @@ class AdminController extends Controller {
 
                             if ($ID_MERCANDO != 0) {
 
-                                $result_m = GiftCard::gift(Mercando::url(), $mercando, $ID_MERCANDO);
+                                $result_m = GiftCard::gift(Mercando::url(), round($mercando), $ID_MERCANDO);
 
                                 if ($result_m == null) {
 
@@ -694,8 +694,8 @@ class AdminController extends Controller {
 
                             if ($g == false && $m != false) {
 
-                                $update->bono_good = $good;
-                                $update->bono_mercando = $mercando;
+                                $update->bono_good = round($good);
+                                $update->bono_mercando = round($mercando);
                                 $update->giftcard_good = null;
                                 $update->giftcard_mercando = $result_m;
                                 $update->save();
@@ -706,8 +706,8 @@ class AdminController extends Controller {
 
                             if ($g != false && $m == false) {
 
-                                $update->bono_good = $good;
-                                $update->bono_mercando = $mercando;
+                                $update->bono_good = round($good);
+                                $update->bono_mercando = round($mercando);
                                 $update->giftcard_good = $result_g;
                                 $update->giftcard_mercando = null;
                                 $update->save();
@@ -718,8 +718,8 @@ class AdminController extends Controller {
 
                             if ($g == false && $m == false) {
 
-                                $update->bono_good = $good;
-                                $update->bono_mercando = $mercando;
+                                $update->bono_good = round($good);
+                                $update->bono_mercando = round($mercando);
                                 $update->giftcard_good = null;
                                 $update->giftcard_mercando = null;
                                 $update->save();
@@ -730,8 +730,8 @@ class AdminController extends Controller {
 
                             if ($g != false && $m != false) {
 
-                                $update->bono_good = $good;
-                                $update->bono_mercando = $mercando;
+                                $update->bono_good = round($good);
+                                $update->bono_mercando = round($mercando);
                                 $update->giftcard_good = $result_g;
                                 $update->giftcard_mercando = $result_m;
                                 $update->save();
