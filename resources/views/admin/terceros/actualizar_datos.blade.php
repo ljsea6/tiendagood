@@ -118,8 +118,8 @@ input[type="file"] {display: none;}
                                           <input type="checkbox"  checked disabled  class="form-check-input campo" checked /> 
                                         @else
                                           <input type="checkbox" name="prime"  class="form-check-input"> 
-                                        @endif 
-                                          Activar plan prime  <a href="https://tiendagood.com/products/suscripcion-prime-trimestral" target="_blank">Terminos y condiciones</a>
+                                        @endif
+                                            Adquirir la Suscripción Prime  <a href="https://cdn.shopify.com/s/files/1/2256/3751/files/3._TERMINOS_Y_CONDICIONES_ESPECIALES_PARA_USUARIOS_CON_SUSCRIPCION_PRIME.pdf?9422701949243987383" target="_blank">Terminos y condiciones</a>
                                         </label>
                                     </div>
                                 </div>  

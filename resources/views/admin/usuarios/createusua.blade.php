@@ -300,7 +300,8 @@
                         <div class="form-group">
                             <label class="form-check-label">
                                 <input id="prime" name="prime" class="form-check-input campo" type="checkbox">
-                                Usuario Prime
+                                ¿Quieres ser  suscriptor  Prime?
+                                <a href="https://cdn.shopify.com/s/files/1/2256/3751/files/3._TERMINOS_Y_CONDICIONES_ESPECIALES_PARA_USUARIOS_CON_SUSCRIPCION_PRIME.pdf?9422701949243987383">Términos</a>
                             </label>
                         </div>
 
