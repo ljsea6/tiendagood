@@ -15,6 +15,7 @@ use App\Traits\OrderCancelledMercando;
 use App\Traits\OrderPaid;
 use App\Traits\OrderPaidMercando;
 use App\Helpers\GuzzleHttp;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -42,6 +43,8 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ClientException;
 use App\Traits\Liquidar;
 use App\LiquidacionDetalle;
+use View;
+use App;
 
 
 
@@ -3425,8 +3428,16 @@ class OrdersController extends Controller {
                         if ($update) {
 
                             $user = Tercero::find($order->user_id);
+                            $identificacion = $user->identificacion;
+                            $img = file_get_contents('https://barcode.tec-it.com/barcode.ashx?translate-esc=off&data=00000'. $update->code .'&code=EAN13&multiplebarcodes=false&unit=Fit&dpi=96&imagetype=Png&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0');
+                            file_put_contents(public_path().'/uploads/' . $user->identificacion .'.png', $img);
 
-                            Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', 1628767);
+                            $view =  View::make('emails.mail', compact('identificacion'))->render();
+                            $pdf = App::make('dompdf.wrapper');
+                            $pdf->loadHTML($view);
+                            $pdf->stream('invoice');
+
+                            Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', $update->code, $pdf->stream('invoice'));
                         }
 
                         return 'email envialdo';
@@ -3460,8 +3471,18 @@ class OrdersController extends Controller {
                         if ($update) {
 
                             $user = Tercero::find($order->user_id);
+                            $identificacion = $user->identificacion;
+                            $img = file_get_contents('https://barcode.tec-it.com/barcode.ashx?translate-esc=off&data=00000'. $update->code .'&code=EAN13&multiplebarcodes=false&unit=Fit&dpi=96&imagetype=Png&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0');
+                            file_put_contents(public_path().'/uploads/' . $user->identificacion .'.png', $img);
 
-                            Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', 1628767);
+                            $view =  View::make('emails.mail', compact('identificacion'))->render();
+                            $pdf = App::make('dompdf.wrapper');
+                            $pdf->loadHTML($view);
+                            $pdf->stream('invoice');
+
+                            file_put_contents(public_path().'/uploads/' . $user->identificacion .'.pdf', $pdf->stream('invoice'));
+
+                            Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', $update->code, public_path().'/uploads/' . $user->identificacion .'.pdf');
                         }
 
                         return 'email envialdo';
@@ -3583,6 +3604,48 @@ class OrdersController extends Controller {
         }
 
         return response()->json(['error' => 'Bad request']);
+    }
+
+    public function hola()
+    {
+        $data = [];
+
+        $pdf = PDF::loadView('emails.mail', $data);
+        return $pdf->download('invoice.pdf');
+        //return PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('emails.mail', $data)->stream();
+    }
+
+    public function otra()
+    {
+        $img = file_get_contents('https://barcode.tec-it.com/barcode.ashx?translate-esc=off&data=000001628767&code=EAN13&multiplebarcodes=false&unit=Fit&dpi=96&imagetype=Png&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0');
+        $id = rand(10, 100);
+        file_put_contents(public_path().'/uploads/' . $id .'.png', $img);
+
+        $view =  View::make('emails.mail', compact('id'))->render();
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadHTML($view);
+        //Helpers::mailing();
+        return $pdf->stream('invoice');
+
+
+        //return PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('emails.mail', $data)->stream();
+    }
+
+
+    public function invoice()
+    {
+        return $img = file_get_contents('https://barcode.tec-it.com/barcode.ashx?translate-esc=off&data=000001111111&code=EAN13&multiplebarcodes=false&unit=Fit&dpi=96&imagetype=Png&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0');
+
+        $data = [];
+
+        $html = View::make('emails.mail', []);
+
+        return PDF::loadHTML($html)->stream();
+
+        $pdf = PDF::loadView('emails.mail', $data);
+        return $pdf->download('invoice.pdf');
+        //return PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('emails.mail', $data)->stream();
+
     }
 
 }

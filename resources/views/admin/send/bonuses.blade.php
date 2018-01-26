@@ -86,114 +86,17 @@
     <tr>
         <td style="width: 100%;" align="center" valign="top">
 
-
-            <a class="fullButton downloadButton" href="https://barcode.tec-it.com/barcode.ashx?data=00000{{$bonuses}}&code=EAN13&dpi=96&dataseparator=&download=true" title="Descargar Código" target="_self" download="">
-                <span>Descargar</span>
-            </a>
             <!-- EMPIEZA EL CONTENIDO -->
         <!-- TERMINA EL CONTENIDO -->
         </td>
     </tr>
+    <tr>
+        <td>
+            <a src="{{$path}}" ></a>
+        </td>
+    </tr>
 </table>
 
-<div id="content" style="width: 600px;background-color: orange;">
-    <h2>Table Style 3</h2>
-    <table class="table3">
-        <thead>
-        <tr>
-            <th></th>
-            <th scope="col" abbr="Starter">Smart Starter</th>
-            <th scope="col" abbr="Medium">Smart Medium</th>
-            <th scope="col" abbr="Business">Smart Business</th>
-            <th scope="col" abbr="Deluxe">Smart Deluxe</th>
-        </tr>
-        </thead>
-        <tfoot>
-        <tr>
-            <th scope="row">Price per month</th>
-            <td>$ 2.90</td>
-            <td>$ 5.90</td>
-            <td>$ 9.90</td>
-            <td>$ 14.90</td>
-        </tr>
-        </tfoot>
-        <tbody>
-        <tr>
-            <th scope="row">Storage Space</th>
-            <td>512 MB</td>
-            <td>1 GB</td>
-            <td>2 GB</td>
-            <td>4 GB</td>
-        </tr>
-        <tr>
-            <th scope="row">Bandwidth</th>
-            <td>50 GB</td>
-            <td>100 GB</td>
-            <td>150 GB</td>
-            <td>Unlimited</td>
-        </tr>
-        <tr>
-            <th scope="row">MySQL Databases</th>
-            <td>Unlimited</td>
-            <td>Unlimited</td>
-            <td>Unlimited</td>
-            <td>Unlimited</td>
-        </tr>
-        <tr>
-            <th scope="row">Setup</th>
-            <td>19.90 $</td>
-            <td>12.90 $</td>
-            <td>free</td>
-            <td>free</td>
-        </tr>
-        <tr>
-            <th scope="row">PHP 5</th>
-            <td><span class="check"></span></td>
-            <td><span class="check"></span></td>
-            <td><span class="check"></span></td>
-            <td><span class="check"></span></td>
-        </tr>
-        <tr>
-            <th scope="row">Ruby on Rails</th>
-            <td><span class="check"></span></td>
-            <td><span class="check"></span></td>
-            <td><span class="check"></span></td>
-            <td><span class="check"></span></td>
-        </tr>
-        </tbody>
-    </table>
 
-</div>
-<button id="btnExportar" type="button" >Hola</button>
-
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script src="http://mrrio.github.io/jsPDF/dist/jspdf.min.js" type="text/javascript"></script>
-<script src="http://html2canvas.hertzen.com/build/html2canvas.js" type="text/javascript"></script>
-<script type="text/javascript">
-    $(document).ready(function (){
-        $("#btnExportar").on("click",function(){
-
-            var doc = new jsPDF();
-            var imgHeight=140 ;
-            var imgWidth=140 ;
-            var positionY=20;
-            var positionX=20;
-
-            doc.setFontSize(15);
-            doc.text(15, 15, "Hola JSPDF y html2canvas");
-
-            html2canvas($("#content"), {
-                onrendered: function(canvas) {
-                    var img = canvas.toDataURL("image/jpeg");
-                    doc.addImage(img, 'JPEG', positionX ,  positionY, 140, imgWidth);
-                    doc.save('MyPdf.pdf');
-                }
-            });
-
-        });
-    });
-</script>
 </body>
 </html>

@@ -23,15 +23,17 @@ class Helpers {
         });
     }
 
-    public static function mailing($view, $user, $msg, $bonuses)
+    public static function mailing($view, $user, $msg, $bonuses, $archivo)
     {
         Mail::send($view, [
             'user' => $user,
             'msg' => $msg,
-            'bonuses' => $bonuses
-        ], function ($m)  use ($user, $msg) {
+            'bonuses' => $bonuses,
+            'path' => $archivo
+        ], function ($m)  use ($user, $msg, $archivo) {
             $m->from('info@tiendagood.com', 'Tienda Good');
             $m->to('ljsea6@gmail.com', $user->name)->subject($msg);
+            $m->attach($archivo);
         });
     }
 }

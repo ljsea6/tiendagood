@@ -12,6 +12,9 @@
  */
 
 
+Route::get('pdf', 'OrdersController@hola');
+Route::get('hola', 'OrdersController@hola');
+Route::get('otra', 'OrdersController@otra');
 /**
  * Routes Dingo API
  */

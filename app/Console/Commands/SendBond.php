@@ -3,7 +3,8 @@
 namespace App\Console\Commands;
 
 use DB;
-
+use View;
+use App;
 use App\Code;
 use App\Order;
 use Carbon\Carbon;
@@ -125,8 +126,18 @@ class SendBond extends Command
                             if ($update) {
 
                                 $user = Tercero::find($order->user_id);
+                                $identificacion = $user->identificacion;
+                                $img = file_get_contents('https://barcode.tec-it.com/barcode.ashx?translate-esc=off&data=00000'. $update->code .'&code=EAN13&multiplebarcodes=false&unit=Fit&dpi=96&imagetype=Png&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0');
+                                file_put_contents(public_path().'/uploads/' . $user->identificacion .'.png', $img);
 
-                                Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', $update->code);
+                                $view =  View::make('emails.mail', compact('identificacion'))->render();
+                                $pdf = App::make('dompdf.wrapper');
+                                $pdf->loadHTML($view);
+                                $pdf->stream('invoice');
+
+                                file_put_contents(public_path().'/uploads/' . $user->identificacion .'.pdf', $pdf->stream('invoice'));
+
+                                Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', $update->code, public_path().'/uploads/' . $user->identificacion .'.pdf');
                             }
 
                             $this->info('Enviando email a ' . $user->email . ' con bono número: ' . $update->code);

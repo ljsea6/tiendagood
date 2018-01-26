@@ -17,8 +17,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "dingo/api": "1.0.*@dev",
         "lucadegasperi/oauth2-server-laravel": "5.1.*",
-        "s-ichikawa/laravel-sendgrid-driver": "~2.0",
-        "milon/barcode": "^5.1"
+        "s-ichikawa/laravel-sendgrid-driver": "~2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
