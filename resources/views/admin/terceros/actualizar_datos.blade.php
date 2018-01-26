@@ -119,7 +119,7 @@ input[type="file"] {display: none;}
                                         @else
                                           <input type="checkbox" name="prime"  class="form-check-input"> 
                                         @endif 
-                                          Activar plan prime  <a href="{{route('terms_prime')}}" target="_blank">Terminos y condiciones</a>
+                                          Activar plan prime  <a href="https://tiendagood.com/products/suscripcion-prime-trimestral" target="_blank">Terminos y condiciones</a>
                                         </label>
                                     </div>
                                 </div>  

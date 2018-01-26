@@ -38,7 +38,7 @@
 
 <body id="page-top" style="font-size: .8em; background-color: #f37f08!important; ">
 
-<section class="bg-primary" id="about">
+{{--<section class="bg-primary" id="about">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center">
@@ -55,7 +55,7 @@
 Esta herramienta cuenta con las siguientes características Los servicios Good Prime las cuales tendrán un costo mensual de $ 27.000 + IVA, valor que y no harán parte, bajo ninguna circunstancia, de la asignación de puntos mensual de los VENDEDORES INDEPENDIENTES: Esta herramienta cuenta con las siguientes características: <strong>1</strong>. Nombres y Número total de clientes, clientes amparados y vendedores independientes, discriminado por persona, valor de la compra y puntos asignados, en cada uno de sus tres (3) niveles. <strong>2</strong>. Total de comisiones devengadas durante el periodo actual o presente, historial de los últimos 24 meses de las comisiones devengadas, discriminadas por clientes, vendedores y puntos comprados. <strong>3</strong>. Estadísticas de crecimiento mensual <strong>4</strong>. Herramientas tecnológicas complementarias para la promoción y venta de productos, servicios o bonos de compra. <strong>5</strong>. Bonificación del 10% adicional mensual, por las ventas directas y las ventas de la red comercial hasta el tercer (3) nivel, por consiguiente,lo que significa que un usuario prime recibirá por concepto de comisiones un pago de CINCUENTA Y CINCO PESOS ($ 55) Pesos por cada punto vendido en su primer nivel, un pago de CIENTO DIEZ PESOS ($110) pesos, por cada punto vendido en su segundo nivel, y un pago de CIENTO SESENTA Y CINCO PESOS ($165) Pesos por cada punto vendido en el tercer nivel. <strong>6</strong>. Promociones puntuales y mensuales a discreción de Ecommerce Colombia S.A.S. y según disponibilidad que ofrezcan los proveedores. <strong>7</strong>. Acceso preferencial para el servicio al cliente. <strong>8</strong>. El usuario prime tendrá la posibilidad de seleccionar una asistencia de las descritas en _______, la cual estará vigente durante el tiempo que el usuario tenga activa su membresía prime. <strong>9</strong>. Canal preferencial para PQRS. <strong>10</strong>. Acceso preferencial a campañas de promoción y capacitación. <strong>11</strong>. Dominio propio para la invitación y registro de nuevos clientes. <strong>12</strong>. Garantía de los productos adquiridos a proveedores del extranjero, por el término de seis (6) meses. <strong>13</strong>. Posibilidad de clasificar en el segmento Master (que normalmente requiere la consecución de mínimo seiscientos (600) puntos en un mes), por compras que signifiquen la adquisición de tan solo cien (100) puntos en un mes, manteniendo dicha clasificación durante un término de tiempo de tres (3) meses calendario, contados a partir del periodo en el que adquieran los cien (100) puntos.
                 </p>
 
-</section>
+</section>--}}
 
 <!-- Bootstrap core JavaScript -->
 <script src="terminos/vendor/jquery/jquery.min.js"></script>
