@@ -81,21 +81,33 @@ class SendBond extends Command
                                 "
                                 )
                             );
+                            
+                            if (count($c) > 0) {
+                                    $update = Code::find($c[0]->id);
+                                    $update->order_id = $order->id;
+                                    $update->state = true;
+                                    $update->burned_at = Carbon::now();
+                                    $update->save();
 
-                            $update = Code::find($c[0]->id);
-                            $update->order_id = $order->id;
-                            $update->state = true;
-                            $update->burned_at = Carbon::now();
-                            $update->save();
+                                    if ($update) {
 
-                            if ($update) {
+                                        $user = Tercero::find($order->user_id);
+                                        $identificacion = $user->identificacion;
+                                        $img = file_get_contents('https://barcode.tec-it.com/barcode.ashx?translate-esc=off&data=00000'. $update->code .'&code=EAN13&multiplebarcodes=false&unit=Fit&dpi=96&imagetype=Png&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0');
+                                        file_put_contents(public_path().'/uploads/' . $user->identificacion .'.png', $img);
 
-                                $user = Tercero::find($order->user_id);
+                                        $view =  View::make('emails.mail', compact('identificacion'))->render();
+                                        $pdf = App::make('dompdf.wrapper');
+                                        $pdf->loadHTML($view);
+                                        $pdf->stream('invoice');
 
-                                Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', $update->code);
+                                        file_put_contents(public_path().'/uploads/' . $user->identificacion .'.pdf', $pdf->stream('invoice'));
+
+                                        Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', $update->code, public_path().'/uploads/' . $user->identificacion .'.pdf');
+                                    }
+
+                                    $this->info('Enviando email a ' . $user->email . ' con bono número: ' . $update->code);
                             }
-
-                            $this->info('Enviando email a ' . $user->email . ' con bono número: ' . $update->code);
                         }
                     }
 
@@ -117,30 +129,32 @@ class SendBond extends Command
                                 )
                             );
 
-                            $update = Code::find($c[0]->id);
-                            $update->order_id = $order->id;
-                            $update->state = true;
-                            $update->burned_at = Carbon::now();
-                            $update->save();
+                            if (count($c) > 0) {
+                                    $update = Code::find($c[0]->id);
+                                    $update->order_id = $order->id;
+                                    $update->state = true;
+                                    $update->burned_at = Carbon::now();
+                                    $update->save();
 
-                            if ($update) {
+                                    if ($update) {
 
-                                $user = Tercero::find($order->user_id);
-                                $identificacion = $user->identificacion;
-                                $img = file_get_contents('https://barcode.tec-it.com/barcode.ashx?translate-esc=off&data=00000'. $update->code .'&code=EAN13&multiplebarcodes=false&unit=Fit&dpi=96&imagetype=Png&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0');
-                                file_put_contents(public_path().'/uploads/' . $user->identificacion .'.png', $img);
+                                        $user = Tercero::find($order->user_id);
+                                        $identificacion = $user->identificacion;
+                                        $img = file_get_contents('https://barcode.tec-it.com/barcode.ashx?translate-esc=off&data=00000'. $update->code .'&code=EAN13&multiplebarcodes=false&unit=Fit&dpi=96&imagetype=Png&rotation=0&color=%23000000&bgcolor=%23ffffff&qunit=Mm&quiet=0');
+                                        file_put_contents(public_path().'/uploads/' . $user->identificacion .'.png', $img);
 
-                                $view =  View::make('emails.mail', compact('identificacion'))->render();
-                                $pdf = App::make('dompdf.wrapper');
-                                $pdf->loadHTML($view);
-                                $pdf->stream('invoice');
+                                        $view =  View::make('emails.mail', compact('identificacion'))->render();
+                                        $pdf = App::make('dompdf.wrapper');
+                                        $pdf->loadHTML($view);
+                                        $pdf->stream('invoice');
 
-                                file_put_contents(public_path().'/uploads/' . $user->identificacion .'.pdf', $pdf->stream('invoice'));
+                                        file_put_contents(public_path().'/uploads/' . $user->identificacion .'.pdf', $pdf->stream('invoice'));
 
-                                Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', $update->code, public_path().'/uploads/' . $user->identificacion .'.pdf');
+                                        Helpers::mailing('admin.send.bonuses', $user, '¡Aquí está tu bono!', $update->code, public_path().'/uploads/' . $user->identificacion .'.pdf');
+                                    }
+
+                                    $this->info('Enviando email a ' . $user->email . ' con bono número: ' . $update->code);
                             }
-
-                            $this->info('Enviando email a ' . $user->email . ' con bono número: ' . $update->code);
                         }
                     }
                 }
